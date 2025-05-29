@@ -1,0 +1,42 @@
+[tool.black]
+skip-magic-trailing-comma = true
+
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "DeepSDFStruct"
+version = "1.0"
+description = "Deep Implicit Lattice Geometry"
+authors = [
+    { name = "Michael Kofler", email = "michael.kofler@tuwien.ac.at" }
+]
+requires-python = ">=3.8"
+
+dependencies = [
+    "plyfile",
+    "scikit-image",
+    "trimesh",
+    "matplotlib",
+    "gustaf @ git+https://github.com/mkofler96/gustaf.git@ft-mfem-3D-export",
+    "splinepy",
+    "vedo",
+    "libigl",
+    "embreex",
+    "tetgenpy",
+    "meshio",
+    "numba",
+    "napf",
+    "mmapy",
+    "torch",
+    "torchvision",
+    "torchaudio",
+]
+
+[tool.setuptools]
+package-dir = {"" = "DeepSDFStruct"}
+
+[tool.setuptools.packages.find]
+where = ["DeepSDFStruct"]
