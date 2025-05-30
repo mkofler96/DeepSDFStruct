@@ -5,6 +5,7 @@ import numpy as _np
 import torch as _torch
 
 from splinepy._base import SplinepyBase as _SplinepyBase
+from splinepy import BSpline as _BSpline
 from .SDF import SDFBase as _SDFBase
 from .mesh import torchSurfMesh
 from flexicubes.flexicubes import FlexiCubes
@@ -39,8 +40,8 @@ class CapBorderDict(TypedDict):
     z1: CapType = {"cap": -1, "measure": 0}
 
 
-class LatticeStructure:
-    """Helper class to facilitatae the construction of microstructures."""
+class LatticeSDFStruct(_SDFBase):
+    """Helper class to facilitatae the construction of Lattice SDF Structures."""
 
     def __init__(
         self,
@@ -80,12 +81,12 @@ class LatticeStructure:
             self._cap_border_dict = cap_border_dict
         else:
             self._cap_border_dict = {
-                "x0": {"cap": -1, "measure": 0},
-                "x1": {"cap": -1, "measure": 0},
-                "y0": {"cap": -1, "measure": 0},
-                "y1": {"cap": -1, "measure": 0},
-                "z0": {"cap": -1, "measure": 0},
-                "z1": {"cap": -1, "measure": 0},
+                "x0": {"cap": 1, "measure": 0.02},
+                "x1": {"cap": 1, "measure": 0.02},
+                "y0": {"cap": 1, "measure": 0.02},
+                "y1": {"cap": 1, "measure": 0.02},
+                "z0": {"cap": 1, "measure": 0.02},
+                "z1": {"cap": 1, "measure": 0.02},
             }
 
     @property
@@ -241,7 +242,10 @@ class LatticeStructure:
         self._parametrization_spline = parametrization_spline
         self._sanity_check()
 
-    def evaluate_sdf(self, samples: _torch.tensor):
+    def _set_param(self, parameters):
+        pass
+
+    def _compute(self, samples: _torch.tensor):
         """Function, that - if required - parametrizes the microtiles.
 
         In order to use said function, the Microtile needs to provide a couple
@@ -262,9 +266,28 @@ class LatticeStructure:
          : Callable
           Function that describes the local tile parameters
         """
+        orig_device = samples.device
+        orig_dtype = samples.dtype
+        spline_domain_samples = self._deformation_spline.proximities(
+            samples.detach().numpy()
+        )
+        spline_domain_samples = _torch.tensor(
+            spline_domain_samples, device=orig_device, dtype=orig_dtype
+        )
 
-        lsdf = LatticeSDF(self.tiling, self.microtile)
-        sdf_values = lsdf(samples)
+        queries_transformed = _torch.zeros_like(spline_domain_samples)
+        tx, ty, tz = self._tiling
+        queries_transformed[:, 0] = transform(spline_domain_samples[:, 0], tx)
+        queries_transformed[:, 1] = transform(spline_domain_samples[:, 1], ty)
+        queries_transformed[:, 2] = transform(spline_domain_samples[:, 2], tz)
+        if self._parametrization_spline is not None:
+            parameters = self._parametrization_spline.evaluate(
+                spline_domain_samples.detach().numpy()
+            )
+            parameters = _torch.tensor(parameters, device=orig_device, dtype=orig_dtype)
+            self.microtile._set_param(parameters)
+        sdf_values = self.microtile(queries_transformed)
+        # self.plot_transformed_untransformed(queries, queries_transformed)
         for loc, cap_dict in self._cap_border_dict.items():
             cap, measure = cap_dict["cap"], cap_dict["measure"]
             dim, location = location_lookup[loc]
@@ -273,15 +296,15 @@ class LatticeStructure:
             elif "1" in loc:
                 multiplier = 1
             border_sdf = (
-                samples[:, dim] - multiplier * (location - measure)
+                spline_domain_samples[:, dim] - multiplier * (location - measure)
             ) * -multiplier
-            border_sdf = border_sdf.view(-1, 1)
+            # border_sdf = border_sdf.view(-1, 1)
             if cap == -1:
                 # sdf_values = _torch.maximum(sdf_values, -border_sdf)
 
-                sdf_values = _torch.max(sdf_values, -border_sdf)
+                sdf_values = _torch.maximum(sdf_values, -border_sdf)
             elif cap == 1:
-                sdf_values = _torch.min(sdf_values, border_sdf)
+                sdf_values = _torch.minimum(sdf_values, border_sdf)
             else:
                 raise ValueError("Cap must be -1 or 1")
 
@@ -291,8 +314,8 @@ class LatticeStructure:
         for dim, measure, location in zip(
             [0, 0, 1, 1, 2, 2], [-1, 1, -1, 1, -1, 1], [0, 1, 0, 1, 0, 1]
         ):
-            border_sdf = (samples[:, dim] - measure) * -measure
-            border_sdf = border_sdf.view(-1, 1)
+            border_sdf = (spline_domain_samples[:, dim] - measure) * -measure
+            # border_sdf = border_sdf.view(-1, 1)
             sdf_values = _torch.maximum(sdf_values, -border_sdf)
 
         return sdf_values
@@ -349,37 +372,26 @@ class LatticeStructure:
         gus_faces = gus.Faces(vertices=verts.cpu().detach(), faces=faces.cpu().detach())
         gus.show(gus_faces, axes=1)
 
+    def plot_slice(self, *args, **kwargs):
+        xmin = self._deformation_spline.control_points[:, 0].min()
+        xmax = self._deformation_spline.control_points[:, 0].max()
+        ymin = self._deformation_spline.control_points[:, 1].min()
+        ymax = self._deformation_spline.control_points[:, 1].max()
+
+        kwargs.setdefault("xlim", (xmin, xmax))
+        kwargs.setdefault("ylim", (ymin, ymax))
+
+        return super().plot_slice(*args, **kwargs)
+
+
+def constantLatvec(value):
+    return _BSpline([0, 0, 0], [[-1, 1], [-1, 1], [-1, 1]], [value])
+
 
 def transform(x, t):
     # transform x from [0,1] to [-1,1]
     # x = (x + 1) / 2 # if this is enabled, transforms from [-1,1] to [1,1]
     return 4 * _torch.abs(t * x / 2 - _torch.floor((t * x + 1) / 2)) - 1
-
-
-class LatticeSDF(_SDFBase):
-    def __init__(self, tiling, microtile: _SDFBase):
-        self.tiling = tiling
-        self.microtile = microtile
-
-    def __call__(self, queries: _torch.tensor) -> _torch.tensor:
-        tx, ty, tz = self.tiling
-        queries_transformed = queries.clone()
-        queries_transformed[:, 0] = transform(queries[:, 0], tx)
-        queries_transformed[:, 1] = transform(queries[:, 1], ty)
-        queries_transformed[:, 2] = transform(queries[:, 2], tz)
-        # self.plot_transformed_untransformed(queries, queries_transformed)
-        return self.microtile(queries_transformed)
-
-    def plot_transformed_untransformed(
-        self, samples_untransformed, samples_transformed
-    ):
-        vp_list = []
-        for i in range(3):
-            vp = gus.Vertices(vertices=samples_untransformed)
-            vp.vertex_data["distance"] = samples_transformed[:, i]
-            vp.show_options["cmap"] = "coolwarm"
-            vp_list.append(vp)
-        gus.show(*vp_list, axes=1)
 
 
 def process_N_base_input(N, tiling):

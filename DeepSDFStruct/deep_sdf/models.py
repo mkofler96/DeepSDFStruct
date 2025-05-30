@@ -21,10 +21,10 @@ class DeepSDFModel:
         """
         num_samples = queries.shape[0]
 
-        if latent_vec.shape[1] == 1:
+        if latent_vec.shape[0] == 1:
             latent_repeat = latent_vec.expand(-1, num_samples).T
-        elif latent_vec.shape[1] == num_samples:
-            latent_repeat = latent_vec.T
+        elif latent_vec.shape[0] == num_samples:
+            latent_repeat = latent_vec
         else:
             raise ValueError(
                 f"Latent vector shape mismatch: {latent_vec.shape} does not align with {num_samples} queries."

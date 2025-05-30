@@ -194,7 +194,6 @@ def load_trained_model(
     latent_size = experiment_specs["CodeLength"]
     DecoderClass = ARCHITECTURES[arch_name]
 
-    latent_size = experiment_specs["CodeLength"]
     decoder = DecoderClass(latent_size, **experiment_specs["NetworkSpecs"]).to(device)
     if data_parallel:
         decoder = torch.nn.DataParallel(decoder)
@@ -215,6 +214,7 @@ def load_trained_model(
         for k, v in data["model_state_dict"].items():
             new_key = k.replace("module.", "", 1) if k.startswith("module.") else k
             state_dict[new_key] = v
+        decoder.load_state_dict(state_dict)
     decoder = decoder.to(device)
     return decoder
 

@@ -6,6 +6,7 @@ import trimesh
 import gustaf
 
 from deep_sdf.models import DeepSDFModel
+from DeepSDFStruct.plotting import plot_slice
 
 import logging
 
@@ -28,6 +29,13 @@ class SDFBase(ABC):
         Subclasses implement this to compute SDF values.
         """
         pass
+
+    @abstractmethod
+    def _set_param(self, parameters: torch.Tensor):
+        pass
+
+    def plot_slice(self, *args, **kwargs):
+        plot_slice(self, *args, **kwargs)
 
 
 class SummedSDF(SDFBase):
@@ -156,6 +164,9 @@ class SDFfromDeepSDF(SDFBase):
             raise ValueError(
                 f"Expected latent_vec to have 1 or 2 dimensions, got shape {latent_vec.shape}"
             )
+
+    def _set_param(self, parameters):
+        return self.set_latent_vec(parameters)
 
     def _compute(self, queries: torch.Tensor) -> torch.Tensor:
         queries = queries.to(self.model.device)

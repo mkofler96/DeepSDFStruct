@@ -14,8 +14,10 @@ class PretrainedModels(Enum):
 # Maps enum entries to file paths
 main_dir = importlib.resources.files("DeepSDFStruct")
 _MODEL_REGISTRY = {
-    PretrainedModels.ChiAndCross: main_dir / "trained_models" / "analytic_round_cross",
-    PretrainedModels.AnalyticRoundCross: main_dir / "trained_models" / "chi_and_cross",
+    PretrainedModels.ChiAndCross: main_dir / "trained_models" / "chi_and_cross",
+    PretrainedModels.AnalyticRoundCross: main_dir
+    / "trained_models"
+    / "analytic_round_cross",
     PretrainedModels.RoundCross: main_dir / "trained_models" / "round_cross",
 }
 
@@ -47,6 +49,7 @@ def get_model(model: str | PretrainedModels, checkpoint: str = "latest", device=
         raise ValueError(f"Model path not registered for: {model_enum.name}")
     decoder = load_trained_model(path, checkpoint, device=device)
     latent_vectors = load_latent_vectors(path, checkpoint, device=device)
+    decoder.eval()
     deep_sdf_model = DeepSDFModel(decoder, latent_vectors, device=device)
     return deep_sdf_model
 
