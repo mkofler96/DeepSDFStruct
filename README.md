@@ -52,6 +52,11 @@ lattice_struct.plot_slice(origin=(0, 0, 0.5))
 
 ---
 
+Since all SDFs are callable, the signed distance can be obtained by calling e.g.
+```
+lattice_struct(torch.tensor([[0, 0, 0], [0, 1, 0]], dtype=torch.float32))
+```
+
 ## 🔗 Repository
 
 GitHub: [https://github.com/mkofler96/DeepSDFStruct](https://github.com/mkofler96/DeepSDFStruct)
