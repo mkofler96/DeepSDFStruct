@@ -35,8 +35,5 @@ dependencies = [
     "torchaudio",
 ]
 
-[tool.setuptools]
-package-dir = {"" = "DeepSDFStruct"}
-
 [tool.setuptools.packages.find]
-where = ["DeepSDFStruct"]
+where = ["."]
