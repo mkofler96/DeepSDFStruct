@@ -269,7 +269,7 @@ class LatticeSDFStruct(_SDFBase):
         orig_device = samples.device
         orig_dtype = samples.dtype
         spline_domain_samples = self._deformation_spline.proximities(
-            samples.detach().numpy()
+            samples.detach().cpu().numpy()
         )
         spline_domain_samples = _torch.tensor(
             spline_domain_samples, device=orig_device, dtype=orig_dtype
@@ -282,7 +282,7 @@ class LatticeSDFStruct(_SDFBase):
         queries_transformed[:, 2] = transform(spline_domain_samples[:, 2], tz)
         if self._parametrization_spline is not None:
             parameters = self._parametrization_spline.evaluate(
-                spline_domain_samples.detach().numpy()
+                spline_domain_samples.detach().cpu().numpy()
             )
             parameters = _torch.tensor(parameters, device=orig_device, dtype=orig_dtype)
             self.microtile._set_param(parameters)

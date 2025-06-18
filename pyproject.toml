@@ -33,7 +33,8 @@ dependencies = [
     "torch",
     "torchvision",
     "torchaudio",
+    "pytest>=8.3.5",
 ]
 
 [tool.setuptools.packages.find]
-where = ["."]
+where = [".", "third_party"]

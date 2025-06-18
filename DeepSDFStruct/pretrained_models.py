@@ -1,7 +1,7 @@
 from enum import Enum
 import importlib.resources
-from .deep_sdf.workspace import load_trained_model, load_latent_vectors
-from .deep_sdf.models import DeepSDFModel
+from deep_sdf.workspace import load_trained_model, load_latent_vectors
+from deep_sdf.models import DeepSDFModel
 import torch
 
 
