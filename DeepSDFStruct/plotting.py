@@ -20,16 +20,14 @@ def plot_slice(
         fig, ax = plt.subplots()
         plt_show = True
 
-    points = generate_plane_points(origin, normal, res, xlim, ylim)
+    points, u, v = generate_plane_points(origin, normal, res, xlim, ylim)
 
     points = torch.from_numpy(points).to(torch.float32)
     sdf = fun(points).reshape((res[0], res[1]))
-    X = points[:, 0].reshape((res[0], res[1]))
-    Y = points[:, 1].reshape((res[0], res[1]))
+    X = u.reshape((res[0], res[1]))
+    Y = v.reshape((res[0], res[1]))
     if isinstance(sdf, torch.Tensor):
         sdf = sdf.detach().cpu().numpy()
-        X = X.detach().cpu().numpy()
-        Y = Y.detach().cpu().numpy()
 
     # cbar = ax[0].scatter(X, Y, c=sdf, cmap="seismic")c
     cbar = ax.contourf(X, Y, sdf, cmap=cmap, levels=10)
@@ -65,22 +63,29 @@ def generate_plane_points(origin, normal, res, xlim, ylim):
     if np.allclose(normal, [0, 0, 1]):  # Special case when the normal is along z-axis
         u = np.array([1, 0, 0])
         v = np.array([0, 1, 0])
+    elif np.allclose(normal, [0, 1, 0]):  # Special case when the normal is along z-axis
+        u = np.array([1, 0, 0])
+        v = np.array([0, 0, 1])
+    elif np.allclose(normal, [1, 0, 0]):  # Special case when the normal is along z-axis
+        u = np.array([0, 1, 0])
+        v = np.array([0, 0, 1])
     else:
-        u = np.cross(
-            [0, 0, 1], normal
-        )  # Cross product to get a vector orthogonal to normal
-        u = u / np.linalg.norm(u)  # Normalize the vector
-        v = np.cross(normal, u)  # v is orthogonal to both normal and u
+        raise NotImplementedError(
+            "Normal vector other than [1,0,0], [0,1,0] and [0,0,1] not supported yet."
+        )
 
     # Create grid points in 2D space (u-v plane)
     u_coords = np.linspace(xlim[0], xlim[1], res[0])
     v_coords = np.linspace(ylim[0], ylim[1], res[1])
 
     points = []
-
+    u_exp = []
+    v_exp = []
     for u_val in u_coords:
         for v_val in v_coords:
             point = origin + u_val * u + v_val * v
+            u_exp.append(u_val)
+            v_exp.append(v_val)
             points.append(point)
 
-    return np.array(points)
+    return np.array(points), np.array(u_exp), np.array(v_exp)

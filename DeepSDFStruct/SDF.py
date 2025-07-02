@@ -35,7 +35,7 @@ class SDFBase(ABC):
         pass
 
     def plot_slice(self, *args, **kwargs):
-        plot_slice(self, *args, **kwargs)
+        return plot_slice(self, *args, **kwargs)
 
 
 class SummedSDF(SDFBase):
