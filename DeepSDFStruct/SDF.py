@@ -188,7 +188,9 @@ class SDFfromDeepSDF(SDFBase):
             query_batch = queries[head:end]
 
             sdf_values[head:end] = (
-                self.model._decode_sdf(latent_vec, query_batch).squeeze(1).detach()
+                self.model._decode_sdf(latent_vec[head:end], query_batch)
+                .squeeze(1)
+                .detach()
             )
 
             head = end
