@@ -299,6 +299,8 @@ class LatticeSDFStruct(_SDFBase):
                 spline_domain_samples[:, dim] - multiplier * (location - measure)
             ) * -multiplier
             # border_sdf = border_sdf.view(-1, 1)
+            border_sdf = border_sdf.to(orig_device)
+            sdf_values = sdf_values.to(orig_device)
             if cap == -1:
                 # sdf_values = _torch.maximum(sdf_values, -border_sdf)
 
