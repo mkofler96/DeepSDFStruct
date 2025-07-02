@@ -8,7 +8,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "DeepSDFStruct"
-version = "1.1"
+version = "1.2"
 description = "Deep Implicit Lattice Geometry"
 authors = [
     { name = "Michael Kofler", email = "michael.kofler@tuwien.ac.at" }
