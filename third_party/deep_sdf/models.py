@@ -21,14 +21,15 @@ class DeepSDFModel:
         """
         num_samples = queries.shape[0]
 
-        if latent_vec.shape[0] == 1:
-            latent_repeat = latent_vec.expand(-1, num_samples).T
-        elif latent_vec.shape[0] == num_samples:
+        # todo: check something like this
+        # raise ValueError(
+        #     f"Latent vector shape mismatch: {latent_vec.shape} does not align with {num_samples} queries."
+        # )
+
+        if latent_vec.shape[0] == num_samples:
             latent_repeat = latent_vec
         else:
-            raise ValueError(
-                f"Latent vector shape mismatch: {latent_vec.shape} does not align with {num_samples} queries."
-            )
+            latent_repeat = latent_vec.expand(-1, num_samples).T
 
         model_input = torch.cat([latent_repeat, queries], dim=1)
         return self._decoder(model_input)
