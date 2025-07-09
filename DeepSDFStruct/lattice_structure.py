@@ -8,7 +8,7 @@ from splinepy._base import SplinepyBase as _SplinepyBase
 from splinepy import BSpline as _BSpline
 from .SDF import SDFBase as _SDFBase
 from .mesh import torchSurfMesh
-from flexicubes.flexicubes import FlexiCubes
+from DeepSDFStruct.flexicubes.flexicubes import FlexiCubes
 import gustaf as gus
 
 logger = logging.getLogger(__name__)
@@ -424,7 +424,7 @@ def check_tiling_input(tiling):
 def _prepare_flexicubes_querypoints(N):
     """
     takes the tiling and a resolution as input
-    output: flexicubes constructor, samples and cube indices
+    output: DeepSDFStruct.flexicubes constructor, samples and cube indices
             the points are located in the region [0,1] with a margin of 0.025
             -> [-0.025, 1.025]
     """

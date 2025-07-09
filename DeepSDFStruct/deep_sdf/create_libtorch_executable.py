@@ -1,5 +1,5 @@
 import torch
-import deep_sdf.workspace as ws
+import DeepSDFStruct.deep_sdf.workspace as ws
 
 
 def main(experiment_directory, checkpoint):

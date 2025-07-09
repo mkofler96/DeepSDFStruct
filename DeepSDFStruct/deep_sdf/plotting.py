@@ -7,8 +7,8 @@ import logging
 import torch
 import matplotlib.pyplot as plt
 
-import deep_sdf.workspace as ws
-import deep_sdf.mesh
+import DeepSDFStruct.deep_sdf.workspace as ws
+import DeepSDFStruct.deep_sdf.mesh
 import trimesh
 
 
@@ -37,10 +37,17 @@ def show_random_reconstruction(experiment_directory, epoch=None):
     npz_filenames = extract_paths(json.load(open(specs["TrainSplit"])))
     print(specs)
     id = np.random.choice(len(npz_filenames), 1, replace=False)
-    model = deep_sdf.ws.load_trained_model(experiment_directory, str(epoch))
-    latent_vecs = deep_sdf.ws.load_latent_vectors(experiment_directory, str(epoch))
-    verts, faces = deep_sdf.mesh.create_mesh_microstructure(
-        [1, 1, 1], model, deep_sdf.mesh.constantLatvec(latent_vecs[id[0]]), N=64
+    model = DeepSDFStruct.deep_sdf.ws.load_trained_model(
+        experiment_directory, str(epoch)
+    )
+    latent_vecs = DeepSDFStruct.deep_sdf.ws.load_latent_vectors(
+        experiment_directory, str(epoch)
+    )
+    verts, faces = DeepSDFStruct.deep_sdf.mesh.create_mesh_microstructure(
+        [1, 1, 1],
+        model,
+        DeepSDFStruct.deep_sdf.mesh.constantLatvec(latent_vecs[id[0]]),
+        N=64,
     )
     mesh = trimesh.Trimesh(verts, faces)
     return mesh.show()
@@ -77,7 +84,7 @@ def show_random_training_files(
 
         # reconstruct the mesh
         if epoch is not None:
-            ply_file = deep_sdf.mesh.create_mesh_from_latent(
+            ply_file = DeepSDFStruct.deep_sdf.mesh.create_mesh_from_latent(
                 experiment_directory, epoch, id
             )
             try:

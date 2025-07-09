@@ -5,7 +5,7 @@ import igl
 import trimesh
 import gustaf
 
-from deep_sdf.models import DeepSDFModel
+from DeepSDFStruct.deep_sdf.models import DeepSDFModel
 from DeepSDFStruct.plotting import plot_slice
 
 import logging

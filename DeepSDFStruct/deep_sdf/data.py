@@ -9,7 +9,7 @@ import random
 import torch
 import torch.utils.data
 
-import deep_sdf.workspace as ws
+import DeepSDFStruct.deep_sdf.workspace as ws
 
 
 def get_instance_filenames(data_source, split):

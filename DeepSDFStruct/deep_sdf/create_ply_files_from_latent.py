@@ -1,8 +1,8 @@
-import deep_sdf.mesh
+import DeepSDFStruct.deep_sdf.mesh
 import os
 import json
 import torch
-import deep_sdf.workspace as ws
+import DeepSDFStruct.deep_sdf.workspace as ws
 import pathlib
 import time
 import datetime
@@ -51,7 +51,7 @@ def main(experiment_directory, checkpoint, max_batch=32):
             print(f"Skipping {fname}")
             continue
         print(f"Reconstructing {fname} ({i}/{len(latent)})")
-        deep_sdf.mesh.create_mesh(
+        DeepSDFStruct.deep_sdf.mesh.create_mesh(
             decoder,
             latent_in,
             str(fname.with_suffix("")),
@@ -86,7 +86,7 @@ def main(experiment_directory, checkpoint, max_batch=32):
             if fname.exists():
                 print(f"Skipping {fname}")
                 continue
-            deep_sdf.mesh.create_mesh(
+            DeepSDFStruct.deep_sdf.mesh.create_mesh(
                 decoder,
                 latent_in,
                 str(fname.with_suffix("")),

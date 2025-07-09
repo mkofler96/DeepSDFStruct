@@ -13,8 +13,8 @@ import time
 import datetime
 import random
 
-import deep_sdf
-import deep_sdf.workspace as ws
+import DeepSDFStruct.deep_sdf
+import DeepSDFStruct.deep_sdf.workspace as ws
 
 
 import numpy as np
@@ -253,7 +253,7 @@ def append_parameter_magnitudes(param_mag_log, model):
         param_mag_log[name].append(param.data.norm().item())
 
 
-def train_deep_sdf(experiment_directory, continue_from, batch_split):
+def train_DeepSDFStruct.deep_sdf(experiment_directory, continue_from, batch_split):
     logging.basicConfig(
         level=logging.INFO, format="%(asctime)s %(message)s", datefmt="%H:%M:%S"
     )
@@ -274,7 +274,7 @@ def train_deep_sdf(experiment_directory, continue_from, batch_split):
     else:
         reconstruction_split = None
 
-    arch = __import__("deep_sdf.networks." + specs["NetworkArch"], fromlist=["Decoder"])
+    arch = __import__("DeepSDFStruct.deep_sdf.networks." + specs["NetworkArch"], fromlist=["Decoder"])
 
     logging.debug(specs["NetworkSpecs"])
 
@@ -374,7 +374,7 @@ def train_deep_sdf(experiment_directory, continue_from, batch_split):
     with open(train_split_file, "r") as f:
         train_split = json.load(f)
 
-    sdf_dataset = deep_sdf.data.SDFSamples(
+    sdf_dataset = DeepSDFStruct.deep_sdf.data.SDFSamples(
         data_source,
         train_split,
         num_samp_per_scene,
@@ -660,13 +660,13 @@ if __name__ == "__main__":
         + "sizes in memory constrained environments.",
     )
 
-    deep_sdf.add_common_args(arg_parser)
+    DeepSDFStruct.deep_sdf.add_common_args(arg_parser)
 
     args = arg_parser.parse_args()
 
-    deep_sdf.configure_logging(args)
+    DeepSDFStruct.deep_sdf.configure_logging(args)
     if args.continue_from is not None:
         continue_from = str(args.continue_from)
     else:
         continue_from = None
-    train_deep_sdf(args.experiment_directory, continue_from, int(args.batch_split))
+    train_DeepSDFStruct.deep_sdf(args.experiment_directory, continue_from, int(args.batch_split))

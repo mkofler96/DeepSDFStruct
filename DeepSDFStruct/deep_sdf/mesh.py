@@ -15,20 +15,20 @@ logger = logging.getLogger(__name__)
 
 from typing import TypedDict
 
-import deep_sdf.utils
+import DeepSDFStruct.deep_sdf.utils
 
 try:
-    from kaolin.non_commercial import FlexiCubes
+    from kaolin.non_commercial import DeepSDFStruct.flexicubes
 except (ModuleNotFoundError, ImportError):
     logger.debug("This functionality requires kaolin library")
-    from flexicubes.flexicubes import FlexiCubes
+    from DeepSDFStruct.flexicubes.DeepSDFStruct.flexicubes import DeepSDFStruct.flexicubes
 
 
 def create_mesh(decoder, latent_vec, N=256, max_batch=32**3, device=None):
     if device is None:
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     decoder.eval()
-    flexi_cubes_constructor = FlexiCubes(device=device)
+    flexi_cubes_constructor = DeepSDFStruct.flexicubes(device=device)
 
     samples, cube_idx = flexi_cubes_constructor.construct_voxel_grid(
         resolution=(N, N, N)
@@ -47,7 +47,7 @@ def create_mesh(decoder, latent_vec, N=256, max_batch=32**3, device=None):
         )
 
         sdf_values[head : min(head + max_batch, num_samples)] = (
-            deep_sdf.utils.decode_sdf(decoder, latent_vec, sample_subset)
+            DeepSDFStruct.deep_sdf.utils.decode_sdf(decoder, latent_vec, sample_subset)
             .squeeze(1)
             .detach()
             .cpu()
@@ -169,7 +169,7 @@ def create_mesh_microstructure(
     scale=None,
     cap_border_dict: CapBorderDict = None,
     save_ply_file=False,
-    use_flexicubes=False,
+    use_DeepSDFStruct.flexicubes=False,
     device=None,
     output_tetmesh=False,
     compute_derivatives=False,
@@ -210,8 +210,8 @@ def create_mesh_microstructure(
 
     decoder.eval()
 
-    if use_flexicubes:
-        reconstructor = FlexiCubes(device=device)
+    if use_DeepSDFStruct.flexicubes:
+        reconstructor = DeepSDFStruct.flexicubes(device=device)
         samples_orig, cube_idx = reconstructor.construct_voxel_grid(resolution=tuple(N))
         samples_orig = samples_orig.to(device)
         cube_idx = cube_idx.to(device)
@@ -285,7 +285,7 @@ def create_mesh_microstructure(
         sample_subset = queries[head : min(head + max_batch, num_samples), :].to(device)
 
         queries[head : min(head + max_batch, num_samples), -1] = (
-            deep_sdf.utils.decode_sdf(decoder, None, sample_subset)
+            DeepSDFStruct.deep_sdf.utils.decode_sdf(decoder, None, sample_subset)
             .squeeze(1)
             .detach()
             .cpu()
@@ -325,8 +325,8 @@ def create_mesh_microstructure(
             sdf_values.cpu(), voxel_origin, voxel_size, filename + ".ply", offset, scale
         )
     else:
-        if use_flexicubes:
-            # flexicubes has the possibility to output tetmesh, but it's extremely slow
+        if use_DeepSDFStruct.flexicubes:
+            # DeepSDFStruct.flexicubes has the possibility to output tetmesh, but it's extremely slow
             # and often fails
             recon_from_latent = lambda l: reconstructor(
                 voxelgrid_vertices=torch.tensor(samples_orig[:, :3]).to(device),
@@ -402,7 +402,7 @@ def create_mesh_microstructure_diff(
         raise ValueError("Number of grid points must be a list or an integer")
 
     decoder.eval()
-    flexi_cubes_constructor = FlexiCubes(device=device)
+    flexi_cubes_constructor = DeepSDFStruct.flexicubes(device=device)
     samples, samples_orig, lat_vec_red, cube_idx = prepare_samples(
         flexi_cubes_constructor, device, N, tiling, latent_vec_interpolation
     )
@@ -421,7 +421,7 @@ def create_mesh_microstructure_diff(
         flexi_cubes_constructor,
     )
     tot_jac = []
-    deep_sdf.utils.log_memory_usage()
+    DeepSDFStruct.deep_sdf.utils.log_memory_usage()
     save_memory = True
     logger.debug("Computing DeepSDF derivatives")
     if compute_derivatives:
@@ -492,7 +492,7 @@ def create_mesh_microstructure_diff(
                 # _, dVerts_dControl_i = torch.autograd.functional.jvp(function, lat_vec_red.reshape(-1), v=dLatent_dControl)
                 # tot_jac.append(dVerts_dControl_i.reshape(-1, physical_dim))
             torch.cuda.empty_cache()
-            # deep_sdf.utils.log_memory_usage()
+            # DeepSDFStruct.deep_sdf.utils.log_memory_usage()
             tot_jac = torch.stack(
                 [torch.stack(inner_jac, dim=2) for inner_jac in tot_jac], dim=3
             )
@@ -502,7 +502,7 @@ def create_mesh_microstructure_diff(
                 lambda l: evaluate_network(l)[0], lat_vec_red
             )
             torch.cuda.empty_cache()
-            # deep_sdf.utils.log_memory_usage()
+            # DeepSDFStruct.deep_sdf.utils.log_memory_usage()
             basis_eval = latent_vec_interpolation.basis(
                 np.clip(samples_orig[:, :3].detach().cpu().numpy(), -1, 1)
             )
@@ -519,7 +519,7 @@ def create_mesh_microstructure_diff(
     )
     verts = (verts + 1) / 2
     max_memory = torch.cuda.max_memory_allocated(device=device)
-    maxmem_human = deep_sdf.utils.format_memory_size(max_memory)
+    maxmem_human = DeepSDFStruct.deep_sdf.utils.format_memory_size(max_memory)
     logger.debug(f"Maximum memory used by {device}: {maxmem_human}")
     return verts, faces, tot_jac_cpu
 
@@ -585,11 +585,13 @@ def evaluate_network(
     cap_border_dict,
     cube_idx,
     output_tetmesh,
-    flexicubes_reconstructor,
+    DeepSDFStruct.flexicubes_reconstructor,
 ):
     queries = torch.hstack([lat_vec_red, samples[:, 0:3]])
     start_time = time.time()
-    sdf_values = deep_sdf.utils.decode_sdf(decoder, None, queries).squeeze(1)
+    sdf_values = DeepSDFStruct.deep_sdf.utils.decode_sdf(
+        decoder, None, queries
+    ).squeeze(1)
     sample_time = time.time()
     # logger.debug("sampling takes: %f" % (sample_time - start_time))
     for loc, cap_dict in cap_border_dict.items():
@@ -612,9 +614,9 @@ def evaluate_network(
     # sdf_values = sdf_values.reshape(N[0]+1, N[1]+1, N[2]+1)
     # sdf_values = torch.tensor(sdf_values).to(device)
 
-    # flexicubes has the possibility to output tetmesh, but it's extremely slow
+    # DeepSDFStruct.flexicubes has the possibility to output tetmesh, but it's extremely slow
     # and often fails
-    verts, faces, loss = flexicubes_reconstructor(
+    verts, faces, loss = DeepSDFStruct.flexicubes_reconstructor(
         voxelgrid_vertices=samples_orig[:, :3],
         scalar_field=sdf_values,
         cube_idx=cube_idx,
@@ -625,12 +627,16 @@ def evaluate_network(
 
 
 def create_mesh_from_latent(experiment_directory, epoch, index, **kwargs):
-    decoder = deep_sdf.ws.load_trained_model(experiment_directory, str(epoch))
-    latent_vecs = deep_sdf.ws.load_latent_vectors(experiment_directory, str(epoch))
+    decoder = DeepSDFStruct.deep_sdf.ws.load_trained_model(
+        experiment_directory, str(epoch)
+    )
+    latent_vecs = DeepSDFStruct.deep_sdf.ws.load_latent_vectors(
+        experiment_directory, str(epoch)
+    )
     class_name = "all"
     instance_name = f"{index}"
     dataset = "latent_recon"
-    fname = deep_sdf.ws.get_reconstructed_mesh_filename(
+    fname = DeepSDFStruct.deep_sdf.ws.get_reconstructed_mesh_filename(
         experiment_directory, epoch, dataset, class_name, instance_name
     )
     fname = pathlib.Path(fname)

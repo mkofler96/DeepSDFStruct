@@ -13,16 +13,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import torch
-from flexicubes.tables import *
+from DeepSDFStruct.flexicubes.tables import *
 
 __all__ = ["FlexiCubes"]
 
 
 class FlexiCubes:
     """
-    This class implements the FlexiCubes method for extracting meshes from scalar fields.
+    This class implements the DeepSDFStruct.flexicubes method for extracting meshes from scalar fields.
     It maintains a series of lookup tables and indices to support the mesh extraction process.
-    FlexiCubes, a differentiable variant of the Dual Marching Cubes (DMC) scheme, enhances
+    DeepSDFStruct.flexicubes, a differentiable variant of the Dual Marching Cubes (DMC) scheme, enhances
     the geometric fidelity and mesh quality of reconstructed meshes by dynamically adjusting
     the surface representation through gradient-based optimization.
 
@@ -66,7 +66,7 @@ class FlexiCubes:
             The scaling factor applied to the regularization loss to prevent issues with singularity
             when solving the QEF. This parameter is only used when a 'grad_func' is specified.
         weight_scale (float):
-            The scale of weights in FlexiCubes. Should be between 0 and 1.
+            The scale of weights in DeepSDFStruct.flexicubes. Should be between 0 and 1.
     """
 
     def __init__(self, device="cuda", qef_reg_scale=1e-3, weight_scale=0.99):
@@ -180,7 +180,7 @@ class FlexiCubes:
 
     # changes mkofler: adapted function signature to match the kaolin package
     # function signature on kaolin package:
-    # verts, faces, loss = flexicubes_reconstructor(voxelgrid_vertices=samples_orig[:, :3],
+    # verts, faces, loss = DeepSDFStruct.flexicubes_reconstructor(voxelgrid_vertices=samples_orig[:, :3],
     # scalar_field=sdf_values,
     # cube_idx=cube_idx,
     # resolution=tuple(N),
@@ -199,10 +199,10 @@ class FlexiCubes:
         grad_func=None,
     ):
         r"""
-        Main function for mesh extraction from scalar field using FlexiCubes. This function converts
+        Main function for mesh extraction from scalar field using DeepSDFStruct.flexicubes. This function converts
         discrete signed distance fields, encoded on voxel grids and additional per-cube parameters,
         to triangle or tetrahedral meshes using a differentiable operation as described in
-        `Flexible Isosurface Extraction for Gradient-Based Mesh Optimization`_. FlexiCubes enhances
+        `Flexible Isosurface Extraction for Gradient-Based Mesh Optimization`_. DeepSDFStruct.flexicubes enhances
         mesh quality and geometric fidelity by adjusting the surface representation based on gradient
         optimization. The output surface is differentiable with respect to the input vertex positions,
         scalar field values, and weight parameters.
@@ -238,7 +238,7 @@ class FlexiCubes:
                 outputs a triangular mesh. Defaults to False.
             grad_func (callable, optional): A function to compute the surface gradient at specified
                 3D positions (input: Nx3 positions). The function should return gradients as an Nx3
-                tensor. If None, the original FlexiCubes algorithm is utilized. Defaults to None.
+                tensor. If None, the original DeepSDFStruct.flexicubes algorithm is utilized. Defaults to None.
 
         Returns:
             (torch.Tensor, torch.LongTensor, torch.Tensor): Tuple containing:
@@ -247,7 +247,7 @@ class FlexiCubes:
                 - Regularizer L_dev, computed per dual vertex.
 
         .. _Flexible Isosurface Extraction for Gradient-Based Mesh Optimization:
-            https://research.nvidia.com/labs/toronto-ai/flexicubes/
+            https://research.nvidia.com/labs/toronto-ai/DeepSDFStruct.flexicubes/
         .. _Manifold Dual Contouring:
             https://people.engr.tamu.edu/schaefer/research/dualsimp_tvcg.pdf
         """
