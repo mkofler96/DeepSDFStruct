@@ -179,14 +179,7 @@ def get_normalization_params_filename(
     )
 
 
-def load_trained_model(
-    experiment_directory: str, checkpoint: str, device=None, data_parallel=False
-):
-    specs_filename = os.path.join(experiment_directory, "specs.json")
-    experiment_specs = json.load(open(specs_filename))
-    if device is None:
-        device = get_default_device(device)
-
+def init_decoder(experiment_specs, device, data_parallel):
     arch_name = experiment_specs["NetworkArch"]
     if arch_name not in ARCHITECTURES:
         raise ValueError(f"Unknown architecture: {arch_name}")
@@ -197,6 +190,16 @@ def load_trained_model(
     decoder = DecoderClass(latent_size, **experiment_specs["NetworkSpecs"]).to(device)
     if data_parallel:
         decoder = torch.nn.DataParallel(decoder)
+    return decoder
+
+
+def load_trained_model(
+    experiment_directory: str, checkpoint: str, device=None, data_parallel=False
+):
+    specs_filename = os.path.join(experiment_directory, "specs.json")
+    experiment_specs = json.load(open(specs_filename))
+    if device is None:
+        device = get_default_device(device)
 
     filename = os.path.join(
         experiment_directory, model_params_subdir, checkpoint + ".pth"
@@ -206,7 +209,7 @@ def load_trained_model(
         raise Exception('model state dict "{}" does not exist'.format(filename))
 
     data = torch.load(filename, map_location=device)
-
+    decoder = init_decoder(experiment_specs, device, data_parallel)
     try:
         decoder.load_state_dict(data["model_state_dict"])
     except RuntimeError:

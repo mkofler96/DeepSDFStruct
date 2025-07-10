@@ -96,3 +96,7 @@ Desktop.ini
 *~
 *.swp
 *.swo
+
+# Pytorch intermediate files
+*.pth 
+!latest.pth

@@ -1,9 +1,8 @@
 {
-    "Description" : "This experiment learns a shape representation for a simple microstructure using a big network.",
-    "DataSource" : "data",
+    "Description" : "This experiment is intented for testing purposes only.",
     "NetworkArch" : "deep_sdf_decoder",
-    "TrainSplit": "data/splits/round_cross.json",
-    "TestSplit": "data/splits/round_cross.json",
+    "TrainSplit": "splits/cross.json",
+    "TestSplit": "splits/cross.json",
     "ReconstructionSplit": "",
     "NetworkSpecs" : {
       "dims" : [32, 32, 32, 32, 32, 32],
@@ -34,7 +33,7 @@
         "Interval" : 500,
         "Factor" : 0.5
       }],
-    "SamplesPerScene" : 16000,
+    "SamplesPerScene" : 16384,
     "ScenesPerBatch" : 10,
     "DataLoaderThreads" : 1,
     "ClampingDistance" : 0.1,

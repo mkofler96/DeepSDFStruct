@@ -12,10 +12,11 @@ import json
 import time
 import datetime
 import random
+import pathlib
 
 import DeepSDFStruct.deep_sdf
 import DeepSDFStruct.deep_sdf.workspace as ws
-
+import DeepSDFStruct.deep_sdf.data
 
 import numpy as np
 
@@ -253,19 +254,26 @@ def append_parameter_magnitudes(param_mag_log, model):
         param_mag_log[name].append(param.data.norm().item())
 
 
-def train_DeepSDFStruct.deep_sdf(experiment_directory, continue_from, batch_split):
+def train_deep_sdf(
+    experiment_directory, data_source, continue_from=None, batch_split=1, device=None
+):
     logging.basicConfig(
         level=logging.INFO, format="%(asctime)s %(message)s", datefmt="%H:%M:%S"
     )
     logging.debug("running " + experiment_directory)
+    if device is None:
+        device = "cuda" if torch.cuda.is_available() else "cpu"
+
+    if device == "cuda":
+        device_name = torch.cuda.get_device_name()
+    elif device == "cpu":
+        device_name = "cpu"
+    else:
+        raise RuntimeError("Device must be either cpu or cuda")
 
     specs = ws.load_experiment_specifications(experiment_directory)
 
     logging.info("Experiment description: \n" + specs["Description"])
-
-    code_length = specs["CodeLength"]
-    data_source = specs["DataSource"]
-    train_split_file = specs["TrainSplit"]
 
     reconstruction_split_file = specs["ReconstructionSplit"]
     if os.path.isfile(reconstruction_split_file):
@@ -273,8 +281,6 @@ def train_DeepSDFStruct.deep_sdf(experiment_directory, continue_from, batch_spli
             reconstruction_split = json.load(f)
     else:
         reconstruction_split = None
-
-    arch = __import__("DeepSDFStruct.deep_sdf.networks." + specs["NetworkArch"], fromlist=["Decoder"])
 
     logging.debug(specs["NetworkSpecs"])
 
@@ -344,14 +350,13 @@ def train_DeepSDFStruct.deep_sdf(experiment_directory, continue_from, batch_spli
 
     code_bound = get_spec_with_default(specs, "CodeBound", None)
 
-    if torch.cuda.is_available():
-        decoder = arch.Decoder(latent_size, **specs["NetworkSpecs"]).cuda()
-        device_name = torch.cuda.get_device_name()
-        device = "cuda"
+    if torch.cuda.device_count() > 1:
+        data_parallel = True
     else:
-        decoder = arch.Decoder(latent_size, **specs["NetworkSpecs"])
-        device_name = "cpu"
-        device = "cpu"
+        data_parallel = False
+
+    decoder = ws.init_decoder(specs, device, data_parallel)
+
     geom_dimension = decoder.geom_dimension
     logging.info(f"training on {device_name}")
 
@@ -365,11 +370,10 @@ def train_DeepSDFStruct.deep_sdf(experiment_directory, continue_from, batch_spli
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = False
 
-    # if torch.cuda.device_count() > 1:
-    decoder = torch.nn.DataParallel(decoder)
-
     num_epochs = specs["NumEpochs"]
     log_frequency = get_spec_with_default(specs, "LogFrequency", 10)
+
+    train_split_file = pathlib.Path(data_source) / specs["TrainSplit"]
 
     with open(train_split_file, "r") as f:
         train_split = json.load(f)
@@ -401,7 +405,9 @@ def train_DeepSDFStruct.deep_sdf(experiment_directory, continue_from, batch_spli
 
     logging.debug(decoder)
 
-    lat_vecs = torch.nn.Embedding(num_scenes, latent_size, max_norm=code_bound)
+    lat_vecs = torch.nn.Embedding(
+        num_scenes, latent_size, max_norm=code_bound, device=device
+    )
     torch.nn.init.normal_(
         lat_vecs.weight.data,
         0.0,
@@ -500,7 +506,9 @@ def train_DeepSDFStruct.deep_sdf(experiment_directory, continue_from, batch_spli
 
         for sdf_data, properties, indices in sdf_loader:
             # Process the input data
-            sdf_data = sdf_data.reshape(-1, geom_dimension + 1)
+            sdf_data = sdf_data.reshape(-1, geom_dimension + 1).to(device)
+            properties = properties.to(device)
+            indices = indices.to(device)
 
             num_sdf_samples = sdf_data.shape[0]
 
@@ -669,4 +677,4 @@ if __name__ == "__main__":
         continue_from = str(args.continue_from)
     else:
         continue_from = None
-    train_DeepSDFStruct.deep_sdf(args.experiment_directory, continue_from, int(args.batch_split))
+    train_deep_sdf(args.experiment_directory, continue_from, int(args.batch_split))
