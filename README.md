@@ -1,7 +1,9 @@
 # DeepSDFStruct
 
 A differentiable framework for generating and deforming 3D microstructured materials using Signed Distance Functions (SDFs) and spline-based lattices.
-
+## Coverage
+[![Test Python Package](https://github.com/mkofler96/DeepSDFStruct/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/mkofler96/DeepSDFStruct/actions/workflows/test.yml)
+[![Coverage Status](https://coveralls.io/repos/github/mkofler96/DeepSDFStruct/badge.svg?branch=main)](https://coveralls.io/github/mkofler96/DeepSDFStruct?branch=main)
 ## 📦 Installation
 
 You can install `DeepSDFStruct` directly from GitHub using `pip`:
