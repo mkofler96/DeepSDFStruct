@@ -32,7 +32,7 @@ jobs:
         run: uv sync
 
       - name: Run tests
-        run: uv run pytest --cov=DeepSDFStruct tests
+        run: uv run pytest --cov=DeepSDFStruct --cov-report=term-missing --cov-report=xml tests
 
       - name: Coveralls
         uses: coverallsapp/github-action@v2
