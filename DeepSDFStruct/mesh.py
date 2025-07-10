@@ -19,6 +19,7 @@ class torchSurfMesh:
         return gus.Faces(self.vertices.detach().cpu(), self.faces.detach().cpu())
 
     def to_trimesh():
+        raise NotImplementedError("To trimesh functionality not implemented yet.")
         pass
 
 

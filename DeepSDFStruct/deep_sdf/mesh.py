@@ -11,24 +11,19 @@ import torch
 import pathlib
 import os
 
-logger = logging.getLogger(__name__)
-
 from typing import TypedDict
 
 import DeepSDFStruct.deep_sdf.utils
+from DeepSDFStruct.flexicubes.flexicubes import FlexiCubes
 
-try:
-    from kaolin.non_commercial import DeepSDFStruct.flexicubes
-except (ModuleNotFoundError, ImportError):
-    logger.debug("This functionality requires kaolin library")
-    from DeepSDFStruct.flexicubes.DeepSDFStruct.flexicubes import DeepSDFStruct.flexicubes
+logger = logging.getLogger(__name__)
 
 
 def create_mesh(decoder, latent_vec, N=256, max_batch=32**3, device=None):
     if device is None:
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     decoder.eval()
-    flexi_cubes_constructor = DeepSDFStruct.flexicubes(device=device)
+    flexi_cubes_constructor = FlexiCubes(device=device)
 
     samples, cube_idx = flexi_cubes_constructor.construct_voxel_grid(
         resolution=(N, N, N)
@@ -169,7 +164,7 @@ def create_mesh_microstructure(
     scale=None,
     cap_border_dict: CapBorderDict = None,
     save_ply_file=False,
-    use_DeepSDFStruct.flexicubes=False,
+    use_flexicubes=False,
     device=None,
     output_tetmesh=False,
     compute_derivatives=False,
@@ -210,7 +205,7 @@ def create_mesh_microstructure(
 
     decoder.eval()
 
-    if use_DeepSDFStruct.flexicubes:
+    if use_flexicubes:
         reconstructor = DeepSDFStruct.flexicubes(device=device)
         samples_orig, cube_idx = reconstructor.construct_voxel_grid(resolution=tuple(N))
         samples_orig = samples_orig.to(device)
@@ -325,7 +320,7 @@ def create_mesh_microstructure(
             sdf_values.cpu(), voxel_origin, voxel_size, filename + ".ply", offset, scale
         )
     else:
-        if use_DeepSDFStruct.flexicubes:
+        if use_flexicubes:
             # DeepSDFStruct.flexicubes has the possibility to output tetmesh, but it's extremely slow
             # and often fails
             recon_from_latent = lambda l: reconstructor(
@@ -585,7 +580,7 @@ def evaluate_network(
     cap_border_dict,
     cube_idx,
     output_tetmesh,
-    DeepSDFStruct.flexicubes_reconstructor,
+    flexicubes_reconstructor,
 ):
     queries = torch.hstack([lat_vec_red, samples[:, 0:3]])
     start_time = time.time()
@@ -640,7 +635,7 @@ def create_mesh_from_latent(experiment_directory, epoch, index, **kwargs):
         experiment_directory, epoch, dataset, class_name, instance_name
     )
     fname = pathlib.Path(fname)
-    if os.path.isdir(fname.parent) == False:
+    if not os.path.isdir(fname.parent):
         os.makedirs(fname.parent)
     create_mesh(decoder, latent_vecs[index], str(fname), **kwargs)
     return fname

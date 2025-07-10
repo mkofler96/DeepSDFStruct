@@ -7,6 +7,7 @@ import torch as _torch
 from splinepy._base import SplinepyBase as _SplinepyBase
 from splinepy import BSpline as _BSpline
 from .SDF import SDFBase as _SDFBase
+from .SDF import _cap_outside_of_unitcube
 from .mesh import torchSurfMesh
 from DeepSDFStruct.flexicubes.flexicubes import FlexiCubes
 import gustaf as gus
@@ -268,24 +269,25 @@ class LatticeSDFStruct(_SDFBase):
         """
         orig_device = samples.device
         orig_dtype = samples.dtype
-        spline_domain_samples = self._deformation_spline.proximities(
-            samples.detach().cpu().numpy()
+        bounds = _torch.tensor(
+            self.deformation_spline.parametric_bounds,
+            device=orig_device,
+            dtype=orig_dtype,
         )
-        spline_domain_samples = _torch.tensor(
-            spline_domain_samples, device=orig_device, dtype=orig_dtype
-        )
-
-        queries_transformed = _torch.zeros_like(spline_domain_samples)
-        tx, ty, tz = self._tiling
-        queries_transformed[:, 0] = transform(spline_domain_samples[:, 0], tx)
-        queries_transformed[:, 1] = transform(spline_domain_samples[:, 1], ty)
-        queries_transformed[:, 2] = transform(spline_domain_samples[:, 2], tz)
+        spline_domain_samples = _torch.clamp(samples, min=bounds[0], max=bounds[1])
         if self._parametrization_spline is not None:
             parameters = self._parametrization_spline.evaluate(
                 spline_domain_samples.detach().cpu().numpy()
             )
             parameters = _torch.tensor(parameters, device=orig_device, dtype=orig_dtype)
             self.microtile._set_param(parameters)
+
+        queries_transformed = _torch.zeros_like(samples)
+        tx, ty, tz = self._tiling
+        queries_transformed[:, 0] = transform(samples[:, 0], tx)
+        queries_transformed[:, 1] = transform(samples[:, 1], ty)
+        queries_transformed[:, 2] = transform(samples[:, 2], tz)
+
         sdf_values = self.microtile(queries_transformed)
         # self.plot_transformed_untransformed(queries, queries_transformed)
         for loc, cap_dict in self._cap_border_dict.items():
@@ -296,7 +298,7 @@ class LatticeSDFStruct(_SDFBase):
             elif "1" in loc:
                 multiplier = 1
             border_sdf = (
-                spline_domain_samples[:, dim] - multiplier * (location - measure)
+                samples[:, dim] - multiplier * (location - measure)
             ) * -multiplier
             # border_sdf = border_sdf.view(-1, 1)
             border_sdf = border_sdf.to(orig_device)
@@ -310,17 +312,10 @@ class LatticeSDFStruct(_SDFBase):
             else:
                 raise ValueError("Cap must be -1 or 1")
 
-        # cap everything outside the unit cube
-        # this is broken now, needs to be fixed
-        # if cap dict is fully given, it does not make a difference
-        for dim, measure, location in zip(
-            [0, 0, 1, 1, 2, 2], [-1, 1, -1, 1, -1, 1], [0, 1, 0, 1, 0, 1]
-        ):
-            border_sdf = (spline_domain_samples[:, dim] - measure) * -measure
-            # border_sdf = border_sdf.view(-1, 1)
-            sdf_values = _torch.maximum(sdf_values, -border_sdf)
-
-        return sdf_values
+        # cap everything outside of the unit cube
+        # k and d are y = k*(x-dx) + dy
+        capped_sdf_values = _cap_outside_of_unitcube(samples, sdf_values)
+        return capped_sdf_values
 
     def _sanity_check(self):
         """Check all members and consistency of user data.
@@ -342,7 +337,7 @@ class LatticeSDFStruct(_SDFBase):
 
         constructor, samples, cube_idx = _prepare_flexicubes_querypoints(N)
 
-        sdf_values = self.evaluate_sdf(samples)
+        sdf_values = self._compute(samples)
         verts, faces, _ = constructor(
             voxelgrid_vertices=samples,
             scalar_field=sdf_values,
@@ -441,6 +436,7 @@ def _prepare_flexicubes_querypoints(N):
         _torch.all(samples.ge(-0.05 - tolerance) & samples.le(1.05 + tolerance)),
         "Samples are out of bounds",
     )
+
     return flexi_cubes_constructor, samples, cube_idx
 
     samples = samples.to(device)

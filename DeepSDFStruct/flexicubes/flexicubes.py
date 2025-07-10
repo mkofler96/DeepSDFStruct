@@ -138,7 +138,7 @@ class FlexiCubes:
         self.qef_reg_scale = qef_reg_scale
         self.weight_scale = weight_scale
 
-    def construct_voxel_grid(self, resolution):
+    def construct_voxel_grid(self, resolution) -> tuple[torch.tensor, torch.tensor]:
         """
         Generates a voxel grid based on the specified resolution.
 

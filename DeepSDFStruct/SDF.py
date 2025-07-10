@@ -196,3 +196,14 @@ class SDFfromDeepSDF(SDFBase):
             head = end
 
         return sdf_values
+
+
+def _cap_outside_of_unitcube(samples, sdf_values):
+    dy = 0
+    for dim, k, dx in zip(
+        [0, 0, 1, 1, 2, 2], [1, -1, 1, -1, 1, -1], [0, 1, 0, 1, 0, 1]
+    ):
+        x = samples[:, dim]
+        border_sdf = k * (x - dx) + dy
+        sdf_values = torch.maximum(sdf_values, -border_sdf)
+    return sdf_values

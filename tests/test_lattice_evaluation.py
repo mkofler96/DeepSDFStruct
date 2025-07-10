@@ -1,5 +1,5 @@
 from DeepSDFStruct.pretrained_models import get_model, PretrainedModels
-from DeepSDFStruct.SDF import SDFfromDeepSDF
+from DeepSDFStruct.SDF import SDFfromDeepSDF, _cap_outside_of_unitcube
 from DeepSDFStruct.lattice_structure import LatticeSDFStruct, constantLatvec
 import splinepy
 import torch
@@ -29,5 +29,39 @@ def test_deepsdf_lattice_evaluation():
     )
 
 
+def test_cap_outside_unitcube():
+
+    samples = torch.tensor(
+        [
+            [1.1, 0.0, 0.0],
+            [-0.1, 0.0, 0.0],
+            [0.0, 1.1, 0.0],
+            [0.0, -0.1, 0.0],
+            [0.0, 0.0, 1.1],
+            [0.0, 0.0, -0.1],
+            [0.1, 0.1, 0.1],
+            [0.9, 0.9, 0.9],
+            [0.0, 0.0, 0.0],
+        ],
+        dtype=torch.float32,
+    )
+    # true = inside, false = outside
+    labels = [False, False, False, False, False, False, True, True]
+
+    # Initial SDF values: all negative (e.g., "inside")
+    sdf_values = torch.tensor([-0.5] * samples.shape[0], dtype=torch.float32)
+
+    capped_sdf = _cap_outside_of_unitcube(samples, sdf_values.clone())
+
+    # Check that the SDF is capped (increased) for points outside the cube
+    for sample, sdf_value, label in zip(samples, capped_sdf, labels):
+        if sdf_value < 1e-10:
+            continue
+        assertion = (sdf_value < 0) == label
+        assert assertion, f"Incorrect capping on valid sample {sample}"
+    assert capped_sdf[-1] < 1e10, "Point on the boundary is wrong"
+
+
 if __name__ == "__main__":
+    test_cap_outside_unitcube()
     test_deepsdf_lattice_evaluation()
