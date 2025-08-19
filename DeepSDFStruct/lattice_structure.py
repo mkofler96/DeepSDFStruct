@@ -44,6 +44,8 @@ class CapBorderDict(TypedDict):
 class LatticeSDFStruct(_SDFBase):
     """Helper class to facilitatae the construction of Lattice SDF Structures."""
 
+    deformation_spline: _SplinepyBase
+
     def __init__(
         self,
         tiling: list[int] | int = None,
@@ -245,6 +247,9 @@ class LatticeSDFStruct(_SDFBase):
 
     def _set_param(self, parameters):
         pass
+
+    def _get_domain_bounds(self):
+        return _np.array([[-1, 1], [-1, 1], [-1, 1]])
 
     def _compute(self, samples: _torch.tensor):
         """Function, that - if required - parametrizes the microtiles.
