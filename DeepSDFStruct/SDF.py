@@ -19,9 +19,11 @@ class SDFBase(ABC):
         return self._compute(queries)
 
     def _validate_input(self, queries: torch.Tensor):
-        # Example check: 2D tensor with shape (N, 3) where N points, each point is a column vector
-        if queries.ndim != 2 or queries.size(1) != 3:
-            raise ValueError(f"Expected input of shape (N, 3), got {queries.shape}")
+        # Example check: 2D tensor with shape (N, 3) or (N, 2where N points, each point is a column vector
+        if queries.ndim != 2 or (queries.shape[1] not in [2, 3]):
+            raise ValueError(
+                f"Expected input of shape (N, 3) or (N, 2), got {queries.shape}"
+            )
 
     @abstractmethod
     def _compute(self, queries: torch.Tensor) -> torch.Tensor:
@@ -32,6 +34,13 @@ class SDFBase(ABC):
 
     @abstractmethod
     def _set_param(self, parameters: torch.Tensor):
+        pass
+
+    @abstractmethod
+    def _get_domain_bounds(self) -> np.array:
+        """
+        Subclasses implement this to know on which domain the SDF is defined
+        """
         pass
 
     def plot_slice(self, *args, **kwargs):
@@ -110,11 +119,15 @@ class SDFfromMesh(SDFBase):
         self.flip_sign = flip_sign
         self.threshold = threshold
 
+    def _get_domain_bounds(self):
+        return self.mesh.bounds
+
     def _compute(self, queries: torch.Tensor | np.ndarray):
         is_tensor = isinstance(queries, torch.Tensor)
 
         if is_tensor:
             orig_device = queries.device
+            orig_dtype = queries.dtype
             queries_np = queries.detach().cpu().numpy()
         else:
             queries_np = np.asarray(queries)
@@ -140,9 +153,43 @@ class SDFfromMesh(SDFBase):
         result = distances.reshape(-1, 1)
 
         if is_tensor:
-            return torch.tensor(result, device=orig_device)
+            return torch.tensor(result, device=orig_device, dtype=orig_dtype)
         else:
             return result
+
+
+class SDFfromLineMesh(SDFBase):
+    line_mesh: gustaf.Edges
+
+    def __init__(self, line_mesh: gustaf.Edges, thickness):
+        """
+        takes a line mesh and the thickness of the lines as inputs and
+        generates a SDF from it
+        for now only supports lines in 2D
+        """
+        self.line_mesh = line_mesh
+        self.t = thickness
+
+    def _get_domain_bounds(self):
+        return self.line_mesh.bounds()
+
+    def _set_param(self, parameters):
+        self.t = parameters
+
+    def _compute(self, queries: torch.Tensor | np.ndarray):
+        is_tensor = isinstance(queries, torch.Tensor)
+        if is_tensor:
+            orig_device = queries.device
+            orig_dtype = queries.dtype
+            queries_np = queries.detach().cpu().numpy()
+        else:
+            queries_np = np.asarray(queries)
+            orig_device = None  # No device for numpy input
+        lines = self.line_mesh.vertices[self.line_mesh.edges]
+        sdf = point_segment_distance(lines[:, 0], lines[:, 1], queries_np) - self.t
+        if is_tensor:
+            sdf = torch.tensor(sdf, dtype=orig_dtype, device=orig_device)
+        return sdf
 
 
 class SDFfromDeepSDF(SDFBase):
@@ -164,6 +211,9 @@ class SDFfromDeepSDF(SDFBase):
             raise ValueError(
                 f"Expected latent_vec to have 1 or 2 dimensions, got shape {latent_vec.shape}"
             )
+
+    def _get_domain_bounds(self):
+        return np.array([[-1, 1], [-1, 1], [-1, 1]])
 
     def _set_param(self, parameters):
         return self.set_latent_vec(parameters)
@@ -207,3 +257,48 @@ def _cap_outside_of_unitcube(samples, sdf_values):
         border_sdf = k * (x - dx) + dy
         sdf_values = torch.maximum(sdf_values, -border_sdf)
     return sdf_values
+
+
+def point_segment_distance(P1, P2, query_points):
+    """
+    Calculates the minimum distance from one or more query points
+    to one or more line segments defined by endpoints P1 and P2.
+
+    Args:
+        P1 (np.ndarray): Array of shape (M, 2) or (2,) representing first endpoints of segments.
+        P2 (np.ndarray): Array of shape (M, 2) or (2,) representing second endpoints of segments.
+        query_points (np.ndarray): Array of shape (N, 2) or (2,) representing query point(s).
+
+    Returns:
+        np.ndarray: Array of shape (N,) with the minimum distance from each query point
+                    to the closest segment.
+    """
+    P1 = np.atleast_2d(P1)  # (M, 2)
+    P2 = np.atleast_2d(P2)  # (M, 2)
+    Q = np.atleast_2d(query_points)  # (N, 2)
+
+    # Handle degenerate case: one segment only
+    if P1.shape[0] == 1 and P2.shape[0] == 1:
+        P1 = np.repeat(P1, Q.shape[0], axis=0)
+        P2 = np.repeat(P2, Q.shape[0], axis=0)
+
+    v = P2 - P1  # (M, 2) segment vectors
+    w = Q[:, None, :] - P1[None, :, :]  # (N, M, 2): vector from P1 to each query point
+
+    seg_len2 = np.sum(v**2, axis=1)  # (M,) squared lengths
+
+    # Avoid division by zero (degenerate segments)
+    seg_len2_safe = np.where(seg_len2 == 0, 1, seg_len2)
+
+    # Projection factor t for each (Q, segment)
+    t = np.einsum("nmd,md->nm", w, v) / seg_len2_safe  # (N, M)
+    t = np.clip(t, 0, 1)  # clamp to segment
+
+    # Closest point on segment
+    projection = P1[None, :, :] + t[..., None] * v[None, :, :]  # (N, M, 2)
+
+    # Distances
+    distances = np.linalg.norm(Q[:, None, :] - projection, axis=2)  # (N, M)
+
+    # For each query point, take the closest segment
+    return distances.min(axis=1)
