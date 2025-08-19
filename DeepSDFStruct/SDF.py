@@ -82,6 +82,25 @@ class BoxSDF(SDFBase):
         return output.reshape(-1, 1)
 
 
+def union(D, k=0):
+    """
+    D: np.array of shape (num_points, num_geometries)
+    k: smoothness parameter
+    """
+    if k == 0:
+        return np.min(D, axis=1)
+    # Start with the first column as d1
+    d1 = D[:, 0].copy()
+
+    # Loop over remaining columns
+    for i in range(1, D.shape[1]):
+        d2 = D[:, i]
+        h = np.clip(0.5 + 0.5 * (d2 - d1) / k, 0, 1)
+        d1 = d2 + (d1 - d2) * h - k * h * (1 - h)
+
+    return d1
+
+
 class SDFfromMesh(SDFBase):
     def __init__(
         self, mesh, dtype=np.float32, flip_sign=False, scale=True, threshold=1e-5
@@ -161,7 +180,7 @@ class SDFfromMesh(SDFBase):
 class SDFfromLineMesh(SDFBase):
     line_mesh: gustaf.Edges
 
-    def __init__(self, line_mesh: gustaf.Edges, thickness):
+    def __init__(self, line_mesh: gustaf.Edges, thickness, smoothness=0):
         """
         takes a line mesh and the thickness of the lines as inputs and
         generates a SDF from it
@@ -169,12 +188,14 @@ class SDFfromLineMesh(SDFBase):
         """
         self.line_mesh = line_mesh
         self.t = thickness
+        self.smoothness = smoothness
 
     def _get_domain_bounds(self):
         return self.line_mesh.bounds()
 
     def _set_param(self, parameters):
-        self.t = parameters
+        self.t = parameters[0]
+        self.smoothness = parameters[1]
 
     def _compute(self, queries: torch.Tensor | np.ndarray):
         is_tensor = isinstance(queries, torch.Tensor)
@@ -189,7 +210,7 @@ class SDFfromLineMesh(SDFBase):
         sdf = point_segment_distance(lines[:, 0], lines[:, 1], queries_np) - self.t
         if is_tensor:
             sdf = torch.tensor(sdf, dtype=orig_dtype, device=orig_device)
-        return sdf
+        return union(sdf, k=self.smoothness)
 
 
 class SDFfromDeepSDF(SDFBase):
@@ -301,4 +322,4 @@ def point_segment_distance(P1, P2, query_points):
     distances = np.linalg.norm(Q[:, None, :] - projection, axis=2)  # (N, M)
 
     # For each query point, take the closest segment
-    return distances.min(axis=1)
+    return distances

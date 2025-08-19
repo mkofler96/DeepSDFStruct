@@ -40,6 +40,10 @@ def test_2D_mesh_export():
     mesh = generate_2D_surf_mesh(sdf_from_linemesh, 300)
     gus.io.meshio.export("triangles.inp", mesh)
 
+    sdf_from_linemesh = SDFfromLineMesh(linemesh, thickness=0.5, smoothness=0.1)
+    mesh = generate_2D_surf_mesh(sdf_from_linemesh, 300)
+    gus.io.meshio.export("triangles_smooth.inp", mesh)
+
 
 if __name__ == "__main__":
     test_deepsdf_lattice_evaluation()
