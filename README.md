@@ -11,6 +11,10 @@ You can install `DeepSDFStruct` directly from GitHub using `pip`:
 ```bash
 pip install git+https://github.com/mkofler96/DeepSDFStruct.git
 ```
+To add it to your uv project run:
+```
+uv add git+https://github.com/mkofler96/DeepSDFStruct.git
+```
 
 ### ⚠️ Troubleshooting
 
