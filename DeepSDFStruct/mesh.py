@@ -152,9 +152,9 @@ def sdf_to_triangle_dict(x, y, sdf, level=0.0, pad_value=1.0, collinear_tol=1e-8
     duplicate_indices = np.where(counts > 1)[0]
 
     if len(duplicate_indices) > 0:
-        print(f"Found {len(duplicate_indices)} duplicate vertices:")
+        logger.info(f"Found {len(duplicate_indices)} duplicate vertices:")
         for idx in duplicate_indices:
-            print(vertices[idx])
+            logger.debug(vertices[idx])
     else:
         print("No duplicate vertices found.")
 
