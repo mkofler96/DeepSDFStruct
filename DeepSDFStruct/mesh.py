@@ -75,9 +75,12 @@ def export_abaqus_surf_mesh(surf_mesh: gus.Faces, filename: str):
     gus.io.meshio.export(str(filepath.with_suffix(".inp")), surf_mesh)
 
 
-def generate_2D_surf_mesh(sdf: SDFBase, n_squares: int, n_elements: int = 50000):
+def generate_2D_surf_mesh(
+    sdf: SDFBase, n_squares: int, n_elements: int = 50000, bounds=None
+):
     n_points = 1000
-    bounds = sdf._get_domain_bounds()
+    if bounds is None:
+        bounds = sdf._get_domain_bounds()
     x = np.linspace(bounds[0, 0], bounds[1, 0], n_points)
     y = np.linspace(bounds[0, 1], bounds[1, 1], n_points)
     xx, yy = np.meshgrid(x, y)

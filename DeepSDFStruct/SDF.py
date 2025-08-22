@@ -207,7 +207,7 @@ class SDFfromLineMesh(SDFBase):
             queries_np = np.asarray(queries)
             orig_device = None  # No device for numpy input
         lines = self.line_mesh.vertices[self.line_mesh.edges]
-        sdf = point_segment_distance(lines[:, 0], lines[:, 1], queries_np) - self.t
+        sdf = point_segment_distance(lines[:, 0], lines[:, 1], queries_np) - self.t / 2
         if is_tensor:
             sdf = torch.tensor(sdf, dtype=orig_dtype, device=orig_device)
         return union(sdf, k=self.smoothness)
