@@ -46,3 +46,9 @@ where = ["."]
 
 [tool.uv]
 package = true
+
+[tool.coverage.run]
+branch = true
+parallel = true
+concurrency = ["multiprocessing"]
+source = ["DeepSDFStruct"]
