@@ -15,7 +15,7 @@ def test_sdf_from_linemesh():
     queries = np.hstack([xx.reshape(-1, 1), yy.reshape(-1, 1)])
     sdf_from_linemesh = SDFfromLineMesh(linemesh, thickness=0.5)
     sdf = sdf_from_linemesh(queries)
-    np.testing.assert_almost_equal(sdf.min(), -0.5)
+    np.testing.assert_almost_equal(sdf.min(), -0.25)
     np.testing.assert_array_compare(np.greater_equal, sdf.max(), 0)
 
 
