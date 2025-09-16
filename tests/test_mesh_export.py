@@ -1,9 +1,14 @@
 from DeepSDFStruct.pretrained_models import get_model, PretrainedModels
 from DeepSDFStruct.SDF import SDFfromDeepSDF, SDFfromLineMesh
-from DeepSDFStruct.mesh import generate_2D_surf_mesh, tetrahedralize_surface
-from DeepSDFStruct.lattice_structure import LatticeSDFStruct, constantLatvec
+from DeepSDFStruct.mesh import (
+    generate_2D_surf_mesh,
+    tetrahedralize_surface,
+    create_3D_surface_mesh,
+)
+from DeepSDFStruct.lattice_structure import LatticeSDFStruct
+from DeepSDFStruct.parametrization import Constant
+from DeepSDFStruct.torch_spline import TorchSpline
 import splinepy
-import gustaf as gus
 import torch
 import gustaf as _gus
 
@@ -17,35 +22,40 @@ def test_deepsdf_lattice_evaluation():
     sdf.set_latent_vec(torch.tensor([0.3]))
 
     # Define a spline-based deformation field
-    deformation_spline = splinepy.helpme.create.box(2, 1, 1)
+    deformation_spline = TorchSpline(
+        splinepy.helpme.create.box(2, 1, 1), device=model.device
+    )
 
     # Create the lattice structure with deformation and microtile
     lattice_struct = LatticeSDFStruct(
         tiling=(6, 3, 3),
         deformation_spline=deformation_spline,
         microtile=sdf,
-        parametrization_spline=constantLatvec([0.5]),
+        parametrization=Constant([0.5], device=model.device),
     )
 
-    surf_mesh = lattice_struct.create_surface_mesh(30)
+    surf_mesh, derivative = create_3D_surface_mesh(
+        lattice_struct, 30, differentiate=True
+    )
     faces = surf_mesh.to_gus()
     _gus.io.meshio.export("faces.inp", faces)
+    _gus.io.meshio.export("faces.obj", faces)
 
     volumes, _ = tetrahedralize_surface(faces)
     _gus.io.mfem.export("volumes.mfem", volumes)
 
 
 def test_2D_mesh_export():
-    linemesh = gus.io.meshio.load("tests/data/example_line_mesh.vtk")
+    linemesh = _gus.io.meshio.load("tests/data/example_line_mesh.vtk")
     linemesh.vertices = linemesh.vertices[:, :2]
 
     sdf_from_linemesh = SDFfromLineMesh(linemesh, thickness=0.5)
     mesh = generate_2D_surf_mesh(sdf_from_linemesh, 300)
-    gus.io.meshio.export("triangles.inp", mesh)
+    _gus.io.meshio.export("triangles.inp", mesh)
 
     sdf_from_linemesh = SDFfromLineMesh(linemesh, thickness=0.5, smoothness=0.1)
     mesh = generate_2D_surf_mesh(sdf_from_linemesh, 300)
-    gus.io.meshio.export("triangles_smooth.inp", mesh)
+    _gus.io.meshio.export("triangles_smooth.inp", mesh)
 
 
 if __name__ == "__main__":

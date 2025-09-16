@@ -1,32 +1,41 @@
 from DeepSDFStruct.pretrained_models import get_model, PretrainedModels
 from DeepSDFStruct.SDF import SDFfromDeepSDF, _cap_outside_of_unitcube
-from DeepSDFStruct.lattice_structure import LatticeSDFStruct, constantLatvec
+from DeepSDFStruct.lattice_structure import LatticeSDFStruct
+from DeepSDFStruct.parametrization import Constant
+from DeepSDFStruct.torch_spline import TorchSpline
 import splinepy
 import torch
 
 
 def test_deepsdf_lattice_evaluation():
     # Load a pretrained DeepSDF model
-    model = get_model(PretrainedModels.RoundCross)
+    model = get_model(PretrainedModels.AnalyticRoundCross)
     sdf = SDFfromDeepSDF(model)
 
     # Set the latent vector and visualize a slice of the SDF
     sdf.set_latent_vec(torch.tensor([0.3]))
 
     # Define a spline-based deformation field
-    deformation_spline = splinepy.helpme.create.box(2, 1, 1)
+    deformation_spline = TorchSpline(
+        splinepy.helpme.create.box(1, 1, 1), device=model.device
+    )
 
     # Create the lattice structure with deformation and microtile
     lattice_struct = LatticeSDFStruct(
-        tiling=(6, 3, 1),
+        tiling=(1, 1, 1),
         deformation_spline=deformation_spline,
         microtile=sdf,
-        parametrization_spline=constantLatvec([0.5]),
+        parametrization=Constant([0.5], device=model.device),
     )
 
-    lattice_struct(
-        torch.tensor([[0, 0, 0], [0, 1, 0]], dtype=torch.float32, device=model.device)
+    out = lattice_struct(
+        torch.tensor(
+            [[0, 0, 0], [0, 1, 0], [0.5, 0.5, 0.5]],
+            dtype=torch.float32,
+            device=model.device,
+        )
     )
+    print(out)
 
 
 def test_cap_outside_unitcube():

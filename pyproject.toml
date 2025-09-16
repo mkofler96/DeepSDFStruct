@@ -13,7 +13,7 @@ description = "Deep Implicit Lattice Geometry"
 authors = [
     { name = "Michael Kofler", email = "michael.kofler@tuwien.ac.at" }
 ]
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 
 dependencies = [
     "plyfile",
@@ -37,6 +37,7 @@ dependencies = [
     "huggingface-hub>=0.33.2",
     "pytest-cov>=5.0.0",
     "triangle>=20250106",
+    "vtk>=9.5.1",
 ]
 [tool.setuptools]
 include-package-data = true

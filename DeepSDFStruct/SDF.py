@@ -5,21 +5,105 @@ import igl
 import trimesh
 import gustaf
 
+from typing import TypedDict
 from DeepSDFStruct.deep_sdf.models import DeepSDFModel
 from DeepSDFStruct.plotting import plot_slice
-
+from DeepSDFStruct.torch_spline import TorchSpline
+from DeepSDFStruct.parametrization import _Parametrization
 import logging
 
 logger = logging.getLogger(__name__)
 
 
 class SDFBase(ABC):
+    """Abstract base class for Signed Distance Functions with optional
+    deformation and parametrization.
+    """
+
+    def __init__(
+        self,
+        deformation_spline: TorchSpline = None,
+        parametrization: _Parametrization = None,
+        cap_border_dict=None,
+    ):
+        self._deformation_spline = deformation_spline
+
+        self._parametrization = parametrization
+        if parametrization is not None:
+            self.parameters = parametrization.parameters
+        else:
+            self.parameters = None
+
+        self._cap_border_dict = (
+            cap_border_dict
+            if cap_border_dict is not None
+            else {
+                "x0": {"cap": 1, "measure": 0.02},
+                "x1": {"cap": 1, "measure": 0.02},
+                "y0": {"cap": 1, "measure": 0.02},
+                "y1": {"cap": 1, "measure": 0.02},
+                "z0": {"cap": 1, "measure": 0.02},
+                "z1": {"cap": 1, "measure": 0.02},
+            }
+        )
+
+    @property
+    def deformation_spline(self):
+        return self._deformation_spline
+
+    @deformation_spline.setter
+    def deformation_spline(self, spline):
+        self._deformation_spline = spline
+
+    @property
+    def parametrization(self):
+        return self._parametrization
+
+    @parametrization.setter
+    def parametrization(self, p: _Parametrization):
+        self._parametrization = p
+        self.parameters = p.parameters if p is not None else None
+
+    @property
+    def cap_border_dict(self):
+        return self._cap_border_dict
+
+    @cap_border_dict.setter
+    def cap_border_dict(self, d):
+        self._cap_border_dict = d
+
     def __call__(self, queries: torch.Tensor) -> torch.Tensor:
         self._validate_input(queries)
-        res = self._compute(queries)
-        if res is None:
+        sdf_values = self._compute(queries)
+        if sdf_values is None:
             raise RuntimeError("Invalid SDF output")
-        return res
+        if hasattr(self, "_cap_border_dict"):
+            for loc, cap_dict in self._cap_border_dict.items():
+                cap, measure = cap_dict["cap"], cap_dict["measure"]
+                dim, location = location_lookup[loc]
+                if "0" in loc:
+                    multiplier = -1
+                elif "1" in loc:
+                    multiplier = 1
+                border_sdf = (
+                    queries[:, dim] - multiplier * (location - measure)
+                ) * -multiplier
+                # # border_sdf = border_sdf.view(-1, 1)
+                # border_sdf = border_sdf.to(orig_device)
+                # sdf_values = sdf_values.to(orig_device)
+                if cap == -1:
+                    # sdf_values = _torch.maximum(sdf_values, -border_sdf)
+
+                    sdf_values = torch.maximum(sdf_values, -border_sdf)
+                elif cap == 1:
+                    sdf_values = torch.minimum(sdf_values, border_sdf)
+                else:
+                    raise ValueError("Cap must be -1 or 1")
+
+            # cap everything outside of the unit cube
+            # k and d are y = k*(x-dx) + dy
+            sdf_values = _cap_outside_of_unitcube(queries, sdf_values)
+        return sdf_values
 
     def _validate_input(self, queries: torch.Tensor):
         # Example check: 2D tensor with shape (N, 3) or (N, 2where N points, each point is a column vector
@@ -54,7 +138,7 @@ class SDFBase(ABC):
 
 
 class SummedSDF(SDFBase):
-    def __init__(self, obj1, obj2):
+    def __init__(self, obj1: SDFBase, obj2: SDFBase):
         self.obj1 = obj1
         self.obj2 = obj2
 
@@ -237,18 +321,18 @@ class SDFfromLineMesh(SDFBase):
 class SDFfromDeepSDF(SDFBase):
     def __init__(self, model: DeepSDFModel, max_batch=32**3):
         self.model = model
-        self._latent_vec = None
+        self.parameters = None
         self.max_batch = max_batch
 
     def set_latent_vec(self, latent_vec: torch.Tensor):
         """
         Set conditioning parameters for the model (e.g., latent code).
         """
-        self._latent_vec = latent_vec
+        self.parameters = latent_vec
         if latent_vec.ndim == 1:
-            self._latent_vec = latent_vec.unsqueeze(1)  # (latent_dim, 1)
+            self.parameters = latent_vec.unsqueeze(1)  # (latent_dim, 1)
         elif latent_vec.ndim == 2:
-            self._latent_vec = latent_vec  # (latent_dim, n_query_points)
+            self.parameters = latent_vec  # (latent_dim, n_query_points)
         else:
             raise ValueError(
                 f"Expected latent_vec to have 1 or 2 dimensions, got shape {latent_vec.shape}"
@@ -264,7 +348,7 @@ class SDFfromDeepSDF(SDFBase):
         queries = queries.to(self.model.device)
         n_queries = queries.shape[0]
 
-        latent_vec = self._latent_vec
+        latent_vec = self.parameters
         if latent_vec is None:
             latent_vec = self.model._trained_latent_vectors[0].unsqueeze(1)
             logger.info(
@@ -344,3 +428,28 @@ def point_segment_distance(P1, P2, query_points):
 
     # For each query point, take the closest segment
     return distances
+
+
+# used to define the unit cube
+location_lookup = {
+    "x0": (0, 0),
+    "x1": (0, 1),
+    "y0": (1, 0),
+    "y1": (1, 1),
+    "z0": (2, 0),
+    "z1": (2, 1),
+}
+
+
+class CapType(TypedDict):
+    cap: int
+    measure: float
+
+
+class CapBorderDict(TypedDict):
+    x0: CapType = {"cap": -1, "measure": 0}
+    x1: CapType = {"cap": -1, "measure": 0}
+    y0: CapType = {"cap": -1, "measure": 0}
+    y1: CapType = {"cap": -1, "measure": 0}
+    z0: CapType = {"cap": -1, "measure": 0}
+    z1: CapType = {"cap": -1, "measure": 0}

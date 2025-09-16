@@ -6,8 +6,8 @@ import torch
 
 
 class PretrainedModels(Enum):
-    ChiAndCross = "analytic_round_cross"
-    AnalyticRoundCross = "chi_and_cross"
+    ChiAndCross = "chi_and_cross"
+    AnalyticRoundCross = "analytic_round_cross"
     RoundCross = "round_cross"
 
 

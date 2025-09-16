@@ -1,5 +1,5 @@
 import logging
-from typing import TypedDict
+
 
 import numpy as _np
 import torch as _torch
@@ -7,38 +7,13 @@ import torch as _torch
 from splinepy._base import SplinepyBase as _SplinepyBase
 from splinepy import BSpline as _BSpline
 from .SDF import SDFBase as _SDFBase
-from .SDF import _cap_outside_of_unitcube
-from .mesh import torchSurfMesh
-from DeepSDFStruct.flexicubes.flexicubes import FlexiCubes
+from .SDF import CapBorderDict
+from DeepSDFStruct.parametrization import _Parametrization
 import gustaf as gus
 
 logger = logging.getLogger(__name__)
 
 device = _torch.device("cuda" if _torch.cuda.is_available() else "cpu")
-
-# used to define the unit cube
-location_lookup = {
-    "x0": (0, 0),
-    "x1": (0, 1),
-    "y0": (1, 0),
-    "y1": (1, 1),
-    "z0": (2, 0),
-    "z1": (2, 1),
-}
-
-
-class CapType(TypedDict):
-    cap: int
-    measure: float
-
-
-class CapBorderDict(TypedDict):
-    x0: CapType = {"cap": -1, "measure": 0}
-    x1: CapType = {"cap": -1, "measure": 0}
-    y0: CapType = {"cap": -1, "measure": 0}
-    y1: CapType = {"cap": -1, "measure": 0}
-    z0: CapType = {"cap": -1, "measure": 0}
-    z1: CapType = {"cap": -1, "measure": 0}
 
 
 class LatticeSDFStruct(_SDFBase):
@@ -51,7 +26,7 @@ class LatticeSDFStruct(_SDFBase):
         tiling: list[int] | int = None,
         deformation_spline: _SplinepyBase = None,
         microtile: _SDFBase = None,
-        parametrization_spline: _SplinepyBase = None,
+        parametrization: _Parametrization = None,
         cap_border_dict: CapBorderDict = None,
     ):
         """Helper class to facilitatae the construction of microstructures.
@@ -68,29 +43,13 @@ class LatticeSDFStruct(_SDFBase):
         parametrization_function : Callable (optional)
           Function to describe spline parameters
         """
-        if deformation_spline is not None:
-            self._deformation_spline = deformation_spline
-
-        if tiling is not None:
-            self._tiling = tiling
-
-        if microtile is not None:
-            self._microtile = microtile
-
-        if parametrization_spline is not None:
-            self._parametrization_spline = parametrization_spline
-
-        if cap_border_dict is not None:
-            self._cap_border_dict = cap_border_dict
-        else:
-            self._cap_border_dict = {
-                "x0": {"cap": 1, "measure": 0.02},
-                "x1": {"cap": 1, "measure": 0.02},
-                "y0": {"cap": 1, "measure": 0.02},
-                "y1": {"cap": 1, "measure": 0.02},
-                "z0": {"cap": 1, "measure": 0.02},
-                "z1": {"cap": 1, "measure": 0.02},
-            }
+        super().__init__(
+            deformation_spline=deformation_spline,
+            parametrization=parametrization,
+            cap_border_dict=cap_border_dict,
+        )
+        self.tiling = [tiling] * 3 if isinstance(tiling, int) else tiling
+        self.microtile = microtile
 
     @property
     def deformation_spline(self):
@@ -162,7 +121,11 @@ class LatticeSDFStruct(_SDFBase):
         -------
         None
         """
-        if not isinstance(tiling, list) and not isinstance(tiling, int):
+        if (
+            not isinstance(tiling, list)
+            and not isinstance(tiling, int)
+            and not isinstance(tiling, tuple)
+        ):
             raise ValueError(
                 "Tiling mus be either list of integers of integer " "value"
             )
@@ -209,44 +172,9 @@ class LatticeSDFStruct(_SDFBase):
 
         self._sanity_check()
 
-    @property
-    def parametrization_spline(self):
-        """Function, that - if required - parametrizes the microtiles.
-
-        In order to use said function, the Microtile needs to provide a couple
-        of attributes:
-
-         - evaluation_points - a list of points defined in the unit cube
-           that will be evaluated in the parametrization function to provide
-           the required set of data points
-         - para_dim - dimensionality of the parametrization
-           function and number of design variables for said microtile
-
-        Parameters
-        ----------
-        None
-
-        Returns
-        -------
-        parametrization_function : Callable
-          Function that describes the local tile parameters
-        """
-        if hasattr(self, "_parametrization_function"):
-            return self._parametrization_spline
-        else:
-            return None
-
-    @parametrization_spline.setter
-    def parametrization_spline(self, parametrization_spline):
-        if not isinstance(parametrization_spline, _SplinepyBase):
-            raise ValueError(
-                "Deformation spline must be splinepy-Spline." " e.g. splinepy.NURBS"
-            )
-        self._parametrization_spline = parametrization_spline
-        self._sanity_check()
-
     def _set_param(self, parameters):
-        pass
+        self.parametrization_spline.control_points = parameters
+        self.parameters = parameters
 
     def _get_domain_bounds(self):
         return _np.array([[-1, 1], [-1, 1], [-1, 1]])
@@ -275,16 +203,13 @@ class LatticeSDFStruct(_SDFBase):
         orig_device = samples.device
         orig_dtype = samples.dtype
         bounds = _torch.tensor(
-            self.deformation_spline.parametric_bounds,
+            self.deformation_spline.spline.parametric_bounds,
             device=orig_device,
             dtype=orig_dtype,
         )
         spline_domain_samples = _torch.clamp(samples, min=bounds[0], max=bounds[1])
-        if self._parametrization_spline is not None:
-            parameters = self._parametrization_spline.evaluate(
-                spline_domain_samples.detach().cpu().numpy()
-            )
-            parameters = _torch.tensor(parameters, device=orig_device, dtype=orig_dtype)
+        if self.parametrization is not None:
+            parameters = self.parametrization(spline_domain_samples)
             self.microtile._set_param(parameters)
 
         queries_transformed = _torch.zeros_like(samples)
@@ -295,32 +220,8 @@ class LatticeSDFStruct(_SDFBase):
 
         sdf_values = self.microtile(queries_transformed)
         # self.plot_transformed_untransformed(queries, queries_transformed)
-        for loc, cap_dict in self._cap_border_dict.items():
-            cap, measure = cap_dict["cap"], cap_dict["measure"]
-            dim, location = location_lookup[loc]
-            if "0" in loc:
-                multiplier = -1
-            elif "1" in loc:
-                multiplier = 1
-            border_sdf = (
-                samples[:, dim] - multiplier * (location - measure)
-            ) * -multiplier
-            # border_sdf = border_sdf.view(-1, 1)
-            border_sdf = border_sdf.to(orig_device)
-            sdf_values = sdf_values.to(orig_device)
-            if cap == -1:
-                # sdf_values = _torch.maximum(sdf_values, -border_sdf)
 
-                sdf_values = _torch.maximum(sdf_values, -border_sdf)
-            elif cap == 1:
-                sdf_values = _torch.minimum(sdf_values, border_sdf)
-            else:
-                raise ValueError("Cap must be -1 or 1")
-
-        # cap everything outside of the unit cube
-        # k and d are y = k*(x-dx) + dy
-        capped_sdf_values = _cap_outside_of_unitcube(samples, sdf_values)
-        return capped_sdf_values
+        return sdf_values
 
     def _sanity_check(self):
         """Check all members and consistency of user data.
@@ -336,33 +237,6 @@ class LatticeSDFStruct(_SDFBase):
         passes: bool
         """
         pass
-
-    def create_surface_mesh(self, N_base, differentiate=False):
-        N = process_N_base_input(N_base, self.tiling)
-
-        constructor, samples, cube_idx = _prepare_flexicubes_querypoints(N)
-
-        sdf_values = self._compute(samples)
-        verts, faces, _ = constructor(
-            voxelgrid_vertices=samples,
-            scalar_field=sdf_values,
-            cube_idx=cube_idx,
-            resolution=tuple(N),
-            output_tetmesh=False,
-        )
-
-        # self.plot_samples(samples, sdf_values)
-        # self.plot_intermesh(verts, faces)
-
-        prev_device = verts.device
-        ffd_vertices = self.deformation_spline.evaluate(verts.detach().cpu().numpy())
-        ffd_vertices_torch = _torch.tensor(ffd_vertices, device=prev_device)
-        if differentiate:
-            raise NotImplementedError("Differentiable version not implemented yet.")
-            # spline_jac = self.macro_spline.jacobian(vertices)
-            # ffd_jac = np.matmul(spline_jac, jacobian)
-
-        return torchSurfMesh(ffd_vertices_torch, faces)
 
     def plot_samples(self, samples, sdf_values):
         vp = gus.Vertices(vertices=samples)
@@ -396,20 +270,6 @@ def transform(x, t):
     return 4 * _torch.abs(t * x / 2 - _torch.floor((t * x + 1) / 2)) - 1
 
 
-def process_N_base_input(N, tiling):
-    if isinstance(N, list):
-        if len(N) != 3:
-            raise ValueError("Number of grid points must be a list of 3 integers")
-        N = _torch.tensor(N)
-    elif isinstance(N, int):
-        N = _torch.tensor([N, N, N])
-    else:
-        raise ValueError("Number of grid points must be a list or an integer")
-    # add 1 on each side to slightly include the border
-    N_mod = N * _torch.tensor(tiling) + 1
-    return N_mod
-
-
 def check_tiling_input(tiling):
     if isinstance(tiling, list):
         if len(tiling) != 3:
@@ -421,50 +281,50 @@ def check_tiling_input(tiling):
         raise ValueError("Tiling must be a list or an integer")
 
 
-def _prepare_flexicubes_querypoints(N):
-    """
-    takes the tiling and a resolution as input
-    output: DeepSDFStruct.flexicubes constructor, samples and cube indices
-            the points are located in the region [0,1] with a margin of 0.025
-            -> [-0.025, 1.025]
-    """
-    # check_tiling_input(tiling)
+# def _prepare_flexicubes_querypoints(N):
+#     """
+#     takes the tiling and a resolution as input
+#     output: DeepSDFStruct.flexicubes constructor, samples and cube indices
+#             the points are located in the region [0,1] with a margin of 0.025
+#             -> [-0.025, 1.025]
+#     """
+#     # check_tiling_input(tiling)
 
-    flexi_cubes_constructor = FlexiCubes(device=device)
-    samples, cube_idx = flexi_cubes_constructor.construct_voxel_grid(
-        resolution=tuple(N)
-    )
+#     flexi_cubes_constructor = FlexiCubes(device=device)
+#     samples, cube_idx = flexi_cubes_constructor.construct_voxel_grid(
+#         resolution=tuple(N)
+#     )
 
-    samples = samples * 1.1 + _torch.tensor([0.5, 0.5, 0.5], device=device)
-    tolerance = 1e-6
-    _torch._assert(
-        _torch.all(samples.ge(-0.05 - tolerance) & samples.le(1.05 + tolerance)),
-        "Samples are out of bounds",
-    )
+#     samples = samples * 1.1 + _torch.tensor([0.5, 0.5, 0.5], device=device)
+#     tolerance = 1e-6
+#     _torch._assert(
+#         _torch.all(samples.ge(-0.05 - tolerance) & samples.le(1.05 + tolerance)),
+#         "Samples are out of bounds",
+#     )
 
-    return flexi_cubes_constructor, samples, cube_idx
+#     return flexi_cubes_constructor, samples, cube_idx
 
-    samples = samples.to(device)
-    cube_idx = cube_idx.to(device)
-    # transform samples from [-0.5, 0.5] to [-1.05, 1.05]
-    N_tot = samples.shape[0]
-    N = N + 1
+#     samples = samples.to(device)
+#     cube_idx = cube_idx.to(device)
+#     # transform samples from [-0.5, 0.5] to [-1.05, 1.05]
+#     N_tot = samples.shape[0]
+#     N = N + 1
 
-    tx, ty, tz = tiling
+#     tx, ty, tz = tiling
 
-    samples_transformed = _torch.zeros(N_tot, 3)
-    samples_transformed[:, 0] = transform(samples[:, 0], tx)
-    samples_transformed[:, 1] = transform(samples[:, 1], ty)
-    samples_transformed[:, 2] = transform(samples[:, 2], tz)
+#     samples_transformed = _torch.zeros(N_tot, 3)
+#     samples_transformed[:, 0] = transform(samples[:, 0], tx)
+#     samples_transformed[:, 1] = transform(samples[:, 1], ty)
+#     samples_transformed[:, 2] = transform(samples[:, 2], tz)
 
-    samples_transformed.requires_grad = False
+#     samples_transformed.requires_grad = False
 
-    inside_domain = torch.where(
-        (samples[:, 0] >= -1)
-        & (samples[:, 0] <= 1)
-        & (samples[:, 1] >= -1)
-        & (samples[:, 1] <= 1)
-        & (samples[:, 2] >= -1)
-        & (samples[:, 2] <= 1)
-    )
-    return flexi_cubes_constructor, samples_transformed, samples
+#     inside_domain = torch.where(
+#         (samples[:, 0] >= -1)
+#         & (samples[:, 0] <= 1)
+#         & (samples[:, 1] >= -1)
+#         & (samples[:, 1] <= 1)
+#         & (samples[:, 2] >= -1)
+#         & (samples[:, 2] <= 1)
+#     )
+#     return flexi_cubes_constructor, samples_transformed, samples

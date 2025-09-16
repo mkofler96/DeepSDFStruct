@@ -59,17 +59,17 @@ lattice_struct.plot_slice(origin=(0, 0, 0.5))
 ---
 
 Since all SDFs are callable, the signed distance can be obtained by calling e.g.
-```
+```python
 lattice_struct(torch.tensor([[0, 0, 0], [0, 1, 0]], dtype=torch.float32))
 ```
 ## Training a Model
 A model can be trained by using the `train_deep_sdf` function that takes as input the experiment directory and the data directory.
-```
+```python
 from DeepSDFStruct.deep_sdf.train_deep_sdf import train_deep_sdf
 train_deep_sdf("DeepSDFStruct/trained_models/test_experiment", data_dir)
 ```
 Example data can be downloaded from huggingface
-```
+```python
 from DeepSDFStruct.deep_sdf.train_deep_sdf import train_deep_sdf
 from huggingface_hub import snapshot_download
 data_dir = snapshot_download(
