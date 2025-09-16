@@ -1,6 +1,6 @@
 from DeepSDFStruct.pretrained_models import get_model, PretrainedModels
 from DeepSDFStruct.SDF import SDFfromDeepSDF, SDFfromLineMesh
-from DeepSDFStruct.mesh import generate_2D_surf_mesh
+from DeepSDFStruct.mesh import generate_2D_surf_mesh, tetrahedralize_surface
 from DeepSDFStruct.lattice_structure import LatticeSDFStruct, constantLatvec
 import splinepy
 import gustaf as gus
@@ -30,6 +30,9 @@ def test_deepsdf_lattice_evaluation():
     surf_mesh = lattice_struct.create_surface_mesh(30)
     faces = surf_mesh.to_gus()
     _gus.io.meshio.export("faces.inp", faces)
+
+    volumes, _ = tetrahedralize_surface(faces)
+    _gus.io.mfem.export("volumes.mfem", volumes)
 
 
 def test_2D_mesh_export():

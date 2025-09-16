@@ -26,7 +26,7 @@ class torchSurfMesh:
         pass
 
 
-def tetrahedralize_surface(surface_mesh: gus.Faces):
+def tetrahedralize_surface(surface_mesh: gus.Faces) -> tuple[gus.Volumes, np.ndarray]:
     logger.debug("Tetrahedralizing surface mesh")
     t_in = tetgenpy.TetgenIO()
     t_in.setup_plc(surface_mesh.vertices, surface_mesh.faces.tolist())
