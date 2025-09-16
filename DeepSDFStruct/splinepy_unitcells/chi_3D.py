@@ -3,7 +3,7 @@ import numpy as _np
 from splinepy.microstructure.tiles.tile_base import TileBase as _TileBase
 
 
-class Chi_3D_center(_TileBase):
+class Chi3D(_TileBase):
 
     _dim = 2  # Dimension der Einheitszelle
     _para_dim = 2  # Dimension der Spline Struktur?
@@ -18,6 +18,7 @@ class Chi_3D_center(_TileBase):
         """
         [Winkel, Dicke, Armposition, Armpositionsverschiebung, Rundungradius]
         """
+        Edge = 0.5
         if parameters is None:
             self._logd("Tile request is not parametrized, setting default Pi/8")
             # Parameter wie folgt [Winkel, Dicke, Armposition, Armpositionsverschiebung, Rundungradius]
@@ -39,7 +40,6 @@ class Chi_3D_center(_TileBase):
             pass
         self.check_params(parameters)
 
-        Edge = 0.5
         # radius = Edge/8
         # arm_pos = Edge/1.4
         # delta_d = Edge/3
@@ -1599,4 +1599,4 @@ class Chi_3D_center(_TileBase):
                 extr_spline = spline
             extr_spline_list.append(extr_spline)
 
-        return splinepy.Multipatch(extr_spline_list)
+        return (extr_spline_list, None)

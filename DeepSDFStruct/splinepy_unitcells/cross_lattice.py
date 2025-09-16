@@ -151,4 +151,4 @@ class CrossLattice(_TileBase):
             extr_spline_list.append(extr_spline)
 
         # Return results
-        return sp.Multipatch(extr_spline_list)
+        return (extr_spline_list, None)

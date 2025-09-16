@@ -7,8 +7,9 @@ import pathlib
 import typing
 import gustaf as gus
 import trimesh
-from sdf_sampler.SDF import SDFfromMesh, SDFBase
-from analysis.problems.homogenization import computeHomogenizedMaterialProperties
+from DeepSDFStruct.SDF import SDFfromMesh, SDFBase
+
+# from analysis.problems.homogenization import computeHomogenizedMaterialProperties
 import splinepy
 import torch
 from collections import defaultdict
@@ -103,10 +104,11 @@ def process_single_geometry(args):
 
     if compute_mechanical_properties:
         mesh_file_name = f"{instance_id}.mesh"
+        raise NotImplementedError("Compute homogenized material not available yet.")
         mesh_file_path = folder_name / "homogenization" / instance_id / mesh_file_name
-        E = computeHomogenizedMaterialProperties(
-            sdf, mesh_file_path=mesh_file_path, mirror=True
-        )
+        # E = computeHomogenizedMaterialProperties(
+        #     sdf, mesh_file_path=mesh_file_path, mirror=True
+        # )
         np.savez(fname, neg=neg.stacked, pos=pos.stacked, E=E)
     else:
         np.savez(fname, neg=neg.stacked, pos=pos.stacked)
@@ -177,6 +179,9 @@ class SDFSampler:
                     mesh_file_name = f"{instance_id}.mesh"
                     mesh_file_path = (
                         folder_name / "homogenization" / instance_id / mesh_file_name
+                    )
+                    raise NotImplementedError(
+                        "Compute homogenized material not available yet."
                     )
                     E = computeHomogenizedMaterialProperties(
                         sdf, mesh_file_path=mesh_file_path, mirror=True

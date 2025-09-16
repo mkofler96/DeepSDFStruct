@@ -54,7 +54,7 @@ class DoubleLatticeExtruded(_TileBase):
         # set to default if nothing is given
         if parameters is None:
             self._logd("Tile request is not parametrized, setting default 0.2")
-            parameters = _np.ones((1, 3)) * 0.1
+            parameters = _np.ones((1, 2)) * 0.2
         # Maintain backwards compatibility
         elif parameters.shape[1] == 1:
             _warning("DoubleLattice now expects 2 values")

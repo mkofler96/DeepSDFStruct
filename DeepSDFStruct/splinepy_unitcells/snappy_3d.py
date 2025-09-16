@@ -2,7 +2,6 @@ import numpy as _np
 
 from splinepy.bezier import Bezier as _Bezier
 from splinepy.microstructure.tiles.tile_base import TileBase as _TileBase
-import splinepy
 
 
 class Snappy3D(_TileBase):
@@ -527,4 +526,4 @@ class Snappy3D(_TileBase):
             spline.control_points[:, 0] = temp_pts[:, 1]
             spline.control_points[:, 1] = temp_pts[:, 2]
             spline.control_points[:, 2] = temp_pts[:, 0]
-        return splinepy.Multipatch(spline_list_extruded)
+        return (spline_list_extruded, None)

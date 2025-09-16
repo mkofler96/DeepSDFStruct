@@ -16,7 +16,10 @@ logger = logging.getLogger(__name__)
 class SDFBase(ABC):
     def __call__(self, queries: torch.Tensor) -> torch.Tensor:
         self._validate_input(queries)
-        return self._compute(queries)
+        res = self._compute(queries)
+        if res is None:
+            raise RuntimeError("Invalid SDF output")
+        return res
 
     def _validate_input(self, queries: torch.Tensor):
         # Example check: 2D tensor with shape (N, 3) or (N, 2where N points, each point is a column vector
@@ -46,23 +49,38 @@ class SDFBase(ABC):
     def plot_slice(self, *args, **kwargs):
         return plot_slice(self, *args, **kwargs)
 
+    def __add__(self, other):
+        return SummedSDF(self, other)
+
 
 class SummedSDF(SDFBase):
     def __init__(self, obj1, obj2):
         self.obj1 = obj1
         self.obj2 = obj2
 
-    def __call__(self, input_param):
-        result1 = self.obj1(input_param)
-        result2 = self.obj2(input_param)
+    def _compute(self, queries):
+        result1 = self.obj1._compute(queries)
+        result2 = self.obj2._compute(queries)
         return -torch.maximum(-result1, -result2)
+
+    def _get_domain_bounds(self):
+        bounds1 = self.obj1._get_domain_bounds()
+        bounds2 = self.obj2._get_domain_bounds()
+
+        lower = torch.minimum(bounds1[0], bounds2[0])
+        upper = torch.maximum(bounds1[1], bounds2[1])
+
+        return torch.stack([lower, upper], dim=0)
+
+    def _set_param(self, parameter):
+        return None
 
 
 class NegatedCallable(SDFBase):
     def __init__(self, obj):
         self.obj = obj
 
-    def __call__(self, input_param):
+    def _compute(self, input_param):
         result = self.obj(input_param)
         return -result
 
@@ -137,6 +155,9 @@ class SDFfromMesh(SDFBase):
         self.dtype = dtype
         self.flip_sign = flip_sign
         self.threshold = threshold
+
+    def _set_param(self, mesh):
+        self.mesh = mesh
 
     def _get_domain_bounds(self):
         return self.mesh.bounds
