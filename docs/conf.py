@@ -46,4 +46,9 @@ autodoc_default_options = {
     "autosummary": True,
 }
 
+autodoc_typehints_format = "fully-qualified"  # show full package.module.Class
+autodoc_typehints_description_target = "all"  # document args + return types
+autodoc_typehints = "both"
+
+
 html_theme_options = {"collapse_navigation": False, "navigation_depth": 4}
