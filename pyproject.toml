@@ -39,6 +39,14 @@ dependencies = [
     "triangle>=20250106",
     "vtk>=9.5.1",
 ]
+
+[project.optional-dependencies]
+docs = [
+    "sphinx",
+    "pydata-sphinx-theme",
+    "sphinx-autodoc-typehints",
+]
+
 [tool.setuptools]
 include-package-data = true
 

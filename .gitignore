@@ -100,3 +100,7 @@ Desktop.ini
 # Pytorch intermediate files
 *.pth 
 !latest.pth
+
+# doc temp files
+docs/_build
+docs/source/generated
