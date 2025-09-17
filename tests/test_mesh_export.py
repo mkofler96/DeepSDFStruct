@@ -5,6 +5,7 @@ from DeepSDFStruct.mesh import (
     tetrahedralize_surface,
     create_3D_surface_mesh,
     export_surface_mesh_vtk,
+    export_sdf_grid_vtk,
 )
 from DeepSDFStruct.lattice_structure import LatticeSDFStruct
 from DeepSDFStruct.parametrization import SplineParametrization
@@ -21,7 +22,7 @@ def test_deepsdf_lattice_export():
 
     # Define a spline-based deformation field
     deformation_spline = TorchSpline(
-        splinepy.helpme.create.box(2, 1, 1), device=model.device
+        splinepy.helpme.create.box(1, 1, 1), device=model.device
     )
 
     param_spline = SplineParametrization(
@@ -35,14 +36,17 @@ def test_deepsdf_lattice_export():
 
     # Create the lattice structure with deformation and microtile
     lattice_struct = LatticeSDFStruct(
-        tiling=(6, 3, 3),
+        tiling=(2, 2, 2),
         deformation_spline=deformation_spline,
         microtile=sdf,
         parametrization=param_spline,
     )
-
+    export_sdf_grid_vtk(lattice_struct, "sdf.vtk")
     surf_mesh, derivative = create_3D_surface_mesh(
         lattice_struct, 30, differentiate=True
+    )
+    export_surface_mesh_vtk(
+        surf_mesh.vertices, surf_mesh.faces, "mesh_with_derivative.vtk", derivative
     )
     faces = surf_mesh.to_gus()
     _gus.io.meshio.export("faces.inp", faces)
@@ -50,10 +54,6 @@ def test_deepsdf_lattice_export():
 
     volumes, _ = tetrahedralize_surface(faces)
     _gus.io.mfem.export("volumes.mfem", volumes)
-
-    export_surface_mesh_vtk(
-        surf_mesh.vertices, surf_mesh.faces, "mesh_with_derivative.vtk", derivative
-    )
 
 
 def test_2D_mesh_export():
