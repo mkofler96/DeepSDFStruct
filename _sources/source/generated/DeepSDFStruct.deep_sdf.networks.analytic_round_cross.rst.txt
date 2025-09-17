@@ -1,0 +1,12 @@
+DeepSDFStruct.deep\_sdf.networks.analytic\_round\_cross
+=======================================================
+
+.. automodule:: DeepSDFStruct.deep_sdf.networks.analytic_round_cross
+
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      RoundCrossDecoder
+   

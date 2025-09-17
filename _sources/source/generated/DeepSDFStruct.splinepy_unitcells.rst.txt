@@ -1,0 +1,16 @@
+DeepSDFStruct.splinepy\_unitcells
+=================================
+
+.. automodule:: DeepSDFStruct.splinepy_unitcells
+
+   
+.. rubric:: Modules
+
+.. autosummary::
+   :toctree:
+   :recursive:
+
+   chi_3D
+   cross_lattice
+   double_lattice_extruded
+   snappy_3d

@@ -1,0 +1,12 @@
+DeepSDFStruct.deep\_sdf.create\_libtorch\_executable
+====================================================
+
+.. automodule:: DeepSDFStruct.deep_sdf.create_libtorch_executable
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      main
+   

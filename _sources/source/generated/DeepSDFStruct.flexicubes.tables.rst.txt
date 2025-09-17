@@ -1,0 +1,6 @@
+DeepSDFStruct.flexicubes.tables
+===============================
+
+.. automodule:: DeepSDFStruct.flexicubes.tables
+
+   

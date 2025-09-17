@@ -1,0 +1,26 @@
+DeepSDFStruct.deep\_sdf.workspace
+=================================
+
+.. automodule:: DeepSDFStruct.deep_sdf.workspace
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      get_data_source_map_filename
+      get_default_device
+      get_evaluation_dir
+      get_latent_codes_dir
+      get_model_params_dir
+      get_normalization_params_filename
+      get_optimizer_params_dir
+      get_reconstructed_code_filename
+      get_reconstructed_mesh_filename
+      get_screenshots_dir
+      init_decoder
+      load_experiment_specifications
+      load_latent_vectors
+      load_trained_model
+      print_model_specifications
+   

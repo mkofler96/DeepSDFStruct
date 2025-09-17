@@ -1,0 +1,12 @@
+DeepSDFStruct.flexicubes.flexicubes
+===================================
+
+.. automodule:: DeepSDFStruct.flexicubes.flexicubes
+
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      FlexiCubes
+   

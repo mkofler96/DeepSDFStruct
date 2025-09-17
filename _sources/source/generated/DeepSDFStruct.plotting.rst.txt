@@ -1,0 +1,13 @@
+DeepSDFStruct.plotting
+======================
+
+.. automodule:: DeepSDFStruct.plotting
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      generate_plane_points
+      plot_slice
+   

@@ -1,0 +1,20 @@
+DeepSDFStruct.lattice\_structure
+================================
+
+.. automodule:: DeepSDFStruct.lattice_structure
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      check_tiling_input
+      constantLatvec
+      transform
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      LatticeSDFStruct
+   

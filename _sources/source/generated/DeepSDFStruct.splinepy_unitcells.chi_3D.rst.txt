@@ -1,0 +1,12 @@
+DeepSDFStruct.splinepy\_unitcells.chi\_3D
+=========================================
+
+.. automodule:: DeepSDFStruct.splinepy_unitcells.chi_3D
+
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      Chi3D
+   

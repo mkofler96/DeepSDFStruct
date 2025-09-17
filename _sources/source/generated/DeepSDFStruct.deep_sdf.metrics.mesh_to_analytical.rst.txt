@@ -1,0 +1,12 @@
+DeepSDFStruct.deep\_sdf.metrics.mesh\_to\_analytical
+====================================================
+
+.. automodule:: DeepSDFStruct.deep_sdf.metrics.mesh_to_analytical
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      mesh_to_analytical
+   

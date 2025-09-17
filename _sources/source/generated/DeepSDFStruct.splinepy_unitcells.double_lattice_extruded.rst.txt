@@ -1,0 +1,12 @@
+DeepSDFStruct.splinepy\_unitcells.double\_lattice\_extruded
+===========================================================
+
+.. automodule:: DeepSDFStruct.splinepy_unitcells.double_lattice_extruded
+
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      DoubleLatticeExtruded
+   

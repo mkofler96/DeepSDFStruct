@@ -1,0 +1,19 @@
+DeepSDFStruct.pretrained\_models
+================================
+
+.. automodule:: DeepSDFStruct.pretrained_models
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      get_model
+      list_available_models
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      PretrainedModels
+   

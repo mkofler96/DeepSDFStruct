@@ -1,0 +1,12 @@
+DeepSDFStruct.splinepy\_unitcells.snappy\_3d
+============================================
+
+.. automodule:: DeepSDFStruct.splinepy_unitcells.snappy_3d
+
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      Snappy3D
+   

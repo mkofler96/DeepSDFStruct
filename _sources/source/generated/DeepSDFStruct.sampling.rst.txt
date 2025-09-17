@@ -1,0 +1,26 @@
+DeepSDFStruct.sampling
+======================
+
+.. automodule:: DeepSDFStruct.sampling
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      move
+      noisy_sample
+      process_single_geometry
+      random_points
+      random_points_cube
+      random_sample_sdf
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      DataSetInfo
+      RandomSampleSDF
+      SDFSampler
+      SphereParameters
+   

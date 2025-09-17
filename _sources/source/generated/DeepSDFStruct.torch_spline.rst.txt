@@ -1,0 +1,12 @@
+DeepSDFStruct.torch\_spline
+===========================
+
+.. automodule:: DeepSDFStruct.torch_spline
+
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      TorchSpline
+   

@@ -1,0 +1,12 @@
+DeepSDFStruct.deep\_sdf.models
+==============================
+
+.. automodule:: DeepSDFStruct.deep_sdf.models
+
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      DeepSDFModel
+   

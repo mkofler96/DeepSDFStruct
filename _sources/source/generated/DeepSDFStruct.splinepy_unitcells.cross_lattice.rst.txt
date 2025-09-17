@@ -1,0 +1,12 @@
+DeepSDFStruct.splinepy\_unitcells.cross\_lattice
+================================================
+
+.. automodule:: DeepSDFStruct.splinepy_unitcells.cross_lattice
+
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      CrossLattice
+   

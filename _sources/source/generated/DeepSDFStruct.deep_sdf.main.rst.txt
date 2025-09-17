@@ -1,0 +1,12 @@
+DeepSDFStruct.deep\_sdf.main
+============================
+
+.. automodule:: DeepSDFStruct.deep_sdf.main
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      main
+   

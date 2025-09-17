@@ -1,0 +1,27 @@
+DeepSDFStruct.SDF
+=================
+
+.. automodule:: DeepSDFStruct.SDF
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      point_segment_distance
+      union
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      BoxSDF
+      CapBorderDict
+      CapType
+      NegatedCallable
+      SDFBase
+      SDFfromDeepSDF
+      SDFfromLineMesh
+      SDFfromMesh
+      SummedSDF
+   

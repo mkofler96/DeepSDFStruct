@@ -1,0 +1,14 @@
+DeepSDFStruct.flexicubes
+========================
+
+.. automodule:: DeepSDFStruct.flexicubes
+
+   
+.. rubric:: Modules
+
+.. autosummary::
+   :toctree:
+   :recursive:
+
+   flexicubes
+   tables

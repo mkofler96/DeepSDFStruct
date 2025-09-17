@@ -1,0 +1,13 @@
+DeepSDFStruct.parametrization
+=============================
+
+.. automodule:: DeepSDFStruct.parametrization
+
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      Constant
+      SplineParametrization
+   

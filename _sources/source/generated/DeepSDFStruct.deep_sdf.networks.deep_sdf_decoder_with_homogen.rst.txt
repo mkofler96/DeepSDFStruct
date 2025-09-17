@@ -1,0 +1,12 @@
+DeepSDFStruct.deep\_sdf.networks.deep\_sdf\_decoder\_with\_homogen
+==================================================================
+
+.. automodule:: DeepSDFStruct.deep_sdf.networks.deep_sdf_decoder_with_homogen
+
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      HomogenDecoder
+   

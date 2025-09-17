@@ -1,0 +1,16 @@
+DeepSDFStruct.deep\_sdf.plotting
+================================
+
+.. automodule:: DeepSDFStruct.deep_sdf.plotting
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      extract_paths
+      plot_logs
+      running_mean
+      show_random_reconstruction
+      show_random_training_files
+   

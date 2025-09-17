@@ -1,0 +1,13 @@
+DeepSDFStruct.deep\_sdf.metrics
+===============================
+
+.. automodule:: DeepSDFStruct.deep_sdf.metrics
+
+   
+.. rubric:: Modules
+
+.. autosummary::
+   :toctree:
+   :recursive:
+
+   mesh_to_analytical

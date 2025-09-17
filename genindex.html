@@ -1,0 +1,1273 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Index &#8212; DeepSDFStruct 1.0.6 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="_static/documentation_options.js?v=e2a723ec"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'genindex';</script>
+    <link rel="index" title="Index" href="#" />
+    <link rel="search" title="Search" href="search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">DeepSDFStruct 1.0.6 documentation</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="api_reference.html">
+    <no title>
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="api_reference.html">
+    <no title>
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none"></div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+
+<h1 id="index">Index</h1>
+
+<div class="genindex-jumpbox">
+ <a href="#A"><strong>A</strong></a>
+ | <a href="#B"><strong>B</strong></a>
+ | <a href="#C"><strong>C</strong></a>
+ | <a href="#D"><strong>D</strong></a>
+ | <a href="#E"><strong>E</strong></a>
+ | <a href="#F"><strong>F</strong></a>
+ | <a href="#G"><strong>G</strong></a>
+ | <a href="#H"><strong>H</strong></a>
+ | <a href="#I"><strong>I</strong></a>
+ | <a href="#L"><strong>L</strong></a>
+ | <a href="#M"><strong>M</strong></a>
+ | <a href="#N"><strong>N</strong></a>
+ | <a href="#P"><strong>P</strong></a>
+ | <a href="#Q"><strong>Q</strong></a>
+ | <a href="#R"><strong>R</strong></a>
+ | <a href="#S"><strong>S</strong></a>
+ | <a href="#T"><strong>T</strong></a>
+ | <a href="#U"><strong>U</strong></a>
+ | <a href="#W"><strong>W</strong></a>
+ | <a href="#X"><strong>X</strong></a>
+ | <a href="#Y"><strong>Y</strong></a>
+ | <a href="#Z"><strong>Z</strong></a>
+ 
+</div>
+<h2 id="A">A</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="source/generated/DeepSDFStruct.sampling.html#DeepSDFStruct.sampling.SDFSampler.add_class">add_class() (DeepSDFStruct.sampling.SDFSampler method)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.deep_sdf.utils.html#DeepSDFStruct.deep_sdf.utils.add_common_args">add_common_args() (in module DeepSDFStruct.deep_sdf.utils)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="source/generated/DeepSDFStruct.flexicubes.flexicubes.html#DeepSDFStruct.flexicubes.flexicubes.FlexiCubes.adj_pairs">adj_pairs (DeepSDFStruct.flexicubes.flexicubes.FlexiCubes attribute)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.pretrained_models.html#DeepSDFStruct.pretrained_models.PretrainedModels.AnalyticRoundCross">AnalyticRoundCross (DeepSDFStruct.pretrained_models.PretrainedModels attribute)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.deep_sdf.train_deep_sdf.html#DeepSDFStruct.deep_sdf.train_deep_sdf.append_parameter_magnitudes">append_parameter_magnitudes() (in module DeepSDFStruct.deep_sdf.train_deep_sdf)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="B">B</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="source/generated/DeepSDFStruct.SDF.html#DeepSDFStruct.SDF.BoxSDF">BoxSDF (class in DeepSDFStruct.SDF)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="C">C</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="source/generated/DeepSDFStruct.deep_sdf.mesh.html#DeepSDFStruct.deep_sdf.mesh.CapType.cap">cap (DeepSDFStruct.deep_sdf.mesh.CapType attribute)</a>
+
+      <ul>
+        <li><a href="source/generated/DeepSDFStruct.SDF.html#DeepSDFStruct.SDF.CapType.cap">(DeepSDFStruct.SDF.CapType attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/generated/DeepSDFStruct.SDF.html#DeepSDFStruct.SDF.SDFBase.cap_border_dict">cap_border_dict (DeepSDFStruct.SDF.SDFBase property)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.deep_sdf.mesh.html#DeepSDFStruct.deep_sdf.mesh.CapBorderDict">CapBorderDict (class in DeepSDFStruct.deep_sdf.mesh)</a>
+
+      <ul>
+        <li><a href="source/generated/DeepSDFStruct.SDF.html#DeepSDFStruct.SDF.CapBorderDict">(class in DeepSDFStruct.SDF)</a>
+</li>
+      </ul></li>
+      <li><a href="source/generated/DeepSDFStruct.deep_sdf.mesh.html#DeepSDFStruct.deep_sdf.mesh.CapType">CapType (class in DeepSDFStruct.deep_sdf.mesh)</a>
+
+      <ul>
+        <li><a href="source/generated/DeepSDFStruct.SDF.html#DeepSDFStruct.SDF.CapType">(class in DeepSDFStruct.SDF)</a>
+</li>
+      </ul></li>
+      <li><a href="source/generated/DeepSDFStruct.flexicubes.flexicubes.html#DeepSDFStruct.flexicubes.flexicubes.FlexiCubes.check_table">check_table (DeepSDFStruct.flexicubes.flexicubes.FlexiCubes attribute)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.lattice_structure.html#DeepSDFStruct.lattice_structure.check_tiling_input">check_tiling_input() (in module DeepSDFStruct.lattice_structure)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.splinepy_unitcells.chi_3D.html#DeepSDFStruct.splinepy_unitcells.chi_3D.Chi3D">Chi3D (class in DeepSDFStruct.splinepy_unitcells.chi_3D)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.pretrained_models.html#DeepSDFStruct.pretrained_models.PretrainedModels.ChiAndCross">ChiAndCross (DeepSDFStruct.pretrained_models.PretrainedModels attribute)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.sampling.html#DeepSDFStruct.sampling.DataSetInfo.class_name">class_name (DeepSDFStruct.sampling.DataSetInfo attribute)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.deep_sdf.train_deep_sdf.html#DeepSDFStruct.deep_sdf.train_deep_sdf.clip_logs">clip_logs() (in module DeepSDFStruct.deep_sdf.train_deep_sdf)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.deep_sdf.utils.html#DeepSDFStruct.deep_sdf.utils.configure_logging">configure_logging() (in module DeepSDFStruct.deep_sdf.utils)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.parametrization.html#DeepSDFStruct.parametrization.Constant">Constant (class in DeepSDFStruct.parametrization)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.deep_sdf.mesh.html#DeepSDFStruct.deep_sdf.mesh.constantLatvec">constantLatvec() (in module DeepSDFStruct.deep_sdf.mesh)</a>
+
+      <ul>
+        <li><a href="source/generated/DeepSDFStruct.lattice_structure.html#DeepSDFStruct.lattice_structure.constantLatvec">(in module DeepSDFStruct.lattice_structure)</a>
+</li>
+      </ul></li>
+      <li><a href="source/generated/DeepSDFStruct.deep_sdf.train_deep_sdf.html#DeepSDFStruct.deep_sdf.train_deep_sdf.ConstantLearningRateSchedule">ConstantLearningRateSchedule (class in DeepSDFStruct.deep_sdf.train_deep_sdf)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="source/generated/DeepSDFStruct.flexicubes.flexicubes.html#DeepSDFStruct.flexicubes.flexicubes.FlexiCubes.construct_voxel_grid">construct_voxel_grid() (DeepSDFStruct.flexicubes.flexicubes.FlexiCubes method)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.deep_sdf.mesh.html#DeepSDFStruct.deep_sdf.mesh.convert_sdf_samples_to_ply">convert_sdf_samples_to_ply() (in module DeepSDFStruct.deep_sdf.mesh)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.mesh.html#DeepSDFStruct.mesh.create_3D_surface_mesh">create_3D_surface_mesh() (in module DeepSDFStruct.mesh)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.sampling.html#DeepSDFStruct.sampling.RandomSampleSDF.create_gus_plottable">create_gus_plottable() (DeepSDFStruct.sampling.RandomSampleSDF method)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.deep_sdf.mesh.html#DeepSDFStruct.deep_sdf.mesh.create_mesh">create_mesh() (in module DeepSDFStruct.deep_sdf.mesh)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.deep_sdf.mesh.html#DeepSDFStruct.deep_sdf.mesh.create_mesh_from_latent">create_mesh_from_latent() (in module DeepSDFStruct.deep_sdf.mesh)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.deep_sdf.mesh.html#DeepSDFStruct.deep_sdf.mesh.create_mesh_microstructure">create_mesh_microstructure() (in module DeepSDFStruct.deep_sdf.mesh)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.deep_sdf.mesh.html#DeepSDFStruct.deep_sdf.mesh.create_mesh_microstructure_diff">create_mesh_microstructure_diff() (in module DeepSDFStruct.deep_sdf.mesh)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.splinepy_unitcells.chi_3D.html#DeepSDFStruct.splinepy_unitcells.chi_3D.Chi3D.create_tile">create_tile() (DeepSDFStruct.splinepy_unitcells.chi_3D.Chi3D method)</a>
+
+      <ul>
+        <li><a href="source/generated/DeepSDFStruct.splinepy_unitcells.cross_lattice.html#DeepSDFStruct.splinepy_unitcells.cross_lattice.CrossLattice.create_tile">(DeepSDFStruct.splinepy_unitcells.cross_lattice.CrossLattice method)</a>
+</li>
+        <li><a href="source/generated/DeepSDFStruct.splinepy_unitcells.double_lattice_extruded.html#DeepSDFStruct.splinepy_unitcells.double_lattice_extruded.DoubleLatticeExtruded.create_tile">(DeepSDFStruct.splinepy_unitcells.double_lattice_extruded.DoubleLatticeExtruded method)</a>
+</li>
+        <li><a href="source/generated/DeepSDFStruct.splinepy_unitcells.snappy_3d.html#DeepSDFStruct.splinepy_unitcells.snappy_3d.Snappy3D.create_tile">(DeepSDFStruct.splinepy_unitcells.snappy_3d.Snappy3D method)</a>
+</li>
+      </ul></li>
+      <li><a href="source/generated/DeepSDFStruct.splinepy_unitcells.cross_lattice.html#DeepSDFStruct.splinepy_unitcells.cross_lattice.CrossLattice">CrossLattice (class in DeepSDFStruct.splinepy_unitcells.cross_lattice)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.flexicubes.flexicubes.html#DeepSDFStruct.flexicubes.flexicubes.FlexiCubes.cube_corners">cube_corners (DeepSDFStruct.flexicubes.flexicubes.FlexiCubes attribute)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.flexicubes.flexicubes.html#DeepSDFStruct.flexicubes.flexicubes.FlexiCubes.cube_corners_idx">cube_corners_idx (DeepSDFStruct.flexicubes.flexicubes.FlexiCubes attribute)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.flexicubes.flexicubes.html#DeepSDFStruct.flexicubes.flexicubes.FlexiCubes.cube_edges">cube_edges (DeepSDFStruct.flexicubes.flexicubes.FlexiCubes attribute)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.sampling.html#DeepSDFStruct.sampling.SphereParameters.cx">cx (DeepSDFStruct.sampling.SphereParameters attribute)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.sampling.html#DeepSDFStruct.sampling.SphereParameters.cy">cy (DeepSDFStruct.sampling.SphereParameters attribute)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.sampling.html#DeepSDFStruct.sampling.SphereParameters.cz">cz (DeepSDFStruct.sampling.SphereParameters attribute)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="D">D</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="source/generated/DeepSDFStruct.sampling.html#DeepSDFStruct.sampling.DataSetInfo.dataset_name">dataset_name (DeepSDFStruct.sampling.DataSetInfo attribute)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.sampling.html#DeepSDFStruct.sampling.DataSetInfo">DataSetInfo (class in DeepSDFStruct.sampling)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.deep_sdf.utils.html#DeepSDFStruct.deep_sdf.utils.decode_sdf">decode_sdf() (in module DeepSDFStruct.deep_sdf.utils)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.deep_sdf.networks.deep_sdf_decoder.html#DeepSDFStruct.deep_sdf.networks.deep_sdf_decoder.DeepSDFDecoder">DeepSDFDecoder (class in DeepSDFStruct.deep_sdf.networks.deep_sdf_decoder)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.deep_sdf.models.html#DeepSDFStruct.deep_sdf.models.DeepSDFModel">DeepSDFModel (class in DeepSDFStruct.deep_sdf.models)</a>
+</li>
+      <li>
+    DeepSDFStruct
+
+      <ul>
+        <li><a href="source/generated/DeepSDFStruct.html#module-DeepSDFStruct">module</a>
+</li>
+      </ul></li>
+      <li>
+    DeepSDFStruct.deep_sdf
+
+      <ul>
+        <li><a href="source/generated/DeepSDFStruct.deep_sdf.html#module-DeepSDFStruct.deep_sdf">module</a>
+</li>
+      </ul></li>
+      <li>
+    DeepSDFStruct.deep_sdf.create_libtorch_executable
+
+      <ul>
+        <li><a href="source/generated/DeepSDFStruct.deep_sdf.create_libtorch_executable.html#module-DeepSDFStruct.deep_sdf.create_libtorch_executable">module</a>
+</li>
+      </ul></li>
+      <li>
+    DeepSDFStruct.deep_sdf.create_ply_files_from_latent
+
+      <ul>
+        <li><a href="source/generated/DeepSDFStruct.deep_sdf.create_ply_files_from_latent.html#module-DeepSDFStruct.deep_sdf.create_ply_files_from_latent">module</a>
+</li>
+      </ul></li>
+      <li>
+    DeepSDFStruct.deep_sdf.data
+
+      <ul>
+        <li><a href="source/generated/DeepSDFStruct.deep_sdf.data.html#module-DeepSDFStruct.deep_sdf.data">module</a>
+</li>
+      </ul></li>
+      <li>
+    DeepSDFStruct.deep_sdf.main
+
+      <ul>
+        <li><a href="source/generated/DeepSDFStruct.deep_sdf.main.html#module-DeepSDFStruct.deep_sdf.main">module</a>
+</li>
+      </ul></li>
+      <li>
+    DeepSDFStruct.deep_sdf.mesh
+
+      <ul>
+        <li><a href="source/generated/DeepSDFStruct.deep_sdf.mesh.html#module-DeepSDFStruct.deep_sdf.mesh">module</a>
+</li>
+      </ul></li>
+      <li>
+    DeepSDFStruct.deep_sdf.metrics
+
+      <ul>
+        <li><a href="source/generated/DeepSDFStruct.deep_sdf.metrics.html#module-DeepSDFStruct.deep_sdf.metrics">module</a>
+</li>
+      </ul></li>
+      <li>
+    DeepSDFStruct.deep_sdf.metrics.mesh_to_analytical
+
+      <ul>
+        <li><a href="source/generated/DeepSDFStruct.deep_sdf.metrics.mesh_to_analytical.html#module-DeepSDFStruct.deep_sdf.metrics.mesh_to_analytical">module</a>
+</li>
+      </ul></li>
+      <li>
+    DeepSDFStruct.deep_sdf.models
+
+      <ul>
+        <li><a href="source/generated/DeepSDFStruct.deep_sdf.models.html#module-DeepSDFStruct.deep_sdf.models">module</a>
+</li>
+      </ul></li>
+      <li>
+    DeepSDFStruct.deep_sdf.networks
+
+      <ul>
+        <li><a href="source/generated/DeepSDFStruct.deep_sdf.networks.html#module-DeepSDFStruct.deep_sdf.networks">module</a>
+</li>
+      </ul></li>
+      <li>
+    DeepSDFStruct.deep_sdf.networks.analytic_round_cross
+
+      <ul>
+        <li><a href="source/generated/DeepSDFStruct.deep_sdf.networks.analytic_round_cross.html#module-DeepSDFStruct.deep_sdf.networks.analytic_round_cross">module</a>
+</li>
+      </ul></li>
+      <li>
+    DeepSDFStruct.deep_sdf.networks.deep_sdf_decoder
+
+      <ul>
+        <li><a href="source/generated/DeepSDFStruct.deep_sdf.networks.deep_sdf_decoder.html#module-DeepSDFStruct.deep_sdf.networks.deep_sdf_decoder">module</a>
+</li>
+      </ul></li>
+      <li>
+    DeepSDFStruct.deep_sdf.networks.deep_sdf_decoder_with_homogen
+
+      <ul>
+        <li><a href="source/generated/DeepSDFStruct.deep_sdf.networks.deep_sdf_decoder_with_homogen.html#module-DeepSDFStruct.deep_sdf.networks.deep_sdf_decoder_with_homogen">module</a>
+</li>
+      </ul></li>
+      <li>
+    DeepSDFStruct.deep_sdf.plotting
+
+      <ul>
+        <li><a href="source/generated/DeepSDFStruct.deep_sdf.plotting.html#module-DeepSDFStruct.deep_sdf.plotting">module</a>
+</li>
+      </ul></li>
+      <li>
+    DeepSDFStruct.deep_sdf.train_deep_sdf
+
+      <ul>
+        <li><a href="source/generated/DeepSDFStruct.deep_sdf.train_deep_sdf.html#module-DeepSDFStruct.deep_sdf.train_deep_sdf">module</a>
+</li>
+      </ul></li>
+      <li>
+    DeepSDFStruct.deep_sdf.utils
+
+      <ul>
+        <li><a href="source/generated/DeepSDFStruct.deep_sdf.utils.html#module-DeepSDFStruct.deep_sdf.utils">module</a>
+</li>
+      </ul></li>
+      <li>
+    DeepSDFStruct.deep_sdf.workspace
+
+      <ul>
+        <li><a href="source/generated/DeepSDFStruct.deep_sdf.workspace.html#module-DeepSDFStruct.deep_sdf.workspace">module</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
+    DeepSDFStruct.flexicubes
+
+      <ul>
+        <li><a href="source/generated/DeepSDFStruct.flexicubes.html#module-DeepSDFStruct.flexicubes">module</a>
+</li>
+      </ul></li>
+      <li>
+    DeepSDFStruct.flexicubes.flexicubes
+
+      <ul>
+        <li><a href="source/generated/DeepSDFStruct.flexicubes.flexicubes.html#module-DeepSDFStruct.flexicubes.flexicubes">module</a>
+</li>
+      </ul></li>
+      <li>
+    DeepSDFStruct.flexicubes.tables
+
+      <ul>
+        <li><a href="source/generated/DeepSDFStruct.flexicubes.tables.html#module-DeepSDFStruct.flexicubes.tables">module</a>
+</li>
+      </ul></li>
+      <li>
+    DeepSDFStruct.lattice_structure
+
+      <ul>
+        <li><a href="source/generated/DeepSDFStruct.lattice_structure.html#module-DeepSDFStruct.lattice_structure">module</a>
+</li>
+      </ul></li>
+      <li>
+    DeepSDFStruct.mesh
+
+      <ul>
+        <li><a href="source/generated/DeepSDFStruct.mesh.html#module-DeepSDFStruct.mesh">module</a>
+</li>
+      </ul></li>
+      <li>
+    DeepSDFStruct.parametrization
+
+      <ul>
+        <li><a href="source/generated/DeepSDFStruct.parametrization.html#module-DeepSDFStruct.parametrization">module</a>
+</li>
+      </ul></li>
+      <li>
+    DeepSDFStruct.plotting
+
+      <ul>
+        <li><a href="source/generated/DeepSDFStruct.plotting.html#module-DeepSDFStruct.plotting">module</a>
+</li>
+      </ul></li>
+      <li>
+    DeepSDFStruct.pretrained_models
+
+      <ul>
+        <li><a href="source/generated/DeepSDFStruct.pretrained_models.html#module-DeepSDFStruct.pretrained_models">module</a>
+</li>
+      </ul></li>
+      <li>
+    DeepSDFStruct.sampling
+
+      <ul>
+        <li><a href="source/generated/DeepSDFStruct.sampling.html#module-DeepSDFStruct.sampling">module</a>
+</li>
+      </ul></li>
+      <li>
+    DeepSDFStruct.SDF
+
+      <ul>
+        <li><a href="source/generated/DeepSDFStruct.SDF.html#module-DeepSDFStruct.SDF">module</a>
+</li>
+      </ul></li>
+      <li>
+    DeepSDFStruct.splinepy_unitcells
+
+      <ul>
+        <li><a href="source/generated/DeepSDFStruct.splinepy_unitcells.html#module-DeepSDFStruct.splinepy_unitcells">module</a>
+</li>
+      </ul></li>
+      <li>
+    DeepSDFStruct.splinepy_unitcells.chi_3D
+
+      <ul>
+        <li><a href="source/generated/DeepSDFStruct.splinepy_unitcells.chi_3D.html#module-DeepSDFStruct.splinepy_unitcells.chi_3D">module</a>
+</li>
+      </ul></li>
+      <li>
+    DeepSDFStruct.splinepy_unitcells.cross_lattice
+
+      <ul>
+        <li><a href="source/generated/DeepSDFStruct.splinepy_unitcells.cross_lattice.html#module-DeepSDFStruct.splinepy_unitcells.cross_lattice">module</a>
+</li>
+      </ul></li>
+      <li>
+    DeepSDFStruct.splinepy_unitcells.double_lattice_extruded
+
+      <ul>
+        <li><a href="source/generated/DeepSDFStruct.splinepy_unitcells.double_lattice_extruded.html#module-DeepSDFStruct.splinepy_unitcells.double_lattice_extruded">module</a>
+</li>
+      </ul></li>
+      <li>
+    DeepSDFStruct.splinepy_unitcells.snappy_3d
+
+      <ul>
+        <li><a href="source/generated/DeepSDFStruct.splinepy_unitcells.snappy_3d.html#module-DeepSDFStruct.splinepy_unitcells.snappy_3d">module</a>
+</li>
+      </ul></li>
+      <li>
+    DeepSDFStruct.torch_spline
+
+      <ul>
+        <li><a href="source/generated/DeepSDFStruct.torch_spline.html#module-DeepSDFStruct.torch_spline">module</a>
+</li>
+      </ul></li>
+      <li><a href="source/generated/DeepSDFStruct.lattice_structure.html#DeepSDFStruct.lattice_structure.LatticeSDFStruct.deformation_spline">deformation_spline (DeepSDFStruct.lattice_structure.LatticeSDFStruct property)</a>
+
+      <ul>
+        <li><a href="source/generated/DeepSDFStruct.SDF.html#DeepSDFStruct.SDF.SDFBase.deformation_spline">(DeepSDFStruct.SDF.SDFBase property)</a>
+</li>
+      </ul></li>
+      <li><a href="source/generated/DeepSDFStruct.flexicubes.flexicubes.html#DeepSDFStruct.flexicubes.flexicubes.FlexiCubes.device">device (DeepSDFStruct.flexicubes.flexicubes.FlexiCubes attribute)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.flexicubes.flexicubes.html#DeepSDFStruct.flexicubes.flexicubes.FlexiCubes.dir_faces_table">dir_faces_table (DeepSDFStruct.flexicubes.flexicubes.FlexiCubes attribute)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.sampling.html#DeepSDFStruct.sampling.RandomSampleSDF.distances">distances (DeepSDFStruct.sampling.RandomSampleSDF attribute)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.flexicubes.flexicubes.html#DeepSDFStruct.flexicubes.flexicubes.FlexiCubes.dmc_table">dmc_table (DeepSDFStruct.flexicubes.flexicubes.FlexiCubes attribute)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.splinepy_unitcells.double_lattice_extruded.html#DeepSDFStruct.splinepy_unitcells.double_lattice_extruded.DoubleLatticeExtruded">DoubleLatticeExtruded (class in DeepSDFStruct.splinepy_unitcells.double_lattice_extruded)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="E">E</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="source/generated/DeepSDFStruct.flexicubes.flexicubes.html#DeepSDFStruct.flexicubes.flexicubes.FlexiCubes.edge_dir_table">edge_dir_table (DeepSDFStruct.flexicubes.flexicubes.FlexiCubes attribute)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.deep_sdf.mesh.html#DeepSDFStruct.deep_sdf.mesh.evaluate_network">evaluate_network() (in module DeepSDFStruct.deep_sdf.mesh)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.mesh.html#DeepSDFStruct.mesh.export_abaqus_surf_mesh">export_abaqus_surf_mesh() (in module DeepSDFStruct.mesh)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="source/generated/DeepSDFStruct.mesh.html#DeepSDFStruct.mesh.export_sdf_grid_vtk">export_sdf_grid_vtk() (in module DeepSDFStruct.mesh)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.mesh.html#DeepSDFStruct.mesh.export_surface_mesh_vtk">export_surface_mesh_vtk() (in module DeepSDFStruct.mesh)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.mesh.html#DeepSDFStruct.mesh.export_volume_mesh">export_volume_mesh() (in module DeepSDFStruct.mesh)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.deep_sdf.plotting.html#DeepSDFStruct.deep_sdf.plotting.extract_paths">extract_paths() (in module DeepSDFStruct.deep_sdf.plotting)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="F">F</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="source/generated/DeepSDFStruct.deep_sdf.data.html#DeepSDFStruct.deep_sdf.data.find_mesh_in_directory">find_mesh_in_directory() (in module DeepSDFStruct.deep_sdf.data)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.flexicubes.flexicubes.html#DeepSDFStruct.flexicubes.flexicubes.FlexiCubes">FlexiCubes (class in DeepSDFStruct.flexicubes.flexicubes)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.deep_sdf.utils.html#DeepSDFStruct.deep_sdf.utils.format_memory_size">format_memory_size() (in module DeepSDFStruct.deep_sdf.utils)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="source/generated/DeepSDFStruct.deep_sdf.networks.analytic_round_cross.html#DeepSDFStruct.deep_sdf.networks.analytic_round_cross.RoundCrossDecoder.forward">forward() (DeepSDFStruct.deep_sdf.networks.analytic_round_cross.RoundCrossDecoder method)</a>
+
+      <ul>
+        <li><a href="source/generated/DeepSDFStruct.deep_sdf.networks.deep_sdf_decoder.html#DeepSDFStruct.deep_sdf.networks.deep_sdf_decoder.DeepSDFDecoder.forward">(DeepSDFStruct.deep_sdf.networks.deep_sdf_decoder.DeepSDFDecoder method)</a>
+</li>
+        <li><a href="source/generated/DeepSDFStruct.deep_sdf.networks.deep_sdf_decoder_with_homogen.html#DeepSDFStruct.deep_sdf.networks.deep_sdf_decoder_with_homogen.HomogenDecoder.forward">(DeepSDFStruct.deep_sdf.networks.deep_sdf_decoder_with_homogen.HomogenDecoder method)</a>
+</li>
+        <li><a href="source/generated/DeepSDFStruct.torch_spline.html#DeepSDFStruct.torch_spline.TorchSpline.forward">(DeepSDFStruct.torch_spline.TorchSpline method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="G">G</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="source/generated/DeepSDFStruct.mesh.html#DeepSDFStruct.mesh.generate_2D_surf_mesh">generate_2D_surf_mesh() (in module DeepSDFStruct.mesh)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.plotting.html#DeepSDFStruct.plotting.generate_plane_points">generate_plane_points() (in module DeepSDFStruct.plotting)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.deep_sdf.workspace.html#DeepSDFStruct.deep_sdf.workspace.get_data_source_map_filename">get_data_source_map_filename() (in module DeepSDFStruct.deep_sdf.workspace)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.deep_sdf.workspace.html#DeepSDFStruct.deep_sdf.workspace.get_default_device">get_default_device() (in module DeepSDFStruct.deep_sdf.workspace)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.deep_sdf.workspace.html#DeepSDFStruct.deep_sdf.workspace.get_evaluation_dir">get_evaluation_dir() (in module DeepSDFStruct.deep_sdf.workspace)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.deep_sdf.data.html#DeepSDFStruct.deep_sdf.data.get_instance_filenames">get_instance_filenames() (in module DeepSDFStruct.deep_sdf.data)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.deep_sdf.workspace.html#DeepSDFStruct.deep_sdf.workspace.get_latent_codes_dir">get_latent_codes_dir() (in module DeepSDFStruct.deep_sdf.workspace)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.deep_sdf.train_deep_sdf.html#DeepSDFStruct.deep_sdf.train_deep_sdf.ConstantLearningRateSchedule.get_learning_rate">get_learning_rate() (DeepSDFStruct.deep_sdf.train_deep_sdf.ConstantLearningRateSchedule method)</a>
+
+      <ul>
+        <li><a href="source/generated/DeepSDFStruct.deep_sdf.train_deep_sdf.html#DeepSDFStruct.deep_sdf.train_deep_sdf.LearningRateSchedule.get_learning_rate">(DeepSDFStruct.deep_sdf.train_deep_sdf.LearningRateSchedule method)</a>
+</li>
+        <li><a href="source/generated/DeepSDFStruct.deep_sdf.train_deep_sdf.html#DeepSDFStruct.deep_sdf.train_deep_sdf.StepLearningRateSchedule.get_learning_rate">(DeepSDFStruct.deep_sdf.train_deep_sdf.StepLearningRateSchedule method)</a>
+</li>
+        <li><a href="source/generated/DeepSDFStruct.deep_sdf.train_deep_sdf.html#DeepSDFStruct.deep_sdf.train_deep_sdf.WarmupLearningRateSchedule.get_learning_rate">(DeepSDFStruct.deep_sdf.train_deep_sdf.WarmupLearningRateSchedule method)</a>
+</li>
+      </ul></li>
+      <li><a href="source/generated/DeepSDFStruct.deep_sdf.train_deep_sdf.html#DeepSDFStruct.deep_sdf.train_deep_sdf.get_learning_rate_schedules">get_learning_rate_schedules() (in module DeepSDFStruct.deep_sdf.train_deep_sdf)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="source/generated/DeepSDFStruct.deep_sdf.train_deep_sdf.html#DeepSDFStruct.deep_sdf.train_deep_sdf.get_mean_latent_vector_magnitude">get_mean_latent_vector_magnitude() (in module DeepSDFStruct.deep_sdf.train_deep_sdf)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.pretrained_models.html#DeepSDFStruct.pretrained_models.get_model">get_model() (in module DeepSDFStruct.pretrained_models)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.deep_sdf.workspace.html#DeepSDFStruct.deep_sdf.workspace.get_model_params_dir">get_model_params_dir() (in module DeepSDFStruct.deep_sdf.workspace)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.deep_sdf.utils.html#DeepSDFStruct.deep_sdf.utils.get_MS">get_MS() (in module DeepSDFStruct.deep_sdf.utils)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.deep_sdf.workspace.html#DeepSDFStruct.deep_sdf.workspace.get_normalization_params_filename">get_normalization_params_filename() (in module DeepSDFStruct.deep_sdf.workspace)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.deep_sdf.workspace.html#DeepSDFStruct.deep_sdf.workspace.get_optimizer_params_dir">get_optimizer_params_dir() (in module DeepSDFStruct.deep_sdf.workspace)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.deep_sdf.workspace.html#DeepSDFStruct.deep_sdf.workspace.get_reconstructed_code_filename">get_reconstructed_code_filename() (in module DeepSDFStruct.deep_sdf.workspace)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.deep_sdf.workspace.html#DeepSDFStruct.deep_sdf.workspace.get_reconstructed_mesh_filename">get_reconstructed_mesh_filename() (in module DeepSDFStruct.deep_sdf.workspace)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.deep_sdf.workspace.html#DeepSDFStruct.deep_sdf.workspace.get_screenshots_dir">get_screenshots_dir() (in module DeepSDFStruct.deep_sdf.workspace)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.sampling.html#DeepSDFStruct.sampling.SDFSampler.get_sdf_from_geometry">get_sdf_from_geometry() (DeepSDFStruct.sampling.SDFSampler method)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.sampling.html#DeepSDFStruct.sampling.SDFSampler.get_SDF_list">get_SDF_list() (DeepSDFStruct.sampling.SDFSampler method)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.deep_sdf.train_deep_sdf.html#DeepSDFStruct.deep_sdf.train_deep_sdf.get_spec_with_default">get_spec_with_default() (in module DeepSDFStruct.deep_sdf.train_deep_sdf)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="H">H</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="source/generated/DeepSDFStruct.deep_sdf.networks.deep_sdf_decoder_with_homogen.html#DeepSDFStruct.deep_sdf.networks.deep_sdf_decoder_with_homogen.HomogenDecoder">HomogenDecoder (class in DeepSDFStruct.deep_sdf.networks.deep_sdf_decoder_with_homogen)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="I">I</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="source/generated/DeepSDFStruct.deep_sdf.workspace.html#DeepSDFStruct.deep_sdf.workspace.init_decoder">init_decoder() (in module DeepSDFStruct.deep_sdf.workspace)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="L">L</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="source/generated/DeepSDFStruct.lattice_structure.html#DeepSDFStruct.lattice_structure.LatticeSDFStruct">LatticeSDFStruct (class in DeepSDFStruct.lattice_structure)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.deep_sdf.train_deep_sdf.html#DeepSDFStruct.deep_sdf.train_deep_sdf.LearningRateSchedule">LearningRateSchedule (class in DeepSDFStruct.deep_sdf.train_deep_sdf)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.SDF.html#DeepSDFStruct.SDF.SDFfromLineMesh.line_mesh">line_mesh (DeepSDFStruct.SDF.SDFfromLineMesh attribute)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.pretrained_models.html#DeepSDFStruct.pretrained_models.list_available_models">list_available_models() (in module DeepSDFStruct.pretrained_models)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.deep_sdf.workspace.html#DeepSDFStruct.deep_sdf.workspace.load_experiment_specifications">load_experiment_specifications() (in module DeepSDFStruct.deep_sdf.workspace)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="source/generated/DeepSDFStruct.deep_sdf.train_deep_sdf.html#DeepSDFStruct.deep_sdf.train_deep_sdf.load_latent_vectors">load_latent_vectors() (in module DeepSDFStruct.deep_sdf.train_deep_sdf)</a>
+
+      <ul>
+        <li><a href="source/generated/DeepSDFStruct.deep_sdf.workspace.html#DeepSDFStruct.deep_sdf.workspace.load_latent_vectors">(in module DeepSDFStruct.deep_sdf.workspace)</a>
+</li>
+      </ul></li>
+      <li><a href="source/generated/DeepSDFStruct.deep_sdf.train_deep_sdf.html#DeepSDFStruct.deep_sdf.train_deep_sdf.load_logs">load_logs() (in module DeepSDFStruct.deep_sdf.train_deep_sdf)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.deep_sdf.train_deep_sdf.html#DeepSDFStruct.deep_sdf.train_deep_sdf.load_optimizer">load_optimizer() (in module DeepSDFStruct.deep_sdf.train_deep_sdf)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.deep_sdf.workspace.html#DeepSDFStruct.deep_sdf.workspace.load_trained_model">load_trained_model() (in module DeepSDFStruct.deep_sdf.workspace)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.deep_sdf.utils.html#DeepSDFStruct.deep_sdf.utils.log_memory_usage">log_memory_usage() (in module DeepSDFStruct.deep_sdf.utils)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="M">M</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="source/generated/DeepSDFStruct.deep_sdf.create_libtorch_executable.html#DeepSDFStruct.deep_sdf.create_libtorch_executable.main">main() (in module DeepSDFStruct.deep_sdf.create_libtorch_executable)</a>
+
+      <ul>
+        <li><a href="source/generated/DeepSDFStruct.deep_sdf.create_ply_files_from_latent.html#DeepSDFStruct.deep_sdf.create_ply_files_from_latent.main">(in module DeepSDFStruct.deep_sdf.create_ply_files_from_latent)</a>
+</li>
+        <li><a href="source/generated/DeepSDFStruct.deep_sdf.main.html#DeepSDFStruct.deep_sdf.main.main">(in module DeepSDFStruct.deep_sdf.main)</a>
+</li>
+      </ul></li>
+      <li><a href="source/generated/DeepSDFStruct.deep_sdf.mesh.html#DeepSDFStruct.deep_sdf.mesh.CapType.measure">measure (DeepSDFStruct.deep_sdf.mesh.CapType attribute)</a>
+
+      <ul>
+        <li><a href="source/generated/DeepSDFStruct.SDF.html#DeepSDFStruct.SDF.CapType.measure">(DeepSDFStruct.SDF.CapType attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/generated/DeepSDFStruct.deep_sdf.metrics.mesh_to_analytical.html#DeepSDFStruct.deep_sdf.metrics.mesh_to_analytical.mesh_to_analytical">mesh_to_analytical() (in module DeepSDFStruct.deep_sdf.metrics.mesh_to_analytical)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.lattice_structure.html#DeepSDFStruct.lattice_structure.LatticeSDFStruct.microtile">microtile (DeepSDFStruct.lattice_structure.LatticeSDFStruct property)</a>
+</li>
+      <li>
+    module
+
+      <ul>
+        <li><a href="source/generated/DeepSDFStruct.html#module-DeepSDFStruct">DeepSDFStruct</a>
+</li>
+        <li><a href="source/generated/DeepSDFStruct.deep_sdf.html#module-DeepSDFStruct.deep_sdf">DeepSDFStruct.deep_sdf</a>
+</li>
+        <li><a href="source/generated/DeepSDFStruct.deep_sdf.create_libtorch_executable.html#module-DeepSDFStruct.deep_sdf.create_libtorch_executable">DeepSDFStruct.deep_sdf.create_libtorch_executable</a>
+</li>
+        <li><a href="source/generated/DeepSDFStruct.deep_sdf.create_ply_files_from_latent.html#module-DeepSDFStruct.deep_sdf.create_ply_files_from_latent">DeepSDFStruct.deep_sdf.create_ply_files_from_latent</a>
+</li>
+        <li><a href="source/generated/DeepSDFStruct.deep_sdf.data.html#module-DeepSDFStruct.deep_sdf.data">DeepSDFStruct.deep_sdf.data</a>
+</li>
+        <li><a href="source/generated/DeepSDFStruct.deep_sdf.main.html#module-DeepSDFStruct.deep_sdf.main">DeepSDFStruct.deep_sdf.main</a>
+</li>
+        <li><a href="source/generated/DeepSDFStruct.deep_sdf.mesh.html#module-DeepSDFStruct.deep_sdf.mesh">DeepSDFStruct.deep_sdf.mesh</a>
+</li>
+        <li><a href="source/generated/DeepSDFStruct.deep_sdf.metrics.html#module-DeepSDFStruct.deep_sdf.metrics">DeepSDFStruct.deep_sdf.metrics</a>
+</li>
+        <li><a href="source/generated/DeepSDFStruct.deep_sdf.metrics.mesh_to_analytical.html#module-DeepSDFStruct.deep_sdf.metrics.mesh_to_analytical">DeepSDFStruct.deep_sdf.metrics.mesh_to_analytical</a>
+</li>
+        <li><a href="source/generated/DeepSDFStruct.deep_sdf.models.html#module-DeepSDFStruct.deep_sdf.models">DeepSDFStruct.deep_sdf.models</a>
+</li>
+        <li><a href="source/generated/DeepSDFStruct.deep_sdf.networks.html#module-DeepSDFStruct.deep_sdf.networks">DeepSDFStruct.deep_sdf.networks</a>
+</li>
+        <li><a href="source/generated/DeepSDFStruct.deep_sdf.networks.analytic_round_cross.html#module-DeepSDFStruct.deep_sdf.networks.analytic_round_cross">DeepSDFStruct.deep_sdf.networks.analytic_round_cross</a>
+</li>
+        <li><a href="source/generated/DeepSDFStruct.deep_sdf.networks.deep_sdf_decoder.html#module-DeepSDFStruct.deep_sdf.networks.deep_sdf_decoder">DeepSDFStruct.deep_sdf.networks.deep_sdf_decoder</a>
+</li>
+        <li><a href="source/generated/DeepSDFStruct.deep_sdf.networks.deep_sdf_decoder_with_homogen.html#module-DeepSDFStruct.deep_sdf.networks.deep_sdf_decoder_with_homogen">DeepSDFStruct.deep_sdf.networks.deep_sdf_decoder_with_homogen</a>
+</li>
+        <li><a href="source/generated/DeepSDFStruct.deep_sdf.plotting.html#module-DeepSDFStruct.deep_sdf.plotting">DeepSDFStruct.deep_sdf.plotting</a>
+</li>
+        <li><a href="source/generated/DeepSDFStruct.deep_sdf.train_deep_sdf.html#module-DeepSDFStruct.deep_sdf.train_deep_sdf">DeepSDFStruct.deep_sdf.train_deep_sdf</a>
+</li>
+        <li><a href="source/generated/DeepSDFStruct.deep_sdf.utils.html#module-DeepSDFStruct.deep_sdf.utils">DeepSDFStruct.deep_sdf.utils</a>
+</li>
+        <li><a href="source/generated/DeepSDFStruct.deep_sdf.workspace.html#module-DeepSDFStruct.deep_sdf.workspace">DeepSDFStruct.deep_sdf.workspace</a>
+</li>
+        <li><a href="source/generated/DeepSDFStruct.flexicubes.html#module-DeepSDFStruct.flexicubes">DeepSDFStruct.flexicubes</a>
+</li>
+        <li><a href="source/generated/DeepSDFStruct.flexicubes.flexicubes.html#module-DeepSDFStruct.flexicubes.flexicubes">DeepSDFStruct.flexicubes.flexicubes</a>
+</li>
+        <li><a href="source/generated/DeepSDFStruct.flexicubes.tables.html#module-DeepSDFStruct.flexicubes.tables">DeepSDFStruct.flexicubes.tables</a>
+</li>
+        <li><a href="source/generated/DeepSDFStruct.lattice_structure.html#module-DeepSDFStruct.lattice_structure">DeepSDFStruct.lattice_structure</a>
+</li>
+        <li><a href="source/generated/DeepSDFStruct.mesh.html#module-DeepSDFStruct.mesh">DeepSDFStruct.mesh</a>
+</li>
+        <li><a href="source/generated/DeepSDFStruct.parametrization.html#module-DeepSDFStruct.parametrization">DeepSDFStruct.parametrization</a>
+</li>
+        <li><a href="source/generated/DeepSDFStruct.plotting.html#module-DeepSDFStruct.plotting">DeepSDFStruct.plotting</a>
+</li>
+        <li><a href="source/generated/DeepSDFStruct.pretrained_models.html#module-DeepSDFStruct.pretrained_models">DeepSDFStruct.pretrained_models</a>
+</li>
+        <li><a href="source/generated/DeepSDFStruct.sampling.html#module-DeepSDFStruct.sampling">DeepSDFStruct.sampling</a>
+</li>
+        <li><a href="source/generated/DeepSDFStruct.SDF.html#module-DeepSDFStruct.SDF">DeepSDFStruct.SDF</a>
+</li>
+        <li><a href="source/generated/DeepSDFStruct.splinepy_unitcells.html#module-DeepSDFStruct.splinepy_unitcells">DeepSDFStruct.splinepy_unitcells</a>
+</li>
+        <li><a href="source/generated/DeepSDFStruct.splinepy_unitcells.chi_3D.html#module-DeepSDFStruct.splinepy_unitcells.chi_3D">DeepSDFStruct.splinepy_unitcells.chi_3D</a>
+</li>
+        <li><a href="source/generated/DeepSDFStruct.splinepy_unitcells.cross_lattice.html#module-DeepSDFStruct.splinepy_unitcells.cross_lattice">DeepSDFStruct.splinepy_unitcells.cross_lattice</a>
+</li>
+        <li><a href="source/generated/DeepSDFStruct.splinepy_unitcells.double_lattice_extruded.html#module-DeepSDFStruct.splinepy_unitcells.double_lattice_extruded">DeepSDFStruct.splinepy_unitcells.double_lattice_extruded</a>
+</li>
+        <li><a href="source/generated/DeepSDFStruct.splinepy_unitcells.snappy_3d.html#module-DeepSDFStruct.splinepy_unitcells.snappy_3d">DeepSDFStruct.splinepy_unitcells.snappy_3d</a>
+</li>
+        <li><a href="source/generated/DeepSDFStruct.torch_spline.html#module-DeepSDFStruct.torch_spline">DeepSDFStruct.torch_spline</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="source/generated/DeepSDFStruct.sampling.html#DeepSDFStruct.sampling.move">move() (in module DeepSDFStruct.sampling)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.deep_sdf.data.html#DeepSDFStruct.deep_sdf.data.MultipleMeshFileError">MultipleMeshFileError</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="N">N</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="source/generated/DeepSDFStruct.SDF.html#DeepSDFStruct.SDF.NegatedCallable">NegatedCallable (class in DeepSDFStruct.SDF)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.sampling.html#DeepSDFStruct.sampling.noisy_sample">noisy_sample() (in module DeepSDFStruct.sampling)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="source/generated/DeepSDFStruct.deep_sdf.data.html#DeepSDFStruct.deep_sdf.data.NoMeshFileError">NoMeshFileError</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.flexicubes.flexicubes.html#DeepSDFStruct.flexicubes.flexicubes.FlexiCubes.num_vd_table">num_vd_table (DeepSDFStruct.flexicubes.flexicubes.FlexiCubes attribute)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="P">P</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="source/generated/DeepSDFStruct.SDF.html#DeepSDFStruct.SDF.SDFBase.parametrization">parametrization (DeepSDFStruct.SDF.SDFBase property)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.lattice_structure.html#DeepSDFStruct.lattice_structure.LatticeSDFStruct.plot_intermesh">plot_intermesh() (DeepSDFStruct.lattice_structure.LatticeSDFStruct method)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.deep_sdf.plotting.html#DeepSDFStruct.deep_sdf.plotting.plot_logs">plot_logs() (in module DeepSDFStruct.deep_sdf.plotting)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.lattice_structure.html#DeepSDFStruct.lattice_structure.LatticeSDFStruct.plot_samples">plot_samples() (DeepSDFStruct.lattice_structure.LatticeSDFStruct method)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.lattice_structure.html#DeepSDFStruct.lattice_structure.LatticeSDFStruct.plot_slice">plot_slice() (DeepSDFStruct.lattice_structure.LatticeSDFStruct method)</a>
+
+      <ul>
+        <li><a href="source/generated/DeepSDFStruct.SDF.html#DeepSDFStruct.SDF.SDFBase.plot_slice">(DeepSDFStruct.SDF.SDFBase method)</a>
+</li>
+        <li><a href="source/generated/DeepSDFStruct.plotting.html#DeepSDFStruct.plotting.plot_slice">(in module DeepSDFStruct.plotting)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="source/generated/DeepSDFStruct.SDF.html#DeepSDFStruct.SDF.point_segment_distance">point_segment_distance() (in module DeepSDFStruct.SDF)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.deep_sdf.mesh.html#DeepSDFStruct.deep_sdf.mesh.prepare_samples">prepare_samples() (in module DeepSDFStruct.deep_sdf.mesh)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.pretrained_models.html#DeepSDFStruct.pretrained_models.PretrainedModels">PretrainedModels (class in DeepSDFStruct.pretrained_models)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.deep_sdf.workspace.html#DeepSDFStruct.deep_sdf.workspace.print_model_specifications">print_model_specifications() (in module DeepSDFStruct.deep_sdf.workspace)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.sampling.html#DeepSDFStruct.sampling.SDFSampler.process_geometries">process_geometries() (DeepSDFStruct.sampling.SDFSampler method)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.mesh.html#DeepSDFStruct.mesh.process_N_base_input">process_N_base_input() (in module DeepSDFStruct.mesh)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.sampling.html#DeepSDFStruct.sampling.process_single_geometry">process_single_geometry() (in module DeepSDFStruct.sampling)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.mesh.html#DeepSDFStruct.mesh.prune_collinear">prune_collinear() (in module DeepSDFStruct.mesh)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="Q">Q</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="source/generated/DeepSDFStruct.flexicubes.flexicubes.html#DeepSDFStruct.flexicubes.flexicubes.FlexiCubes.qef_reg_scale">qef_reg_scale (DeepSDFStruct.flexicubes.flexicubes.FlexiCubes attribute)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.flexicubes.flexicubes.html#DeepSDFStruct.flexicubes.flexicubes.FlexiCubes.quad_split_1">quad_split_1 (DeepSDFStruct.flexicubes.flexicubes.FlexiCubes attribute)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="source/generated/DeepSDFStruct.flexicubes.flexicubes.html#DeepSDFStruct.flexicubes.flexicubes.FlexiCubes.quad_split_2">quad_split_2 (DeepSDFStruct.flexicubes.flexicubes.FlexiCubes attribute)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.flexicubes.flexicubes.html#DeepSDFStruct.flexicubes.flexicubes.FlexiCubes.quad_split_train">quad_split_train (DeepSDFStruct.flexicubes.flexicubes.FlexiCubes attribute)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="R">R</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="source/generated/DeepSDFStruct.sampling.html#DeepSDFStruct.sampling.SphereParameters.r">r (DeepSDFStruct.sampling.SphereParameters attribute)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.sampling.html#DeepSDFStruct.sampling.random_points">random_points() (in module DeepSDFStruct.sampling)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.sampling.html#DeepSDFStruct.sampling.random_points_cube">random_points_cube() (in module DeepSDFStruct.sampling)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.sampling.html#DeepSDFStruct.sampling.random_sample_sdf">random_sample_sdf() (in module DeepSDFStruct.sampling)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.sampling.html#DeepSDFStruct.sampling.RandomSampleSDF">RandomSampleSDF (class in DeepSDFStruct.sampling)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="source/generated/DeepSDFStruct.deep_sdf.data.html#DeepSDFStruct.deep_sdf.data.read_sdf_samples_into_ram">read_sdf_samples_into_ram() (in module DeepSDFStruct.deep_sdf.data)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.deep_sdf.data.html#DeepSDFStruct.deep_sdf.data.remove_nans">remove_nans() (in module DeepSDFStruct.deep_sdf.data)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.pretrained_models.html#DeepSDFStruct.pretrained_models.PretrainedModels.RoundCross">RoundCross (DeepSDFStruct.pretrained_models.PretrainedModels attribute)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.deep_sdf.networks.analytic_round_cross.html#DeepSDFStruct.deep_sdf.networks.analytic_round_cross.RoundCrossDecoder">RoundCrossDecoder (class in DeepSDFStruct.deep_sdf.networks.analytic_round_cross)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.deep_sdf.plotting.html#DeepSDFStruct.deep_sdf.plotting.running_mean">running_mean() (in module DeepSDFStruct.deep_sdf.plotting)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="S">S</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="source/generated/DeepSDFStruct.sampling.html#DeepSDFStruct.sampling.SDFSampler.sample_sdf">sample_sdf() (DeepSDFStruct.sampling.SDFSampler method)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.sampling.html#DeepSDFStruct.sampling.SDFSampler.sample_sdfs">sample_sdfs() (DeepSDFStruct.sampling.SDFSampler method)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.sampling.html#DeepSDFStruct.sampling.RandomSampleSDF.samples">samples (DeepSDFStruct.sampling.RandomSampleSDF attribute)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.deep_sdf.train_deep_sdf.html#DeepSDFStruct.deep_sdf.train_deep_sdf.save_latent_vectors">save_latent_vectors() (in module DeepSDFStruct.deep_sdf.train_deep_sdf)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.deep_sdf.train_deep_sdf.html#DeepSDFStruct.deep_sdf.train_deep_sdf.save_logs">save_logs() (in module DeepSDFStruct.deep_sdf.train_deep_sdf)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.deep_sdf.train_deep_sdf.html#DeepSDFStruct.deep_sdf.train_deep_sdf.save_model">save_model() (in module DeepSDFStruct.deep_sdf.train_deep_sdf)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.deep_sdf.train_deep_sdf.html#DeepSDFStruct.deep_sdf.train_deep_sdf.save_optimizer">save_optimizer() (in module DeepSDFStruct.deep_sdf.train_deep_sdf)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.mesh.html#DeepSDFStruct.mesh.sdf_to_triangle_dict">sdf_to_triangle_dict() (in module DeepSDFStruct.mesh)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.SDF.html#DeepSDFStruct.SDF.SDFBase">SDFBase (class in DeepSDFStruct.SDF)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.SDF.html#DeepSDFStruct.SDF.SDFfromDeepSDF">SDFfromDeepSDF (class in DeepSDFStruct.SDF)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.SDF.html#DeepSDFStruct.SDF.SDFfromLineMesh">SDFfromLineMesh (class in DeepSDFStruct.SDF)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.SDF.html#DeepSDFStruct.SDF.SDFfromMesh">SDFfromMesh (class in DeepSDFStruct.SDF)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="source/generated/DeepSDFStruct.sampling.html#DeepSDFStruct.sampling.SDFSampler">SDFSampler (class in DeepSDFStruct.sampling)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.deep_sdf.data.html#DeepSDFStruct.deep_sdf.data.SDFSamples">SDFSamples (class in DeepSDFStruct.deep_sdf.data)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.SDF.html#DeepSDFStruct.SDF.SDFfromDeepSDF.set_latent_vec">set_latent_vec() (DeepSDFStruct.SDF.SDFfromDeepSDF method)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.deep_sdf.plotting.html#DeepSDFStruct.deep_sdf.plotting.show_random_reconstruction">show_random_reconstruction() (in module DeepSDFStruct.deep_sdf.plotting)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.deep_sdf.plotting.html#DeepSDFStruct.deep_sdf.plotting.show_random_training_files">show_random_training_files() (in module DeepSDFStruct.deep_sdf.plotting)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.splinepy_unitcells.snappy_3d.html#DeepSDFStruct.splinepy_unitcells.snappy_3d.Snappy3D">Snappy3D (class in DeepSDFStruct.splinepy_unitcells.snappy_3d)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.sampling.html#DeepSDFStruct.sampling.SphereParameters">SphereParameters (class in DeepSDFStruct.sampling)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.parametrization.html#DeepSDFStruct.parametrization.SplineParametrization">SplineParametrization (class in DeepSDFStruct.parametrization)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.sampling.html#DeepSDFStruct.sampling.RandomSampleSDF.split_pos_neg">split_pos_neg() (DeepSDFStruct.sampling.RandomSampleSDF method)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.sampling.html#DeepSDFStruct.sampling.RandomSampleSDF.stacked">stacked (DeepSDFStruct.sampling.RandomSampleSDF property)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.deep_sdf.train_deep_sdf.html#DeepSDFStruct.deep_sdf.train_deep_sdf.StepLearningRateSchedule">StepLearningRateSchedule (class in DeepSDFStruct.deep_sdf.train_deep_sdf)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.SDF.html#DeepSDFStruct.SDF.SummedSDF">SummedSDF (class in DeepSDFStruct.SDF)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="T">T</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="source/generated/DeepSDFStruct.flexicubes.flexicubes.html#DeepSDFStruct.flexicubes.flexicubes.FlexiCubes.tet_table">tet_table (DeepSDFStruct.flexicubes.flexicubes.FlexiCubes attribute)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.mesh.html#DeepSDFStruct.mesh.tetrahedralize_surface">tetrahedralize_surface() (in module DeepSDFStruct.mesh)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.lattice_structure.html#DeepSDFStruct.lattice_structure.LatticeSDFStruct.tiling">tiling (DeepSDFStruct.lattice_structure.LatticeSDFStruct property)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.mesh.html#DeepSDFStruct.mesh.torchSurfMesh.to_gus">to_gus() (DeepSDFStruct.mesh.torchSurfMesh method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="source/generated/DeepSDFStruct.mesh.html#DeepSDFStruct.mesh.torchSurfMesh.to_trimesh">to_trimesh() (DeepSDFStruct.mesh.torchSurfMesh method)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.torch_spline.html#DeepSDFStruct.torch_spline.TorchSpline">TorchSpline (class in DeepSDFStruct.torch_spline)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.mesh.html#DeepSDFStruct.mesh.torchSurfMesh">torchSurfMesh (class in DeepSDFStruct.mesh)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.deep_sdf.train_deep_sdf.html#DeepSDFStruct.deep_sdf.train_deep_sdf.train_deep_sdf">train_deep_sdf() (in module DeepSDFStruct.deep_sdf.train_deep_sdf)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.lattice_structure.html#DeepSDFStruct.lattice_structure.transform">transform() (in module DeepSDFStruct.lattice_structure)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="U">U</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="source/generated/DeepSDFStruct.SDF.html#DeepSDFStruct.SDF.union">union() (in module DeepSDFStruct.SDF)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="source/generated/DeepSDFStruct.deep_sdf.data.html#DeepSDFStruct.deep_sdf.data.unpack_sdf_samples">unpack_sdf_samples() (in module DeepSDFStruct.deep_sdf.data)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.deep_sdf.data.html#DeepSDFStruct.deep_sdf.data.unpack_sdf_samples_from_ram">unpack_sdf_samples_from_ram() (in module DeepSDFStruct.deep_sdf.data)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="W">W</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="source/generated/DeepSDFStruct.deep_sdf.train_deep_sdf.html#DeepSDFStruct.deep_sdf.train_deep_sdf.WarmupLearningRateSchedule">WarmupLearningRateSchedule (class in DeepSDFStruct.deep_sdf.train_deep_sdf)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="source/generated/DeepSDFStruct.flexicubes.flexicubes.html#DeepSDFStruct.flexicubes.flexicubes.FlexiCubes.weight_scale">weight_scale (DeepSDFStruct.flexicubes.flexicubes.FlexiCubes attribute)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.sampling.html#DeepSDFStruct.sampling.SDFSampler.write_json">write_json() (DeepSDFStruct.sampling.SDFSampler method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="X">X</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="source/generated/DeepSDFStruct.deep_sdf.mesh.html#DeepSDFStruct.deep_sdf.mesh.CapBorderDict.x0">x0 (DeepSDFStruct.deep_sdf.mesh.CapBorderDict attribute)</a>
+
+      <ul>
+        <li><a href="source/generated/DeepSDFStruct.SDF.html#DeepSDFStruct.SDF.CapBorderDict.x0">(DeepSDFStruct.SDF.CapBorderDict attribute)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="source/generated/DeepSDFStruct.deep_sdf.mesh.html#DeepSDFStruct.deep_sdf.mesh.CapBorderDict.x1">x1 (DeepSDFStruct.deep_sdf.mesh.CapBorderDict attribute)</a>
+
+      <ul>
+        <li><a href="source/generated/DeepSDFStruct.SDF.html#DeepSDFStruct.SDF.CapBorderDict.x1">(DeepSDFStruct.SDF.CapBorderDict attribute)</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="Y">Y</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="source/generated/DeepSDFStruct.deep_sdf.mesh.html#DeepSDFStruct.deep_sdf.mesh.CapBorderDict.y0">y0 (DeepSDFStruct.deep_sdf.mesh.CapBorderDict attribute)</a>
+
+      <ul>
+        <li><a href="source/generated/DeepSDFStruct.SDF.html#DeepSDFStruct.SDF.CapBorderDict.y0">(DeepSDFStruct.SDF.CapBorderDict attribute)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="source/generated/DeepSDFStruct.deep_sdf.mesh.html#DeepSDFStruct.deep_sdf.mesh.CapBorderDict.y1">y1 (DeepSDFStruct.deep_sdf.mesh.CapBorderDict attribute)</a>
+
+      <ul>
+        <li><a href="source/generated/DeepSDFStruct.SDF.html#DeepSDFStruct.SDF.CapBorderDict.y1">(DeepSDFStruct.SDF.CapBorderDict attribute)</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="Z">Z</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="source/generated/DeepSDFStruct.deep_sdf.mesh.html#DeepSDFStruct.deep_sdf.mesh.CapBorderDict.z0">z0 (DeepSDFStruct.deep_sdf.mesh.CapBorderDict attribute)</a>
+
+      <ul>
+        <li><a href="source/generated/DeepSDFStruct.SDF.html#DeepSDFStruct.SDF.CapBorderDict.z0">(DeepSDFStruct.SDF.CapBorderDict attribute)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="source/generated/DeepSDFStruct.deep_sdf.mesh.html#DeepSDFStruct.deep_sdf.mesh.CapBorderDict.z1">z1 (DeepSDFStruct.deep_sdf.mesh.CapBorderDict attribute)</a>
+
+      <ul>
+        <li><a href="source/generated/DeepSDFStruct.SDF.html#DeepSDFStruct.SDF.CapBorderDict.z1">(DeepSDFStruct.SDF.CapBorderDict attribute)</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, Michael Kofler.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

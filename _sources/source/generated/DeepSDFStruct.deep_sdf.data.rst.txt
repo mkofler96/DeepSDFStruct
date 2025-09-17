@@ -1,0 +1,30 @@
+DeepSDFStruct.deep\_sdf.data
+============================
+
+.. automodule:: DeepSDFStruct.deep_sdf.data
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      find_mesh_in_directory
+      get_instance_filenames
+      read_sdf_samples_into_ram
+      remove_nans
+      unpack_sdf_samples
+      unpack_sdf_samples_from_ram
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      SDFSamples
+   
+   .. rubric:: Exceptions
+
+   .. autosummary::
+   
+      MultipleMeshFileError
+      NoMeshFileError
+   

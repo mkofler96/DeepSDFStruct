@@ -1,0 +1,15 @@
+DeepSDFStruct.deep\_sdf.networks
+================================
+
+.. automodule:: DeepSDFStruct.deep_sdf.networks
+
+   
+.. rubric:: Modules
+
+.. autosummary::
+   :toctree:
+   :recursive:
+
+   analytic_round_cross
+   deep_sdf_decoder
+   deep_sdf_decoder_with_homogen
