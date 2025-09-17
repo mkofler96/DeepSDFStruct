@@ -43,6 +43,8 @@ class LatticeSDFStruct(_SDFBase):
         parametrization_function : Callable (optional)
           Function to describe spline parameters
         """
+        if not isinstance(parametrization, _Parametrization):
+            raise TypeError("Parametrization must be of type _Parametrization")
         super().__init__(
             deformation_spline=deformation_spline,
             parametrization=parametrization,

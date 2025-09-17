@@ -281,6 +281,7 @@ def _verts_from_params(
     N,
     return_faces=False,
 ):
+    sdf._set_param(p)
     sdf_values = sdf(samples)
 
     verts_local, faces, _ = constructor(
@@ -348,9 +349,9 @@ def export_sdf_grid_vtk(sdf: SDFBase, filename, N=64):
 
 def export_surface_mesh_vtk(verts, faces, filename, dSurf=None):
     """
-    verts: (N, 3) numpy array
-    faces: (M, 3) numpy array of indices
-    dSurf: (N, 3) numpy array (optional derivative vectors)
+    verts: (N, 3) torch tensor
+    faces: (M, 3) torch tensor
+    dSurf: (N, 3, ..,..) torch tensor
     """
     vtk_points = vtk.vtkPoints()
     for v in verts:
@@ -369,14 +370,25 @@ def export_surface_mesh_vtk(verts, faces, filename, dSurf=None):
     polydata.SetPolys(vtk_cells)
 
     # Add derivative vectors as a vector field
-    if dSurf is not None:
+    extra_dims = dSurf.shape[2:]
+    N = int(np.prod(extra_dims))
+
+    # reshape to [n_nodes, N_derivatives, 3]
+    dSurf_flat = dSurf.permute(0, *range(2, dSurf.ndim), 1).reshape(dSurf.size(0), N, 3)
+    indices = [np.unravel_index(i, extra_dims) for i in range(N)]
+
+    for j, idx in enumerate(indices):
+        idx_str = "".join(str(i + 1) for i in idx)
+        name = f"derivative_[{idx_str}]"
+
         vectors = vtk.vtkDoubleArray()
         vectors.SetNumberOfComponents(3)
-        vectors.SetName("derivatives")
-        for vec in dSurf:
-            vectors.InsertNextTuple(vec.tolist())
-        polydata.GetPointData().SetVectors(vectors)
+        vectors.SetName(name)
 
+        for vec in dSurf_flat[:, j]:
+            vectors.InsertNextTuple(vec.tolist())
+
+        polydata.GetPointData().AddArray(vectors)
     # Write to file
     writer = vtk.vtkPolyDataWriter()
     writer.SetFileName(filename)

@@ -4,26 +4,33 @@ from DeepSDFStruct.mesh import (
     generate_2D_surf_mesh,
     tetrahedralize_surface,
     create_3D_surface_mesh,
+    export_surface_mesh_vtk,
 )
 from DeepSDFStruct.lattice_structure import LatticeSDFStruct
-from DeepSDFStruct.parametrization import Constant
+from DeepSDFStruct.parametrization import SplineParametrization
 from DeepSDFStruct.torch_spline import TorchSpline
 import splinepy
 import torch
 import gustaf as _gus
 
 
-def test_deepsdf_lattice_evaluation():
+def test_deepsdf_lattice_export():
     # Load a pretrained DeepSDF model
-    model = get_model(PretrainedModels.RoundCross)
+    model = get_model(PretrainedModels.AnalyticRoundCross)
     sdf = SDFfromDeepSDF(model)
-
-    # Set the latent vector and visualize a slice of the SDF
-    sdf.set_latent_vec(torch.tensor([0.3]))
 
     # Define a spline-based deformation field
     deformation_spline = TorchSpline(
         splinepy.helpme.create.box(2, 1, 1), device=model.device
+    )
+
+    param_spline = SplineParametrization(
+        splinepy.BSpline(
+            [1, 1, 1],
+            [[-1, -1, 1, 1], [-1, -1, 1, 1], [-1, -1, 1, 1]],
+            [[0.5], [0.5], [0.5], [0.5], [0.5], [0.5], [0.5], [0.5]],
+        ),
+        device=model.device,
     )
 
     # Create the lattice structure with deformation and microtile
@@ -31,7 +38,7 @@ def test_deepsdf_lattice_evaluation():
         tiling=(6, 3, 3),
         deformation_spline=deformation_spline,
         microtile=sdf,
-        parametrization=Constant([0.5], device=model.device),
+        parametrization=param_spline,
     )
 
     surf_mesh, derivative = create_3D_surface_mesh(
@@ -43,6 +50,10 @@ def test_deepsdf_lattice_evaluation():
 
     volumes, _ = tetrahedralize_surface(faces)
     _gus.io.mfem.export("volumes.mfem", volumes)
+
+    export_surface_mesh_vtk(
+        surf_mesh.vertices, surf_mesh.faces, "mesh_with_derivative.vtk", derivative
+    )
 
 
 def test_2D_mesh_export():
@@ -59,5 +70,5 @@ def test_2D_mesh_export():
 
 
 if __name__ == "__main__":
-    test_deepsdf_lattice_evaluation()
+    test_deepsdf_lattice_export()
     test_2D_mesh_export()

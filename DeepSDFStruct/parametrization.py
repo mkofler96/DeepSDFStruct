@@ -29,7 +29,7 @@ class Constant(_Parametrization):
 
 class SplineParametrization(_Parametrization):
     def __init__(self, spline: sp.BSpline | sp.Bezier | sp.NURBS, device):
-        self.torch_spline = TorchSpline(spline)
+        self.torch_spline = TorchSpline(spline, device=device)
         super().__init__(parameters=self.torch_spline.control_points, device=device)
 
     def __call__(self, queries: torch.Tensor) -> torch.Tensor:
