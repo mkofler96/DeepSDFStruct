@@ -32,8 +32,9 @@ jobs:
         run: uv sync --extra docs
 
       - name: Create Docs
-        run: uv run sphinx-autogen -o docs/source/generated docs/api_reference.rst
-        run: uv run make -C docs html
+        run: |
+          uv run sphinx-autogen -o docs/source/generated docs/api_reference.rst
+          uv run make -C docs html
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
