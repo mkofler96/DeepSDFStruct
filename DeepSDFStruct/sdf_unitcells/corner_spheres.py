@@ -4,6 +4,7 @@ import torch
 
 class CornerSpheresSDF(SDFBase):
     def __init__(self, radius, limit=1):
+        super().__init__()
         self.r = radius
         self.limit = limit
 

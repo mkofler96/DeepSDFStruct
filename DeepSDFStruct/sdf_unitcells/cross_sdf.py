@@ -4,6 +4,7 @@ import torch
 
 class CrossMsSDF(SDFBase):
     def __init__(self, radius):
+        super().__init__()
         self.r = radius
 
     def SDF(self, xyz):

@@ -28,6 +28,7 @@ class LatticeSDFStruct(_SDFBase):
         microtile: _SDFBase = None,
         parametrization: _Parametrization = None,
         cap_border_dict: CapBorderDict = None,
+        cap_outside_of_unitcube: bool = True,
     ):
         """Helper class to facilitatae the construction of microstructures.
 
@@ -49,6 +50,7 @@ class LatticeSDFStruct(_SDFBase):
             deformation_spline=deformation_spline,
             parametrization=parametrization,
             cap_border_dict=cap_border_dict,
+            cap_outside_of_unitcube=cap_outside_of_unitcube,
         )
         self.tiling = [tiling] * 3 if isinstance(tiling, int) else tiling
         self.microtile = microtile
@@ -175,7 +177,6 @@ class LatticeSDFStruct(_SDFBase):
         self._sanity_check()
 
     def _set_param(self, parameters):
-        self.parametrization_spline.control_points = parameters
         self.parameters = parameters
 
     def _get_domain_bounds(self):

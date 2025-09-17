@@ -10,9 +10,48 @@ from DeepSDFStruct.deep_sdf.models import DeepSDFModel
 from DeepSDFStruct.plotting import plot_slice
 from DeepSDFStruct.torch_spline import TorchSpline
 from DeepSDFStruct.parametrization import _Parametrization
+
 import logging
 
 logger = logging.getLogger(__name__)
+
+
+class CapType(TypedDict):
+    cap: int
+    measure: float
+
+
+class CapBorderDict(TypedDict):
+    """
+    A dictionary type describing boundary conditions ("caps")
+    for each axis direction (x, y, z).
+
+    Each key (`x0`, `x1`, `y0`, `y1`, `z0`, `z1`) corresponds to
+    one boundary face of a 3D domain, and maps to a dictionary
+    with two fields:
+
+    - `cap` (int): Type of cap applied (e.g., -1 = none, 1 = active).
+    - `measure` (float): Numerical measure associated with the cap
+      (e.g., thickness, scaling factor, tolerance).
+
+    Example
+    -------
+    >>> caps: CapBorderDict = {
+    ...     "x0": {"cap": 1, "measure": 0.02},
+    ...     "x1": {"cap": 1, "measure": 0.02},
+    ...     "y0": {"cap": 1, "measure": 0.02},
+    ...     "y1": {"cap": 1, "measure": 0.02},
+    ...     "z0": {"cap": 1, "measure": 0.02},
+    ...     "z1": {"cap": 1, "measure": 0.02},
+    ... }
+    """
+
+    x0: CapType = {"cap": -1, "measure": 0}
+    x1: CapType = {"cap": -1, "measure": 0}
+    y0: CapType = {"cap": -1, "measure": 0}
+    y1: CapType = {"cap": -1, "measure": 0}
+    z0: CapType = {"cap": -1, "measure": 0}
+    z1: CapType = {"cap": -1, "measure": 0}
 
 
 class SDFBase(ABC):
@@ -24,7 +63,8 @@ class SDFBase(ABC):
         self,
         deformation_spline: TorchSpline = None,
         parametrization: _Parametrization = None,
-        cap_border_dict=None,
+        cap_border_dict: CapBorderDict = None,
+        cap_outside_of_unitcube=False,
     ):
         self._deformation_spline = deformation_spline
 
@@ -34,18 +74,8 @@ class SDFBase(ABC):
         else:
             self.parameters = None
 
-        self._cap_border_dict = (
-            cap_border_dict
-            if cap_border_dict is not None
-            else {
-                "x0": {"cap": 1, "measure": 0.02},
-                "x1": {"cap": 1, "measure": 0.02},
-                "y0": {"cap": 1, "measure": 0.02},
-                "y1": {"cap": 1, "measure": 0.02},
-                "z0": {"cap": 1, "measure": 0.02},
-                "z1": {"cap": 1, "measure": 0.02},
-            }
-        )
+        self._cap_border_dict = cap_border_dict
+        self.cap_outside_of_unitcube = cap_outside_of_unitcube
 
     @property
     def deformation_spline(self):
@@ -77,7 +107,7 @@ class SDFBase(ABC):
         sdf_values = self._compute(queries)
         if sdf_values is None:
             raise RuntimeError("Invalid SDF output")
-        if hasattr(self, "_cap_border_dict"):
+        if self._cap_border_dict is not None:
             for loc, cap_dict in self._cap_border_dict.items():
                 cap, measure = cap_dict["cap"], cap_dict["measure"]
                 dim, location = location_lookup[loc]
@@ -102,6 +132,7 @@ class SDFBase(ABC):
 
             # cap everything outside of the unit cube
             # k and d are y = k*(x-dx) + dy
+        if self.cap_outside_of_unitcube:
             sdf_values = _cap_outside_of_unitcube(queries, sdf_values)
         return sdf_values
 
@@ -139,6 +170,7 @@ class SDFBase(ABC):
 
 class SummedSDF(SDFBase):
     def __init__(self, obj1: SDFBase, obj2: SDFBase):
+        super().__init__()
         self.obj1 = obj1
         self.obj2 = obj2
 
@@ -162,6 +194,7 @@ class SummedSDF(SDFBase):
 
 class NegatedCallable(SDFBase):
     def __init__(self, obj):
+        super().__init__()
         self.obj = obj
 
     def _compute(self, input_param):
@@ -173,6 +206,7 @@ class BoxSDF(SDFBase):
     def __init__(
         self, box_size: float = 1, center: torch.tensor = torch.tensor([0, 0, 0])
     ):
+        super().__init__()
         self.box_size = box_size
         self.center = center
 
@@ -221,6 +255,7 @@ class SDFfromMesh(SDFBase):
         --------
         signed_distances: (n,) np.ndarray
         """
+        super().__init__()
         if type(mesh) is gustaf.faces.Faces:
             mesh = trimesh.Trimesh(mesh.vertices, mesh.faces)
 
@@ -291,6 +326,7 @@ class SDFfromLineMesh(SDFBase):
         generates a SDF from it
         for now only supports lines in 2D
         """
+        super().__init__()
         self.line_mesh = line_mesh
         self.t = thickness
         self.smoothness = smoothness
@@ -320,6 +356,7 @@ class SDFfromLineMesh(SDFBase):
 
 class SDFfromDeepSDF(SDFBase):
     def __init__(self, model: DeepSDFModel, max_batch=32**3):
+        super().__init__()
         self.model = model
         self.parameters = None
         self.max_batch = max_batch
@@ -439,17 +476,3 @@ location_lookup = {
     "z0": (2, 0),
     "z1": (2, 1),
 }
-
-
-class CapType(TypedDict):
-    cap: int
-    measure: float
-
-
-class CapBorderDict(TypedDict):
-    x0: CapType = {"cap": -1, "measure": 0}
-    x1: CapType = {"cap": -1, "measure": 0}
-    y0: CapType = {"cap": -1, "measure": 0}
-    y1: CapType = {"cap": -1, "measure": 0}
-    z0: CapType = {"cap": -1, "measure": 0}
-    z1: CapType = {"cap": -1, "measure": 0}
