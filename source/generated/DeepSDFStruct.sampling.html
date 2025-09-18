@@ -410,6 +410,14 @@
 <dt class="sig sig-object py" id="DeepSDFStruct.sampling.RandomSampleSDF">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.sampling.</span></span><span class="sig-name descname"><span class="pre">RandomSampleSDF</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">samples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distances</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.sampling.RandomSampleSDF" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>samples</strong> (<em>torch._VariableFunctionsClass.tensor</em>)</p></li>
+<li><p><strong>distances</strong> (<em>torch._VariableFunctionsClass.tensor</em>)</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="DeepSDFStruct.sampling.RandomSampleSDF.create_gus_plottable">
 <span class="sig-name descname"><span class="pre">create_gus_plottable</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.sampling.RandomSampleSDF.create_gus_plottable" title="Link to this definition">#</a></dt>
@@ -441,12 +449,20 @@
 <dt class="sig sig-object py" id="DeepSDFStruct.sampling.SDFSampler">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.sampling.</span></span><span class="sig-name descname"><span class="pre">SDFSampler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outdir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">splitdir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unify_multipatches</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.sampling.SDFSampler" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="field-list simple">
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="DeepSDFStruct.sampling.SDFSampler.add_class">
 <span class="sig-name descname"><span class="pre">add_class</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">geom_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">class_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.sampling.SDFSampler.add_class" title="Link to this definition">#</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>geom_list</strong> (<em>list</em>)</p></li>
+<li><p><strong>class_name</strong> (<em>str</em>)</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -468,18 +484,35 @@
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="DeepSDFStruct.SDF.html#DeepSDFStruct.SDF.SDFBase" title="DeepSDFStruct.SDF.SDFBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">SDFBase</span></code></a></span></p>
 </dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>n_faces</strong> (<em>int</em>)</p></li>
+<li><p><strong>unify_multipatches</strong> (<em>bool</em>)</p></li>
+<li><p><strong>threshold</strong> (<em>float</em>)</p></li>
+</ul>
+</dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="DeepSDFStruct.sampling.SDFSampler.process_geometries">
 <span class="sig-name descname"><span class="pre">process_geometries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sampling_strategy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'uniform'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_faces</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_samples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unify_multipatches</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compute_mechanical_properties</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.sampling.SDFSampler.process_geometries" title="Link to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>n_samples</strong> (<em>int</em>)</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="DeepSDFStruct.sampling.SDFSampler.sample_sdf">
 <span class="sig-name descname"><span class="pre">sample_sdf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sdf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_samples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampling_strategy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'uniform'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">box_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[0.0025,</span> <span class="pre">0.00025]</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.sampling.SDFSampler.sample_sdf" title="Link to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>n_samples</strong> (<em>int</em>)</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="DeepSDFStruct.sampling.SDFSampler.sample_sdfs">
@@ -487,6 +520,12 @@
 <dd><dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>data_set_info</strong> (<a class="reference internal" href="#DeepSDFStruct.sampling.DataSetInfo" title="DeepSDFStruct.sampling.DataSetInfo"><em>DeepSDFStruct.sampling.DataSetInfo</em></a>)</p></li>
+<li><p><strong>n_samples</strong> (<em>int</em>)</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>

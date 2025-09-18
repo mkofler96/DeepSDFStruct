@@ -363,13 +363,38 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="DeepSDFStruct.parametrization.Constant">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.parametrization.</span></span><span class="sig-name descname"><span class="pre">Constant</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.parametrization.Constant" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_Parametrization</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">DeepSDFStruct.parametrization._Parametrization</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="DeepSDFStruct.parametrization.Constant.set_param">
+<span class="sig-name descname"><span class="pre">set_param</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parameters</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.parametrization.Constant.set_param" title="Link to this definition">#</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>parameters</strong> (<em>torch.Tensor</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="DeepSDFStruct.parametrization.SplineParametrization">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.parametrization.</span></span><span class="sig-name descname"><span class="pre">SplineParametrization</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spline</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.parametrization.SplineParametrization" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_Parametrization</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">DeepSDFStruct.parametrization._Parametrization</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>spline</strong> (<em>splinepy.bspline.BSpline</em><em> | </em><em>splinepy.bezier.Bezier</em><em> | </em><em>splinepy.nurbs.NURBS</em>)</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="DeepSDFStruct.parametrization.SplineParametrization.set_param">
+<span class="sig-name descname"><span class="pre">set_param</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parameter</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.parametrization.SplineParametrization.set_param" title="Link to this definition">#</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>parameter</strong> (<em>torch.Tensor</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 </section>
@@ -421,8 +446,14 @@
   </div>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.parametrization.Constant"><code class="docutils literal notranslate"><span class="pre">Constant</span></code></a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.parametrization.SplineParametrization"><code class="docutils literal notranslate"><span class="pre">SplineParametrization</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.parametrization.Constant"><code class="docutils literal notranslate"><span class="pre">Constant</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.parametrization.Constant.set_param"><code class="docutils literal notranslate"><span class="pre">Constant.set_param()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.parametrization.SplineParametrization"><code class="docutils literal notranslate"><span class="pre">SplineParametrization</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.parametrization.SplineParametrization.set_param"><code class="docutils literal notranslate"><span class="pre">SplineParametrization.set_param()</span></code></a></li>
+</ul>
+</li>
 </ul>
   </nav></div>
 

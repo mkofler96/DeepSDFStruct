@@ -267,6 +267,7 @@
  | <a href="#G"><strong>G</strong></a>
  | <a href="#H"><strong>H</strong></a>
  | <a href="#I"><strong>I</strong></a>
+ | <a href="#J"><strong>J</strong></a>
  | <a href="#L"><strong>L</strong></a>
  | <a href="#M"><strong>M</strong></a>
  | <a href="#N"><strong>N</strong></a>
@@ -302,6 +303,10 @@
 
 <h2 id="B">B</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="source/generated/DeepSDFStruct.torch_spline.html#DeepSDFStruct.torch_spline.TorchSplineFunction.backward">backward() (DeepSDFStruct.torch_spline.TorchSplineFunction static method)</a>
+</li>
+  </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="source/generated/DeepSDFStruct.SDF.html#DeepSDFStruct.SDF.BoxSDF">BoxSDF (class in DeepSDFStruct.SDF)</a>
 </li>
@@ -703,8 +708,6 @@
 </li>
       <li><a href="source/generated/DeepSDFStruct.deep_sdf.utils.html#DeepSDFStruct.deep_sdf.utils.format_memory_size">format_memory_size() (in module DeepSDFStruct.deep_sdf.utils)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="source/generated/DeepSDFStruct.deep_sdf.networks.analytic_round_cross.html#DeepSDFStruct.deep_sdf.networks.analytic_round_cross.RoundCrossDecoder.forward">forward() (DeepSDFStruct.deep_sdf.networks.analytic_round_cross.RoundCrossDecoder method)</a>
 
       <ul>
@@ -713,6 +716,8 @@
         <li><a href="source/generated/DeepSDFStruct.deep_sdf.networks.deep_sdf_decoder_with_homogen.html#DeepSDFStruct.deep_sdf.networks.deep_sdf_decoder_with_homogen.HomogenDecoder.forward">(DeepSDFStruct.deep_sdf.networks.deep_sdf_decoder_with_homogen.HomogenDecoder method)</a>
 </li>
         <li><a href="source/generated/DeepSDFStruct.torch_spline.html#DeepSDFStruct.torch_spline.TorchSpline.forward">(DeepSDFStruct.torch_spline.TorchSpline method)</a>
+</li>
+        <li><a href="source/generated/DeepSDFStruct.torch_spline.html#DeepSDFStruct.torch_spline.TorchSplineFunction.forward">(DeepSDFStruct.torch_spline.TorchSplineFunction static method)</a>
 </li>
       </ul></li>
   </ul></td>
@@ -788,6 +793,14 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="source/generated/DeepSDFStruct.deep_sdf.workspace.html#DeepSDFStruct.deep_sdf.workspace.init_decoder">init_decoder() (in module DeepSDFStruct.deep_sdf.workspace)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="J">J</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="source/generated/DeepSDFStruct.torch_spline.html#DeepSDFStruct.torch_spline.TorchSplineFunction.jvp">jvp() (DeepSDFStruct.torch_spline.TorchSplineFunction static method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -1054,14 +1067,20 @@
 </li>
       <li><a href="source/generated/DeepSDFStruct.SDF.html#DeepSDFStruct.SDF.SDFfromMesh">SDFfromMesh (class in DeepSDFStruct.SDF)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="source/generated/DeepSDFStruct.sampling.html#DeepSDFStruct.sampling.SDFSampler">SDFSampler (class in DeepSDFStruct.sampling)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="source/generated/DeepSDFStruct.deep_sdf.data.html#DeepSDFStruct.deep_sdf.data.SDFSamples">SDFSamples (class in DeepSDFStruct.deep_sdf.data)</a>
 </li>
       <li><a href="source/generated/DeepSDFStruct.SDF.html#DeepSDFStruct.SDF.SDFfromDeepSDF.set_latent_vec">set_latent_vec() (DeepSDFStruct.SDF.SDFfromDeepSDF method)</a>
 </li>
+      <li><a href="source/generated/DeepSDFStruct.parametrization.html#DeepSDFStruct.parametrization.Constant.set_param">set_param() (DeepSDFStruct.parametrization.Constant method)</a>
+
+      <ul>
+        <li><a href="source/generated/DeepSDFStruct.parametrization.html#DeepSDFStruct.parametrization.SplineParametrization.set_param">(DeepSDFStruct.parametrization.SplineParametrization method)</a>
+</li>
+      </ul></li>
       <li><a href="source/generated/DeepSDFStruct.deep_sdf.plotting.html#DeepSDFStruct.deep_sdf.plotting.show_random_reconstruction">show_random_reconstruction() (in module DeepSDFStruct.deep_sdf.plotting)</a>
 </li>
       <li><a href="source/generated/DeepSDFStruct.deep_sdf.plotting.html#DeepSDFStruct.deep_sdf.plotting.show_random_training_files">show_random_training_files() (in module DeepSDFStruct.deep_sdf.plotting)</a>
@@ -1094,11 +1113,13 @@
 </li>
       <li><a href="source/generated/DeepSDFStruct.mesh.html#DeepSDFStruct.mesh.torchSurfMesh.to_gus">to_gus() (DeepSDFStruct.mesh.torchSurfMesh method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="source/generated/DeepSDFStruct.mesh.html#DeepSDFStruct.mesh.torchSurfMesh.to_trimesh">to_trimesh() (DeepSDFStruct.mesh.torchSurfMesh method)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="source/generated/DeepSDFStruct.torch_spline.html#DeepSDFStruct.torch_spline.TorchSpline">TorchSpline (class in DeepSDFStruct.torch_spline)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.torch_spline.html#DeepSDFStruct.torch_spline.TorchSplineFunction">TorchSplineFunction (class in DeepSDFStruct.torch_spline)</a>
 </li>
       <li><a href="source/generated/DeepSDFStruct.mesh.html#DeepSDFStruct.mesh.torchSurfMesh">torchSurfMesh (class in DeepSDFStruct.mesh)</a>
 </li>

@@ -367,7 +367,7 @@
 <td><p></p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.SDF.CapBorderDict" title="DeepSDFStruct.SDF.CapBorderDict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CapBorderDict</span></code></a></p></td>
-<td><p></p></td>
+<td><p>A dictionary type describing boundary conditions (&quot;caps&quot;) for each axis direction (x, y, z).</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.SDF.CapType" title="DeepSDFStruct.SDF.CapType"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CapType</span></code></a></p></td>
 <td><p></p></td>
@@ -396,13 +396,42 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="DeepSDFStruct.SDF.BoxSDF">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.SDF.</span></span><span class="sig-name descname"><span class="pre">BoxSDF</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">box_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">center</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">tensor([0,</span> <span class="pre">0,</span> <span class="pre">0])</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.SDF.BoxSDF" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#DeepSDFStruct.SDF.SDFBase" title="DeepSDFStruct.SDF.SDFBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">SDFBase</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#DeepSDFStruct.SDF.SDFBase" title="DeepSDFStruct.SDF.SDFBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">DeepSDFStruct.SDF.SDFBase</span></code></a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>box_size</strong> (<em>float</em>)</p></li>
+<li><p><strong>center</strong> (<em>torch._VariableFunctionsClass.tensor</em>)</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="DeepSDFStruct.SDF.CapBorderDict">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.SDF.</span></span><span class="sig-name descname"><span class="pre">CapBorderDict</span></span><a class="headerlink" href="#DeepSDFStruct.SDF.CapBorderDict" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">TypedDict</span></code></p>
+<p>A dictionary type describing boundary conditions (“caps”)
+for each axis direction (x, y, z).</p>
+<p>Each key (<cite>x0</cite>, <cite>x1</cite>, <cite>y0</cite>, <cite>y1</cite>, <cite>z0</cite>, <cite>z1</cite>) corresponds to
+one boundary face of a 3D domain, and maps to a dictionary
+with two fields:</p>
+<ul class="simple">
+<li><p><cite>cap</cite> (int): Type of cap applied (e.g., -1 = none, 1 = active).</p></li>
+<li><p><cite>measure</cite> (float): Numerical measure associated with the cap
+(e.g., thickness, scaling factor, tolerance).</p></li>
+</ul>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">caps</span><span class="p">:</span> <span class="n">CapBorderDict</span> <span class="o">=</span> <span class="p">{</span>
+<span class="gp">... </span>    <span class="s2">&quot;x0&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;cap&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;measure&quot;</span><span class="p">:</span> <span class="mf">0.02</span><span class="p">},</span>
+<span class="gp">... </span>    <span class="s2">&quot;x1&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;cap&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;measure&quot;</span><span class="p">:</span> <span class="mf">0.02</span><span class="p">},</span>
+<span class="gp">... </span>    <span class="s2">&quot;y0&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;cap&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;measure&quot;</span><span class="p">:</span> <span class="mf">0.02</span><span class="p">},</span>
+<span class="gp">... </span>    <span class="s2">&quot;y1&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;cap&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;measure&quot;</span><span class="p">:</span> <span class="mf">0.02</span><span class="p">},</span>
+<span class="gp">... </span>    <span class="s2">&quot;z0&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;cap&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;measure&quot;</span><span class="p">:</span> <span class="mf">0.02</span><span class="p">},</span>
+<span class="gp">... </span>    <span class="s2">&quot;z1&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;cap&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;measure&quot;</span><span class="p">:</span> <span class="mf">0.02</span><span class="p">},</span>
+<span class="gp">... </span><span class="p">}</span>
+</pre></div>
+</div>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="DeepSDFStruct.SDF.CapBorderDict.x0">
 <span class="sig-name descname"><span class="pre">x0</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#DeepSDFStruct.SDF.CapType" title="DeepSDFStruct.SDF.CapType"><code class="xref py py-class docutils literal notranslate"><span class="pre">CapType</span></code></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'cap':</span> <span class="pre">-1,</span> <span class="pre">'measure':</span> <span class="pre">0}</span></em><a class="headerlink" href="#DeepSDFStruct.SDF.CapBorderDict.x0" title="Link to this definition">#</a></dt>
@@ -454,15 +483,24 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="DeepSDFStruct.SDF.NegatedCallable">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.SDF.</span></span><span class="sig-name descname"><span class="pre">NegatedCallable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.SDF.NegatedCallable" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#DeepSDFStruct.SDF.SDFBase" title="DeepSDFStruct.SDF.SDFBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">SDFBase</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#DeepSDFStruct.SDF.SDFBase" title="DeepSDFStruct.SDF.SDFBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">DeepSDFStruct.SDF.SDFBase</span></code></a></p>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="DeepSDFStruct.SDF.SDFBase">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.SDF.</span></span><span class="sig-name descname"><span class="pre">SDFBase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">deformation_spline</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parametrization</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cap_border_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.SDF.SDFBase" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.SDF.</span></span><span class="sig-name descname"><span class="pre">SDFBase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">deformation_spline</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parametrization</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cap_border_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cap_outside_of_unitcube</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.SDF.SDFBase" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
 <p>Abstract base class for Signed Distance Functions with optional
 deformation and parametrization.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>deformation_spline</strong> (<a class="reference internal" href="DeepSDFStruct.torch_spline.html#DeepSDFStruct.torch_spline.TorchSpline" title="DeepSDFStruct.torch_spline.TorchSpline"><em>DeepSDFStruct.torch_spline.TorchSpline</em></a>)</p></li>
+<li><p><strong>parametrization</strong> (<em>DeepSDFStruct.parametrization._Parametrization</em>)</p></li>
+<li><p><strong>cap_border_dict</strong> (<a class="reference internal" href="#DeepSDFStruct.SDF.CapBorderDict" title="DeepSDFStruct.SDF.CapBorderDict"><em>DeepSDFStruct.SDF.CapBorderDict</em></a>)</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py property">
 <dt class="sig sig-object py" id="DeepSDFStruct.SDF.SDFBase.cap_border_dict">
 <em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">cap_border_dict</span></span><a class="headerlink" href="#DeepSDFStruct.SDF.SDFBase.cap_border_dict" title="Link to this definition">#</a></dt>
@@ -488,11 +526,21 @@ deformation and parametrization.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="DeepSDFStruct.SDF.SDFfromDeepSDF">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.SDF.</span></span><span class="sig-name descname"><span class="pre">SDFfromDeepSDF</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_batch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">32768</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.SDF.SDFfromDeepSDF" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#DeepSDFStruct.SDF.SDFBase" title="DeepSDFStruct.SDF.SDFBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">SDFBase</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#DeepSDFStruct.SDF.SDFBase" title="DeepSDFStruct.SDF.SDFBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">DeepSDFStruct.SDF.SDFBase</span></code></a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>model</strong> (<a class="reference internal" href="DeepSDFStruct.deep_sdf.models.html#DeepSDFStruct.deep_sdf.models.DeepSDFModel" title="DeepSDFStruct.deep_sdf.models.DeepSDFModel"><em>DeepSDFStruct.deep_sdf.models.DeepSDFModel</em></a>)</p>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="DeepSDFStruct.SDF.SDFfromDeepSDF.set_latent_vec">
 <span class="sig-name descname"><span class="pre">set_latent_vec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">latent_vec</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.SDF.SDFfromDeepSDF.set_latent_vec" title="Link to this definition">#</a></dt>
 <dd><p>Set conditioning parameters for the model (e.g., latent code).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>latent_vec</strong> (<em>torch.Tensor</em>)</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -500,7 +548,12 @@ deformation and parametrization.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="DeepSDFStruct.SDF.SDFfromLineMesh">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.SDF.</span></span><span class="sig-name descname"><span class="pre">SDFfromLineMesh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">line_mesh</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thickness</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">smoothness</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.SDF.SDFfromLineMesh" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#DeepSDFStruct.SDF.SDFBase" title="DeepSDFStruct.SDF.SDFBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">SDFBase</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#DeepSDFStruct.SDF.SDFBase" title="DeepSDFStruct.SDF.SDFBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">DeepSDFStruct.SDF.SDFBase</span></code></a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>line_mesh</strong> (<em>gustaf.edges.Edges</em>)</p>
+</dd>
+</dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="DeepSDFStruct.SDF.SDFfromLineMesh.line_mesh">
 <span class="sig-name descname"><span class="pre">line_mesh</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">Edges</span></code></em><a class="headerlink" href="#DeepSDFStruct.SDF.SDFfromLineMesh.line_mesh" title="Link to this definition">#</a></dt>
@@ -511,13 +564,21 @@ deformation and parametrization.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="DeepSDFStruct.SDF.SDFfromMesh">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.SDF.</span></span><span class="sig-name descname"><span class="pre">SDFfromMesh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mesh</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype=&lt;class</span> <span class="pre">'numpy.float32'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flip_sign=False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale=True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold=1e-05</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.SDF.SDFfromMesh" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#DeepSDFStruct.SDF.SDFBase" title="DeepSDFStruct.SDF.SDFBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">SDFBase</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#DeepSDFStruct.SDF.SDFBase" title="DeepSDFStruct.SDF.SDFBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">DeepSDFStruct.SDF.SDFBase</span></code></a></p>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="DeepSDFStruct.SDF.SummedSDF">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.SDF.</span></span><span class="sig-name descname"><span class="pre">SummedSDF</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obj2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.SDF.SummedSDF" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#DeepSDFStruct.SDF.SDFBase" title="DeepSDFStruct.SDF.SDFBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">SDFBase</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#DeepSDFStruct.SDF.SDFBase" title="DeepSDFStruct.SDF.SDFBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">DeepSDFStruct.SDF.SDFBase</span></code></a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>obj1</strong> (<a class="reference internal" href="#DeepSDFStruct.SDF.SDFBase" title="DeepSDFStruct.SDF.SDFBase"><em>DeepSDFStruct.SDF.SDFBase</em></a>)</p></li>
+<li><p><strong>obj2</strong> (<a class="reference internal" href="#DeepSDFStruct.SDF.SDFBase" title="DeepSDFStruct.SDF.SDFBase"><em>DeepSDFStruct.SDF.SDFBase</em></a>)</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">

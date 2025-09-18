@@ -361,7 +361,7 @@
 <td><p></p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.mesh.export_surface_mesh_vtk" title="DeepSDFStruct.mesh.export_surface_mesh_vtk"><code class="xref py py-obj docutils literal notranslate"><span class="pre">export_surface_mesh_vtk</span></code></a>(verts, faces, filename)</p></td>
-<td><p>verts: (N, 3) numpy array faces: (M, 3) numpy array of indices dSurf: (N, 3) numpy array (optional derivative vectors)</p></td>
+<td><p>verts: (N, 3) torch tensor faces: (M, 3) torch tensor dSurf: (N, 3, ..,..) torch tensor</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.mesh.export_volume_mesh" title="DeepSDFStruct.mesh.export_volume_mesh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">export_volume_mesh</span></code></a>(volume_mesh, filename[, ...])</p></td>
 <td><p>export a mesh and adds corresponding boundary conditions</p></td>
@@ -396,37 +396,72 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="DeepSDFStruct.mesh.create_3D_surface_mesh">
 <span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.mesh.</span></span><span class="sig-name descname"><span class="pre">create_3D_surface_mesh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sdf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N_base</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">differentiate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.mesh.create_3D_surface_mesh" title="Link to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>sdf</strong> (<a class="reference internal" href="DeepSDFStruct.SDF.html#DeepSDFStruct.SDF.SDFBase" title="DeepSDFStruct.SDF.SDFBase"><em>DeepSDFStruct.SDF.SDFBase</em></a>)</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="DeepSDFStruct.mesh.export_abaqus_surf_mesh">
 <span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.mesh.</span></span><span class="sig-name descname"><span class="pre">export_abaqus_surf_mesh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">surf_mesh</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.mesh.export_abaqus_surf_mesh" title="Link to this definition">#</a></dt>
 <dd><p>export a mesh and adds corresponding boundary conditions</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>surf_mesh</strong> (<em>gustaf.faces.Faces</em>)</p></li>
+<li><p><strong>filename</strong> (<em>str</em>)</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="DeepSDFStruct.mesh.export_sdf_grid_vtk">
 <span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.mesh.</span></span><span class="sig-name descname"><span class="pre">export_sdf_grid_vtk</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sdf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">64</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.mesh.export_sdf_grid_vtk" title="Link to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>sdf</strong> (<a class="reference internal" href="DeepSDFStruct.SDF.html#DeepSDFStruct.SDF.SDFBase" title="DeepSDFStruct.SDF.SDFBase"><em>DeepSDFStruct.SDF.SDFBase</em></a>)</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="DeepSDFStruct.mesh.export_surface_mesh_vtk">
 <span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.mesh.</span></span><span class="sig-name descname"><span class="pre">export_surface_mesh_vtk</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">verts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">faces</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dSurf</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.mesh.export_surface_mesh_vtk" title="Link to this definition">#</a></dt>
-<dd><p>verts: (N, 3) numpy array
-faces: (M, 3) numpy array of indices
-dSurf: (N, 3) numpy array (optional derivative vectors)</p>
+<dd><p>verts: (N, 3) torch tensor
+faces: (M, 3) torch tensor
+dSurf: (N, 3, ..,..) torch tensor</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="DeepSDFStruct.mesh.export_volume_mesh">
 <span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.mesh.</span></span><span class="sig-name descname"><span class="pre">export_volume_mesh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">volume_mesh</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">export_abaqus</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.mesh.export_volume_mesh" title="Link to this definition">#</a></dt>
 <dd><p>export a mesh and adds corresponding boundary conditions</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>volume_mesh</strong> (<em>gustaf.volumes.Volumes</em>)</p></li>
+<li><p><strong>filename</strong> (<em>str</em>)</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="DeepSDFStruct.mesh.generate_2D_surf_mesh">
 <span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.mesh.</span></span><span class="sig-name descname"><span class="pre">generate_2D_surf_mesh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sdf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_squares</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_elements</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bounds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.mesh.generate_2D_surf_mesh" title="Link to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sdf</strong> (<a class="reference internal" href="DeepSDFStruct.SDF.html#DeepSDFStruct.SDF.SDFBase" title="DeepSDFStruct.SDF.SDFBase"><em>DeepSDFStruct.SDF.SDFBase</em></a>)</p></li>
+<li><p><strong>n_squares</strong> (<em>int</em>)</p></li>
+<li><p><strong>n_elements</strong> (<em>int</em>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="DeepSDFStruct.mesh.process_N_base_input">
@@ -482,6 +517,9 @@ Includes domain boundary and hole polygons.</p>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Volumes</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>]</span></p>
 </dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>surface_mesh</strong> (<em>gustaf.faces.Faces</em>)</p>
+</dd>
 </dl>
 </dd></dl>
 
@@ -489,6 +527,14 @@ Includes domain boundary and hole polygons.</p>
 <dt class="sig sig-object py" id="DeepSDFStruct.mesh.torchSurfMesh">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.mesh.</span></span><span class="sig-name descname"><span class="pre">torchSurfMesh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vertices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">faces</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.mesh.torchSurfMesh" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>vertices</strong> (<em>torch._VariableFunctionsClass.tensor</em>)</p></li>
+<li><p><strong>faces</strong> (<em>torch._VariableFunctionsClass.tensor</em>)</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="DeepSDFStruct.mesh.torchSurfMesh.to_gus">
 <span class="sig-name descname"><span class="pre">to_gus</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.mesh.torchSurfMesh.to_gus" title="Link to this definition">#</a></dt>

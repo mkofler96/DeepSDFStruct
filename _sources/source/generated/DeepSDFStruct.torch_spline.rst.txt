@@ -9,4 +9,5 @@ DeepSDFStruct.torch\_spline
    .. autosummary::
    
       TorchSpline
+      TorchSplineFunction
    
