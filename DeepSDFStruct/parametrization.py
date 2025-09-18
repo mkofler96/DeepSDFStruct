@@ -30,6 +30,9 @@ class Constant(_Parametrization):
         N = queries.shape[0]
         return self.parameters.expand(N, -1)
 
+    def set_param(self, parameters: torch.Tensor):
+        self.parameters = parameters
+
 
 class SplineParametrization(_Parametrization):
     def __init__(self, spline: sp.BSpline | sp.Bezier | sp.NURBS, device):
