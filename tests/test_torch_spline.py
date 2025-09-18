@@ -2,6 +2,12 @@ import torch
 import splinepy
 from DeepSDFStruct.torch_spline import TorchSpline
 import numpy as np
+import pytest
+
+
+@pytest.fixture
+def np_rng():
+    return np.random.default_rng(0)
 
 
 def test_torchspline_evaluation(np_rng, device="cpu"):
