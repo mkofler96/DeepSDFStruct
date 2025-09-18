@@ -31,6 +31,7 @@ env/
 ENV/
 env.bak/
 venv.bak/
+.python-version
 
 # PyInstaller
 *.manifest
@@ -100,6 +101,11 @@ Desktop.ini
 # Pytorch intermediate files
 *.pth 
 !latest.pth
+
+# Files generated during testing
+DeepSDFStruct/trained_models/test_experiment/**/latest.pth
+
+training_data
 
 # doc temp files
 docs/_build
