@@ -26,8 +26,8 @@ def test_deepsdf_lattice_export():
 
     param_spline = SplineParametrization(
         splinepy.BSpline(
-            [1, 1, 1],
-            [[-1, -1, 1, 1], [-1, -1, 1, 1], [-1, -1, 1, 1]],
+            [0, 0, 0],
+            [[0, 0.5, 1], [0, 0.5, 1], [0, 0.5, 1]],
             [[0.1], [0.1], [0.1], [0.1], [0.1], [0.1], [0.1], [0.1]],
         ),
         device=model.device,
@@ -35,7 +35,7 @@ def test_deepsdf_lattice_export():
 
     # Create the lattice structure with deformation and microtile
     lattice_struct = LatticeSDFStruct(
-        tiling=(1, 1, 1),
+        tiling=(2, 2, 2),
         deformation_spline=deformation_spline,
         microtile=sdf,
         parametrization=param_spline,
