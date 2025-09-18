@@ -14,8 +14,6 @@ DeepSDFStruct.deep\_sdf
    create_ply_files_from_latent
    create_screenshots_from_plyfiles
    data
-   main
-   mesh
    metrics
    models
    networks
