@@ -162,6 +162,68 @@ class SDFBase(ABC):
     def __add__(self, other):
         return SummedSDF(self, other)
 
+    def reconstruct_from_mesh(
+        self,
+        mesh: gustaf.Faces,
+        num_iterations=1000,
+        lr=5e-4,
+        l2reg=False,
+        device="cpu",
+    ):
+        parameters = (
+            torch.ones_like(self.parameters).normal_(mean=0, std=0.1).to(device)
+        )
+
+        parameters.requires_grad = True
+
+        optimizer = torch.optim.Adam([parameters], lr=lr)
+
+        loss_num = 0
+
+        queries_parameter_space = self.deformation_spline.spline.proximities(
+            mesh.vertices
+        )
+        verts_min = mesh.vertices.min(axis=0)
+        verts_max = mesh.vertices.max(axis=0)
+
+        print("Min/Max in PHYSICAL space:\n")
+        for name, mn, mx in zip(
+            ["x", "y", "z"], verts_min.tolist(), verts_max.tolist()
+        ):
+            print(f"{name}: min={mn:.6f}, max={mx:.6f}")
+        queries_ps_torch = torch.tensor(
+            queries_parameter_space, device=device, dtype=parameters.dtype
+        )
+        queries_min = queries_ps_torch.min(dim=0).values
+        queries_max = queries_ps_torch.max(dim=0).values
+
+        print("\nMin/Max in QUERY space:\n")
+        for name, mn, mx in zip(
+            ["x", "y", "z"], queries_min.tolist(), queries_max.tolist()
+        ):
+            print(f"{name}: min={mn:.6f}, max={mx:.6f}")
+
+        for e in range(num_iterations):
+            optimizer.zero_grad()
+
+            # SDF at vertices needs to be zero
+            self.parametrization.set_param(parameters)
+            loss = torch.norm(self.__call__(queries_ps_torch))
+            if l2reg:
+                loss += 1e-4 * torch.mean(parameters.pow(2))
+            loss.backward()
+            optimizer.step()
+
+            if e % 50 == 0:
+                loss_num = loss.detach().item()
+                print(f"Epoch: {e:5g} | Loss: {loss_num:.5f}")
+
+            loss_num = loss.cpu().data.numpy()
+
+        print("Reconstructed parameters:")
+        print(parameters)
+        return parameters
+
 
 class SummedSDF(SDFBase):
     def __init__(self, obj1: SDFBase, obj2: SDFBase):

@@ -23,25 +23,23 @@ def test_deepsdf_lattice_export():
     deformation_spline = TorchSpline(
         splinepy.helpme.create.box(1.5, 1, 1), device=model.device
     )
-
+    control_points = [
+        [0.3],
+        [0.3],
+        [0.3],
+        [0.3],
+        [0.3],
+        [0.3],
+        [0.3],
+        [0.3],
+        [0.3],
+        [0.3],
+        [0.3],
+        [0.3],
+    ]
     param_spline = SplineParametrization(
         splinepy.BSpline(
-            [0, 0, 0],
-            [[0, 1 / 3, 2 / 3, 1], [0, 0.5, 1], [0, 0.5, 1]],
-            [
-                [0.1],
-                [0.1],
-                [0.1],
-                [0.1],
-                [0.1],
-                [0.1],
-                [0.1],
-                [0.1],
-                [0.1],
-                [0.1],
-                [0.1],
-                [0.1],
-            ],
+            [0, 0, 0], [[0, 1 / 3, 2 / 3, 1], [0, 0.5, 1], [0, 0.5, 1]], control_points
         ),
         device=model.device,
     )
@@ -69,6 +67,13 @@ def test_deepsdf_lattice_export():
 
     volumes, _ = tetrahedralize_surface(faces)
     _gus.io.mfem.export("tests/tmp_outputs/volumes.mfem", volumes)
+
+    # test reconstruction
+    recon_param = lattice_struct.reconstruct_from_mesh(faces, device=model.device)
+    print("Original parameters:")
+    print(control_points)
+    print("Reconstructed parameters:")
+    print(recon_param)
 
 
 def test_2D_mesh_export():
