@@ -57,15 +57,18 @@ def test_deepsdf_lattice_export():
         lattice_struct, 30, differentiate=True
     )
     export_surface_mesh_vtk(
-        surf_mesh.vertices, surf_mesh.faces, "mesh_with_derivative.vtk", derivative
+        surf_mesh.vertices,
+        surf_mesh.faces,
+        "tests/tmp_outputs/mesh_with_derivative.vtk",
+        derivative,
     )
-    export_sdf_grid_vtk(lattice_struct, "sdf.vtk")
+    export_sdf_grid_vtk(lattice_struct, "tests/tmp_outputs/sdf.vtk")
     faces = surf_mesh.to_gus()
-    _gus.io.meshio.export("faces.inp", faces)
-    _gus.io.meshio.export("faces.obj", faces)
+    _gus.io.meshio.export("tests/tmp_outputs/faces.inp", faces)
+    _gus.io.meshio.export("tests/tmp_outputs/faces.obj", faces)
 
     volumes, _ = tetrahedralize_surface(faces)
-    _gus.io.mfem.export("volumes.mfem", volumes)
+    _gus.io.mfem.export("tests/tmp_outputs/volumes.mfem", volumes)
 
 
 def test_2D_mesh_export():
@@ -74,11 +77,11 @@ def test_2D_mesh_export():
 
     sdf_from_linemesh = SDFfromLineMesh(linemesh, thickness=0.5)
     mesh = generate_2D_surf_mesh(sdf_from_linemesh, 300)
-    _gus.io.meshio.export("triangles.inp", mesh)
+    _gus.io.meshio.export("tests/tmp_outputs/triangles.inp", mesh)
 
     sdf_from_linemesh = SDFfromLineMesh(linemesh, thickness=0.5, smoothness=0.1)
     mesh = generate_2D_surf_mesh(sdf_from_linemesh, 300)
-    _gus.io.meshio.export("triangles_smooth.inp", mesh)
+    _gus.io.meshio.export("tests/tmp_outputs/triangles_smooth.inp", mesh)
 
 
 if __name__ == "__main__":

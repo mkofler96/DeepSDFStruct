@@ -104,8 +104,8 @@ Desktop.ini
 
 # Files generated during testing
 DeepSDFStruct/trained_models/test_experiment/**/latest.pth
-
 training_data
+tests/tmp_outputs
 
 # doc temp files
 docs/_build
