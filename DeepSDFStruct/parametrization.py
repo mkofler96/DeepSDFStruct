@@ -15,6 +15,10 @@ class _Parametrization(ABC):
     def __call__(self, queries: torch.Tensor) -> torch.Tensor:
         pass
 
+    @abstractmethod
+    def set_param(self, parameter: torch.Tensor) -> torch.Tensor:
+        pass
+
 
 class Constant(_Parametrization):
     def __init__(self, value, device):
@@ -34,3 +38,6 @@ class SplineParametrization(_Parametrization):
 
     def __call__(self, queries: torch.Tensor) -> torch.Tensor:
         return self.torch_spline(queries)
+
+    def set_param(self, parameter: torch.Tensor):
+        self.torch_spline.control_points = parameter

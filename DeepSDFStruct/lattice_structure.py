@@ -176,9 +176,6 @@ class LatticeSDFStruct(_SDFBase):
 
         self._sanity_check()
 
-    def _set_param(self, parameters):
-        self.parameters = parameters
-
     def _get_domain_bounds(self):
         return _np.array([[-1, 1], [-1, 1], [-1, 1]])
 

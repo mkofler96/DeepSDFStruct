@@ -11,7 +11,6 @@ from DeepSDFStruct.lattice_structure import LatticeSDFStruct
 from DeepSDFStruct.parametrization import SplineParametrization
 from DeepSDFStruct.torch_spline import TorchSpline
 import splinepy
-import torch
 import gustaf as _gus
 
 
@@ -29,25 +28,25 @@ def test_deepsdf_lattice_export():
         splinepy.BSpline(
             [1, 1, 1],
             [[-1, -1, 1, 1], [-1, -1, 1, 1], [-1, -1, 1, 1]],
-            [[0.5], [0.5], [0.5], [0.5], [0.5], [0.5], [0.5], [0.5]],
+            [[0.1], [0.1], [0.1], [0.1], [0.1], [0.1], [0.1], [0.1]],
         ),
         device=model.device,
     )
 
     # Create the lattice structure with deformation and microtile
     lattice_struct = LatticeSDFStruct(
-        tiling=(2, 2, 2),
+        tiling=(1, 1, 1),
         deformation_spline=deformation_spline,
         microtile=sdf,
         parametrization=param_spline,
     )
-    export_sdf_grid_vtk(lattice_struct, "sdf.vtk")
     surf_mesh, derivative = create_3D_surface_mesh(
         lattice_struct, 30, differentiate=True
     )
     export_surface_mesh_vtk(
         surf_mesh.vertices, surf_mesh.faces, "mesh_with_derivative.vtk", derivative
     )
+    export_sdf_grid_vtk(lattice_struct, "sdf.vtk")
     faces = surf_mesh.to_gus()
     _gus.io.meshio.export("faces.inp", faces)
     _gus.io.meshio.export("faces.obj", faces)

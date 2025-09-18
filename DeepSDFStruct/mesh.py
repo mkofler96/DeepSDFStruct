@@ -1,5 +1,7 @@
 import logging
 import torch as _torch
+import torch.autograd.functional
+from torch.func import jacfwd
 import tetgenpy
 import numpy as np
 import napf
@@ -265,8 +267,11 @@ def create_3D_surface_mesh(sdf: SDFBase, N_base, differentiate=False):
     if differentiate:
         if sdf.parametrization is None:
             raise RuntimeError("No parametrization found for given SDF")
-        dVerts_dParams = _torch.autograd.functional.jacobian(
-            verts_fn, sdf.parametrization.parameters  # only takes `p` now
+        dVerts_dParams = torch.autograd.functional.jacobian(
+            verts_fn,
+            sdf.parametrization.parameters,
+            strategy="forward-mode",
+            vectorize=True,
         )
 
     return torchSurfMesh(verts, faces), dVerts_dParams
@@ -281,7 +286,7 @@ def _verts_from_params(
     N,
     return_faces=False,
 ):
-    sdf._set_param(p)
+    sdf.parametrization.set_param(p)
     sdf_values = sdf(samples)
 
     verts_local, faces, _ = constructor(
@@ -374,9 +379,9 @@ def export_surface_mesh_vtk(verts, faces, filename, dSurf=None):
     N = int(np.prod(extra_dims))
 
     # reshape to [n_nodes, N_derivatives, 3]
-    dSurf_flat = dSurf.permute(0, *range(2, dSurf.ndim), 1).reshape(dSurf.size(0), N, 3)
+    dSurf_flat = dSurf.flatten(2)
     indices = [np.unravel_index(i, extra_dims) for i in range(N)]
-
+    assert dSurf_flat.shape[2] == len(indices)
     for j, idx in enumerate(indices):
         idx_str = "".join(str(i + 1) for i in idx)
         name = f"derivative_[{idx_str}]"
@@ -385,10 +390,11 @@ def export_surface_mesh_vtk(verts, faces, filename, dSurf=None):
         vectors.SetNumberOfComponents(3)
         vectors.SetName(name)
 
-        for vec in dSurf_flat[:, j]:
+        for vec in dSurf_flat[:, :, j]:
             vectors.InsertNextTuple(vec.tolist())
 
         polydata.GetPointData().AddArray(vectors)
+        polydata.GetPointData().SetActiveVectors(name)
     # Write to file
     writer = vtk.vtkPolyDataWriter()
     writer.SetFileName(filename)

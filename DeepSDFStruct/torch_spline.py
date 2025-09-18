@@ -10,44 +10,70 @@ class TorchSplineFunction(torch.autograd.Function):
         control_points: [n_control_points, dim_out] tensor
         spline: splinepy object
         """
-        # Save for backward
-        ctx.save_for_backward(queries, control_points)
         ctx.spline = spline
 
         # Evaluate basis functions using splinepy (NumPy)
-        basis, supports = spline.basis_and_support(queries.detach().cpu().numpy())
-        basis_eval = sp.utils.data.make_matrix(
+        basis, supports = spline.basis_and_support(
+            queries.clone().detach().cpu().numpy()
+        )
+        basis_eval_np = sp.utils.data.make_matrix(
             basis, supports, control_points.shape[0], as_array=True
         )
-        basis_eval_torch = torch.tensor(
-            basis_eval, dtype=control_points.dtype, device=control_points.device
+        basis_eval = torch.tensor(
+            basis_eval_np, device=control_points.device, dtype=control_points.dtype
         )
-        ctx.basis_eval = basis_eval_torch
-
-        return basis_eval_torch @ control_points
+        # Save for backward
+        ctx.save_for_backward(queries, basis_eval, control_points)
+        # Save separately for forward-mode
+        ctx.queries = queries
+        ctx.basis_eval = basis_eval
+        ctx.control_points = control_points
+        return basis_eval @ control_points
 
     @staticmethod
     def backward(ctx, grad_output):
-        queries, control_points = ctx.saved_tensors
-        basis_eval = ctx.basis_eval
+        queries, basis_eval, control_points = ctx.saved_tensors
 
         # Gradient w.r.t control points
         grad_control_points = basis_eval.T @ grad_output
 
         # Gradient w.r.t queries (via splinepy jacobian)
         grad_queries = None
-        try:
-            jacobian = ctx.spline.jacobian(
-                queries.detach().cpu().numpy()
-            )  # [n_points, dim_out, dim_in]
-            jacobian_torch = torch.tensor(
-                jacobian, dtype=grad_output.dtype, device=grad_output.device
-            )
-            grad_queries = torch.einsum("pi,pij->pj", grad_output, jacobian_torch)
-        except:
-            grad_queries = None  # If jacobian not implemented
+
+        jacobian = ctx.spline.jacobian(
+            queries.detach().cpu().numpy()
+        )  # [n_points, dim_out, dim_in]
+        jacobian_torch = torch.tensor(
+            jacobian, dtype=grad_output.dtype, device=grad_output.device
+        )
+        grad_queries = torch.einsum("pi,pij->pj", grad_output, jacobian_torch)
 
         return grad_queries, grad_control_points, None  # None for spline
+
+    @staticmethod
+    def jvp(ctx, queries_tangent, control_points_tangent, spline_tangent):
+        queries = ctx.queries
+        basis_eval = ctx.basis_eval
+        control_points = ctx.control_points
+
+        # Tangent due to control_points
+        cp_tangent = control_points_tangent
+        if cp_tangent is None:
+            cp_tangent = torch.zeros_like(control_points)
+
+        out_tangent_cp = basis_eval @ cp_tangent
+
+        jacobian = ctx.spline.jacobian(
+            queries.detach().cpu().numpy()
+        )  # [n_points, dim_out, dim_in]
+        jacobian_torch = torch.tensor(
+            jacobian, dtype=queries.dtype, device=queries.device
+        )
+        out_tangent_queries = torch.bmm(
+            queries_tangent.unsqueeze(1), jacobian_torch.transpose(1, 2)
+        ).squeeze(1)
+
+        return out_tangent_cp + out_tangent_queries
 
 
 # ---------------------------------------------------------
@@ -57,9 +83,8 @@ class TorchSpline(torch.nn.Module):
         self.device = device
         self.spline = spline
 
-        # Learnable control points
-        self.control_points = torch.nn.Parameter(
-            torch.tensor(spline.control_points, dtype=torch.float32, device=device)
+        self.control_points = torch.tensor(
+            spline.control_points, dtype=torch.float32, device=device
         )
 
     def forward(self, queries: torch.Tensor):

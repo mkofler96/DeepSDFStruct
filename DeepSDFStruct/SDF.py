@@ -92,7 +92,6 @@ class SDFBase(ABC):
     @parametrization.setter
     def parametrization(self, p: _Parametrization):
         self._parametrization = p
-        self.parameters = p.parameters if p is not None else None
 
     @property
     def cap_border_dict(self):
@@ -148,10 +147,6 @@ class SDFBase(ABC):
         """
         Subclasses implement this to compute SDF values.
         """
-        pass
-
-    @abstractmethod
-    def _set_param(self, parameters: torch.Tensor):
         pass
 
     @abstractmethod
@@ -401,9 +396,8 @@ class SDFfromDeepSDF(SDFBase):
             query_batch = queries[head:end]
 
             sdf_values[head:end] = (
-                self.model._decode_sdf(latent_vec[head:end], query_batch)
-                .squeeze(1)
-                .detach()
+                self.model._decode_sdf(latent_vec[head:end], query_batch).squeeze(1)
+                # .detach()
             )
 
             head = end
