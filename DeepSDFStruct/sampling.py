@@ -250,68 +250,6 @@ class SDFSampler:
 
         return sdf_geom
 
-    def sample_sdfs(
-        self,
-        sdfs,
-        data_set_info: DataSetInfo,
-        show=False,
-        n_samples: int = 1e5,
-        sampling_strategy="uniform",
-        clamp_distance=0.1,
-        box_size=None,
-        stds=[0.0025, 0.00025],
-    ) -> list[str]:
-
-        start_tot = time.time()
-
-        split = []
-        for i, current_sdf in enumerate(sdfs):
-
-            file_name = f"{data_set_info['class_name']}_{10000 + i}.npz"
-
-            folder_name = pathlib.Path(
-                f"{self.outdir}/{data_set_info['dataset_name']}/{data_set_info['class_name']}"
-            )
-            fname = folder_name / file_name
-            split.append(fname.stem)
-            if not os.path.exists(folder_name):
-                os.makedirs(folder_name)
-            if os.path.isfile(fname) and show == False:
-                continue
-
-            sampled_sdf = random_sample_sdf(
-                current_sdf,
-                bounds=(-1, 1),
-                n_samples=int(n_samples),
-                type=sampling_strategy,
-            )
-
-            pos, neg = sampled_sdf.split_pos_neg()
-
-            if show:
-                vp_pos = pos.create_gus_plottable()
-                vp_neg = neg.create_gus_plottable()
-                vp_pos.show_options["cmap"] = "coolwarm"
-                vp_neg.show_options["cmap"] = "coolwarm"
-                vp_pos.show_options["vmin"] = -0.1
-                vp_pos.show_options["vmax"] = 0.1
-                vp_neg.show_options["vmin"] = -0.1
-                vp_neg.show_options["vmax"] = 0.1
-                gus.show(vp_neg, vp_pos)
-            np.savez(fname, neg=neg.stacked, pos=pos.stacked)
-            tot_time = time.time() - start_tot
-            avg_time_per_reconstruction = tot_time / (i + 1)
-            estimated_remaining_time = avg_time_per_reconstruction * (
-                len(sdfs) - (i + 1)
-            )
-            time_string = str(
-                datetime.timedelta(seconds=round(estimated_remaining_time))
-            )
-            print(
-                f"Sampling {fname} ({(i+1)}/{len(sdfs)}) [{(i+1)/len(sdfs)*100:.2f}%] in {time_string} ({avg_time_per_reconstruction:.2f}s/file)"
-            )
-        return split
-
     def write_json(self, json_fname):
         json_content = defaultdict(lambda: defaultdict(list))
         for class_name, instance_list in self.geometries.items():
