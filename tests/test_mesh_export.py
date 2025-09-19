@@ -4,7 +4,7 @@ from DeepSDFStruct.mesh import (
     generate_2D_surf_mesh,
     tetrahedralize_surface,
     create_3D_surface_mesh,
-    export_surface_mesh_vtk,
+    export_surface_mesh,
     export_sdf_grid_vtk,
 )
 from DeepSDFStruct.lattice_structure import LatticeSDFStruct
@@ -54,11 +54,8 @@ def test_deepsdf_lattice_export():
     surf_mesh, derivative = create_3D_surface_mesh(
         lattice_struct, 30, differentiate=True
     )
-    export_surface_mesh_vtk(
-        surf_mesh.vertices,
-        surf_mesh.faces,
-        "tests/tmp_outputs/mesh_with_derivative.vtk",
-        derivative,
+    export_surface_mesh(
+        "tests/tmp_outputs/mesh_with_derivative.vtk", surf_mesh, derivative
     )
     export_sdf_grid_vtk(lattice_struct, "tests/tmp_outputs/sdf.vtk")
     faces = surf_mesh.to_gus()

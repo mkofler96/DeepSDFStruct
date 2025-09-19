@@ -207,7 +207,7 @@ def process_N_base_input(N, tiling):
     else:
         raise ValueError("Number of grid points must be a list or an integer")
     # add 1 on each side to slightly include the border
-    N_mod = N * _torch.tensor(tiling) + 1
+    N_mod = N * tiling + 1
     return N_mod
 
 
@@ -238,9 +238,9 @@ def _prepare_flexicubes_querypoints(N, device=None):
 
 def create_3D_surface_mesh(sdf: SDFBase, N_base, differentiate=False):
     if type(sdf) is LatticeSDFStruct:
-        tiling = sdf.tiling
+        tiling = _torch.tensor(sdf.tiling)
     else:
-        tiling = _torch.tensor([0, 0, 0])
+        tiling = _torch.tensor([1, 1, 1])
     N = process_N_base_input(N_base, tiling)
 
     constructor, samples, cube_idx = _prepare_flexicubes_querypoints(N)
@@ -352,7 +352,7 @@ def export_sdf_grid_vtk(sdf: SDFBase, filename, N=64):
     print(f"SDF structured grid saved to {filename}")
 
 
-def export_surface_mesh_vtk(verts, faces, filename, dSurf=None):
+def _export_surface_mesh_vtk(verts, faces, filename, dSurf=None):
     """
     verts: (N, 3) torch tensor
     faces: (M, 3) torch tensor
@@ -401,3 +401,19 @@ def export_surface_mesh_vtk(verts, faces, filename, dSurf=None):
     writer.SetInputData(polydata)
     writer.Write()
     print(f"Mesh saved to {filename}")
+
+
+def export_surface_mesh(
+    filename: str | bytes | os.PathLike[str] | os.PathLike[bytes],
+    mesh: gus.Faces | torchSurfMesh,
+    dSurf=None,
+):
+    export_filename = pathlib.Path(filename)
+    ext = export_filename.suffix.lower()
+    if isinstance(mesh, torchSurfMesh):
+        mesh = mesh.to_gus()
+    match ext:
+        case ".vtk":
+            _export_surface_mesh_vtk(mesh.vertices, mesh.faces, export_filename, dSurf)
+        case _:
+            gus.io.meshio.export(export_filename, mesh)

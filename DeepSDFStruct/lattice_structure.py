@@ -265,9 +265,9 @@ def constantLatvec(value):
 
 
 def transform(x, t):
-    # transform x from [0,1] to [-1,1]
-    # x = (x + 1) / 2 # if this is enabled, transforms from [-1,1] to [1,1]
-    return 4 * _torch.abs(t * x / 2 - _torch.floor((t * x + 1) / 2)) - 1
+    # transform x from [0,1] to [0,1]
+    x_transformed = 2 * _torch.abs(t * x / 2 - _torch.floor((t * x + 1) / 2))
+    return x_transformed
 
 
 def check_tiling_input(tiling):

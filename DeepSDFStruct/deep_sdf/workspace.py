@@ -3,6 +3,7 @@
 
 import json
 import os
+import pathlib
 import torch
 
 from .networks.analytic_round_cross import RoundCrossDecoder
@@ -68,7 +69,7 @@ def load_latent_vectors(experiment_directory, checkpoint, device):
 
         lat_vecs = []
         for i in range(num_vecs):
-            lat_vecs.append(data["latent_codes"][i].cuda())
+            lat_vecs.append(data["latent_codes"][i])
 
         return lat_vecs
 
@@ -76,7 +77,7 @@ def load_latent_vectors(experiment_directory, checkpoint, device):
 
         num_embeddings, embedding_dim = data["latent_codes"]["weight"].shape
 
-        lat_vecs = torch.nn.Embedding(num_embeddings, embedding_dim)
+        lat_vecs = torch.nn.Embedding(num_embeddings, embedding_dim, device=device)
 
         lat_vecs.load_state_dict(data["latent_codes"])
 
@@ -88,18 +89,27 @@ def get_data_source_map_filename(data_dir):
 
 
 def get_reconstructed_mesh_filename(
-    experiment_dir, epoch, dataset, class_name, instance_name
+    experiment_dir,
+    epoch,
+    dataset,
+    class_name,
+    instance_name,
+    create_dir=True,
+    filetype="ply",
 ):
-
-    return os.path.join(
+    fname_raw = os.path.join(
         experiment_dir,
         reconstructions_subdir,
         str(epoch),
         reconstruction_meshes_subdir,
         dataset,
         class_name,
-        instance_name + ".ply",
+        instance_name + "." + filetype,
     )
+    fname = pathlib.Path(fname_raw)
+    if not os.path.isdir(fname.parent) and create_dir:
+        os.makedirs(fname.parent)
+    return fname
 
 
 def get_reconstructed_code_filename(

@@ -17,6 +17,9 @@ import pathlib
 import DeepSDFStruct.deep_sdf
 import DeepSDFStruct.deep_sdf.workspace as ws
 import DeepSDFStruct.deep_sdf.data
+from DeepSDFStruct.deep_sdf.models import DeepSDFModel
+from DeepSDFStruct.SDF import SDFfromDeepSDF
+from DeepSDFStruct.mesh import create_3D_surface_mesh, export_surface_mesh
 
 import numpy as np
 
@@ -144,38 +147,38 @@ def save_latent_vectors(experiment_directory, filename, latent_vec, epoch):
     )
 
 
-# TODO: duplicated in workspace
-def load_latent_vectors(experiment_directory, filename, lat_vecs):
+# # TODO: duplicated in workspace
+# def load_latent_vectors(experiment_directory, filename, lat_vecs):
 
-    full_filename = os.path.join(
-        ws.get_latent_codes_dir(experiment_directory), filename
-    )
+#     full_filename = os.path.join(
+#         ws.get_latent_codes_dir(experiment_directory), filename
+#     )
 
-    if not os.path.isfile(full_filename):
-        raise Exception('latent state file "{}" does not exist'.format(full_filename))
+#     if not os.path.isfile(full_filename):
+#         raise Exception('latent state file "{}" does not exist'.format(full_filename))
 
-    data = torch.load(full_filename)
+#     data = torch.load(full_filename)
 
-    if isinstance(data["latent_codes"], torch.Tensor):
+#     if isinstance(data["latent_codes"], torch.Tensor):
 
-        # for backwards compatibility
-        if not lat_vecs.num_embeddings == data["latent_codes"].size()[0]:
-            raise Exception(
-                "num latent codes mismatched: {} vs {}".format(
-                    lat_vecs.num_embeddings, data["latent_codes"].size()[0]
-                )
-            )
+#         # for backwards compatibility
+#         if not lat_vecs.num_embeddings == data["latent_codes"].size()[0]:
+#             raise Exception(
+#                 "num latent codes mismatched: {} vs {}".format(
+#                     lat_vecs.num_embeddings, data["latent_codes"].size()[0]
+#                 )
+#             )
 
-        if not lat_vecs.embedding_dim == data["latent_codes"].size()[2]:
-            raise Exception("latent code dimensionality mismatch")
+#         if not lat_vecs.embedding_dim == data["latent_codes"].size()[2]:
+#             raise Exception("latent code dimensionality mismatch")
 
-        for i, lat_vec in enumerate(data["latent_codes"]):
-            lat_vecs.weight.data[i, :] = lat_vec
+#         for i, lat_vec in enumerate(data["latent_codes"]):
+#             lat_vecs.weight.data[i, :] = lat_vec
 
-    else:
-        lat_vecs.load_state_dict(data["latent_codes"])
+#     else:
+#         lat_vecs.load_state_dict(data["latent_codes"])
 
-    return data["epoch"]
+#     return data["epoch"]
 
 
 def save_logs(
@@ -275,12 +278,12 @@ def train_deep_sdf(
 
     logging.info("Experiment description: \n" + specs["Description"])
 
-    reconstruction_split_file = specs["ReconstructionSplit"]
-    if os.path.isfile(reconstruction_split_file):
-        with open(reconstruction_split_file, "r") as f:
-            reconstruction_split = json.load(f)
-    else:
-        reconstruction_split = None
+    # reconstruction_split_file = specs["ReconstructionSplit"]
+    # if os.path.isfile(reconstruction_split_file):
+    #     with open(reconstruction_split_file, "r") as f:
+    #         reconstruction_split = json.load(f)
+    # else:
+    #     reconstruction_split = None
 
     logging.debug(specs["NetworkSpecs"])
 
@@ -449,7 +452,7 @@ def train_deep_sdf(
 
         logging.info('continuing from "{}"'.format(continue_from))
 
-        lat_epoch = load_latent_vectors(
+        lat_epoch = ws.load_latent_vectors(
             experiment_directory, continue_from + ".pth", lat_vecs
         )
 
@@ -634,6 +637,136 @@ def train_deep_sdf(
                 param_mag_log,
                 epoch,
             )
+
+
+def reconstruct_meshs_from_latent(
+    experiment_directory,
+    checkpoint="latest",
+    max_batch=32,
+    filetype="ply",
+    device="cpu",
+):
+
+    decoder = ws.load_trained_model(experiment_directory, checkpoint, device=device)
+    latent_vectors = ws.load_latent_vectors(
+        experiment_directory, checkpoint, device=device
+    )
+    decoder.eval()
+    deep_sdf_model = DeepSDFModel(decoder, latent_vectors, device=device)
+    sdf_from_DeepSDF = SDFfromDeepSDF(deep_sdf_model)
+
+    for i, latent_in in enumerate(latent_vectors):
+        epoch = checkpoint
+        dataset = "latent_recon"
+        class_name = "all"
+        instance_name = f"{i}"
+        fname = ws.get_reconstructed_mesh_filename(
+            experiment_directory,
+            epoch,
+            dataset,
+            class_name,
+            instance_name,
+            filetype=filetype,
+        )
+        if os.path.isfile(fname):
+            print(f"Skipping {fname}")
+            continue
+        print(f"Reconstructing {fname} ({i}/{len(latent_vectors)})")
+        sdf_from_DeepSDF.set_latent_vec(latent_in)
+        surf_mesh, _ = create_3D_surface_mesh(sdf_from_DeepSDF, 30)
+        export_surface_mesh(fname, surf_mesh)
+
+
+def create_interpolated_meshes_from_latent(
+    experiment_directory: str | os.PathLike[str],
+    indices: list[int],
+    steps: int,
+    checkpoint: str = "latest",
+    max_batch: int = 32,
+    filetype: str = "ply",
+    device="cpu",
+) -> None:
+    """
+    Interpolate between latent vectors and export reconstructed meshes.
+
+    This function loads a trained DeepSDF model and its latent vectors, then
+    interpolates between consecutive latent codes specified in `indices`. At
+    each interpolation step, a 3D surface mesh is reconstructed and exported
+    to disk in the requested format.
+
+    Args:
+        experiment_directory (str | PathLike): Path to the experiment directory
+            containing checkpoints and latent vectors.
+        checkpoint (str, optional): Which checkpoint to load. Defaults to "latest".
+        max_batch (int, optional): Maximum batch size for inference. Defaults to 32.
+        filetype (str, optional): File extension for exported meshes (e.g., "ply", "obj").
+            Defaults to "ply".
+        indices (list[int], optional): Sequence of latent vector indices between
+            which interpolation should be performed. Defaults to [1, 2, 3, 4, 5, 6, 7, 8].
+        steps (int, optional): Number of interpolation steps (including endpoints).
+            Defaults to 11.
+
+    Example:
+        >>> create_interpolated_meshes_from_latent(
+        ...     experiment_directory="experiments/run1",
+        ...     [1, 2, 3, 4, 5, 6, 7, 8],
+        ...     11,
+        ...     checkpoint="latest",
+        ...     max_batch=32,
+        ...     filetype="ply",
+        ... )
+    """
+    decoder = ws.load_trained_model(experiment_directory, checkpoint, device=device)
+    latent_vectors = ws.load_latent_vectors(
+        experiment_directory, checkpoint, device=device
+    )
+    decoder.eval()
+    deep_sdf_model = DeepSDFModel(decoder, latent_vectors, device=device)
+    sdf_from_DeepSDF = SDFfromDeepSDF(deep_sdf_model)
+    # interpolate between two latents
+    start = time.time()
+    num_samples = (len(indices) - 1) * steps
+    i_sample = 1
+    for i_latent, lat in enumerate(indices[:-1]):
+        index1 = indices[i_latent]
+        index2 = indices[i_latent + 1]
+        latent1 = latent_vectors[index1]
+        latent2 = latent_vectors[index2]
+
+        for i in range(steps):
+            latent_in = latent1 + (latent2 - latent1) * i / (steps - 1)
+            epoch = checkpoint
+            dataset = "latent_recon"
+            class_name = "interpolation"
+            instance_name = f"interpolate_{index1}_{index2}_{i}"
+            fname = ws.get_reconstructed_mesh_filename(
+                experiment_directory,
+                epoch,
+                dataset,
+                class_name,
+                instance_name,
+                filetype=filetype,
+            )
+            if os.path.isfile(fname):
+                print(f"Skipping {fname}")
+                continue
+            print(f"Reconstructing {fname} ({i}/{len(latent_vectors)})")
+            sdf_from_DeepSDF.set_latent_vec(latent_in)
+            surf_mesh, _ = create_3D_surface_mesh(sdf_from_DeepSDF, 30)
+            export_surface_mesh(fname, surf_mesh)
+
+            # end = time.time()
+            # logging.info("epoch {}...".format(epoch))
+            tot_time = time.time() - start
+            avg_time_per_sample = tot_time / (i_sample)
+            estimated_remaining_time = avg_time_per_sample * (num_samples - (i_sample))
+            time_string = str(
+                datetime.timedelta(seconds=round(estimated_remaining_time))
+            )
+            print(
+                f"Finished {i_sample} ({i_sample}/{num_samples}) [{i_sample/num_samples*100:.2f}%] in {time_string} ({avg_time_per_sample:.2f}s/epoch)"
+            )
+            i_sample += 1
 
 
 if __name__ == "__main__":

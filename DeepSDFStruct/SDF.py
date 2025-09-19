@@ -9,7 +9,7 @@ from typing import TypedDict
 from DeepSDFStruct.deep_sdf.models import DeepSDFModel
 from DeepSDFStruct.plotting import plot_slice
 from DeepSDFStruct.torch_spline import TorchSpline
-from DeepSDFStruct.parametrization import _Parametrization
+from DeepSDFStruct.parametrization import _Parametrization, Constant
 
 import logging
 
@@ -415,18 +415,20 @@ class SDFfromDeepSDF(SDFBase):
     def __init__(self, model: DeepSDFModel, max_batch=32**3):
         super().__init__()
         self.model = model
-        self.parameters = None
+        self.latvec = None
+        self.parametrization = None
         self.max_batch = max_batch
 
     def set_latent_vec(self, latent_vec: torch.Tensor):
         """
         Set conditioning parameters for the model (e.g., latent code).
         """
-        self.parameters = latent_vec
+        # if dimension is 1, set parametrization
+        # if dimnsion is equal to the number of query points, directly set latvec
         if latent_vec.ndim == 1:
-            self.parameters = latent_vec.unsqueeze(1)  # (latent_dim, 1)
+            self.parametrization = Constant(latent_vec, device=self.model.device)
         elif latent_vec.ndim == 2:
-            self.parameters = latent_vec  # (latent_dim, n_query_points)
+            self.latvec = latent_vec  # (latent_dim, n_query_points)
         else:
             raise ValueError(
                 f"Expected latent_vec to have 1 or 2 dimensions, got shape {latent_vec.shape}"
@@ -439,16 +441,14 @@ class SDFfromDeepSDF(SDFBase):
         return self.set_latent_vec(parameters)
 
     def _compute(self, queries: torch.Tensor) -> torch.Tensor:
-        queries = queries.to(self.model.device)
+        # DeepSDF queries range from -1 to 1
+        queries = queries.to(self.model.device) * 2 - 1
         n_queries = queries.shape[0]
 
-        latent_vec = self.parameters
-        if latent_vec is None:
-            latent_vec = self.model._trained_latent_vectors[0].unsqueeze(1)
-            logger.info(
-                f"No latent vector set. Using default latent vec shape: {latent_vec.shape}"
-            )
-        latent_vec = latent_vec.to(self.model.device)
+        if self.latvec is None:
+            latvec = self.parametrization(queries)
+        else:
+            latvec = self.latvec.to(self.model.device)
 
         sdf_values = torch.zeros(n_queries, device=self.model.device)
 
@@ -458,7 +458,7 @@ class SDFfromDeepSDF(SDFBase):
             query_batch = queries[head:end]
 
             sdf_values[head:end] = (
-                self.model._decode_sdf(latent_vec[head:end], query_batch).squeeze(1)
+                self.model._decode_sdf(latvec[head:end], query_batch).squeeze(1)
                 # .detach()
             )
 
