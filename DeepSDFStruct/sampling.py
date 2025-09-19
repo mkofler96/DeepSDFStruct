@@ -262,7 +262,8 @@ class SDFSampler:
         json_fname = pathlib.Path(f"{self.splitdir}/{json_fname}")
         if not json_fname.parent.is_dir():
             os.makedirs(json_fname.parent)
-        json.dump(json_content, open(json_fname, "w"), indent=4)
+        with open(json_fname, "w", encoding="utf-8") as f:
+            json.dump(json_content, f, indent=4)
 
 
 def move(t_mesh, new_center):

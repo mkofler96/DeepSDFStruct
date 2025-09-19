@@ -45,8 +45,8 @@ def load_experiment_specifications(experiment_directory):
             f"The experiment directory ({experiment_directory}) does not include specifications file "
             + '"specs.json"'
         )
-
-    return json.load(open(filename))
+    with open(filename, "r", encoding="utf-8") as f:
+        return json.load(f)
 
 
 def load_latent_vectors(experiment_directory, checkpoint, device):
@@ -207,7 +207,8 @@ def load_trained_model(
     experiment_directory: str, checkpoint: str, device=None, data_parallel=False
 ):
     specs_filename = os.path.join(experiment_directory, "specs.json")
-    experiment_specs = json.load(open(specs_filename))
+    with open(specs_filename, "r", encoding="utf-8") as f:
+        experiment_specs = json.load(f)
     if device is None:
         device = get_default_device(device)
 
