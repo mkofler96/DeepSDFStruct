@@ -1,4 +1,4 @@
-from DeepSDFStruct.deep_sdf.train_deep_sdf import train_deep_sdf
+from DeepSDFStruct.deep_sdf.training import train_deep_sdf
 from huggingface_hub import snapshot_download
 
 
