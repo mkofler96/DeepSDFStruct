@@ -44,7 +44,7 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'source/generated/DeepSDFStruct.sampling';</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="DeepSDFStruct.splinepy_unitcells" href="DeepSDFStruct.splinepy_unitcells.html" />
+    <link rel="next" title="DeepSDFStruct.sdf_primitives" href="DeepSDFStruct.sdf_primitives.html" />
     <link rel="prev" title="DeepSDFStruct.pretrained_models" href="DeepSDFStruct.pretrained_models.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -269,6 +269,7 @@
 <li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.plotting.html">DeepSDFStruct.plotting</a></li>
 <li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.pretrained_models.html">DeepSDFStruct.pretrained_models</a></li>
 <li class="toctree-l2 current active"><a class="current reference internal" href="#">DeepSDFStruct.sampling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.sdf_primitives.html">DeepSDFStruct.sdf_primitives</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="DeepSDFStruct.splinepy_unitcells.html">DeepSDFStruct.splinepy_unitcells</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.splinepy_unitcells.chi_3D.html">DeepSDFStruct.splinepy_unitcells.chi_3D</a></li>
 <li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.splinepy_unitcells.cross_lattice.html">DeepSDFStruct.splinepy_unitcells.cross_lattice</a></li>
@@ -511,22 +512,6 @@
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="DeepSDFStruct.sampling.SDFSampler.sample_sdfs">
-<span class="sig-name descname"><span class="pre">sample_sdfs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sdfs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_set_info</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_samples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampling_strategy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'uniform'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clamp_distance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">box_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[0.0025,</span> <span class="pre">0.00025]</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.sampling.SDFSampler.sample_sdfs" title="Link to this definition">#</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span></p>
-</dd>
-<dt class="field-even">Parameters<span class="colon">:</span></dt>
-<dd class="field-even"><ul class="simple">
-<li><p><strong>data_set_info</strong> (<a class="reference internal" href="#DeepSDFStruct.sampling.DataSetInfo" title="DeepSDFStruct.sampling.DataSetInfo"><em>DeepSDFStruct.sampling.DataSetInfo</em></a>)</p></li>
-<li><p><strong>n_samples</strong> (<em>int</em>)</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
 <dt class="sig sig-object py" id="DeepSDFStruct.sampling.SDFSampler.write_json">
 <span class="sig-name descname"><span class="pre">write_json</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">json_fname</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.sampling.SDFSampler.write_json" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
@@ -613,11 +598,11 @@
       </div>
     </a>
     <a class="right-next"
-       href="DeepSDFStruct.splinepy_unitcells.html"
+       href="DeepSDFStruct.sdf_primitives.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">DeepSDFStruct.splinepy_unitcells</p>
+        <p class="prev-next-title">DeepSDFStruct.sdf_primitives</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -659,7 +644,6 @@
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.sampling.SDFSampler.get_sdf_from_geometry"><code class="docutils literal notranslate"><span class="pre">SDFSampler.get_sdf_from_geometry()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.sampling.SDFSampler.process_geometries"><code class="docutils literal notranslate"><span class="pre">SDFSampler.process_geometries()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.sampling.SDFSampler.sample_sdf"><code class="docutils literal notranslate"><span class="pre">SDFSampler.sample_sdf()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.sampling.SDFSampler.sample_sdfs"><code class="docutils literal notranslate"><span class="pre">SDFSampler.sample_sdfs()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.sampling.SDFSampler.write_json"><code class="docutils literal notranslate"><span class="pre">SDFSampler.write_json()</span></code></a></li>
 </ul>
 </li>

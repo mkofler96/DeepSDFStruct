@@ -24,4 +24,5 @@ DeepSDFStruct.SDF
       SDFfromLineMesh
       SDFfromMesh
       SummedSDF
+      TransformedSDF
    

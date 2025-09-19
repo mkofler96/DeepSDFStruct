@@ -19,5 +19,6 @@ DeepSDFStruct
    plotting
    pretrained_models
    sampling
+   sdf_primitives
    splinepy_unitcells
    torch_spline

@@ -1,0 +1,17 @@
+DeepSDFStruct.sdf\_primitives
+=============================
+
+.. automodule:: DeepSDFStruct.sdf_primitives
+
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      CornerSpheresSDF
+      CrossMsSDF
+      CylinderSDF
+      PlaneSDF
+      SphereSDF
+      TorusSDF
+   
