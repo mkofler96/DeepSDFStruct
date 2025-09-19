@@ -11,7 +11,7 @@ DeepSDFStruct.mesh
       create_3D_surface_mesh
       export_abaqus_surf_mesh
       export_sdf_grid_vtk
-      export_surface_mesh_vtk
+      export_surface_mesh
       export_volume_mesh
       generate_2D_surf_mesh
       process_N_base_input

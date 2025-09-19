@@ -253,7 +253,7 @@
 <li class="toctree-l4"><a class="reference internal" href="DeepSDFStruct.deep_sdf.networks.deep_sdf_decoder_with_homogen.html">DeepSDFStruct.deep_sdf.networks.deep_sdf_decoder_with_homogen</a></li>
 </ul>
 </details></li>
-<li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.deep_sdf.train_deep_sdf.html">DeepSDFStruct.deep_sdf.train_deep_sdf</a></li>
+<li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.deep_sdf.training.html">DeepSDFStruct.deep_sdf.training</a></li>
 <li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.deep_sdf.utils.html">DeepSDFStruct.deep_sdf.utils</a></li>
 <li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.deep_sdf.workspace.html">DeepSDFStruct.deep_sdf.workspace</a></li>
 </ul>
@@ -356,8 +356,8 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.mesh.export_sdf_grid_vtk" title="DeepSDFStruct.mesh.export_sdf_grid_vtk"><code class="xref py py-obj docutils literal notranslate"><span class="pre">export_sdf_grid_vtk</span></code></a>(sdf, filename[, N])</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.mesh.export_surface_mesh_vtk" title="DeepSDFStruct.mesh.export_surface_mesh_vtk"><code class="xref py py-obj docutils literal notranslate"><span class="pre">export_surface_mesh_vtk</span></code></a>(verts, faces, filename)</p></td>
-<td><p>verts: (N, 3) torch tensor faces: (M, 3) torch tensor dSurf: (N, 3, ..,..) torch tensor</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.mesh.export_surface_mesh" title="DeepSDFStruct.mesh.export_surface_mesh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">export_surface_mesh</span></code></a>(filename, mesh[, dSurf])</p></td>
+<td><p></p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.mesh.export_volume_mesh" title="DeepSDFStruct.mesh.export_volume_mesh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">export_volume_mesh</span></code></a>(volume_mesh, filename[, ...])</p></td>
 <td><p>export a mesh and adds corresponding boundary conditions</p></td>
@@ -424,11 +424,16 @@
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="DeepSDFStruct.mesh.export_surface_mesh_vtk">
-<span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.mesh.</span></span><span class="sig-name descname"><span class="pre">export_surface_mesh_vtk</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">verts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">faces</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dSurf</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.mesh.export_surface_mesh_vtk" title="Link to this definition">#</a></dt>
-<dd><p>verts: (N, 3) torch tensor
-faces: (M, 3) torch tensor
-dSurf: (N, 3, ..,..) torch tensor</p>
+<dt class="sig sig-object py" id="DeepSDFStruct.mesh.export_surface_mesh">
+<span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.mesh.</span></span><span class="sig-name descname"><span class="pre">export_surface_mesh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mesh</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dSurf</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.mesh.export_surface_mesh" title="Link to this definition">#</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filename</strong> (<em>str</em><em> | </em><em>bytes</em><em> | </em><em>os.PathLike</em><em>[</em><em>str</em><em>] </em><em>| </em><em>os.PathLike</em><em>[</em><em>bytes</em><em>]</em>)</p></li>
+<li><p><strong>mesh</strong> (<em>gustaf.faces.Faces</em><em> | </em><a class="reference internal" href="#DeepSDFStruct.mesh.torchSurfMesh" title="DeepSDFStruct.mesh.torchSurfMesh"><em>DeepSDFStruct.mesh.torchSurfMesh</em></a>)</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -595,7 +600,7 @@ Includes domain boundary and hole polygons.</p>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.mesh.create_3D_surface_mesh"><code class="docutils literal notranslate"><span class="pre">create_3D_surface_mesh()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.mesh.export_abaqus_surf_mesh"><code class="docutils literal notranslate"><span class="pre">export_abaqus_surf_mesh()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.mesh.export_sdf_grid_vtk"><code class="docutils literal notranslate"><span class="pre">export_sdf_grid_vtk()</span></code></a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.mesh.export_surface_mesh_vtk"><code class="docutils literal notranslate"><span class="pre">export_surface_mesh_vtk()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.mesh.export_surface_mesh"><code class="docutils literal notranslate"><span class="pre">export_surface_mesh()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.mesh.export_volume_mesh"><code class="docutils literal notranslate"><span class="pre">export_volume_mesh()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.mesh.generate_2D_surf_mesh"><code class="docutils literal notranslate"><span class="pre">generate_2D_surf_mesh()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.mesh.process_N_base_input"><code class="docutils literal notranslate"><span class="pre">process_N_base_input()</span></code></a></li>

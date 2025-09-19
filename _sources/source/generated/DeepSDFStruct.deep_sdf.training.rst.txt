@@ -1,7 +1,7 @@
-DeepSDFStruct.deep\_sdf.train\_deep\_sdf
-========================================
+DeepSDFStruct.deep\_sdf.training
+================================
 
-.. automodule:: DeepSDFStruct.deep_sdf.train_deep_sdf
+.. automodule:: DeepSDFStruct.deep_sdf.training
 
    
    .. rubric:: Functions
@@ -10,12 +10,13 @@ DeepSDFStruct.deep\_sdf.train\_deep\_sdf
    
       append_parameter_magnitudes
       clip_logs
+      create_interpolated_meshes_from_latent
       get_learning_rate_schedules
       get_mean_latent_vector_magnitude
       get_spec_with_default
-      load_latent_vectors
       load_logs
       load_optimizer
+      reconstruct_meshs_from_latent
       save_latent_vectors
       save_logs
       save_model

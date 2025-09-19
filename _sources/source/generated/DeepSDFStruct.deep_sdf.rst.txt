@@ -11,13 +11,12 @@ DeepSDFStruct.deep\_sdf
    :recursive:
 
    create_libtorch_executable
-   create_ply_files_from_latent
    create_screenshots_from_plyfiles
    data
    metrics
    models
    networks
    plotting
-   train_deep_sdf
+   training
    utils
    workspace
