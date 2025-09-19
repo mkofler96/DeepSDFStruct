@@ -442,6 +442,7 @@ class SDFfromDeepSDF(SDFBase):
 
     def _compute(self, queries: torch.Tensor) -> torch.Tensor:
         # DeepSDF queries range from -1 to 1
+        orig_device = queries.device
         queries = queries.to(self.model.device) * 2 - 1
         n_queries = queries.shape[0]
 
@@ -464,7 +465,7 @@ class SDFfromDeepSDF(SDFBase):
 
             head = end
 
-        return sdf_values
+        return sdf_values.to(orig_device)
 
 
 def _cap_outside_of_unitcube(samples, sdf_values):
@@ -532,3 +533,42 @@ location_lookup = {
     "z0": (2, 0),
     "z1": (2, 1),
 }
+
+
+class TransformedSDF(SDFBase):
+    """
+    Generic SDF wrapper that applies a transformation to the input queries.
+    Transformation can be rotation, translation, or scaling.
+    """
+
+    def __init__(self, sdf: SDFBase, rotation=None, translation=None, scale=None):
+        super().__init__()
+        self.sdf = sdf
+        self.rotation = rotation
+        self.translation = translation
+        self.scale = scale
+
+    def _compute(self, queries: torch.Tensor) -> torch.Tensor:
+        xyz = queries
+
+        # apply scale
+        if self.scale is not None:
+            xyz = xyz / self.scale  # inverse scale
+
+        # apply rotation
+        if self.rotation is not None:
+            xyz = xyz @ self.rotation.T  # rotate points
+
+        # apply translation
+        if self.translation is not None:
+            xyz = xyz - self.translation
+
+        sdf_vals = self.sdf._compute(xyz)
+
+        # rescale distances if scaled
+        if self.scale is not None:
+            sdf_vals = sdf_vals * self.scale
+        return sdf_vals
+
+    def _get_domain_bounds(self) -> torch.Tensor:
+        return self.sdf._get_domain_bounds()
