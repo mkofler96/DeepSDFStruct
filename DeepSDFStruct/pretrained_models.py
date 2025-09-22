@@ -34,19 +34,16 @@ def get_model(model: str | PretrainedModels, checkpoint: str = "latest", device=
         Trained PyTorch model
     """
     if isinstance(model, str):
-        try:
-            model_enum = PretrainedModels(model)
-        except ValueError:
-            raise ValueError(f"Unknown pretrained model name: {model}")
+        path = model
     else:
         model_enum = model
+        path = _MODEL_REGISTRY.get(model_enum)
 
     if device is None:
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    path = _MODEL_REGISTRY.get(model_enum)
     if not path:
-        raise ValueError(f"Model path not registered for: {model_enum.name}")
+        raise ValueError(f"Model path {path} not found.")
     decoder = load_trained_model(path, checkpoint, device=device)
     latent_vectors = load_latent_vectors(path, checkpoint, device=device)
     decoder.eval()
