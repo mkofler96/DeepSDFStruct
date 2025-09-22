@@ -236,14 +236,14 @@ def _prepare_flexicubes_querypoints(N, device=None):
     return flexi_cubes_constructor, samples, cube_idx
 
 
-def create_3D_surface_mesh(sdf: SDFBase, N_base, differentiate=False):
+def create_3D_surface_mesh(sdf: SDFBase, N_base, differentiate=False, device="cpu"):
     if type(sdf) is LatticeSDFStruct:
         tiling = _torch.tensor(sdf.tiling)
     else:
         tiling = _torch.tensor([1, 1, 1])
     N = process_N_base_input(N_base, tiling)
 
-    constructor, samples, cube_idx = _prepare_flexicubes_querypoints(N)
+    constructor, samples, cube_idx = _prepare_flexicubes_querypoints(N, device=device)
     dVerts_dParams = None
 
     verts_fn = partial(

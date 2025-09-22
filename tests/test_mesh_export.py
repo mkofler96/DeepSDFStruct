@@ -52,7 +52,7 @@ def test_deepsdf_lattice_export():
         parametrization=param_spline,
     )
     surf_mesh, derivative = create_3D_surface_mesh(
-        lattice_struct, 30, differentiate=True
+        lattice_struct, 30, differentiate=True, device=model.device
     )
     export_surface_mesh(
         "tests/tmp_outputs/mesh_with_derivative.vtk", surf_mesh, derivative
