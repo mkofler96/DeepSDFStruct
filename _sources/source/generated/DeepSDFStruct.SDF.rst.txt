@@ -8,6 +8,7 @@ DeepSDFStruct.SDF
 
    .. autosummary::
    
+      get_equidistant_grid_sample
       point_segment_distance
       union
    
@@ -18,6 +19,7 @@ DeepSDFStruct.SDF
       BoxSDF
       CapBorderDict
       CapType
+      ClampedL1Loss
       NegatedCallable
       SDFBase
       SDFfromDeepSDF

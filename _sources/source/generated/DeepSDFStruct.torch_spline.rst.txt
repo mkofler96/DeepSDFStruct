@@ -4,6 +4,12 @@ DeepSDFStruct.torch\_spline
 .. automodule:: DeepSDFStruct.torch_spline
 
    
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      generate_bbox_spline
+   
    .. rubric:: Classes
 
    .. autosummary::

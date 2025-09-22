@@ -344,6 +344,15 @@
                   
   <section id="module-DeepSDFStruct.torch_spline">
 <span id="deepsdfstruct-torch-spline"></span><h1>DeepSDFStruct.torch_spline<a class="headerlink" href="#module-DeepSDFStruct.torch_spline" title="Link to this heading">#</a></h1>
+<p class="rubric">Functions</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.torch_spline.generate_bbox_spline" title="DeepSDFStruct.torch_spline.generate_bbox_spline"><code class="xref py py-obj docutils literal notranslate"><span class="pre">generate_bbox_spline</span></code></a>(bounds)</p></td>
+<td><p>Takes bounding box and generates a spline box.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
 <p class="rubric">Classes</p>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
@@ -440,6 +449,27 @@ functions.</p>
 
 </dd></dl>
 
+<dl class="py function">
+<dt class="sig sig-object py" id="DeepSDFStruct.torch_spline.generate_bbox_spline">
+<span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.torch_spline.</span></span><span class="sig-name descname"><span class="pre">generate_bbox_spline</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bounds</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.torch_spline.generate_bbox_spline" title="Link to this definition">#</a></dt>
+<dd><p>Takes bounding box and generates a spline box.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>bounds</strong> (<em>(</em><em>2</em><em>, </em><em>3</em><em>) </em><em>array-like</em>) – <dl class="simple">
+<dt>[[xmin, ymin, zmin],</dt><dd><p>[xmax, ymax, zmax]]</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>spline</strong> – BSpline representing the bounding box.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>splinepy.BSpline</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 
 
@@ -490,6 +520,7 @@ functions.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.torch_spline.TorchSplineFunction.jvp"><code class="docutils literal notranslate"><span class="pre">TorchSplineFunction.jvp()</span></code></a></li>
 </ul>
 </li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.torch_spline.generate_bbox_spline"><code class="docutils literal notranslate"><span class="pre">generate_bbox_spline()</span></code></a></li>
 </ul>
   </nav></div>
 
