@@ -1,5 +1,6 @@
 import torch
 import splinepy as sp
+import numpy as np
 
 
 class TorchSplineFunction(torch.autograd.Function):
@@ -89,3 +90,37 @@ class TorchSpline(torch.nn.Module):
 
     def forward(self, queries: torch.Tensor):
         return TorchSplineFunction.apply(queries, self.control_points, self.spline)
+
+
+def generate_bbox_spline(bounds):
+    """
+    Takes bounding box and generates a spline box.
+
+    Parameters
+    ----------
+    bounds : (2, 3) array-like
+        [[xmin, ymin, zmin],
+         [xmax, ymax, zmax]]
+
+    Returns
+    -------
+    spline : splinepy.BSpline
+        BSpline representing the bounding box.
+    """
+    bounds = np.asarray(bounds)
+    mins, maxs = bounds[0], bounds[1]
+
+    knots = [[0, 0, 1, 1], [0, 0, 1, 1], [0, 0, 1, 1]]
+
+    nx, ny, nz = 2, 2, 2
+
+    # Create regular grid of control points
+    xs = np.linspace(mins[0], maxs[0], nx)
+    ys = np.linspace(mins[1], maxs[1], ny)
+    zs = np.linspace(mins[2], maxs[2], nz)
+
+    # Generate full grid
+    control_points = np.array([[x, y, z] for z in zs for y in ys for x in xs])
+
+    spline = sp.BSpline([1, 1, 1], knots, control_points)
+    return spline

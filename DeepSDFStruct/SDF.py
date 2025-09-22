@@ -4,6 +4,7 @@ import numpy as np
 import igl
 import trimesh
 import gustaf
+from tqdm import trange
 
 from typing import TypedDict
 from DeepSDFStruct.deep_sdf.models import DeepSDFModel
@@ -52,6 +53,71 @@ class CapBorderDict(TypedDict):
     y1: CapType = {"cap": -1, "measure": 0}
     z0: CapType = {"cap": -1, "measure": 0}
     z1: CapType = {"cap": -1, "measure": 0}
+
+
+def get_equidistant_grid_sample(
+    bounds: torch.Tensor | np.ndarray,
+    grid_spacing: float,
+    dtype=torch.float32,
+    device="cpu",
+) -> torch.Tensor:
+    """
+    Generates an equidistant 3D grid of points within the given bounding box.
+
+    Parameters
+    ----------
+    bounds : torch.Tensor
+        Tensor of shape (2,3), [[xmin, ymin, zmin], [xmax, ymax, zmax]]
+    grid_spacing : float
+        Approximate spacing between points along each axis.
+
+    Returns
+    -------
+    points : torch.Tensor
+        Tensor of shape (N,3) containing all grid points.
+    """
+    if isinstance(bounds, np.ndarray):
+        bounds = torch.tensor(bounds, dtype=dtype, device=device)
+    assert bounds.shape == (2, 3), "Bounds should be of shape (2,3)"
+    mins, maxs = bounds[0], bounds[1]
+
+    # Compute number of points along each axis (ceil to include max)
+    num_points = torch.ceil((maxs - mins) / grid_spacing).to(torch.int64) + 1
+
+    # Generate linspace for each axis
+    xs = torch.linspace(mins[0], maxs[0], num_points[0], dtype=dtype, device=device)
+    ys = torch.linspace(mins[1], maxs[1], num_points[1], dtype=dtype, device=device)
+    zs = torch.linspace(mins[2], maxs[2], num_points[2], dtype=dtype, device=device)
+
+    # Generate full 3D grid
+    grid = torch.meshgrid(xs, ys, zs, indexing="ij")
+    points = torch.stack(grid, dim=-1).reshape(-1, 3)
+
+    # Assertions to verify grid covers the bounds
+    tol = 1e-6
+    mins_generated = points.min(dim=0).values
+    maxs_generated = points.max(dim=0).values
+    assert torch.allclose(
+        mins_generated, bounds[0], atol=tol
+    ), f"Grid min {mins_generated} does not match bounds {bounds[0]}"
+    assert torch.allclose(
+        maxs_generated, bounds[1], atol=tol
+    ), f"Grid max {maxs_generated} does not match bounds {bounds[1]}"
+
+    return points
+
+
+class ClampedL1Loss(torch.nn.Module):
+    def __init__(self, clamp_val=0.1):
+        super().__init__()
+        self.clamp_val = clamp_val
+        self.loss = torch.nn.L1Loss()
+
+    def forward(self, input, target):
+        # Clamp both input and target to [-clamp_val, clamp_val]
+        input_clamped = input.clamp(-self.clamp_val, self.clamp_val)
+        target_clamped = target.clamp(-self.clamp_val, self.clamp_val)
+        return self.loss(input_clamped, target_clamped)
 
 
 class SDFBase(ABC):
@@ -169,27 +235,30 @@ class SDFBase(ABC):
         lr=5e-4,
         l2reg=False,
         device="cpu",
+        dtype=torch.float32,
+        loss_fn="ClampedL1",
+        grid_spacing=0.1,
     ):
         parameters = (
             torch.ones_like(self.parameters).normal_(mean=0, std=0.1).to(device)
         )
-
+        gt_sdf = SDFfromMesh(mesh, scale=False)
         parameters.requires_grad = True
 
         optimizer = torch.optim.Adam([parameters], lr=lr)
 
         loss_num = 0
-
-        queries_parameter_space = self.deformation_spline.spline.proximities(
-            mesh.vertices
+        uniform_grid = get_equidistant_grid_sample(
+            mesh.bounds(), grid_spacing=grid_spacing, dtype=dtype, device=device
         )
-        verts_min = mesh.vertices.min(axis=0)
-        verts_max = mesh.vertices.max(axis=0)
+        queries_parameter_space = self.deformation_spline.spline.proximities(
+            uniform_grid.detach().cpu().numpy()
+        )
+        verts_min = uniform_grid.min(axis=0)
+        verts_max = uniform_grid.max(axis=0)
 
         print("Min/Max in PHYSICAL space:\n")
-        for name, mn, mx in zip(
-            ["x", "y", "z"], verts_min.tolist(), verts_max.tolist()
-        ):
+        for name, mn, mx in zip(["x", "y", "z"], verts_min.values, verts_max.values):
             print(f"{name}: min={mn:.6f}, max={mx:.6f}")
         queries_ps_torch = torch.tensor(
             queries_parameter_space, device=device, dtype=parameters.dtype
@@ -202,23 +271,33 @@ class SDFBase(ABC):
             ["x", "y", "z"], queries_min.tolist(), queries_max.tolist()
         ):
             print(f"{name}: min={mn:.6f}, max={mx:.6f}")
+        gt_dist = gt_sdf(uniform_grid).view(-1)
+        pbar = trange(num_iterations, desc="Reconstructing SDF from mesh", leave=True)
 
-        for e in range(num_iterations):
+        if loss_fn == "L1":
+            Loss = torch.nn.L1Loss()
+        elif loss_fn == "ClampedL1":
+            Loss = ClampedL1Loss(clamp_val=0.1)
+        elif loss_fn == "MSE":
+            Loss = torch.nn.MSELoss()
+        else:
+            raise NotImplementedError(f"Loss function {loss_fn} not available.")
+
+        for e in pbar:
             optimizer.zero_grad()
 
             # SDF at vertices needs to be zero
             self.parametrization.set_param(parameters)
-            loss = torch.norm(self.__call__(queries_ps_torch))
+            pred_dist = self.__call__(queries_ps_torch)
+
+            loss = Loss(pred_dist, gt_dist)
             if l2reg:
                 loss += 1e-4 * torch.mean(parameters.pow(2))
             loss.backward()
             optimizer.step()
 
-            if e % 50 == 0:
-                loss_num = loss.detach().item()
-                print(f"Epoch: {e:5g} | Loss: {loss_num:.5f}")
-
-            loss_num = loss.cpu().data.numpy()
+            loss_num = loss.detach().item()
+            pbar.set_postfix({"loss": f"{loss_num:.5f}"})
 
         print("Reconstructed parameters:")
         print(parameters)

@@ -1,6 +1,6 @@
 import torch
 import splinepy
-from DeepSDFStruct.torch_spline import TorchSpline
+from DeepSDFStruct.torch_spline import TorchSpline, generate_bbox_spline
 import numpy as np
 import pytest
 
@@ -112,7 +112,34 @@ def test_torchspline_autograd(np_rng, device="cpu"):
     torch.autograd.gradcheck(func, (queries_2, control_points_2), check_forward_ad=True)
 
 
+def test_generate_bbox_spline():
+    # Define bounding box
+    bbox = np.array([[-1.0, -2.0, -3.0], [4.0, 5.0, 6.0]])
+
+    spline = generate_bbox_spline(bbox)
+
+    # Check that min/max corners match bbox
+    cp = spline.control_points
+    mins, maxs = cp.min(axis=0), cp.max(axis=0)
+    np.testing.assert_allclose(mins, bbox[0])
+    np.testing.assert_allclose(maxs, bbox[1])
+
+    params = np.array(np.meshgrid([0, 1], [0, 1], [0, 1])).T.reshape(-1, 3)
+
+    evals = spline.evaluate(params)
+
+    expected = np.array(
+        np.meshgrid(
+            [bbox[0, 0], bbox[1, 0]], [bbox[0, 1], bbox[1, 1]], [bbox[0, 2], bbox[1, 2]]
+        )
+    ).T.reshape(-1, 3)
+
+    # Order might differ, so compare sets
+    assert set(map(tuple, np.round(evals, 8))) == set(map(tuple, np.round(expected, 8)))
+
+
 if __name__ == "__main__":
+    test_generate_bbox_spline()
     np_rng = np.random.default_rng(0)
     test_torchspline_evaluation(np_rng)
     test_torchspline_derivative(np_rng)
