@@ -253,6 +253,7 @@
 <li class="toctree-l4"><a class="reference internal" href="DeepSDFStruct.deep_sdf.networks.deep_sdf_decoder_with_homogen.html">DeepSDFStruct.deep_sdf.networks.deep_sdf_decoder_with_homogen</a></li>
 </ul>
 </details></li>
+<li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.deep_sdf.reconstruction.html">DeepSDFStruct.deep_sdf.reconstruction</a></li>
 <li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.deep_sdf.training.html">DeepSDFStruct.deep_sdf.training</a></li>
 <li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.deep_sdf.utils.html">DeepSDFStruct.deep_sdf.utils</a></li>
 <li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.deep_sdf.workspace.html">DeepSDFStruct.deep_sdf.workspace</a></li>
@@ -354,7 +355,7 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.mesh.export_abaqus_surf_mesh" title="DeepSDFStruct.mesh.export_abaqus_surf_mesh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">export_abaqus_surf_mesh</span></code></a>(surf_mesh, filename)</p></td>
 <td><p>export a mesh and adds corresponding boundary conditions</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.mesh.export_sdf_grid_vtk" title="DeepSDFStruct.mesh.export_sdf_grid_vtk"><code class="xref py py-obj docutils literal notranslate"><span class="pre">export_sdf_grid_vtk</span></code></a>(sdf, filename[, N])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.mesh.export_sdf_grid_vtk" title="DeepSDFStruct.mesh.export_sdf_grid_vtk"><code class="xref py py-obj docutils literal notranslate"><span class="pre">export_sdf_grid_vtk</span></code></a>(sdf, filename[, N, bounds])</p></td>
 <td><p></p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.mesh.export_surface_mesh" title="DeepSDFStruct.mesh.export_surface_mesh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">export_surface_mesh</span></code></a>(filename, mesh[, dSurf])</p></td>
@@ -416,7 +417,7 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="DeepSDFStruct.mesh.export_sdf_grid_vtk">
-<span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.mesh.</span></span><span class="sig-name descname"><span class="pre">export_sdf_grid_vtk</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sdf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">64</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.mesh.export_sdf_grid_vtk" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.mesh.</span></span><span class="sig-name descname"><span class="pre">export_sdf_grid_vtk</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sdf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">64</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bounds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.mesh.export_sdf_grid_vtk" title="Link to this definition">#</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>sdf</strong> (<a class="reference internal" href="DeepSDFStruct.SDF.html#DeepSDFStruct.SDF.SDFBase" title="DeepSDFStruct.SDF.SDFBase"><em>DeepSDFStruct.SDF.SDFBase</em></a>)</p>

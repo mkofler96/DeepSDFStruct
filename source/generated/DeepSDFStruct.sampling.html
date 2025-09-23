@@ -253,6 +253,7 @@
 <li class="toctree-l4"><a class="reference internal" href="DeepSDFStruct.deep_sdf.networks.deep_sdf_decoder_with_homogen.html">DeepSDFStruct.deep_sdf.networks.deep_sdf_decoder_with_homogen</a></li>
 </ul>
 </details></li>
+<li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.deep_sdf.reconstruction.html">DeepSDFStruct.deep_sdf.reconstruction</a></li>
 <li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.deep_sdf.training.html">DeepSDFStruct.deep_sdf.training</a></li>
 <li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.deep_sdf.utils.html">DeepSDFStruct.deep_sdf.utils</a></li>
 <li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.deep_sdf.workspace.html">DeepSDFStruct.deep_sdf.workspace</a></li>
@@ -363,7 +364,10 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.sampling.random_points_cube" title="DeepSDFStruct.sampling.random_points_cube"><code class="xref py py-obj docutils literal notranslate"><span class="pre">random_points_cube</span></code></a>(count, box_size)</p></td>
 <td><p>random points in a cube with size box_size centered at (0, 0, 0)</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.sampling.random_sample_sdf" title="DeepSDFStruct.sampling.random_sample_sdf"><code class="xref py py-obj docutils literal notranslate"><span class="pre">random_sample_sdf</span></code></a>(sdf, bounds, n_samples[, type])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.sampling.random_sample_sdf" title="DeepSDFStruct.sampling.random_sample_sdf"><code class="xref py py-obj docutils literal notranslate"><span class="pre">random_sample_sdf</span></code></a>(sdf, bounds, n_samples[, ...])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.sampling.sample_mesh_surface" title="DeepSDFStruct.sampling.sample_mesh_surface"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sample_mesh_surface</span></code></a>(sdf, mesh, n_samples, stds)</p></td>
 <td><p></p></td>
 </tr>
 </tbody>
@@ -375,10 +379,10 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.sampling.DataSetInfo" title="DeepSDFStruct.sampling.DataSetInfo"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataSetInfo</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.sampling.RandomSampleSDF" title="DeepSDFStruct.sampling.RandomSampleSDF"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RandomSampleSDF</span></code></a>(samples, distances)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.sampling.SDFSampler" title="DeepSDFStruct.sampling.SDFSampler"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SDFSampler</span></code></a>(outdir, splitdir, dataset_name[, ...])</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.sampling.SDFSampler" title="DeepSDFStruct.sampling.SDFSampler"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SDFSampler</span></code></a>(outdir, splitdir, dataset_name[, ...])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.sampling.SampledSDF" title="DeepSDFStruct.sampling.SampledSDF"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SampledSDF</span></code></a>(samples, distances)</p></td>
 <td><p></p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.sampling.SphereParameters" title="DeepSDFStruct.sampling.SphereParameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SphereParameters</span></code></a></p></td>
@@ -399,45 +403,6 @@
 <dl class="py attribute">
 <dt class="sig sig-object py" id="DeepSDFStruct.sampling.DataSetInfo.dataset_name">
 <span class="sig-name descname"><span class="pre">dataset_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><a class="headerlink" href="#DeepSDFStruct.sampling.DataSetInfo.dataset_name" title="Link to this definition">#</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="DeepSDFStruct.sampling.RandomSampleSDF">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.sampling.</span></span><span class="sig-name descname"><span class="pre">RandomSampleSDF</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">samples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distances</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.sampling.RandomSampleSDF" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>samples</strong> (<em>torch._VariableFunctionsClass.tensor</em>)</p></li>
-<li><p><strong>distances</strong> (<em>torch._VariableFunctionsClass.tensor</em>)</p></li>
-</ul>
-</dd>
-</dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="DeepSDFStruct.sampling.RandomSampleSDF.create_gus_plottable">
-<span class="sig-name descname"><span class="pre">create_gus_plottable</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.sampling.RandomSampleSDF.create_gus_plottable" title="Link to this definition">#</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="DeepSDFStruct.sampling.RandomSampleSDF.distances">
-<span class="sig-name descname"><span class="pre">distances</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">tensor</span></code></em><a class="headerlink" href="#DeepSDFStruct.sampling.RandomSampleSDF.distances" title="Link to this definition">#</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="DeepSDFStruct.sampling.RandomSampleSDF.samples">
-<span class="sig-name descname"><span class="pre">samples</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">tensor</span></code></em><a class="headerlink" href="#DeepSDFStruct.sampling.RandomSampleSDF.samples" title="Link to this definition">#</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="DeepSDFStruct.sampling.RandomSampleSDF.split_pos_neg">
-<span class="sig-name descname"><span class="pre">split_pos_neg</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.sampling.RandomSampleSDF.split_pos_neg" title="Link to this definition">#</a></dt>
-<dd></dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="DeepSDFStruct.sampling.RandomSampleSDF.stacked">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">stacked</span></span><a class="headerlink" href="#DeepSDFStruct.sampling.RandomSampleSDF.stacked" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -519,6 +484,45 @@
 </dd></dl>
 
 <dl class="py class">
+<dt class="sig sig-object py" id="DeepSDFStruct.sampling.SampledSDF">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.sampling.</span></span><span class="sig-name descname"><span class="pre">SampledSDF</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">samples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distances</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.sampling.SampledSDF" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>samples</strong> (<em>torch._VariableFunctionsClass.tensor</em>)</p></li>
+<li><p><strong>distances</strong> (<em>torch._VariableFunctionsClass.tensor</em>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="DeepSDFStruct.sampling.SampledSDF.create_gus_plottable">
+<span class="sig-name descname"><span class="pre">create_gus_plottable</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.sampling.SampledSDF.create_gus_plottable" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="DeepSDFStruct.sampling.SampledSDF.distances">
+<span class="sig-name descname"><span class="pre">distances</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">tensor</span></code></em><a class="headerlink" href="#DeepSDFStruct.sampling.SampledSDF.distances" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="DeepSDFStruct.sampling.SampledSDF.samples">
+<span class="sig-name descname"><span class="pre">samples</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">tensor</span></code></em><a class="headerlink" href="#DeepSDFStruct.sampling.SampledSDF.samples" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="DeepSDFStruct.sampling.SampledSDF.split_pos_neg">
+<span class="sig-name descname"><span class="pre">split_pos_neg</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.sampling.SampledSDF.split_pos_neg" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="DeepSDFStruct.sampling.SampledSDF.stacked">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">stacked</span></span><a class="headerlink" href="#DeepSDFStruct.sampling.SampledSDF.stacked" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
 <dt class="sig sig-object py" id="DeepSDFStruct.sampling.SphereParameters">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.sampling.</span></span><span class="sig-name descname"><span class="pre">SphereParameters</span></span><a class="headerlink" href="#DeepSDFStruct.sampling.SphereParameters" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">TypedDict</span></code></p>
@@ -573,8 +577,26 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="DeepSDFStruct.sampling.random_sample_sdf">
-<span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.sampling.</span></span><span class="sig-name descname"><span class="pre">random_sample_sdf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sdf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bounds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_samples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'uniform'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.sampling.random_sample_sdf" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.sampling.</span></span><span class="sig-name descname"><span class="pre">random_sample_sdf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sdf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bounds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_samples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'uniform'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cpu'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">torch.float32</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.sampling.random_sample_sdf" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="DeepSDFStruct.sampling.sample_mesh_surface">
+<span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.sampling.</span></span><span class="sig-name descname"><span class="pre">sample_mesh_surface</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sdf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mesh</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_samples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cpu'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">torch.float32</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.sampling.sample_mesh_surface" title="Link to this definition">#</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#DeepSDFStruct.sampling.SampledSDF" title="DeepSDFStruct.sampling.SampledSDF"><code class="xref py py-class docutils literal notranslate"><span class="pre">SampledSDF</span></code></a></span></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>sdf</strong> (<a class="reference internal" href="DeepSDFStruct.SDF.html#DeepSDFStruct.SDF.SDFBase" title="DeepSDFStruct.SDF.SDFBase"><em>DeepSDFStruct.SDF.SDFBase</em></a>)</p></li>
+<li><p><strong>mesh</strong> (<em>gustaf.faces.Faces</em>)</p></li>
+<li><p><strong>n_samples</strong> (<em>int</em>)</p></li>
+<li><p><strong>stds</strong> (<em>list</em><em>[</em><em>float</em><em>]</em>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 
 </section>
 
@@ -630,14 +652,6 @@
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.sampling.DataSetInfo.dataset_name"><code class="docutils literal notranslate"><span class="pre">DataSetInfo.dataset_name</span></code></a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.sampling.RandomSampleSDF"><code class="docutils literal notranslate"><span class="pre">RandomSampleSDF</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.sampling.RandomSampleSDF.create_gus_plottable"><code class="docutils literal notranslate"><span class="pre">RandomSampleSDF.create_gus_plottable()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.sampling.RandomSampleSDF.distances"><code class="docutils literal notranslate"><span class="pre">RandomSampleSDF.distances</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.sampling.RandomSampleSDF.samples"><code class="docutils literal notranslate"><span class="pre">RandomSampleSDF.samples</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.sampling.RandomSampleSDF.split_pos_neg"><code class="docutils literal notranslate"><span class="pre">RandomSampleSDF.split_pos_neg()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.sampling.RandomSampleSDF.stacked"><code class="docutils literal notranslate"><span class="pre">RandomSampleSDF.stacked</span></code></a></li>
-</ul>
-</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.sampling.SDFSampler"><code class="docutils literal notranslate"><span class="pre">SDFSampler</span></code></a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.sampling.SDFSampler.add_class"><code class="docutils literal notranslate"><span class="pre">SDFSampler.add_class()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.sampling.SDFSampler.get_SDF_list"><code class="docutils literal notranslate"><span class="pre">SDFSampler.get_SDF_list()</span></code></a></li>
@@ -645,6 +659,14 @@
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.sampling.SDFSampler.process_geometries"><code class="docutils literal notranslate"><span class="pre">SDFSampler.process_geometries()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.sampling.SDFSampler.sample_sdf"><code class="docutils literal notranslate"><span class="pre">SDFSampler.sample_sdf()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.sampling.SDFSampler.write_json"><code class="docutils literal notranslate"><span class="pre">SDFSampler.write_json()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.sampling.SampledSDF"><code class="docutils literal notranslate"><span class="pre">SampledSDF</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.sampling.SampledSDF.create_gus_plottable"><code class="docutils literal notranslate"><span class="pre">SampledSDF.create_gus_plottable()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.sampling.SampledSDF.distances"><code class="docutils literal notranslate"><span class="pre">SampledSDF.distances</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.sampling.SampledSDF.samples"><code class="docutils literal notranslate"><span class="pre">SampledSDF.samples</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.sampling.SampledSDF.split_pos_neg"><code class="docutils literal notranslate"><span class="pre">SampledSDF.split_pos_neg()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.sampling.SampledSDF.stacked"><code class="docutils literal notranslate"><span class="pre">SampledSDF.stacked</span></code></a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.sampling.SphereParameters"><code class="docutils literal notranslate"><span class="pre">SphereParameters</span></code></a><ul class="nav section-nav flex-column">
@@ -660,6 +682,7 @@
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.sampling.random_points"><code class="docutils literal notranslate"><span class="pre">random_points()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.sampling.random_points_cube"><code class="docutils literal notranslate"><span class="pre">random_points_cube()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.sampling.random_sample_sdf"><code class="docutils literal notranslate"><span class="pre">random_sample_sdf()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.sampling.sample_mesh_surface"><code class="docutils literal notranslate"><span class="pre">sample_mesh_surface()</span></code></a></li>
 </ul>
   </nav></div>
 

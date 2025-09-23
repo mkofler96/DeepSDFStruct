@@ -19,7 +19,6 @@ DeepSDFStruct.SDF
       BoxSDF
       CapBorderDict
       CapType
-      ClampedL1Loss
       NegatedCallable
       SDFBase
       SDFfromDeepSDF

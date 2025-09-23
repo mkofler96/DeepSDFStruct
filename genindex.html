@@ -332,7 +332,7 @@
 </li>
       <li><a href="source/generated/DeepSDFStruct.pretrained_models.html#DeepSDFStruct.pretrained_models.PretrainedModels.ChiAndCross">ChiAndCross (DeepSDFStruct.pretrained_models.PretrainedModels attribute)</a>
 </li>
-      <li><a href="source/generated/DeepSDFStruct.SDF.html#DeepSDFStruct.SDF.ClampedL1Loss">ClampedL1Loss (class in DeepSDFStruct.SDF)</a>
+      <li><a href="source/generated/DeepSDFStruct.deep_sdf.training.html#DeepSDFStruct.deep_sdf.training.ClampedL1Loss">ClampedL1Loss (class in DeepSDFStruct.deep_sdf.training)</a>
 </li>
       <li><a href="source/generated/DeepSDFStruct.sampling.html#DeepSDFStruct.sampling.DataSetInfo.class_name">class_name (DeepSDFStruct.sampling.DataSetInfo attribute)</a>
 </li>
@@ -354,7 +354,7 @@
 </li>
       <li><a href="source/generated/DeepSDFStruct.mesh.html#DeepSDFStruct.mesh.create_3D_surface_mesh">create_3D_surface_mesh() (in module DeepSDFStruct.mesh)</a>
 </li>
-      <li><a href="source/generated/DeepSDFStruct.sampling.html#DeepSDFStruct.sampling.RandomSampleSDF.create_gus_plottable">create_gus_plottable() (DeepSDFStruct.sampling.RandomSampleSDF method)</a>
+      <li><a href="source/generated/DeepSDFStruct.sampling.html#DeepSDFStruct.sampling.SampledSDF.create_gus_plottable">create_gus_plottable() (DeepSDFStruct.sampling.SampledSDF method)</a>
 </li>
       <li><a href="source/generated/DeepSDFStruct.deep_sdf.training.html#DeepSDFStruct.deep_sdf.training.create_interpolated_meshes_from_latent">create_interpolated_meshes_from_latent() (in module DeepSDFStruct.deep_sdf.training)</a>
 </li>
@@ -477,6 +477,13 @@
 
       <ul>
         <li><a href="source/generated/DeepSDFStruct.deep_sdf.networks.deep_sdf_decoder_with_homogen.html#module-DeepSDFStruct.deep_sdf.networks.deep_sdf_decoder_with_homogen">module</a>
+</li>
+      </ul></li>
+      <li>
+    DeepSDFStruct.deep_sdf.reconstruction
+
+      <ul>
+        <li><a href="source/generated/DeepSDFStruct.deep_sdf.reconstruction.html#module-DeepSDFStruct.deep_sdf.reconstruction">module</a>
 </li>
       </ul></li>
       <li>
@@ -631,7 +638,7 @@
 </li>
       <li><a href="source/generated/DeepSDFStruct.flexicubes.flexicubes.html#DeepSDFStruct.flexicubes.flexicubes.FlexiCubes.dir_faces_table">dir_faces_table (DeepSDFStruct.flexicubes.flexicubes.FlexiCubes attribute)</a>
 </li>
-      <li><a href="source/generated/DeepSDFStruct.sampling.html#DeepSDFStruct.sampling.RandomSampleSDF.distances">distances (DeepSDFStruct.sampling.RandomSampleSDF attribute)</a>
+      <li><a href="source/generated/DeepSDFStruct.sampling.html#DeepSDFStruct.sampling.SampledSDF.distances">distances (DeepSDFStruct.sampling.SampledSDF attribute)</a>
 </li>
       <li><a href="source/generated/DeepSDFStruct.flexicubes.flexicubes.html#DeepSDFStruct.flexicubes.flexicubes.FlexiCubes.dmc_table">dmc_table (DeepSDFStruct.flexicubes.flexicubes.FlexiCubes attribute)</a>
 </li>
@@ -674,7 +681,7 @@
 </li>
         <li><a href="source/generated/DeepSDFStruct.deep_sdf.networks.deep_sdf_decoder_with_homogen.html#DeepSDFStruct.deep_sdf.networks.deep_sdf_decoder_with_homogen.HomogenDecoder.forward">(DeepSDFStruct.deep_sdf.networks.deep_sdf_decoder_with_homogen.HomogenDecoder method)</a>
 </li>
-        <li><a href="source/generated/DeepSDFStruct.SDF.html#DeepSDFStruct.SDF.ClampedL1Loss.forward">(DeepSDFStruct.SDF.ClampedL1Loss method)</a>
+        <li><a href="source/generated/DeepSDFStruct.deep_sdf.training.html#DeepSDFStruct.deep_sdf.training.ClampedL1Loss.forward">(DeepSDFStruct.deep_sdf.training.ClampedL1Loss method)</a>
 </li>
         <li><a href="source/generated/DeepSDFStruct.torch_spline.html#DeepSDFStruct.torch_spline.TorchSpline.forward">(DeepSDFStruct.torch_spline.TorchSpline method)</a>
 </li>
@@ -835,6 +842,8 @@
 </li>
         <li><a href="source/generated/DeepSDFStruct.deep_sdf.networks.deep_sdf_decoder_with_homogen.html#module-DeepSDFStruct.deep_sdf.networks.deep_sdf_decoder_with_homogen">DeepSDFStruct.deep_sdf.networks.deep_sdf_decoder_with_homogen</a>
 </li>
+        <li><a href="source/generated/DeepSDFStruct.deep_sdf.reconstruction.html#module-DeepSDFStruct.deep_sdf.reconstruction">DeepSDFStruct.deep_sdf.reconstruction</a>
+</li>
         <li><a href="source/generated/DeepSDFStruct.deep_sdf.training.html#module-DeepSDFStruct.deep_sdf.training">DeepSDFStruct.deep_sdf.training</a>
 </li>
         <li><a href="source/generated/DeepSDFStruct.deep_sdf.utils.html#module-DeepSDFStruct.deep_sdf.utils">DeepSDFStruct.deep_sdf.utils</a>
@@ -966,13 +975,11 @@
 </li>
       <li><a href="source/generated/DeepSDFStruct.sampling.html#DeepSDFStruct.sampling.random_sample_sdf">random_sample_sdf() (in module DeepSDFStruct.sampling)</a>
 </li>
-      <li><a href="source/generated/DeepSDFStruct.sampling.html#DeepSDFStruct.sampling.RandomSampleSDF">RandomSampleSDF (class in DeepSDFStruct.sampling)</a>
+      <li><a href="source/generated/DeepSDFStruct.deep_sdf.data.html#DeepSDFStruct.deep_sdf.data.read_sdf_samples_into_ram">read_sdf_samples_into_ram() (in module DeepSDFStruct.deep_sdf.data)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="source/generated/DeepSDFStruct.deep_sdf.data.html#DeepSDFStruct.deep_sdf.data.read_sdf_samples_into_ram">read_sdf_samples_into_ram() (in module DeepSDFStruct.deep_sdf.data)</a>
-</li>
-      <li><a href="source/generated/DeepSDFStruct.SDF.html#DeepSDFStruct.SDF.SDFBase.reconstruct_from_mesh">reconstruct_from_mesh() (DeepSDFStruct.SDF.SDFBase method)</a>
+      <li><a href="source/generated/DeepSDFStruct.deep_sdf.reconstruction.html#DeepSDFStruct.deep_sdf.reconstruction.reconstruct_from_samples">reconstruct_from_samples() (in module DeepSDFStruct.deep_sdf.reconstruction)</a>
 </li>
       <li><a href="source/generated/DeepSDFStruct.deep_sdf.training.html#DeepSDFStruct.deep_sdf.training.reconstruct_meshs_from_latent">reconstruct_meshs_from_latent() (in module DeepSDFStruct.deep_sdf.training)</a>
 </li>
@@ -988,9 +995,13 @@
 <h2 id="S">S</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="source/generated/DeepSDFStruct.sampling.html#DeepSDFStruct.sampling.sample_mesh_surface">sample_mesh_surface() (in module DeepSDFStruct.sampling)</a>
+</li>
       <li><a href="source/generated/DeepSDFStruct.sampling.html#DeepSDFStruct.sampling.SDFSampler.sample_sdf">sample_sdf() (DeepSDFStruct.sampling.SDFSampler method)</a>
 </li>
-      <li><a href="source/generated/DeepSDFStruct.sampling.html#DeepSDFStruct.sampling.RandomSampleSDF.samples">samples (DeepSDFStruct.sampling.RandomSampleSDF attribute)</a>
+      <li><a href="source/generated/DeepSDFStruct.sampling.html#DeepSDFStruct.sampling.SampledSDF">SampledSDF (class in DeepSDFStruct.sampling)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.sampling.html#DeepSDFStruct.sampling.SampledSDF.samples">samples (DeepSDFStruct.sampling.SampledSDF attribute)</a>
 </li>
       <li><a href="source/generated/DeepSDFStruct.deep_sdf.training.html#DeepSDFStruct.deep_sdf.training.save_latent_vectors">save_latent_vectors() (in module DeepSDFStruct.deep_sdf.training)</a>
 </li>
@@ -1010,10 +1021,10 @@
 </li>
       <li><a href="source/generated/DeepSDFStruct.SDF.html#DeepSDFStruct.SDF.SDFfromMesh">SDFfromMesh (class in DeepSDFStruct.SDF)</a>
 </li>
-      <li><a href="source/generated/DeepSDFStruct.sampling.html#DeepSDFStruct.sampling.SDFSampler">SDFSampler (class in DeepSDFStruct.sampling)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="source/generated/DeepSDFStruct.sampling.html#DeepSDFStruct.sampling.SDFSampler">SDFSampler (class in DeepSDFStruct.sampling)</a>
+</li>
       <li><a href="source/generated/DeepSDFStruct.deep_sdf.data.html#DeepSDFStruct.deep_sdf.data.SDFSamples">SDFSamples (class in DeepSDFStruct.deep_sdf.data)</a>
 </li>
       <li><a href="source/generated/DeepSDFStruct.SDF.html#DeepSDFStruct.SDF.SDFfromDeepSDF.set_latent_vec">set_latent_vec() (DeepSDFStruct.SDF.SDFfromDeepSDF method)</a>
@@ -1032,9 +1043,9 @@
 </li>
       <li><a href="source/generated/DeepSDFStruct.parametrization.html#DeepSDFStruct.parametrization.SplineParametrization">SplineParametrization (class in DeepSDFStruct.parametrization)</a>
 </li>
-      <li><a href="source/generated/DeepSDFStruct.sampling.html#DeepSDFStruct.sampling.RandomSampleSDF.split_pos_neg">split_pos_neg() (DeepSDFStruct.sampling.RandomSampleSDF method)</a>
+      <li><a href="source/generated/DeepSDFStruct.sampling.html#DeepSDFStruct.sampling.SampledSDF.split_pos_neg">split_pos_neg() (DeepSDFStruct.sampling.SampledSDF method)</a>
 </li>
-      <li><a href="source/generated/DeepSDFStruct.sampling.html#DeepSDFStruct.sampling.RandomSampleSDF.stacked">stacked (DeepSDFStruct.sampling.RandomSampleSDF property)</a>
+      <li><a href="source/generated/DeepSDFStruct.sampling.html#DeepSDFStruct.sampling.SampledSDF.stacked">stacked (DeepSDFStruct.sampling.SampledSDF property)</a>
 </li>
       <li><a href="source/generated/DeepSDFStruct.deep_sdf.training.html#DeepSDFStruct.deep_sdf.training.StepLearningRateSchedule">StepLearningRateSchedule (class in DeepSDFStruct.deep_sdf.training)</a>
 </li>

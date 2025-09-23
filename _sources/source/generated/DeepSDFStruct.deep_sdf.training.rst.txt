@@ -27,6 +27,7 @@ DeepSDFStruct.deep\_sdf.training
 
    .. autosummary::
    
+      ClampedL1Loss
       ConstantLearningRateSchedule
       LearningRateSchedule
       StepLearningRateSchedule

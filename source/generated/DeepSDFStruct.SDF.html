@@ -253,6 +253,7 @@
 <li class="toctree-l4"><a class="reference internal" href="DeepSDFStruct.deep_sdf.networks.deep_sdf_decoder_with_homogen.html">DeepSDFStruct.deep_sdf.networks.deep_sdf_decoder_with_homogen</a></li>
 </ul>
 </details></li>
+<li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.deep_sdf.reconstruction.html">DeepSDFStruct.deep_sdf.reconstruction</a></li>
 <li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.deep_sdf.training.html">DeepSDFStruct.deep_sdf.training</a></li>
 <li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.deep_sdf.utils.html">DeepSDFStruct.deep_sdf.utils</a></li>
 <li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.deep_sdf.workspace.html">DeepSDFStruct.deep_sdf.workspace</a></li>
@@ -372,28 +373,25 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.SDF.CapType" title="DeepSDFStruct.SDF.CapType"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CapType</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.SDF.ClampedL1Loss" title="DeepSDFStruct.SDF.ClampedL1Loss"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ClampedL1Loss</span></code></a>([clamp_val])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.SDF.NegatedCallable" title="DeepSDFStruct.SDF.NegatedCallable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">NegatedCallable</span></code></a>(obj)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.SDF.NegatedCallable" title="DeepSDFStruct.SDF.NegatedCallable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">NegatedCallable</span></code></a>(obj)</p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.SDF.SDFBase" title="DeepSDFStruct.SDF.SDFBase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SDFBase</span></code></a>([deformation_spline, ...])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.SDF.SDFBase" title="DeepSDFStruct.SDF.SDFBase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SDFBase</span></code></a>([deformation_spline, ...])</p></td>
 <td><p>Abstract base class for Signed Distance Functions with optional deformation and parametrization.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.SDF.SDFfromDeepSDF" title="DeepSDFStruct.SDF.SDFfromDeepSDF"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SDFfromDeepSDF</span></code></a>(model[, max_batch])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.SDF.SDFfromDeepSDF" title="DeepSDFStruct.SDF.SDFfromDeepSDF"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SDFfromDeepSDF</span></code></a>(model[, max_batch])</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.SDF.SDFfromLineMesh" title="DeepSDFStruct.SDF.SDFfromLineMesh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SDFfromLineMesh</span></code></a>(line_mesh, thickness[, ...])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.SDF.SDFfromLineMesh" title="DeepSDFStruct.SDF.SDFfromLineMesh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SDFfromLineMesh</span></code></a>(line_mesh, thickness[, ...])</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.SDF.SDFfromMesh" title="DeepSDFStruct.SDF.SDFfromMesh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SDFfromMesh</span></code></a>(mesh[, dtype, flip_sign, scale, ...])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.SDF.SDFfromMesh" title="DeepSDFStruct.SDF.SDFfromMesh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SDFfromMesh</span></code></a>(mesh[, dtype, flip_sign, scale, ...])</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.SDF.SummedSDF" title="DeepSDFStruct.SDF.SummedSDF"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SummedSDF</span></code></a>(obj1, obj2)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.SDF.SummedSDF" title="DeepSDFStruct.SDF.SummedSDF"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SummedSDF</span></code></a>(obj1, obj2)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.SDF.TransformedSDF" title="DeepSDFStruct.SDF.TransformedSDF"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TransformedSDF</span></code></a>(sdf[, rotation, translation, ...])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.SDF.TransformedSDF" title="DeepSDFStruct.SDF.TransformedSDF"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TransformedSDF</span></code></a>(sdf[, rotation, translation, ...])</p></td>
 <td><p>Generic SDF wrapper that applies a transformation to the input queries.</p></td>
 </tr>
 </tbody>
@@ -487,26 +485,6 @@ with two fields:</p>
 </dd></dl>
 
 <dl class="py class">
-<dt class="sig sig-object py" id="DeepSDFStruct.SDF.ClampedL1Loss">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.SDF.</span></span><span class="sig-name descname"><span class="pre">ClampedL1Loss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">clamp_val</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.SDF.ClampedL1Loss" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
-<dl class="py method">
-<dt class="sig sig-object py" id="DeepSDFStruct.SDF.ClampedL1Loss.forward">
-<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.SDF.ClampedL1Loss.forward" title="Link to this definition">#</a></dt>
-<dd><p>Define the computation performed at every call.</p>
-<p>Should be overridden by all subclasses.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Although the recipe for forward pass needs to be defined within
-this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
-instead of this since the former takes care of running the
-registered hooks while the latter silently ignores them.</p>
-</div>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
 <dt class="sig sig-object py" id="DeepSDFStruct.SDF.NegatedCallable">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.SDF.</span></span><span class="sig-name descname"><span class="pre">NegatedCallable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.SDF.NegatedCallable" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#DeepSDFStruct.SDF.SDFBase" title="DeepSDFStruct.SDF.SDFBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">DeepSDFStruct.SDF.SDFBase</span></code></a></p>
@@ -546,16 +524,6 @@ deformation and parametrization.</p>
 <dt class="sig sig-object py" id="DeepSDFStruct.SDF.SDFBase.plot_slice">
 <span class="sig-name descname"><span class="pre">plot_slice</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.SDF.SDFBase.plot_slice" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="DeepSDFStruct.SDF.SDFBase.reconstruct_from_mesh">
-<span class="sig-name descname"><span class="pre">reconstruct_from_mesh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mesh</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_iterations</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0005</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">l2reg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cpu'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">torch.float32</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss_fn</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ClampedL1'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_spacing</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.SDF.SDFBase.reconstruct_from_mesh" title="Link to this definition">#</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>mesh</strong> (<em>gustaf.faces.Faces</em>)</p>
-</dd>
-</dl>
-</dd></dl>
 
 </dd></dl>
 
@@ -747,17 +715,12 @@ k: smoothness parameter</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.SDF.CapType.measure"><code class="docutils literal notranslate"><span class="pre">CapType.measure</span></code></a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.SDF.ClampedL1Loss"><code class="docutils literal notranslate"><span class="pre">ClampedL1Loss</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.SDF.ClampedL1Loss.forward"><code class="docutils literal notranslate"><span class="pre">ClampedL1Loss.forward()</span></code></a></li>
-</ul>
-</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.SDF.NegatedCallable"><code class="docutils literal notranslate"><span class="pre">NegatedCallable</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.SDF.SDFBase"><code class="docutils literal notranslate"><span class="pre">SDFBase</span></code></a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.SDF.SDFBase.cap_border_dict"><code class="docutils literal notranslate"><span class="pre">SDFBase.cap_border_dict</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.SDF.SDFBase.deformation_spline"><code class="docutils literal notranslate"><span class="pre">SDFBase.deformation_spline</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.SDF.SDFBase.parametrization"><code class="docutils literal notranslate"><span class="pre">SDFBase.parametrization</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.SDF.SDFBase.plot_slice"><code class="docutils literal notranslate"><span class="pre">SDFBase.plot_slice()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.SDF.SDFBase.reconstruct_from_mesh"><code class="docutils literal notranslate"><span class="pre">SDFBase.reconstruct_from_mesh()</span></code></a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.SDF.SDFfromDeepSDF"><code class="docutils literal notranslate"><span class="pre">SDFfromDeepSDF</span></code></a><ul class="nav section-nav flex-column">

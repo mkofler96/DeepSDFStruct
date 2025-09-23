@@ -14,13 +14,14 @@ DeepSDFStruct.sampling
       random_points
       random_points_cube
       random_sample_sdf
+      sample_mesh_surface
    
    .. rubric:: Classes
 
    .. autosummary::
    
       DataSetInfo
-      RandomSampleSDF
       SDFSampler
+      SampledSDF
       SphereParameters
    

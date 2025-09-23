@@ -45,7 +45,7 @@
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="DeepSDFStruct.deep_sdf.utils" href="DeepSDFStruct.deep_sdf.utils.html" />
-    <link rel="prev" title="DeepSDFStruct.deep_sdf.networks.deep_sdf_decoder_with_homogen" href="DeepSDFStruct.deep_sdf.networks.deep_sdf_decoder_with_homogen.html" />
+    <link rel="prev" title="DeepSDFStruct.deep_sdf.reconstruction" href="DeepSDFStruct.deep_sdf.reconstruction.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
@@ -253,6 +253,7 @@
 <li class="toctree-l4"><a class="reference internal" href="DeepSDFStruct.deep_sdf.networks.deep_sdf_decoder_with_homogen.html">DeepSDFStruct.deep_sdf.networks.deep_sdf_decoder_with_homogen</a></li>
 </ul>
 </details></li>
+<li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.deep_sdf.reconstruction.html">DeepSDFStruct.deep_sdf.reconstruction</a></li>
 <li class="toctree-l3 current active"><a class="current reference internal" href="#">DeepSDFStruct.deep_sdf.training</a></li>
 <li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.deep_sdf.utils.html">DeepSDFStruct.deep_sdf.utils</a></li>
 <li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.deep_sdf.workspace.html">DeepSDFStruct.deep_sdf.workspace</a></li>
@@ -399,21 +400,44 @@
 <p class="rubric">Classes</p>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.deep_sdf.training.ConstantLearningRateSchedule" title="DeepSDFStruct.deep_sdf.training.ConstantLearningRateSchedule"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ConstantLearningRateSchedule</span></code></a>(value)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.deep_sdf.training.ClampedL1Loss" title="DeepSDFStruct.deep_sdf.training.ClampedL1Loss"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ClampedL1Loss</span></code></a>([clamp_val])</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.deep_sdf.training.LearningRateSchedule" title="DeepSDFStruct.deep_sdf.training.LearningRateSchedule"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LearningRateSchedule</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.deep_sdf.training.ConstantLearningRateSchedule" title="DeepSDFStruct.deep_sdf.training.ConstantLearningRateSchedule"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ConstantLearningRateSchedule</span></code></a>(value)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.deep_sdf.training.StepLearningRateSchedule" title="DeepSDFStruct.deep_sdf.training.StepLearningRateSchedule"><code class="xref py py-obj docutils literal notranslate"><span class="pre">StepLearningRateSchedule</span></code></a>(initial, interval, ...)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.deep_sdf.training.LearningRateSchedule" title="DeepSDFStruct.deep_sdf.training.LearningRateSchedule"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LearningRateSchedule</span></code></a>()</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.deep_sdf.training.WarmupLearningRateSchedule" title="DeepSDFStruct.deep_sdf.training.WarmupLearningRateSchedule"><code class="xref py py-obj docutils literal notranslate"><span class="pre">WarmupLearningRateSchedule</span></code></a>(initial, ...)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.deep_sdf.training.StepLearningRateSchedule" title="DeepSDFStruct.deep_sdf.training.StepLearningRateSchedule"><code class="xref py py-obj docutils literal notranslate"><span class="pre">StepLearningRateSchedule</span></code></a>(initial, interval, ...)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.deep_sdf.training.WarmupLearningRateSchedule" title="DeepSDFStruct.deep_sdf.training.WarmupLearningRateSchedule"><code class="xref py py-obj docutils literal notranslate"><span class="pre">WarmupLearningRateSchedule</span></code></a>(initial, ...)</p></td>
 <td><p></p></td>
 </tr>
 </tbody>
 </table>
 </div>
+<dl class="py class">
+<dt class="sig sig-object py" id="DeepSDFStruct.deep_sdf.training.ClampedL1Loss">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.deep_sdf.training.</span></span><span class="sig-name descname"><span class="pre">ClampedL1Loss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">clamp_val</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.deep_sdf.training.ClampedL1Loss" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="DeepSDFStruct.deep_sdf.training.ClampedL1Loss.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.deep_sdf.training.ClampedL1Loss.forward" title="Link to this definition">#</a></dt>
+<dd><p>Define the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
 <dl class="py class">
 <dt class="sig sig-object py" id="DeepSDFStruct.deep_sdf.training.ConstantLearningRateSchedule">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.deep_sdf.training.</span></span><span class="sig-name descname"><span class="pre">ConstantLearningRateSchedule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.deep_sdf.training.ConstantLearningRateSchedule" title="Link to this definition">#</a></dt>
@@ -576,12 +600,12 @@ Defaults to 11.</p></li>
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="DeepSDFStruct.deep_sdf.networks.deep_sdf_decoder_with_homogen.html"
+       href="DeepSDFStruct.deep_sdf.reconstruction.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">DeepSDFStruct.deep_sdf.networks.deep_sdf_decoder_with_homogen</p>
+        <p class="prev-next-title">DeepSDFStruct.deep_sdf.reconstruction</p>
       </div>
     </a>
     <a class="right-next"
@@ -612,6 +636,10 @@ Defaults to 11.</p></li>
   </div>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.deep_sdf.training.ClampedL1Loss"><code class="docutils literal notranslate"><span class="pre">ClampedL1Loss</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.deep_sdf.training.ClampedL1Loss.forward"><code class="docutils literal notranslate"><span class="pre">ClampedL1Loss.forward()</span></code></a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.deep_sdf.training.ConstantLearningRateSchedule"><code class="docutils literal notranslate"><span class="pre">ConstantLearningRateSchedule</span></code></a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.deep_sdf.training.ConstantLearningRateSchedule.get_learning_rate"><code class="docutils literal notranslate"><span class="pre">ConstantLearningRateSchedule.get_learning_rate()</span></code></a></li>
 </ul>

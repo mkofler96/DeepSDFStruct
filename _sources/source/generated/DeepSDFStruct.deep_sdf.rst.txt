@@ -17,6 +17,7 @@ DeepSDFStruct.deep\_sdf
    models
    networks
    plotting
+   reconstruction
    training
    utils
    workspace

@@ -1,0 +1,12 @@
+DeepSDFStruct.deep\_sdf.reconstruction
+======================================
+
+.. automodule:: DeepSDFStruct.deep_sdf.reconstruction
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      reconstruct_from_samples
+   
