@@ -24,6 +24,19 @@ from DeepSDFStruct.mesh import create_3D_surface_mesh, export_surface_mesh
 import numpy as np
 
 
+class ClampedL1Loss(torch.nn.Module):
+    def __init__(self, clamp_val=0.1):
+        super().__init__()
+        self.clamp_val = clamp_val
+        self.loss = torch.nn.L1Loss()
+
+    def forward(self, input, target):
+        # Clamp both input and target to [-clamp_val, clamp_val]
+        input_clamped = input.clamp(-self.clamp_val, self.clamp_val)
+        target_clamped = target.clamp(-self.clamp_val, self.clamp_val)
+        return self.loss(input_clamped, target_clamped)
+
+
 class LearningRateSchedule:
     def get_learning_rate(self, epoch):
         pass

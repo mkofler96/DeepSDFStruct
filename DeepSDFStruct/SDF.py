@@ -4,7 +4,7 @@ import numpy as np
 import igl
 import trimesh
 import gustaf
-from tqdm import trange
+
 
 from typing import TypedDict
 from DeepSDFStruct.deep_sdf.models import DeepSDFModel
@@ -105,19 +105,6 @@ def get_equidistant_grid_sample(
     ), f"Grid max {maxs_generated} does not match bounds {bounds[1]}"
 
     return points
-
-
-class ClampedL1Loss(torch.nn.Module):
-    def __init__(self, clamp_val=0.1):
-        super().__init__()
-        self.clamp_val = clamp_val
-        self.loss = torch.nn.L1Loss()
-
-    def forward(self, input, target):
-        # Clamp both input and target to [-clamp_val, clamp_val]
-        input_clamped = input.clamp(-self.clamp_val, self.clamp_val)
-        target_clamped = target.clamp(-self.clamp_val, self.clamp_val)
-        return self.loss(input_clamped, target_clamped)
 
 
 class SDFBase(ABC):
@@ -227,81 +214,6 @@ class SDFBase(ABC):
 
     def __add__(self, other):
         return SummedSDF(self, other)
-
-    def reconstruct_from_mesh(
-        self,
-        mesh: gustaf.Faces,
-        num_iterations=1000,
-        lr=5e-4,
-        l2reg=False,
-        device="cpu",
-        dtype=torch.float32,
-        loss_fn="ClampedL1",
-        grid_spacing=0.1,
-    ):
-        parameters = (
-            torch.ones_like(self.parameters).normal_(mean=0, std=0.1).to(device)
-        )
-        gt_sdf = SDFfromMesh(mesh, scale=False)
-        parameters.requires_grad = True
-
-        optimizer = torch.optim.Adam([parameters], lr=lr)
-
-        loss_num = 0
-        uniform_grid = get_equidistant_grid_sample(
-            mesh.bounds(), grid_spacing=grid_spacing, dtype=dtype, device=device
-        )
-        queries_parameter_space = self.deformation_spline.spline.proximities(
-            uniform_grid.detach().cpu().numpy()
-        )
-        verts_min = uniform_grid.min(axis=0)
-        verts_max = uniform_grid.max(axis=0)
-
-        print("Min/Max in PHYSICAL space:\n")
-        for name, mn, mx in zip(["x", "y", "z"], verts_min.values, verts_max.values):
-            print(f"{name}: min={mn:.6f}, max={mx:.6f}")
-        queries_ps_torch = torch.tensor(
-            queries_parameter_space, device=device, dtype=parameters.dtype
-        )
-        queries_min = queries_ps_torch.min(dim=0).values
-        queries_max = queries_ps_torch.max(dim=0).values
-
-        print("\nMin/Max in QUERY space:\n")
-        for name, mn, mx in zip(
-            ["x", "y", "z"], queries_min.tolist(), queries_max.tolist()
-        ):
-            print(f"{name}: min={mn:.6f}, max={mx:.6f}")
-        gt_dist = gt_sdf(uniform_grid).view(-1)
-        pbar = trange(num_iterations, desc="Reconstructing SDF from mesh", leave=True)
-
-        if loss_fn == "L1":
-            Loss = torch.nn.L1Loss()
-        elif loss_fn == "ClampedL1":
-            Loss = ClampedL1Loss(clamp_val=0.1)
-        elif loss_fn == "MSE":
-            Loss = torch.nn.MSELoss()
-        else:
-            raise NotImplementedError(f"Loss function {loss_fn} not available.")
-
-        for e in pbar:
-            optimizer.zero_grad()
-
-            # SDF at vertices needs to be zero
-            self.parametrization.set_param(parameters)
-            pred_dist = self.__call__(queries_ps_torch)
-
-            loss = Loss(pred_dist, gt_dist)
-            if l2reg:
-                loss += 1e-4 * torch.mean(parameters.pow(2))
-            loss.backward()
-            optimizer.step()
-
-            loss_num = loss.detach().item()
-            pbar.set_postfix({"loss": f"{loss_num:.5f}"})
-
-        print("Reconstructed parameters:")
-        print(parameters)
-        return parameters
 
 
 class SummedSDF(SDFBase):

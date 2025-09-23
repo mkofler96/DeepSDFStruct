@@ -1,7 +1,6 @@
 import logging
 import torch as _torch
 import torch.autograd.functional
-from torch.func import jacfwd
 import tetgenpy
 import numpy as np
 import napf
@@ -305,15 +304,13 @@ def _verts_from_params(
         return verts_local
 
 
-def export_sdf_grid_vtk(sdf: SDFBase, filename, N=64):
-    if hasattr(sdf, "bounds"):
-        bounds = sdf.bounds
-    else:
-        bounds = (0, 1, 0, 1, 0, 1)
+def export_sdf_grid_vtk(sdf: SDFBase, filename, N=64, bounds=None):
+    if bounds is None:
+        bounds = np.array([[0, 0, 0], [1, 1, 1]])
     # Generate grid points
-    x = np.linspace(bounds[0], bounds[1], N)
-    y = np.linspace(bounds[2], bounds[3], N)
-    z = np.linspace(bounds[4], bounds[5], N)
+    x = np.linspace(bounds[0, 0], bounds[1, 0], N)
+    y = np.linspace(bounds[0, 1], bounds[1, 1], N)
+    z = np.linspace(bounds[0, 2], bounds[1, 2], N)
     xx, yy, zz = np.meshgrid(x, y, z, indexing="ij")
     points = np.vstack([xx.ravel(), yy.ravel(), zz.ravel()]).T
 

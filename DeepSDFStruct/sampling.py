@@ -32,17 +32,17 @@ class SphereParameters(typing.TypedDict):
     r: float
 
 
-class RandomSampleSDF:
+class SampledSDF:
     samples: torch.tensor
     distances: torch.tensor
 
     def split_pos_neg(self):
         pos_mask = torch.where(self.distances >= 0.0)[0]
         neg_mask = torch.where(self.distances < 0.0)[0]
-        pos = RandomSampleSDF(
+        pos = SampledSDF(
             samples=self.samples[pos_mask], distances=self.distances[pos_mask]
         )
-        neg = RandomSampleSDF(
+        neg = SampledSDF(
             samples=self.samples[neg_mask], distances=self.distances[neg_mask]
         )
         return pos, neg
@@ -61,7 +61,7 @@ class RandomSampleSDF:
         self.distances = distances
 
     def __add__(self, other):
-        return RandomSampleSDF(
+        return SampledSDF(
             samples=torch.vstack((self.samples, other.samples)),
             distances=torch.vstack((self.distances, other.distances)),
         )
@@ -295,16 +295,55 @@ def random_points_cube(count, box_size):
     return points
 
 
-def random_sample_sdf(sdf, bounds, n_samples, type="uniform"):
+def random_sample_sdf(
+    sdf, bounds, n_samples, type="uniform", device="cpu", dtype=torch.float32
+):
+
+    bounds = torch.tensor(bounds, dtype=dtype, device=device)
     if type == "plane":
-        samples = torch.random.uniform(bounds[0], bounds[1], (n_samples, 2))
+        samples = torch.random.uniform(
+            bounds[0], bounds[1], (n_samples, 2), device=device, dtype=dtype
+        )
         samples = torch.hstack((samples, torch.zeros((n_samples, 1))))
     elif type == "spherical_gaussian":
-        samples = torch.random.randn(n_samples, 3)
+        samples = torch.random.randn(n_samples, 3, device=device, dtype=dtype)
         samples /= torch.linalg.norm(samples, axis=1).reshape(-1, 1)
         # samples += torch.random.uniform(bounds[0], bounds[1], (n_samples, 3))
         samples = samples + torch.random.normal(0, 0.01, (n_samples, 3))
     elif type == "uniform":
-        samples = torch.rand((n_samples, 3)) * (bounds[1] - bounds[0]) + bounds[0]
+        samples = (
+            torch.rand((n_samples, 3), device=device, dtype=dtype)
+            * (bounds[1] - bounds[0])
+            + bounds[0]
+        )
     distances = sdf(samples)
-    return RandomSampleSDF(samples=samples, distances=distances)
+    return SampledSDF(samples=samples, distances=distances)
+
+
+def sample_mesh_surface(
+    sdf: SDFBase,
+    mesh: gus.Faces,
+    n_samples: int,
+    stds: list[float],
+    device="cpu",
+    dtype=torch.float32,
+) -> SampledSDF:
+    samples = []
+
+    vertices = torch.tensor(mesh.vertices, dtype=dtype, device=device)
+
+    if n_samples > len(vertices):
+        random_vertices = vertices
+    else:
+        idx = torch.randperm(len(vertices), device=device)[:n_samples]
+        random_vertices = vertices[idx]
+
+    for std in stds:
+        noise = torch.randn((n_samples, 3), device=device) * std
+        samples.append(random_vertices + noise)
+
+    queries = torch.vstack(samples)
+
+    distances = sdf(queries)
+
+    return SampledSDF(samples=queries, distances=distances)

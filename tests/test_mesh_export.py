@@ -1,5 +1,5 @@
 from DeepSDFStruct.pretrained_models import get_model, PretrainedModels
-from DeepSDFStruct.SDF import SDFfromDeepSDF, SDFfromLineMesh
+from DeepSDFStruct.SDF import SDFfromDeepSDF, SDFfromLineMesh, SDFfromMesh
 from DeepSDFStruct.mesh import (
     generate_2D_surf_mesh,
     tetrahedralize_surface,
@@ -7,9 +7,11 @@ from DeepSDFStruct.mesh import (
     export_surface_mesh,
     export_sdf_grid_vtk,
 )
+from DeepSDFStruct.deep_sdf.reconstruction import reconstruct_from_samples
 from DeepSDFStruct.lattice_structure import LatticeSDFStruct
 from DeepSDFStruct.parametrization import SplineParametrization
 from DeepSDFStruct.torch_spline import TorchSpline
+from DeepSDFStruct.sampling import sample_mesh_surface, random_sample_sdf
 import splinepy
 import gustaf as _gus
 
@@ -58,15 +60,33 @@ def test_deepsdf_lattice_export():
         "tests/tmp_outputs/mesh_with_derivative.vtk", surf_mesh, derivative
     )
     export_sdf_grid_vtk(lattice_struct, "tests/tmp_outputs/sdf.vtk")
-    faces = surf_mesh.to_gus()
-    _gus.io.meshio.export("tests/tmp_outputs/faces.inp", faces)
-    _gus.io.meshio.export("tests/tmp_outputs/faces.obj", faces)
+    mesh = surf_mesh.to_gus()
+    _gus.io.meshio.export("tests/tmp_outputs/faces.inp", mesh)
+    _gus.io.meshio.export("tests/tmp_outputs/faces.obj", mesh)
 
-    volumes, _ = tetrahedralize_surface(faces)
+    volumes, _ = tetrahedralize_surface(mesh)
     _gus.io.mfem.export("tests/tmp_outputs/volumes.mfem", volumes)
 
     # test reconstruction
-    recon_param = lattice_struct.reconstruct_from_mesh(faces, device=model.device)
+    device = model.device
+    gt_sdf = SDFfromMesh(mesh, scale=False)
+    uniform_samples = random_sample_sdf(
+        gt_sdf, mesh.bounds(), n_samples=int(1e3), type="uniform", device=device
+    )
+    surface_samples = sample_mesh_surface(
+        gt_sdf, mesh, n_samples=int(1e3), stds=[0.0, 0.025], device=device
+    )
+
+    SDF_samples = uniform_samples + surface_samples
+    recon_param = reconstruct_from_samples(
+        lattice_struct,
+        SDF_samples,
+        device=model.device,
+        lr=1e-3,
+        loss_fn="ClampedL1",
+        num_iterations=500,
+        batch_size=2**17,
+    ).to(device)
     print("Original parameters:")
     print(control_points)
     print("Reconstructed parameters:")
