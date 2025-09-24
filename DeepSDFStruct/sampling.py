@@ -328,6 +328,27 @@ def sample_mesh_surface(
     device="cpu",
     dtype=torch.float32,
 ) -> SampledSDF:
+    """
+    Sample noisy points around a mesh surface and evaluate them with a signed distance function (SDF).
+
+    This function randomly selects a subset of mesh vertices, perturbs them with Gaussian noise of
+    varying standard deviations, and queries the SDF at those points.
+
+    Args:
+        sdf (SDFBase): A callable SDF object that takes 3D points and returns signed distances.
+        mesh (gus.Faces): A mesh object containing the vertices.
+        n_samples (int): Number of mesh vertices to sample (or all vertices if fewer are available).
+        stds (list[float]): Standard deviations for Gaussian noise added to sampled vertices.
+            - Typical values: [0.05, 0.0015].
+            - Larger values spread samples farther from the surface; smaller values keep them closer.
+        device (str, optional): Torch device to place tensors on (e.g., "cpu" or "cuda").
+        dtype (torch.dtype, optional): Data type for generated tensors (default: torch.float32).
+
+    Returns:
+        SampledSDF: An object containing:
+            - samples (torch.Tensor): The perturbed sample points of shape (n_samples * len(stds), 3).
+            - distances (torch.Tensor): The corresponding SDF values at those sample points.
+    """
     samples = []
 
     vertices = torch.tensor(mesh.vertices, dtype=dtype, device=device)
