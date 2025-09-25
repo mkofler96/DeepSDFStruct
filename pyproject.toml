@@ -3,17 +3,18 @@ skip-magic-trailing-comma = true
 
 
 [build-system]
-requires = ["setuptools>=61.0"]
+requires = ["setuptools>=80", "setuptools-scm"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "DeepSDFStruct"
-version = "1.0.6"
+dynamic = ["version"]
 description = "Deep Implicit Lattice Geometry"
 authors = [
     { name = "Michael Kofler", email = "michael.kofler@tuwien.ac.at" }
 ]
 requires-python = ">=3.10"
+
 
 dependencies = [
     "plyfile",
@@ -39,6 +40,8 @@ dependencies = [
     "triangle>=20250106",
     "vtk>=9.5.1",
 ]
+
+[tool.setuptools_scm]
 
 [project.optional-dependencies]
 docs = [
