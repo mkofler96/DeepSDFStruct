@@ -104,10 +104,9 @@ def torch_spline_3D(knot_vectors, control_points, degrees, queries):
     ix, bx = bspline_basis(tx, px, qx)  # (N, px+1), (N, px+1)
     iy, by = bspline_basis(ty, py, qy)
     iz, bz = bspline_basis(tz, pz, qz)
-
-    assert bx.sum() / bx.shape[0] == 1
-    assert by.sum() / by.shape[0] == 1
-    assert bz.sum() / bz.shape[0] == 1
+    torch.testing.assert_close(bx.sum(dim=1), torch.ones_like(qx))
+    torch.testing.assert_close(by.sum(dim=1), torch.ones_like(qy))
+    torch.testing.assert_close(bz.sum(dim=1), torch.ones_like(qz))
     nx = len(tx) - px - 1
     ny = len(ty) - py - 1
     nz = len(tz) - pz - 1
