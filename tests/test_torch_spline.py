@@ -1,6 +1,11 @@
 import torch
 import splinepy
-from DeepSDFStruct.torch_spline import TorchSpline, generate_bbox_spline
+from DeepSDFStruct.torch_spline import (
+    TorchSpline,
+    generate_bbox_spline,
+    torch_spline_1D,
+    torch_spline_3D,
+)
 import numpy as np
 import pytest
 
@@ -138,7 +143,83 @@ def test_generate_bbox_spline():
     assert set(map(tuple, np.round(evals, 8))) == set(map(tuple, np.round(expected, 8)))
 
 
+def test_custom_torchspline_3D():
+
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+
+    n_queries = 1000
+
+    queries = torch.rand((n_queries, 3), dtype=torch.float32, device=device)
+    control_points = np.random.rand(64, 3)  # 4x4x4 Bezier -> 64 control points
+
+    knot_vecs = [
+        [0.0, 0.0, 0.0, 0.5, 1.0, 1.0, 1.0],
+        [0.0, 0.0, 0.0, 0.5, 1.0, 1.0, 1.0],
+        [0.0, 0.0, 0.0, 0.5, 1.0, 1.0, 1.0],
+    ]
+    bspline = splinepy.BSpline(
+        degrees=[2, 2, 2], knot_vectors=knot_vecs, control_points=control_points
+    )
+    torch_spline = TorchSpline(bspline, device=device)
+
+    output_torch = torch_spline(queries)
+
+    output_ip = torch_spline_3D(
+        torch.tensor(knot_vecs, device=device, dtype=torch.float32),
+        control_points=torch.tensor(control_points, device=device, dtype=torch.float32),
+        degrees=[2, 2, 2],
+        queries=queries,
+    )
+
+    diff = torch.linalg.norm(output_torch - output_ip, axis=1)
+
+    print("Max L2 difference:", diff.max())
+    torch.testing.assert_close(
+        diff.max(),
+        torch.tensor(0, device=diff.device, dtype=diff.dtype),
+        atol=1e-5,
+        rtol=1e-5,
+    )
+
+
+def test_custom_torchspline_1D():
+
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+
+    n_queries = 1000
+
+    queries = torch.rand((n_queries, 1), dtype=torch.float32, device=device)
+    control_points = np.random.rand(4, 1)  # 4x4x4 Bezier -> 64 control points
+
+    knot_vecs = [[0.0, 0.0, 0.0, 0.5, 1.0, 1.0, 1.0]]
+    bspline = splinepy.BSpline(
+        degrees=[2], knot_vectors=knot_vecs, control_points=control_points
+    )
+    torch_spline = TorchSpline(bspline, device=device)
+
+    output_torch = torch_spline(queries)
+
+    output_ip = torch_spline_1D(
+        torch.tensor(knot_vecs, device=device, dtype=torch.float32),
+        control_points=torch.tensor(control_points, device=device, dtype=torch.float32),
+        degrees=[2],
+        queries=queries,
+    )
+
+    diff = torch.linalg.norm(output_torch - output_ip, axis=1)
+
+    print("Max L2 difference:", diff.max())
+    torch.testing.assert_close(
+        diff.max(),
+        torch.tensor(0, device=diff.device, dtype=diff.dtype),
+        atol=1e-5,
+        rtol=1e-5,
+    )
+
+
 if __name__ == "__main__":
+    test_custom_torchspline_3D()
+    test_custom_torchspline_1D()
     test_generate_bbox_spline()
     np_rng = np.random.default_rng(0)
     test_torchspline_evaluation(np_rng)
