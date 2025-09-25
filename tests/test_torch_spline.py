@@ -6,7 +6,7 @@ from DeepSDFStruct.torch_spline import (
     torch_spline_1D,
     torch_spline_3D,
 )
-from DeepSDFStruct.torch_spline import TorchSplineV2 as TorchSpline
+from DeepSDFStruct.torch_spline import TorchSpline
 import numpy as np
 import pytest
 

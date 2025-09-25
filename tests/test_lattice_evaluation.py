@@ -17,7 +17,7 @@ def test_deepsdf_lattice_evaluation():
 
     # Define a spline-based deformation field
     deformation_spline = TorchSpline(
-        splinepy.helpme.create.box(1, 1, 1), device=model.device
+        splinepy.helpme.create.box(1, 1, 1).bspline, device=model.device
     )
 
     # Create the lattice structure with deformation and microtile

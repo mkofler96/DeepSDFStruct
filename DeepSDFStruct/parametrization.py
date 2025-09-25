@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 import torch
 import splinepy as sp
-from DeepSDFStruct.torch_spline import TorchSplineV2 as TorchSpline
+from DeepSDFStruct.torch_spline import TorchSpline
 
 
 class _Parametrization(ABC):

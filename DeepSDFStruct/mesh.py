@@ -304,7 +304,7 @@ def _verts_from_params(
         return verts_local
 
 
-def export_sdf_grid_vtk(sdf: SDFBase, filename, N=64, bounds=None):
+def export_sdf_grid_vtk(sdf: SDFBase, filename, N=64, bounds=None, device="cpu"):
     if bounds is None:
         bounds = np.array([[0, 0, 0], [1, 1, 1]])
     # Generate grid points
@@ -316,7 +316,7 @@ def export_sdf_grid_vtk(sdf: SDFBase, filename, N=64, bounds=None):
 
     # Evaluate SDF
     with _torch.no_grad():
-        sdf_vals = sdf(_torch.tensor(points, dtype=_torch.float32, device="cpu"))
+        sdf_vals = sdf(_torch.tensor(points, dtype=_torch.float32, device=device))
     sdf_vals = sdf_vals.detach().cpu().numpy()
 
     # Create vtkPoints

@@ -23,7 +23,7 @@ def test_deepsdf_lattice_export():
 
     # Define a spline-based deformation field
     deformation_spline = TorchSpline(
-        splinepy.helpme.create.box(1.5, 1, 1), device=model.device
+        splinepy.helpme.create.box(1.5, 1, 1).bspline, device=model.device
     )
     control_points = [
         [0.3],
@@ -59,7 +59,9 @@ def test_deepsdf_lattice_export():
     export_surface_mesh(
         "tests/tmp_outputs/mesh_with_derivative.vtk", surf_mesh, derivative
     )
-    export_sdf_grid_vtk(lattice_struct, "tests/tmp_outputs/sdf.vtk")
+    export_sdf_grid_vtk(
+        lattice_struct, "tests/tmp_outputs/sdf.vtk", device=model.device
+    )
     mesh = surf_mesh.to_gus()
     _gus.io.meshio.export("tests/tmp_outputs/faces.inp", mesh)
     _gus.io.meshio.export("tests/tmp_outputs/faces.obj", mesh)
