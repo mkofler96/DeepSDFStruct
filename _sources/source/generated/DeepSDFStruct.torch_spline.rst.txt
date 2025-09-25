@@ -8,12 +8,14 @@ DeepSDFStruct.torch\_spline
 
    .. autosummary::
    
+      bspline_basis
       generate_bbox_spline
+      torch_spline_1D
+      torch_spline_3D
    
    .. rubric:: Classes
 
    .. autosummary::
    
       TorchSpline
-      TorchSplineFunction
    

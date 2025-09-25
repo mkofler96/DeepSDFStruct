@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>DeepSDFStruct.sampling &#8212; DeepSDFStruct 1.0.6 documentation</title>
+    <title>DeepSDFStruct.sampling &#8212; DeepSDFStruct 0.1.dev1+g9cf38c7ca.d20250925 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=e2a723ec"></script>
+    <script src="../../_static/documentation_options.js?v=3e52bb69"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'source/generated/DeepSDFStruct.sampling';</script>
@@ -110,7 +110,7 @@
   
   
   
-    <p class="title logo__title">DeepSDFStruct 1.0.6 documentation</p>
+    <p class="title logo__title">DeepSDFStruct 0.1.dev1+g9cf38c7ca.d20250925 documentation</p>
   
 </a></div>
     
@@ -368,7 +368,7 @@
 <td><p></p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.sampling.sample_mesh_surface" title="DeepSDFStruct.sampling.sample_mesh_surface"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sample_mesh_surface</span></code></a>(sdf, mesh, n_samples, stds)</p></td>
-<td><p></p></td>
+<td><p>Sample noisy points around a mesh surface and evaluate them with a signed distance function (SDF).</p></td>
 </tr>
 </tbody>
 </table>
@@ -583,17 +583,34 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="DeepSDFStruct.sampling.sample_mesh_surface">
 <span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.sampling.</span></span><span class="sig-name descname"><span class="pre">sample_mesh_surface</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sdf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mesh</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_samples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cpu'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">torch.float32</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.sampling.sample_mesh_surface" title="Link to this definition">#</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#DeepSDFStruct.sampling.SampledSDF" title="DeepSDFStruct.sampling.SampledSDF"><code class="xref py py-class docutils literal notranslate"><span class="pre">SampledSDF</span></code></a></span></p>
-</dd>
-<dt class="field-even">Parameters<span class="colon">:</span></dt>
-<dd class="field-even"><ul class="simple">
-<li><p><strong>sdf</strong> (<a class="reference internal" href="DeepSDFStruct.SDF.html#DeepSDFStruct.SDF.SDFBase" title="DeepSDFStruct.SDF.SDFBase"><em>DeepSDFStruct.SDF.SDFBase</em></a>)</p></li>
-<li><p><strong>mesh</strong> (<em>gustaf.faces.Faces</em>)</p></li>
-<li><p><strong>n_samples</strong> (<em>int</em>)</p></li>
-<li><p><strong>stds</strong> (<em>list</em><em>[</em><em>float</em><em>]</em>)</p></li>
+<dd><p>Sample noisy points around a mesh surface and evaluate them with a signed distance function (SDF).</p>
+<p>This function randomly selects a subset of mesh vertices, perturbs them with Gaussian noise of
+varying standard deviations, and queries the SDF at those points.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sdf</strong> (<a class="reference internal" href="DeepSDFStruct.SDF.html#DeepSDFStruct.SDF.SDFBase" title="DeepSDFStruct.SDF.SDFBase"><em>SDFBase</em></a>) – A callable SDF object that takes 3D points and returns signed distances.</p></li>
+<li><p><strong>mesh</strong> (<em>gus.Faces</em>) – A mesh object containing the vertices.</p></li>
+<li><p><strong>n_samples</strong> (<em>int</em>) – Number of mesh vertices to sample (or all vertices if fewer are available).</p></li>
+<li><p><strong>stds</strong> (<em>list</em><em>[</em><em>float</em><em>]</em>) – Standard deviations for Gaussian noise added to sampled vertices.
+- Typical values: [0.05, 0.0015].
+- Larger values spread samples farther from the surface; smaller values keep them closer.</p></li>
+<li><p><strong>device</strong> (<em>str</em><em>, </em><em>optional</em>) – Torch device to place tensors on (e.g., “cpu” or “cuda”).</p></li>
+<li><p><strong>dtype</strong> (<em>torch.dtype</em><em>, </em><em>optional</em>) – Data type for generated tensors (default: torch.float32).</p></li>
 </ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>An object containing:</dt><dd><ul class="simple">
+<li><p>samples (torch.Tensor): The perturbed sample points of shape (n_samples * len(stds), 3).</p></li>
+<li><p>distances (torch.Tensor): The corresponding SDF values at those sample points.</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#DeepSDFStruct.sampling.SampledSDF" title="DeepSDFStruct.sampling.SampledSDF">SampledSDF</a></p>
 </dd>
 </dl>
 </dd></dl>

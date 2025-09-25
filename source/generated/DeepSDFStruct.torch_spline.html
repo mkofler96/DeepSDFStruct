@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>DeepSDFStruct.torch_spline &#8212; DeepSDFStruct 1.0.6 documentation</title>
+    <title>DeepSDFStruct.torch_spline &#8212; DeepSDFStruct 0.1.dev1+g9cf38c7ca.d20250925 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=e2a723ec"></script>
+    <script src="../../_static/documentation_options.js?v=3e52bb69"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'source/generated/DeepSDFStruct.torch_spline';</script>
@@ -109,7 +109,7 @@
   
   
   
-    <p class="title logo__title">DeepSDFStruct 1.0.6 documentation</p>
+    <p class="title logo__title">DeepSDFStruct 0.1.dev1+g9cf38c7ca.d20250925 documentation</p>
   
 </a></div>
     
@@ -348,8 +348,17 @@
 <p class="rubric">Functions</p>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.torch_spline.generate_bbox_spline" title="DeepSDFStruct.torch_spline.generate_bbox_spline"><code class="xref py py-obj docutils literal notranslate"><span class="pre">generate_bbox_spline</span></code></a>(bounds)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.torch_spline.bspline_basis" title="DeepSDFStruct.torch_spline.bspline_basis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bspline_basis</span></code></a>(t, p, queries)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.torch_spline.generate_bbox_spline" title="DeepSDFStruct.torch_spline.generate_bbox_spline"><code class="xref py py-obj docutils literal notranslate"><span class="pre">generate_bbox_spline</span></code></a>(bounds)</p></td>
 <td><p>Takes bounding box and generates a spline box.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.torch_spline.torch_spline_1D" title="DeepSDFStruct.torch_spline.torch_spline_1D"><code class="xref py py-obj docutils literal notranslate"><span class="pre">torch_spline_1D</span></code></a>(knot_vectors, ...)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.torch_spline.torch_spline_3D" title="DeepSDFStruct.torch_spline.torch_spline_3D"><code class="xref py py-obj docutils literal notranslate"><span class="pre">torch_spline_3D</span></code></a>(knot_vectors, ...)</p></td>
+<td><p>Evaluate a 3D B-spline volume at query points.</p></td>
 </tr>
 </tbody>
 </table>
@@ -357,22 +366,20 @@
 <p class="rubric">Classes</p>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.torch_spline.TorchSpline" title="DeepSDFStruct.torch_spline.TorchSpline"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TorchSpline</span></code></a>(spline[, device])</p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.torch_spline.TorchSplineFunction" title="DeepSDFStruct.torch_spline.TorchSplineFunction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TorchSplineFunction</span></code></a>(*args, **kwargs)</p></td>
-<td><p></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.torch_spline.TorchSpline" title="DeepSDFStruct.torch_spline.TorchSpline"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TorchSpline</span></code></a>(spline[, device, dtype])</p></td>
+<td><p>V2: uses custom torch spline as spline backend</p></td>
 </tr>
 </tbody>
 </table>
 </div>
 <dl class="py class">
 <dt class="sig sig-object py" id="DeepSDFStruct.torch_spline.TorchSpline">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.torch_spline.</span></span><span class="sig-name descname"><span class="pre">TorchSpline</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spline</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cpu'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.torch_spline.TorchSpline" title="Link to this definition">#</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.torch_spline.</span></span><span class="sig-name descname"><span class="pre">TorchSpline</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spline</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cpu'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">torch.float32</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.torch_spline.TorchSpline" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
+<p>V2: uses custom torch spline as spline backend</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>spline</strong> (<em>splinepy.bspline.BSpline</em><em> | </em><em>splinepy.bezier.Bezier</em><em> | </em><em>splinepy.nurbs.NURBS</em>)</p>
+<dd class="field-odd"><p><strong>spline</strong> (<em>splinepy.bspline.BSpline</em>)</p>
 </dd>
 </dl>
 <dl class="py method">
@@ -394,60 +401,21 @@ registered hooks while the latter silently ignores them.</p>
 </dl>
 </dd></dl>
 
+<dl class="py attribute">
+<dt class="sig sig-object py" id="DeepSDFStruct.torch_spline.TorchSpline.spline">
+<span class="sig-name descname"><span class="pre">spline</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">BSpline</span></code></em><a class="headerlink" href="#DeepSDFStruct.torch_spline.TorchSpline.spline" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
-<dl class="py class">
-<dt class="sig sig-object py" id="DeepSDFStruct.torch_spline.TorchSplineFunction">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.torch_spline.</span></span><span class="sig-name descname"><span class="pre">TorchSplineFunction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.torch_spline.TorchSplineFunction" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.autograd.function.Function</span></code></p>
-<dl class="py method">
-<dt class="sig sig-object py" id="DeepSDFStruct.torch_spline.TorchSplineFunction.backward">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">backward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ctx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grad_output</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.torch_spline.TorchSplineFunction.backward" title="Link to this definition">#</a></dt>
-<dd><p>Define a formula for differentiating the operation with backward mode automatic differentiation.</p>
-<p>This function is to be overridden by all subclasses.
-(Defining this function is equivalent to defining the <code class="docutils literal notranslate"><span class="pre">vjp</span></code> function.)</p>
-<p>It must accept a context <code class="xref py py-attr docutils literal notranslate"><span class="pre">ctx</span></code> as the first argument, followed by
-as many outputs as the <a class="reference internal" href="#DeepSDFStruct.torch_spline.TorchSplineFunction.forward" title="DeepSDFStruct.torch_spline.TorchSplineFunction.forward"><code class="xref py py-func docutils literal notranslate"><span class="pre">forward()</span></code></a> returned (None will be passed in
-for non tensor outputs of the forward function),
-and it should return as many tensors, as there were inputs to
-<a class="reference internal" href="#DeepSDFStruct.torch_spline.TorchSplineFunction.forward" title="DeepSDFStruct.torch_spline.TorchSplineFunction.forward"><code class="xref py py-func docutils literal notranslate"><span class="pre">forward()</span></code></a>. Each argument is the gradient w.r.t the given output,
-and each returned value should be the gradient w.r.t. the
-corresponding input. If an input is not a Tensor or is a Tensor not
-requiring grads, you can just pass None as a gradient for that input.</p>
-<p>The context can be used to retrieve tensors saved during the forward
-pass. It also has an attribute <code class="xref py py-attr docutils literal notranslate"><span class="pre">ctx.needs_input_grad</span></code> as a tuple
-of booleans representing whether each input needs gradient. E.g.,
-<a class="reference internal" href="#DeepSDFStruct.torch_spline.TorchSplineFunction.backward" title="DeepSDFStruct.torch_spline.TorchSplineFunction.backward"><code class="xref py py-func docutils literal notranslate"><span class="pre">backward()</span></code></a> will have <code class="docutils literal notranslate"><span class="pre">ctx.needs_input_grad[0]</span> <span class="pre">=</span> <span class="pre">True</span></code> if the
-first input to <a class="reference internal" href="#DeepSDFStruct.torch_spline.TorchSplineFunction.forward" title="DeepSDFStruct.torch_spline.TorchSplineFunction.forward"><code class="xref py py-func docutils literal notranslate"><span class="pre">forward()</span></code></a> needs gradient computed w.r.t. the
-output.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="DeepSDFStruct.torch_spline.TorchSplineFunction.forward">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ctx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">queries</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">control_points</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spline</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.torch_spline.TorchSplineFunction.forward" title="Link to this definition">#</a></dt>
-<dd><p>queries: [n_points, dim_in] tensor
-control_points: [n_control_points, dim_out] tensor
-spline: splinepy object</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="DeepSDFStruct.torch_spline.TorchSplineFunction.jvp">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">jvp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ctx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">queries_tangent</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">control_points_tangent</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spline_tangent</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.torch_spline.TorchSplineFunction.jvp" title="Link to this definition">#</a></dt>
-<dd><p>Define a formula for differentiating the operation with forward mode automatic differentiation.</p>
-<p>This function is to be overridden by all subclasses.
-It must accept a context <code class="xref py py-attr docutils literal notranslate"><span class="pre">ctx</span></code> as the first argument, followed by
-as many inputs as the <a class="reference internal" href="#DeepSDFStruct.torch_spline.TorchSplineFunction.forward" title="DeepSDFStruct.torch_spline.TorchSplineFunction.forward"><code class="xref py py-func docutils literal notranslate"><span class="pre">forward()</span></code></a> got (None will be passed in
-for non tensor inputs of the forward function),
-and it should return as many tensors as there were outputs to
-<a class="reference internal" href="#DeepSDFStruct.torch_spline.TorchSplineFunction.forward" title="DeepSDFStruct.torch_spline.TorchSplineFunction.forward"><code class="xref py py-func docutils literal notranslate"><span class="pre">forward()</span></code></a>. Each argument is the gradient w.r.t the given input,
-and each returned value should be the gradient w.r.t. the
-corresponding output. If an output is not a Tensor or the function is not
-differentiable with respect to that output, you can just pass None as a
-gradient for that input.</p>
-<p>You can use the <code class="xref py py-attr docutils literal notranslate"><span class="pre">ctx</span></code> object to pass any value from the forward to this
-functions.</p>
-</dd></dl>
-
+<dl class="py function">
+<dt class="sig sig-object py" id="DeepSDFStruct.torch_spline.bspline_basis">
+<span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.torch_spline.</span></span><span class="sig-name descname"><span class="pre">bspline_basis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">queries</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.torch_spline.bspline_basis" title="Link to this definition">#</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>queries</strong> (<em>torch._VariableFunctionsClass.tensor</em>)</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -467,6 +435,44 @@ functions.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>splinepy.BSpline</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="DeepSDFStruct.torch_spline.torch_spline_1D">
+<span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.torch_spline.</span></span><span class="sig-name descname"><span class="pre">torch_spline_1D</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">knot_vectors</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">control_points</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">degrees</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">queries</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.torch_spline.torch_spline_1D" title="Link to this definition">#</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>queries</strong> (<em>torch._VariableFunctionsClass.tensor</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="DeepSDFStruct.torch_spline.torch_spline_3D">
+<span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.torch_spline.</span></span><span class="sig-name descname"><span class="pre">torch_spline_3D</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">knot_vectors</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">control_points</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">degrees</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">queries</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.torch_spline.torch_spline_3D" title="Link to this definition">#</a></dt>
+<dd><p>Evaluate a 3D B-spline volume at query points.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tx</strong> – knot vectors for x, y, z</p></li>
+<li><p><strong>ty</strong> – knot vectors for x, y, z</p></li>
+<li><p><strong>tz</strong> – knot vectors for x, y, z</p></li>
+<li><p><strong>px</strong> – degrees</p></li>
+<li><p><strong>py</strong> – degrees</p></li>
+<li><p><strong>pz</strong> – degrees</p></li>
+<li><p><strong>cp</strong> – control points, shape (nx, ny, nz, d)</p></li>
+<li><p><strong>qx</strong> – query coordinates, shape (N,)</p></li>
+<li><p><strong>qy</strong> – query coordinates, shape (N,)</p></li>
+<li><p><strong>qz</strong> – query coordinates, shape (N,)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>evaluated spline, shape (N, d)</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>y</p>
 </dd>
 </dl>
 </dd></dl>
@@ -513,15 +519,13 @@ functions.</p>
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.torch_spline.TorchSpline"><code class="docutils literal notranslate"><span class="pre">TorchSpline</span></code></a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.torch_spline.TorchSpline.forward"><code class="docutils literal notranslate"><span class="pre">TorchSpline.forward()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.torch_spline.TorchSpline.spline"><code class="docutils literal notranslate"><span class="pre">TorchSpline.spline</span></code></a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.torch_spline.TorchSplineFunction"><code class="docutils literal notranslate"><span class="pre">TorchSplineFunction</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.torch_spline.TorchSplineFunction.backward"><code class="docutils literal notranslate"><span class="pre">TorchSplineFunction.backward()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.torch_spline.TorchSplineFunction.forward"><code class="docutils literal notranslate"><span class="pre">TorchSplineFunction.forward()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.torch_spline.TorchSplineFunction.jvp"><code class="docutils literal notranslate"><span class="pre">TorchSplineFunction.jvp()</span></code></a></li>
-</ul>
-</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.torch_spline.bspline_basis"><code class="docutils literal notranslate"><span class="pre">bspline_basis()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.torch_spline.generate_bbox_spline"><code class="docutils literal notranslate"><span class="pre">generate_bbox_spline()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.torch_spline.torch_spline_1D"><code class="docutils literal notranslate"><span class="pre">torch_spline_1D()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.torch_spline.torch_spline_3D"><code class="docutils literal notranslate"><span class="pre">torch_spline_3D()</span></code></a></li>
 </ul>
   </nav></div>
 
