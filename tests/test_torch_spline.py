@@ -1,11 +1,12 @@
 import torch
 import splinepy
 from DeepSDFStruct.torch_spline import (
-    TorchSpline,
+    # TorchSpline,
     generate_bbox_spline,
     torch_spline_1D,
     torch_spline_3D,
 )
+from DeepSDFStruct.torch_spline import TorchSplineV2 as TorchSpline
 import numpy as np
 import pytest
 
@@ -15,36 +16,44 @@ def np_rng():
     return np.random.default_rng(0)
 
 
-def test_torchspline_evaluation(np_rng, device="cpu"):
+@pytest.fixture
+def bspline():
+    control_points = np.random.rand(64, 3)  # 4x4x4 Bezier -> 64 control points
+
+    knot_vecs = [
+        [0.0, 0.0, 0.0, 0.5, 1.0, 1.0, 1.0],
+        [0.0, 0.0, 0.0, 0.5, 1.0, 1.0, 1.0],
+        [0.0, 0.0, 0.0, 0.5, 1.0, 1.0, 1.0],
+    ]
+
+    return splinepy.BSpline(
+        degrees=[2, 2, 2], knot_vectors=knot_vecs, control_points=control_points
+    )
+
+
+def test_torchspline_evaluation(np_rng, bspline, device="cpu"):
     """Check that TorchSpline evaluation matches splinepy evaluation"""
 
-    # Random Bezier 2D -> 3D
-    control_points = np_rng.random((16, 3))
-    bezier = splinepy.Bezier(degrees=[3, 3], control_points=control_points)
+    spline_module = TorchSpline(bspline, device=device)
 
-    spline_module = TorchSpline(bezier, device=device)
-
-    queries = torch.tensor(np_rng.random((5, 2)), dtype=torch.float32, device=device)
+    queries = torch.tensor(np_rng.random((5, 3)), dtype=torch.float32, device=device)
 
     # Torch output
     output_torch = spline_module(queries).detach().cpu().numpy()
 
     # Numpy output
-    output_np = bezier.evaluate(queries.detach().cpu().numpy())
+    output_np = bspline.evaluate(queries.detach().cpu().numpy())
 
     assert np.allclose(output_torch, output_np, atol=1e-6)
 
 
-def test_torchspline_derivative(np_rng, device="cpu", eps=1e-3):
+def test_torchspline_derivative(np_rng, bspline, device="cpu", eps=1e-3):
     """Check that TorchSpline forward derivatives w.r.t input are correct via finite differences"""
 
-    # Random Bezier 2D -> 3D
-    control_points = np_rng.random((16, 3))
-    bezier = splinepy.Bezier(degrees=[3, 3], control_points=control_points)
-    spline_module = TorchSpline(bezier, device=device)
+    spline_module = TorchSpline(bspline, device=device)
 
     queries = torch.tensor(
-        np_rng.random((3, 2)), dtype=torch.float32, device=device, requires_grad=True
+        np_rng.random((5, 3)), dtype=torch.float32, device=device, requires_grad=True
     )
 
     # Torch output
@@ -90,15 +99,14 @@ def test_torchspline_derivative(np_rng, device="cpu", eps=1e-3):
     )
 
 
-def test_torchspline_autograd(np_rng, device="cpu"):
-    control_points_np = np_rng.random((16, 3))
-    bezier = splinepy.Bezier(degrees=[3, 3], control_points=control_points_np)
-    torch_spline = TorchSpline(bezier, device=device)
+def test_torchspline_autograd(np_rng, bspline, device="cpu"):
+
+    torch_spline = TorchSpline(bspline, device=device)
     queries = torch.tensor(
-        np_rng.random((3, 2)), dtype=torch.float64, device=device, requires_grad=True
+        np_rng.random((5, 3)), dtype=torch.float64, device=device, requires_grad=True
     )
     control_points = torch.tensor(
-        control_points_np, dtype=torch.float64, device=device, requires_grad=True
+        bspline.control_points, dtype=torch.float64, device=device, requires_grad=True
     )
 
     def func(q, cp):
@@ -108,10 +116,10 @@ def test_torchspline_autograd(np_rng, device="cpu"):
     torch.autograd.gradcheck(func, (queries, control_points), check_forward_ad=False)
 
     queries_2 = torch.tensor(
-        np_rng.random((3, 2)), dtype=torch.float64, device=device, requires_grad=True
+        np_rng.random((5, 3)), dtype=torch.float64, device=device, requires_grad=True
     )
     control_points_2 = torch.tensor(
-        control_points_np, dtype=torch.float64, device=device, requires_grad=True
+        bspline.control_points, dtype=torch.float64, device=device, requires_grad=True
     )
 
     torch.autograd.gradcheck(func, (queries_2, control_points_2), check_forward_ad=True)
@@ -143,35 +151,30 @@ def test_generate_bbox_spline():
     assert set(map(tuple, np.round(evals, 8))) == set(map(tuple, np.round(expected, 8)))
 
 
-def test_custom_torchspline_3D():
+def test_custom_torchspline_3D(bspline):
 
     device = "cuda" if torch.cuda.is_available() else "cpu"
 
     n_queries = 1000
 
     queries = torch.rand((n_queries, 3), dtype=torch.float32, device=device)
-    control_points = np.random.rand(64, 3)  # 4x4x4 Bezier -> 64 control points
 
-    knot_vecs = [
-        [0.0, 0.0, 0.0, 0.5, 1.0, 1.0, 1.0],
-        [0.0, 0.0, 0.0, 0.5, 1.0, 1.0, 1.0],
-        [0.0, 0.0, 0.0, 0.5, 1.0, 1.0, 1.0],
-    ]
-    bspline = splinepy.BSpline(
-        degrees=[2, 2, 2], knot_vectors=knot_vecs, control_points=control_points
+    splinepy_eval = bspline.evaluate(queries.detach().cpu().numpy())
+
+    splinepy_eval_as_tensor = torch.tensor(
+        splinepy_eval, dtype=torch.float32, device=device
     )
-    torch_spline = TorchSpline(bspline, device=device)
-
-    output_torch = torch_spline(queries)
 
     output_ip = torch_spline_3D(
-        torch.tensor(knot_vecs, device=device, dtype=torch.float32),
-        control_points=torch.tensor(control_points, device=device, dtype=torch.float32),
-        degrees=[2, 2, 2],
+        torch.tensor(bspline.knot_vectors, device=device, dtype=torch.float32),
+        control_points=torch.tensor(
+            bspline.control_points, device=device, dtype=torch.float32
+        ),
+        degrees=bspline.degrees,
         queries=queries,
     )
 
-    diff = torch.linalg.norm(output_torch - output_ip, axis=1)
+    diff = torch.linalg.norm(splinepy_eval_as_tensor - output_ip, axis=1)
 
     print("Max L2 difference:", diff.max())
     torch.testing.assert_close(
@@ -195,9 +198,11 @@ def test_custom_torchspline_1D():
     bspline = splinepy.BSpline(
         degrees=[2], knot_vectors=knot_vecs, control_points=control_points
     )
-    torch_spline = TorchSpline(bspline, device=device)
+    splinepy_eval = bspline.evaluate(queries.detach().cpu().numpy())
 
-    output_torch = torch_spline(queries)
+    splinepy_eval_as_tensor = torch.tensor(
+        splinepy_eval, dtype=torch.float32, device=device
+    )
 
     output_ip = torch_spline_1D(
         torch.tensor(knot_vecs, device=device, dtype=torch.float32),
@@ -206,7 +211,7 @@ def test_custom_torchspline_1D():
         queries=queries,
     )
 
-    diff = torch.linalg.norm(output_torch - output_ip, axis=1)
+    diff = torch.linalg.norm(splinepy_eval_as_tensor - output_ip, axis=1)
 
     print("Max L2 difference:", diff.max())
     torch.testing.assert_close(
@@ -218,10 +223,21 @@ def test_custom_torchspline_1D():
 
 
 if __name__ == "__main__":
-    test_custom_torchspline_3D()
+    control_points = np.random.rand(64, 3)  # 4x4x4 Bezier -> 64 control points
+
+    knot_vecs = [
+        [0.0, 0.0, 0.0, 0.5, 1.0, 1.0, 1.0],
+        [0.0, 0.0, 0.0, 0.5, 1.0, 1.0, 1.0],
+        [0.0, 0.0, 0.0, 0.5, 1.0, 1.0, 1.0],
+    ]
+
+    bspline_test = splinepy.BSpline(
+        degrees=[2, 2, 2], knot_vectors=knot_vecs, control_points=control_points
+    )
+    test_custom_torchspline_3D(bspline_test)
     test_custom_torchspline_1D()
     test_generate_bbox_spline()
     np_rng = np.random.default_rng(0)
-    test_torchspline_evaluation(np_rng)
-    test_torchspline_derivative(np_rng)
-    test_torchspline_autograd(np_rng)
+    test_torchspline_evaluation(np_rng, bspline_test)
+    test_torchspline_derivative(np_rng, bspline_test)
+    test_torchspline_autograd(np_rng, bspline_test)

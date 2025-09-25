@@ -207,17 +207,60 @@ class TorchSplineFunction(torch.autograd.Function):
 
 # ---------------------------------------------------------
 class TorchSpline(torch.nn.Module):
-    def __init__(self, spline: sp.BSpline | sp.Bezier | sp.NURBS, device="cpu"):
+    def __init__(
+        self,
+        spline: sp.BSpline | sp.Bezier | sp.NURBS,
+        device="cpu",
+        dtype=torch.float32,
+    ):
         super().__init__()
         self.device = device
+        self.dtype = dtype  # dtype and device could be getter and setter
         self.spline = spline
 
         self.control_points = torch.tensor(
-            spline.control_points, dtype=torch.float32, device=device
+            spline.control_points, dtype=dtype, device=device
         )
 
     def forward(self, queries: torch.Tensor):
         return TorchSplineFunction.apply(queries, self.control_points, self.spline)
+
+
+class TorchSplineV2(torch.nn.Module):
+    """
+    V2: uses custom torch spline as spline backend
+    """
+
+    spline: sp.BSpline
+
+    def __init__(self, spline: sp.BSpline, device="cpu", dtype=torch.float32):
+        # TODO register control points etc. as parameter
+        super().__init__()
+        self.device = device
+        self.dtype = dtype  # dtype and device could be getter and setter
+        self.spline = spline
+        self.control_points = torch.tensor(
+            spline.control_points, dtype=dtype, device=device
+        )
+        self.knot_vectors = torch.tensor(
+            spline.knot_vectors, dtype=dtype, device=device
+        )
+        self.degrees = torch.tensor(self.spline.degrees, dtype=int, device=device)
+
+        match len(spline.degrees):
+            case 1:
+                self.spline_fun = torch_spline_1D
+            case 2:
+                raise NotImplementedError("2D spline not implemented yet")
+            case 3:
+                self.spline_fun = torch_spline_3D
+
+    def forward(self, queries: torch.Tensor):
+        # spline fun takes the following arguments:
+        #     knot_vectors, control_points, degrees, queries: Any
+        return self.spline_fun(
+            self.knot_vectors, self.control_points, self.degrees, queries
+        )
 
 
 def generate_bbox_spline(bounds):
