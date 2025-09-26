@@ -1,7 +1,5 @@
 import os
 import numpy as np
-import time
-import datetime
 import json
 import pathlib
 import typing
@@ -331,13 +329,14 @@ def sample_mesh_surface(
     """
     Sample noisy points around a mesh surface and evaluate them with a signed distance function (SDF).
 
-    This function randomly selects a subset of mesh vertices, perturbs them with Gaussian noise of
-    varying standard deviations, and queries the SDF at those points.
+    This function uses trimesh.sample to generate surface samples
+    and perturbs them with Gaussian noise of varying standard deviations,
+    and queries the SDF at those points.
 
     Args:
         sdf (SDFBase): A callable SDF object that takes 3D points and returns signed distances.
         mesh (gus.Faces): A mesh object containing the vertices.
-        n_samples (int): Number of mesh vertices to sample (or all vertices if fewer are available).
+        n_samples (int): Number of mesh vertices to sample
         stds (list[float]): Standard deviations for Gaussian noise added to sampled vertices.
             - Typical values: [0.05, 0.0015].
             - Larger values spread samples farther from the surface; smaller values keep them closer.
@@ -351,17 +350,13 @@ def sample_mesh_surface(
     """
     samples = []
 
-    vertices = torch.tensor(mesh.vertices, dtype=dtype, device=device)
+    trim = trimesh.Trimesh(mesh.vertices, mesh.faces)
 
-    if n_samples > len(vertices):
-        random_vertices = vertices
-    else:
-        idx = torch.randperm(len(vertices), device=device)[:n_samples]
-        random_vertices = vertices[idx]
+    random_samples = torch.tensor(trim.sample(n_samples), dtype=dtype, device=device)
 
     for std in stds:
-        noise = torch.randn((n_samples, 3), device=device) * std
-        samples.append(random_vertices + noise)
+        noise = torch.randn((n_samples, 3), device=device, dtype=dtype) * std
+        samples.append(random_samples + noise)
 
     queries = torch.vstack(samples)
 

@@ -62,7 +62,9 @@ def reconstruct_from_samples(
         raise NotImplementedError(f"Loss function {loss_fn} not available.")
 
     dataset = TensorDataset(queries_ps_torch, gt_dist)
-    dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
+    dataloader = DataLoader(
+        dataset, batch_size=batch_size, shuffle=True, drop_last=True
+    )
 
     for e in pbar:
         for querie_batch, gt_batch in dataloader:
