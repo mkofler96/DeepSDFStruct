@@ -115,6 +115,7 @@ docs/source/generated
 # work in progress files
 wip
 examples
+todo
 
 # confidential files
 confidential*
