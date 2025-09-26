@@ -438,7 +438,7 @@ class SDFfromDeepSDF(SDFBase):
         n_queries = queries.shape[0]
 
         if self.latvec is None:
-            latvec = self.parametrization(queries)
+            latvec = self.parametrization(queries).to(self.model.device)
         else:
             latvec = self.latvec.to(self.model.device)
 

@@ -13,8 +13,6 @@ import gustaf as gus
 
 logger = logging.getLogger(__name__)
 
-device = _torch.device("cuda" if _torch.cuda.is_available() else "cpu")
-
 
 class LatticeSDFStruct(_SDFBase):
     """Helper class to facilitatae the construction of Lattice SDF Structures."""
@@ -249,10 +247,10 @@ class LatticeSDFStruct(_SDFBase):
         gus.show(gus_faces, axes=1)
 
     def plot_slice(self, *args, **kwargs):
-        xmin = self._deformation_spline.control_points[:, 0].min()
-        xmax = self._deformation_spline.control_points[:, 0].max()
-        ymin = self._deformation_spline.control_points[:, 1].min()
-        ymax = self._deformation_spline.control_points[:, 1].max()
+        xmin = self._deformation_spline.control_points[:, 0].min().item()
+        xmax = self._deformation_spline.control_points[:, 0].max().item()
+        ymin = self._deformation_spline.control_points[:, 1].min().item()
+        ymax = self._deformation_spline.control_points[:, 1].max().item()
 
         kwargs.setdefault("xlim", (xmin, xmax))
         kwargs.setdefault("ylim", (ymin, ymax))

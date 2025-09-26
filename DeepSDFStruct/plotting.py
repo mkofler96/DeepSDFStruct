@@ -58,7 +58,7 @@ def generate_plane_points(origin, normal, res, xlim, ylim):
     """
     normal = np.array(normal)
     normal = normal / np.linalg.norm(normal)
-
+    origin = np.array(origin)
     # Find two orthogonal vectors to the normal that lie on the plane (u and v axes)
     if np.allclose(normal, [0, 0, 1]):  # Special case when the normal is along z-axis
         u = np.array([1, 0, 0])
