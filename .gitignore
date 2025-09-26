@@ -116,5 +116,8 @@ docs/source/generated
 wip
 examples
 
+# confidential files
+confidential*
+
 # slurm files
 slurm-*.out
