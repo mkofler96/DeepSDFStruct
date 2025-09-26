@@ -111,3 +111,10 @@ tests/tmp_outputs
 # doc temp files
 docs/_build
 docs/source/generated
+
+# work in progress files
+wip
+examples
+
+# slurm files
+slurm-*.out
