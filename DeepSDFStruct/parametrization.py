@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 import torch
+import torch.nn
 import splinepy as sp
 from DeepSDFStruct.torch_spline import TorchSpline
 
@@ -23,7 +24,8 @@ class _Parametrization(ABC):
 class Constant(_Parametrization):
     def __init__(self, value, device):
         if type(value) is not torch.Tensor:
-            value = torch.tensor(value, device=device)
+            val_tensor = torch.tensor(value, device=device)
+            value = torch.nn.Parameter(val_tensor)
         super().__init__(parameters=value, device=device)
 
     def __call__(self, queries: torch.Tensor) -> torch.Tensor:
@@ -37,7 +39,8 @@ class Constant(_Parametrization):
 class SplineParametrization(_Parametrization):
     def __init__(self, spline: sp.BSpline | sp.Bezier | sp.NURBS, device):
         self.torch_spline = TorchSpline(spline, device=device)
-        super().__init__(parameters=self.torch_spline.control_points, device=device)
+        params = torch.nn.Parameter(self.torch_spline.control_points)
+        super().__init__(parameters=params, device=device)
 
     def __call__(self, queries: torch.Tensor) -> torch.Tensor:
         return self.torch_spline(queries)

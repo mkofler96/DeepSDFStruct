@@ -293,7 +293,7 @@ def _verts_from_params(
         scalar_field=sdf_values,
         cube_idx=cube_idx,
         resolution=tuple(N),
-        output_tetmesh=False,
+        output_tetmesh=True,
     )
 
     if sdf.deformation_spline is not None:

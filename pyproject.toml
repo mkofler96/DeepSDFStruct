@@ -39,6 +39,8 @@ dependencies = [
     "pytest-cov>=5.0.0",
     "triangle>=20250106",
     "vtk>=9.5.1",
+    "torch-fem>=0.4.5",
+    "pypardiso>=0.4.6",
 ]
 
 [tool.setuptools_scm]
