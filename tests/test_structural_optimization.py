@@ -19,7 +19,7 @@ configure_logging()
 
 
 def test_structural_optimization(num_iter=2):
-    torch.set_default_device("cuda")
+    # torch.set_default_device("cuda")
 
     logger.info("Loading Model")
     # Load a pretrained DeepSDF model
@@ -70,7 +70,7 @@ def test_structural_optimization(num_iter=2):
         # log(
         #     f"Starting iteration with parameters: {lattice_struct.parametrization.parameters.T}"
         # )
-        torch.set_default_device("cuda")
+        # torch.set_default_device("cuda")
         torch.set_default_dtype(torch.float32)
         mesh, derivative = create_3D_mesh(
             lattice_struct,
@@ -104,7 +104,7 @@ def test_structural_optimization(num_iter=2):
         # print(f"Removed {removed} negative volume tets")
 
         # Create model
-        torch.set_default_device("cpu")
+        # torch.set_default_device("cpu")
         torch.set_default_dtype(torch.float64)
         verts_tf = verts.to("cpu").to(torch.float64)
         tets_tf = tets_clean.to("cpu")
