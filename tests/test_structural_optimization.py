@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 configure_logging()
 
 
-def test_structural_optimization(num_iter=2):
+def test_structural_optimization(num_iter=1):
     # torch.set_default_device("cuda")
 
     logger.info("Loading Model")
@@ -39,7 +39,7 @@ def test_structural_optimization(num_iter=2):
     logger.info("using spline with knot vectors:")
     logger.info(param_spline_sp.knot_vectors)
     logger.info(f"and control points: {param_spline_sp.control_points}")
-    tiling = [6, 3, 3]
+    tiling = [2, 1, 1]
 
     param_spline = SplineParametrization(param_spline_sp, device=model.device)
     # Define a spline-based deformation field
