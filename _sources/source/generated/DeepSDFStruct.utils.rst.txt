@@ -1,0 +1,12 @@
+DeepSDFStruct.utils
+===================
+
+.. automodule:: DeepSDFStruct.utils
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      configure_logging
+   

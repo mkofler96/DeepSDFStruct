@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>DeepSDFStruct.flexicubes.tables &#8212; DeepSDFStruct 0.1.dev1+g21749772e documentation</title>
+    <title>DeepSDFStruct.utils &#8212; DeepSDFStruct 0.1.dev1+g21749772e documentation</title>
   
   
   
@@ -41,11 +41,10 @@
     <script src="../../_static/documentation_options.js?v=996fb79b"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'source/generated/DeepSDFStruct.flexicubes.tables';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'source/generated/DeepSDFStruct.utils';</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="DeepSDFStruct.lattice_structure" href="DeepSDFStruct.lattice_structure.html" />
-    <link rel="prev" title="DeepSDFStruct.flexicubes.flexicubes" href="DeepSDFStruct.flexicubes.flexicubes.html" />
+    <link rel="prev" title="DeepSDFStruct.torch_spline" href="DeepSDFStruct.torch_spline.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
@@ -259,9 +258,9 @@
 <li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.deep_sdf.workspace.html">DeepSDFStruct.deep_sdf.workspace</a></li>
 </ul>
 </details></li>
-<li class="toctree-l2 current active has-children"><a class="reference internal" href="DeepSDFStruct.flexicubes.html">DeepSDFStruct.flexicubes</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 has-children"><a class="reference internal" href="DeepSDFStruct.flexicubes.html">DeepSDFStruct.flexicubes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.flexicubes.flexicubes.html">DeepSDFStruct.flexicubes.flexicubes</a></li>
-<li class="toctree-l3 current active"><a class="current reference internal" href="#">DeepSDFStruct.flexicubes.tables</a></li>
+<li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.flexicubes.tables.html">DeepSDFStruct.flexicubes.tables</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.lattice_structure.html">DeepSDFStruct.lattice_structure</a></li>
@@ -280,7 +279,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.torch_spline.html">DeepSDFStruct.torch_spline</a></li>
-<li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.utils.html">DeepSDFStruct.utils</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">DeepSDFStruct.utils</a></li>
 </ul>
 </details></li>
 </ul>
@@ -329,10 +328,7 @@
     
     <li class="breadcrumb-item"><a href="DeepSDFStruct.html" class="nav-link">DeepSDFStruct</a></li>
     
-    
-    <li class="breadcrumb-item"><a href="DeepSDFStruct.flexicubes.html" class="nav-link">DeepSDFStruct.flexicubes</a></li>
-    
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">DeepSDFStruct.flexicubes.tables</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">DeepSDFStruct.utils</span></li>
   </ul>
 </nav>
 </div>
@@ -349,8 +345,22 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="module-DeepSDFStruct.flexicubes.tables">
-<span id="deepsdfstruct-flexicubes-tables"></span><h1>DeepSDFStruct.flexicubes.tables<a class="headerlink" href="#module-DeepSDFStruct.flexicubes.tables" title="Link to this heading">#</a></h1>
+  <section id="module-DeepSDFStruct.utils">
+<span id="deepsdfstruct-utils"></span><h1>DeepSDFStruct.utils<a class="headerlink" href="#module-DeepSDFStruct.utils" title="Link to this heading">#</a></h1>
+<p class="rubric">Functions</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.utils.configure_logging" title="DeepSDFStruct.utils.configure_logging"><code class="xref py py-obj docutils literal notranslate"><span class="pre">configure_logging</span></code></a>([level, logfile])</p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="py function">
+<dt class="sig sig-object py" id="DeepSDFStruct.utils.configure_logging">
+<span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.utils.</span></span><span class="sig-name descname"><span class="pre">configure_logging</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logfile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.utils.configure_logging" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
 </section>
 
 
@@ -364,22 +374,13 @@
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="DeepSDFStruct.flexicubes.flexicubes.html"
+       href="DeepSDFStruct.torch_spline.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">DeepSDFStruct.flexicubes.flexicubes</p>
+        <p class="prev-next-title">DeepSDFStruct.torch_spline</p>
       </div>
-    </a>
-    <a class="right-next"
-       href="DeepSDFStruct.lattice_structure.html"
-       title="next page">
-      <div class="prev-next-info">
-        <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">DeepSDFStruct.lattice_structure</p>
-      </div>
-      <i class="fa-solid fa-angle-right"></i>
     </a>
 </div>
                 </footer>
@@ -393,10 +394,22 @@
 
 
   <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.utils.configure_logging"><code class="docutils literal notranslate"><span class="pre">configure_logging()</span></code></a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="../../_sources/source/generated/DeepSDFStruct.flexicubes.tables.rst.txt"
+      <li><a href="../../_sources/source/generated/DeepSDFStruct.utils.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div></div>

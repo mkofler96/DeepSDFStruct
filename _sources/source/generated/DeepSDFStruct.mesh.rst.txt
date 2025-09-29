@@ -8,12 +8,13 @@ DeepSDFStruct.mesh
 
    .. autosummary::
    
-      create_3D_surface_mesh
+      create_3D_mesh
       export_abaqus_surf_mesh
       export_sdf_grid_vtk
       export_surface_mesh
       export_volume_mesh
       generate_2D_surf_mesh
+      get_verts
       process_N_base_input
       prune_collinear
       sdf_to_triangle_dict
@@ -24,4 +25,5 @@ DeepSDFStruct.mesh
    .. autosummary::
    
       torchSurfMesh
+      torchVolumeMesh
    

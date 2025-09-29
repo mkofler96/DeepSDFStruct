@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>DeepSDFStruct.lattice_structure &#8212; DeepSDFStruct 0.1.dev1+g0b4540395.d20250926 documentation</title>
+    <title>DeepSDFStruct.lattice_structure &#8212; DeepSDFStruct 0.1.dev1+g21749772e documentation</title>
   
   
   
@@ -38,7 +38,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=e8897579"></script>
+    <script src="../../_static/documentation_options.js?v=996fb79b"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'source/generated/DeepSDFStruct.lattice_structure';</script>
@@ -110,7 +110,7 @@
   
   
   
-    <p class="title logo__title">DeepSDFStruct 0.1.dev1+g0b4540395.d20250926 documentation</p>
+    <p class="title logo__title">DeepSDFStruct 0.1.dev1+g21749772e documentation</p>
   
 </a></div>
     
@@ -266,6 +266,7 @@
 </details></li>
 <li class="toctree-l2 current active"><a class="current reference internal" href="#">DeepSDFStruct.lattice_structure</a></li>
 <li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.mesh.html">DeepSDFStruct.mesh</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.optimization.html">DeepSDFStruct.optimization</a></li>
 <li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.parametrization.html">DeepSDFStruct.parametrization</a></li>
 <li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.plotting.html">DeepSDFStruct.plotting</a></li>
 <li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.pretrained_models.html">DeepSDFStruct.pretrained_models</a></li>
@@ -279,6 +280,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.torch_spline.html">DeepSDFStruct.torch_spline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.utils.html">DeepSDFStruct.utils</a></li>
 </ul>
 </details></li>
 </ul>
@@ -378,10 +380,10 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>tiling</strong> (<em>list</em><em>[</em><em>int</em><em>] </em><em>| </em><em>int</em>)</p></li>
+<li><p><strong>tiling</strong> (<em>list</em><em>[</em><em>int</em><em>] </em><em>| </em><em>int</em><em> | </em><em>None</em>)</p></li>
 <li><p><strong>deformation_spline</strong> (<em>splinepy._base.SplinepyBase</em>)</p></li>
-<li><p><strong>microtile</strong> (<a class="reference internal" href="DeepSDFStruct.SDF.html#DeepSDFStruct.SDF.SDFBase" title="DeepSDFStruct.SDF.SDFBase"><em>DeepSDFStruct.SDF.SDFBase</em></a>)</p></li>
-<li><p><strong>parametrization</strong> (<em>DeepSDFStruct.parametrization._Parametrization</em>)</p></li>
+<li><p><strong>microtile</strong> (<a class="reference internal" href="DeepSDFStruct.SDF.html#DeepSDFStruct.SDF.SDFBase" title="DeepSDFStruct.SDF.SDFBase"><em>DeepSDFStruct.SDF.SDFBase</em></a><em> | </em><em>None</em>)</p></li>
+<li><p><strong>parametrization</strong> (<em>torch.nn.modules.module.Module</em><em> | </em><em>None</em>)</p></li>
 <li><p><strong>cap_border_dict</strong> (<a class="reference internal" href="DeepSDFStruct.SDF.html#DeepSDFStruct.SDF.CapBorderDict" title="DeepSDFStruct.SDF.CapBorderDict"><em>DeepSDFStruct.SDF.CapBorderDict</em></a>)</p></li>
 <li><p><strong>cap_outside_of_unitcube</strong> (<em>bool</em>)</p></li>
 </ul>
@@ -418,8 +420,8 @@ that provides a <cite>create_tile</cite> function.</p>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>verts</strong> (<em>torch._VariableFunctionsClass.tensor</em>)</p></li>
-<li><p><strong>faces</strong> (<em>torch._VariableFunctionsClass.tensor</em>)</p></li>
+<li><p><strong>verts</strong> (<em>torch.Tensor</em>)</p></li>
+<li><p><strong>faces</strong> (<em>torch.Tensor</em>)</p></li>
 </ul>
 </dd>
 </dl>

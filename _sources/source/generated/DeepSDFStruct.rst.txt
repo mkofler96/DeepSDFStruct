@@ -15,6 +15,7 @@ DeepSDFStruct
    flexicubes
    lattice_structure
    mesh
+   optimization
    parametrization
    plotting
    pretrained_models
@@ -22,3 +23,4 @@ DeepSDFStruct
    sdf_primitives
    splinepy_unitcells
    torch_spline
+   utils

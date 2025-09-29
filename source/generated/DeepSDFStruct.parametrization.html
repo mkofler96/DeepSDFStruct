@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>DeepSDFStruct.parametrization &#8212; DeepSDFStruct 0.1.dev1+g0b4540395.d20250926 documentation</title>
+    <title>DeepSDFStruct.parametrization &#8212; DeepSDFStruct 0.1.dev1+g21749772e documentation</title>
   
   
   
@@ -38,14 +38,14 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=e8897579"></script>
+    <script src="../../_static/documentation_options.js?v=996fb79b"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'source/generated/DeepSDFStruct.parametrization';</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="DeepSDFStruct.plotting" href="DeepSDFStruct.plotting.html" />
-    <link rel="prev" title="DeepSDFStruct.mesh" href="DeepSDFStruct.mesh.html" />
+    <link rel="prev" title="DeepSDFStruct.optimization" href="DeepSDFStruct.optimization.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
@@ -110,7 +110,7 @@
   
   
   
-    <p class="title logo__title">DeepSDFStruct 0.1.dev1+g0b4540395.d20250926 documentation</p>
+    <p class="title logo__title">DeepSDFStruct 0.1.dev1+g21749772e documentation</p>
   
 </a></div>
     
@@ -266,6 +266,7 @@
 </details></li>
 <li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.lattice_structure.html">DeepSDFStruct.lattice_structure</a></li>
 <li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.mesh.html">DeepSDFStruct.mesh</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.optimization.html">DeepSDFStruct.optimization</a></li>
 <li class="toctree-l2 current active"><a class="current reference internal" href="#">DeepSDFStruct.parametrization</a></li>
 <li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.plotting.html">DeepSDFStruct.plotting</a></li>
 <li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.pretrained_models.html">DeepSDFStruct.pretrained_models</a></li>
@@ -279,6 +280,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.torch_spline.html">DeepSDFStruct.torch_spline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.utils.html">DeepSDFStruct.utils</a></li>
 </ul>
 </details></li>
 </ul>
@@ -349,10 +351,10 @@
 <p class="rubric">Classes</p>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.parametrization.Constant" title="DeepSDFStruct.parametrization.Constant"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constant</span></code></a>(value, device)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.parametrization.Constant" title="DeepSDFStruct.parametrization.Constant"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constant</span></code></a>(value[, device, dtype])</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.parametrization.SplineParametrization" title="DeepSDFStruct.parametrization.SplineParametrization"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SplineParametrization</span></code></a>(spline, device)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.parametrization.SplineParametrization" title="DeepSDFStruct.parametrization.SplineParametrization"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SplineParametrization</span></code></a>(spline[, device])</p></td>
 <td><p></p></td>
 </tr>
 </tbody>
@@ -360,14 +362,36 @@
 </div>
 <dl class="py class">
 <dt class="sig sig-object py" id="DeepSDFStruct.parametrization.Constant">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.parametrization.</span></span><span class="sig-name descname"><span class="pre">Constant</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.parametrization.Constant" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">DeepSDFStruct.parametrization._Parametrization</span></code></p>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.parametrization.</span></span><span class="sig-name descname"><span class="pre">Constant</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.parametrization.Constant" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="DeepSDFStruct.parametrization.Constant.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">queries</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.parametrization.Constant.forward" title="Link to this definition">#</a></dt>
+<dd><p>Define the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></span></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>queries</strong> (<em>torch.Tensor</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="DeepSDFStruct.parametrization.Constant.set_param">
-<span class="sig-name descname"><span class="pre">set_param</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parameters</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.parametrization.Constant.set_param" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">set_param</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">new_value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.parametrization.Constant.set_param" title="Link to this definition">#</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>parameters</strong> (<em>torch.Tensor</em>)</p>
+<dd class="field-odd"><p><strong>new_value</strong> (<em>torch.Tensor</em>)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -376,19 +400,41 @@
 
 <dl class="py class">
 <dt class="sig sig-object py" id="DeepSDFStruct.parametrization.SplineParametrization">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.parametrization.</span></span><span class="sig-name descname"><span class="pre">SplineParametrization</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spline</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.parametrization.SplineParametrization" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">DeepSDFStruct.parametrization._Parametrization</span></code></p>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.parametrization.</span></span><span class="sig-name descname"><span class="pre">SplineParametrization</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spline</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.parametrization.SplineParametrization" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>spline</strong> (<em>splinepy.bspline.BSpline</em><em> | </em><em>splinepy.bezier.Bezier</em><em> | </em><em>splinepy.nurbs.NURBS</em>)</p>
 </dd>
 </dl>
 <dl class="py method">
+<dt class="sig sig-object py" id="DeepSDFStruct.parametrization.SplineParametrization.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">queries</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.parametrization.SplineParametrization.forward" title="Link to this definition">#</a></dt>
+<dd><p>Define the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></span></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>queries</strong> (<em>torch.Tensor</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="DeepSDFStruct.parametrization.SplineParametrization.set_param">
-<span class="sig-name descname"><span class="pre">set_param</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parameter</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.parametrization.SplineParametrization.set_param" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">set_param</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">new_value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.parametrization.SplineParametrization.set_param" title="Link to this definition">#</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>parameter</strong> (<em>torch.Tensor</em>)</p>
+<dd class="field-odd"><p><strong>new_value</strong> (<em>torch.Tensor</em>)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -408,12 +454,12 @@
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="DeepSDFStruct.mesh.html"
+       href="DeepSDFStruct.optimization.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">DeepSDFStruct.mesh</p>
+        <p class="prev-next-title">DeepSDFStruct.optimization</p>
       </div>
     </a>
     <a class="right-next"
@@ -445,10 +491,12 @@
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.parametrization.Constant"><code class="docutils literal notranslate"><span class="pre">Constant</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.parametrization.Constant.forward"><code class="docutils literal notranslate"><span class="pre">Constant.forward()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.parametrization.Constant.set_param"><code class="docutils literal notranslate"><span class="pre">Constant.set_param()</span></code></a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.parametrization.SplineParametrization"><code class="docutils literal notranslate"><span class="pre">SplineParametrization</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.parametrization.SplineParametrization.forward"><code class="docutils literal notranslate"><span class="pre">SplineParametrization.forward()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.parametrization.SplineParametrization.set_param"><code class="docutils literal notranslate"><span class="pre">SplineParametrization.set_param()</span></code></a></li>
 </ul>
 </li>

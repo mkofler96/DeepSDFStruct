@@ -1,0 +1,19 @@
+DeepSDFStruct.optimization
+==========================
+
+.. automodule:: DeepSDFStruct.optimization
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      get_mesh_from_torchfem
+      tet_signed_vol
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      MMA
+   
