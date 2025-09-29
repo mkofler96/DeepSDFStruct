@@ -144,8 +144,8 @@ class TorchSpline(torch.nn.Module):
         self.device = device
         self.dtype = dtype  # dtype and device could be getter and setter
         self.spline = spline
-        self.control_points = torch.tensor(
-            spline.control_points, dtype=dtype, device=device
+        self.control_points = torch.nn.Parameter(
+            torch.tensor(spline.control_points, dtype=dtype, device=device)
         )
         self.knot_vectors = [
             torch.tensor(knot, dtype=dtype, device=device)

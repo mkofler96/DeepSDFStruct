@@ -8,7 +8,7 @@ from splinepy._base import SplinepyBase as _SplinepyBase
 from splinepy import BSpline as _BSpline
 from .SDF import SDFBase as _SDFBase
 from .SDF import CapBorderDict
-from DeepSDFStruct.parametrization import _Parametrization
+from DeepSDFStruct.torch_spline import TorchSpline
 import gustaf as gus
 
 logger = logging.getLogger(__name__)
@@ -21,10 +21,10 @@ class LatticeSDFStruct(_SDFBase):
 
     def __init__(
         self,
-        tiling: list[int] | int = None,
-        deformation_spline: _SplinepyBase = None,
-        microtile: _SDFBase = None,
-        parametrization: _Parametrization = None,
+        tiling: list[int] | int | None = None,
+        deformation_spline: TorchSpline | None = None,
+        microtile: _SDFBase | None = None,
+        parametrization: _torch.nn.Module | None = None,
         cap_border_dict: CapBorderDict = None,
         cap_outside_of_unitcube: bool = True,
     ):
@@ -42,7 +42,7 @@ class LatticeSDFStruct(_SDFBase):
         parametrization_function : Callable (optional)
           Function to describe spline parameters
         """
-        if not isinstance(parametrization, _Parametrization):
+        if not isinstance(parametrization, _torch.nn.Module):
             raise TypeError("Parametrization must be of type _Parametrization")
         super().__init__(
             deformation_spline=deformation_spline,
@@ -177,7 +177,7 @@ class LatticeSDFStruct(_SDFBase):
     def _get_domain_bounds(self):
         return _np.array([[-1, 1], [-1, 1], [-1, 1]])
 
-    def _compute(self, samples: _torch.tensor):
+    def _compute(self, samples: _torch.Tensor):
         """Function, that - if required - parametrizes the microtiles.
 
         In order to use said function, the Microtile needs to provide a couple
@@ -242,7 +242,7 @@ class LatticeSDFStruct(_SDFBase):
         vp.show_options["cmap"] = "coolwarm"
         gus.show(vp, axes=1)
 
-    def plot_intermesh(self, verts: _torch.tensor, faces: _torch.tensor):
+    def plot_intermesh(self, verts: _torch.Tensor, faces: _torch.Tensor):
         gus_faces = gus.Faces(vertices=verts.cpu().detach(), faces=faces.cpu().detach())
         gus.show(gus_faces, axes=1)
 

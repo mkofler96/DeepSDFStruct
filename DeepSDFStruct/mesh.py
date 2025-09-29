@@ -10,6 +10,7 @@ import os
 import skimage
 import triangle
 import vtk
+from typing import Optional, Tuple, Union
 
 from functools import partial
 
@@ -21,12 +22,25 @@ logger = logging.getLogger(__name__)
 
 
 class torchSurfMesh:
-    def __init__(self, vertices: _torch.tensor, faces: _torch.tensor):
+    def __init__(self, vertices: _torch.Tensor, faces: _torch.Tensor):
         self.vertices = vertices
         self.faces = faces
 
     def to_gus(self):
         return gus.Faces(self.vertices.detach().cpu(), self.faces.detach().cpu())
+
+    def to_trimesh():
+        raise NotImplementedError("To trimesh functionality not implemented yet.")
+        pass
+
+
+class torchVolumeMesh:
+    def __init__(self, vertices: _torch.Tensor, volumes: _torch.Tensor):
+        self.vertices = vertices
+        self.volumes = volumes
+
+    def to_gus(self):
+        return gus.Volumes(self.vertices.detach().cpu(), self.volumes.detach().cpu())
 
     def to_trimesh():
         raise NotImplementedError("To trimesh functionality not implemented yet.")
@@ -235,11 +249,23 @@ def _prepare_flexicubes_querypoints(N, device=None):
     return flexi_cubes_constructor, samples, cube_idx
 
 
-def create_3D_surface_mesh(sdf: SDFBase, N_base, differentiate=False, device="cpu"):
+def create_3D_mesh(
+    sdf: SDFBase, N_base, mesh_type: str, differentiate=False, device="cpu"
+) -> Tuple[Union[torchSurfMesh, torchVolumeMesh], Optional[torch.Tensor]]:
     if type(sdf) is LatticeSDFStruct:
         tiling = _torch.tensor(sdf.tiling)
     else:
         tiling = _torch.tensor([1, 1, 1])
+
+    if mesh_type == "surface":
+        output_tetmesh = False
+    elif mesh_type == "volume":
+        output_tetmesh = True
+    else:
+        raise RuntimeError(
+            f"mesh_type {mesh_type} unavailable. Must be either surface or volume"
+        )
+
     N = process_N_base_input(N_base, tiling)
 
     constructor, samples, cube_idx = _prepare_flexicubes_querypoints(N, device=device)
@@ -253,37 +279,48 @@ def create_3D_surface_mesh(sdf: SDFBase, N_base, differentiate=False, device="cp
         cube_idx=cube_idx,
         N=N,
         return_faces=False,
+        output_tetmesh=output_tetmesh,
     )
-    verts, faces = _verts_from_params(
-        p=sdf.parametrization.parameters,
+    # returns faces or volumes depending on the output_tetmesh flag
+    # if output_tetmesh -> returns volumes
+    # if not output_tetmesh -> returns faces
+    verts, faces_or_volumes = get_verts(
         sdf=sdf,
         samples=samples,
         constructor=constructor,
         cube_idx=cube_idx,
         N=N,
         return_faces=True,
+        output_tetmesh=output_tetmesh,
     )
     if differentiate:
         if sdf.parametrization is None:
             raise RuntimeError("No parametrization found for given SDF")
+        if len(list(sdf.parametrization.parameters())) > 1:
+            raise NotImplementedError(
+                "Jacobian with more than one parameter list not supported yet."
+            )
         dVerts_dParams = torch.autograd.functional.jacobian(
             verts_fn,
-            sdf.parametrization.parameters,
+            list(sdf.parametrization.parameters())[0],
             strategy="forward-mode",
             vectorize=True,
         )
-
-    return torchSurfMesh(verts, faces), dVerts_dParams
+    if output_tetmesh:
+        return torchVolumeMesh(verts, faces_or_volumes), dVerts_dParams
+    else:
+        return torchSurfMesh(verts, faces_or_volumes), dVerts_dParams
 
 
 def _verts_from_params(
-    p: _torch.tensor,
+    p: _torch.Tensor,
     sdf: SDFBase,
-    samples: _torch.tensor,
+    samples: _torch.Tensor,
     constructor: FlexiCubes,
-    cube_idx: _torch.tensor,
+    cube_idx: _torch.Tensor,
     N,
     return_faces=False,
+    output_tetmesh=False,
 ):
     sdf.parametrization.set_param(p)
     sdf_values = sdf(samples)
@@ -293,7 +330,34 @@ def _verts_from_params(
         scalar_field=sdf_values,
         cube_idx=cube_idx,
         resolution=tuple(N),
-        output_tetmesh=False,
+        output_tetmesh=output_tetmesh,
+    )
+
+    if sdf.deformation_spline is not None:
+        verts_local = sdf.deformation_spline.forward(verts_local)
+    if return_faces:
+        return verts_local, faces
+    else:
+        return verts_local
+
+
+def get_verts(
+    sdf: SDFBase,
+    samples: _torch.Tensor,
+    constructor: FlexiCubes,
+    cube_idx: _torch.Tensor,
+    N,
+    return_faces=False,
+    output_tetmesh=False,
+):
+    sdf_values = sdf(samples)
+
+    verts_local, faces, _ = constructor(
+        voxelgrid_vertices=samples,
+        scalar_field=sdf_values,
+        cube_idx=cube_idx,
+        resolution=tuple(N),
+        output_tetmesh=output_tetmesh,
     )
 
     if sdf.deformation_spline is not None:
@@ -366,28 +430,28 @@ def _export_surface_mesh_vtk(verts, faces, filename, dSurf=None):
     polydata = vtk.vtkPolyData()
     polydata.SetPoints(vtk_points)
     polydata.SetPolys(vtk_cells)
+    if dSurf is not None:
+        # Add derivative vectors as a vector field
+        extra_dims = dSurf.shape[2:]
+        N = int(np.prod(extra_dims))
 
-    # Add derivative vectors as a vector field
-    extra_dims = dSurf.shape[2:]
-    N = int(np.prod(extra_dims))
+        # reshape to [n_nodes, N_derivatives, 3]
+        dSurf_flat = dSurf.flatten(2)
+        indices = [np.unravel_index(i, extra_dims) for i in range(N)]
+        assert dSurf_flat.shape[2] == len(indices)
+        for j, idx in enumerate(indices):
+            idx_str = "".join(str(i + 1) for i in idx)
+            name = f"derivative_[{idx_str}]"
 
-    # reshape to [n_nodes, N_derivatives, 3]
-    dSurf_flat = dSurf.flatten(2)
-    indices = [np.unravel_index(i, extra_dims) for i in range(N)]
-    assert dSurf_flat.shape[2] == len(indices)
-    for j, idx in enumerate(indices):
-        idx_str = "".join(str(i + 1) for i in idx)
-        name = f"derivative_[{idx_str}]"
+            vectors = vtk.vtkDoubleArray()
+            vectors.SetNumberOfComponents(3)
+            vectors.SetName(name)
 
-        vectors = vtk.vtkDoubleArray()
-        vectors.SetNumberOfComponents(3)
-        vectors.SetName(name)
+            for vec in dSurf_flat[:, :, j]:
+                vectors.InsertNextTuple(vec.tolist())
 
-        for vec in dSurf_flat[:, :, j]:
-            vectors.InsertNextTuple(vec.tolist())
-
-        polydata.GetPointData().AddArray(vectors)
-        polydata.GetPointData().SetActiveVectors(name)
+            polydata.GetPointData().AddArray(vectors)
+            polydata.GetPointData().SetActiveVectors(name)
     # Write to file
     writer = vtk.vtkPolyDataWriter()
     writer.SetFileName(filename)

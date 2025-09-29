@@ -19,7 +19,7 @@ import DeepSDFStruct.deep_sdf.workspace as ws
 import DeepSDFStruct.deep_sdf.data
 from DeepSDFStruct.deep_sdf.models import DeepSDFModel
 from DeepSDFStruct.SDF import SDFfromDeepSDF
-from DeepSDFStruct.mesh import create_3D_surface_mesh, export_surface_mesh
+from DeepSDFStruct.mesh import create_3D_mesh, export_surface_mesh
 
 import numpy as np
 
@@ -342,10 +342,10 @@ def train_deep_sdf(
             param_group["lr"] = lr_schedules[i].get_learning_rate(epoch)
 
     def empirical_stat(latent_vecs, indices):
-        if torch.cuda.is_available():
-            lat_mat = torch.zeros(0).cuda()
-        else:
-            lat_mat = torch.zeros(0)
+        lat_mat = torch.zeros(
+            0, device=latent_vecs[0].device, dtype=latent_vecs[0].dtype
+        )
+
         for ind in indices:
             lat_mat = torch.cat([lat_mat, latent_vecs[ind]], 0)
         mean = torch.mean(lat_mat, 0)
@@ -558,40 +558,28 @@ def train_deep_sdf(
 
                 if enforce_minmax:
                     pred_sdf = torch.clamp(pred_sdf, minT, maxT)
-                if torch.cuda.is_available():
-                    chunk_loss = loss_l1(pred_sdf, sdf_gt[i].cuda()) / num_sdf_samples
-                else:
-                    chunk_loss = loss_l1(pred_sdf, sdf_gt[i]) / num_sdf_samples
+
+                chunk_loss = loss_l1(pred_sdf, sdf_gt[i].to(device)) / num_sdf_samples
 
                 if do_code_regularization == "homogenization":
                     unique_lat_vecs = lat_vecs(indices[i].unique())
-                    if torch.cuda.is_available():
-                        pred_properties = decoder.module.regressor(
-                            unique_lat_vecs.cuda()
-                        )
-                        reg_loss = code_reg_lambda * loss_MSE(
-                            pred_properties, properties.cuda()
-                        )
-                        chunk_loss = chunk_loss + reg_loss.cuda()
-                        batch_reg_loss = batch_reg_loss + reg_loss.cuda()
-                    else:
-                        pred_properties = decoder.module.regressor(batch_lat_vecs)
-                        reg_loss = code_reg_lambda * loss_MSE(
-                            pred_properties, properties
-                        )
-                        chunk_loss = chunk_loss + reg_loss
-                        batch_reg_loss = batch_reg_loss + reg_loss
+
+                    pred_properties = decoder.module.regressor(
+                        unique_lat_vecs.to(device)
+                    )
+                    reg_loss = code_reg_lambda * loss_MSE(
+                        pred_properties, properties.to(device)
+                    )
+                    chunk_loss = chunk_loss + reg_loss.to(device)
+                    batch_reg_loss = batch_reg_loss + reg_loss.to(device)
 
                 l2_size_loss = torch.sum(torch.norm(batch_lat_vecs, dim=1))
                 reg_loss = (
                     code_reg_lambda * min(1, epoch / 100) * l2_size_loss
                 ) / num_sdf_samples
-                if torch.cuda.is_available():
-                    chunk_loss = chunk_loss + reg_loss.cuda()
-                    batch_reg_loss = batch_reg_loss + reg_loss.cuda()
-                else:
-                    chunk_loss = chunk_loss + reg_loss
-                    batch_reg_loss = batch_reg_loss + reg_loss
+
+                chunk_loss = chunk_loss + reg_loss.to(device)
+                batch_reg_loss = batch_reg_loss + reg_loss.to(device)
 
                 chunk_loss.backward()
 
@@ -686,7 +674,7 @@ def reconstruct_meshs_from_latent(
             continue
         print(f"Reconstructing {fname} ({i}/{len(latent_vectors)})")
         sdf_from_DeepSDF.set_latent_vec(latent_in)
-        surf_mesh, _ = create_3D_surface_mesh(sdf_from_DeepSDF, 30)
+        surf_mesh, _ = create_3D_mesh(sdf_from_DeepSDF, 30, mesh_type="surface")
         export_surface_mesh(fname, surf_mesh)
 
 
@@ -765,7 +753,7 @@ def create_interpolated_meshes_from_latent(
                 continue
             print(f"Reconstructing {fname} ({i}/{len(latent_vectors)})")
             sdf_from_DeepSDF.set_latent_vec(latent_in)
-            surf_mesh, _ = create_3D_surface_mesh(sdf_from_DeepSDF, 30)
+            surf_mesh, _ = create_3D_mesh(sdf_from_DeepSDF, 30, mesh_type="surface")
             export_surface_mesh(fname, surf_mesh)
 
             # end = time.time()

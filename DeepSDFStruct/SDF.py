@@ -10,7 +10,7 @@ from typing import TypedDict
 from DeepSDFStruct.deep_sdf.models import DeepSDFModel
 from DeepSDFStruct.plotting import plot_slice
 from DeepSDFStruct.torch_spline import TorchSpline
-from DeepSDFStruct.parametrization import _Parametrization, Constant
+from DeepSDFStruct.parametrization import Constant
 
 import logging
 
@@ -114,8 +114,8 @@ class SDFBase(ABC):
 
     def __init__(
         self,
-        deformation_spline: TorchSpline = None,
-        parametrization: _Parametrization = None,
+        deformation_spline: TorchSpline | None = None,
+        parametrization: torch.nn.Module | None = None,
         cap_border_dict: CapBorderDict = None,
         cap_outside_of_unitcube=False,
     ):
@@ -143,7 +143,7 @@ class SDFBase(ABC):
         return self._parametrization
 
     @parametrization.setter
-    def parametrization(self, p: _Parametrization):
+    def parametrization(self, p):
         self._parametrization = p
 
     @property

@@ -1,46 +1,35 @@
-from abc import ABC, abstractmethod
 import torch
+import torch.nn as nn
 import splinepy as sp
 from DeepSDFStruct.torch_spline import TorchSpline
 
 
-class _Parametrization(ABC):
-    parameters: torch.Tensor
+class Constant(nn.Module):
+    def __init__(self, value, device=None, dtype=None):
+        super().__init__()
+        if not isinstance(value, torch.Tensor):
+            value = torch.tensor(value, device=device, dtype=dtype)
+        self.param = nn.Parameter(value)
 
-    def __init__(self, parameters: torch.Tensor, device):
-        self.parameters = parameters
-        self.device = device
-
-    @abstractmethod
-    def __call__(self, queries: torch.Tensor) -> torch.Tensor:
-        pass
-
-    @abstractmethod
-    def set_param(self, parameter: torch.Tensor) -> torch.Tensor:
-        pass
-
-
-class Constant(_Parametrization):
-    def __init__(self, value, device):
-        if type(value) is not torch.Tensor:
-            value = torch.tensor(value, device=device)
-        super().__init__(parameters=value, device=device)
-
-    def __call__(self, queries: torch.Tensor) -> torch.Tensor:
+    def forward(self, queries: torch.Tensor) -> torch.Tensor:
         N = queries.shape[0]
-        return self.parameters.expand(N, -1)
+        return self.param.expand(N, -1)
 
-    def set_param(self, parameters: torch.Tensor):
-        self.parameters = parameters
+    def set_param(self, new_value: torch.Tensor):
+        with torch.no_grad():
+            self.param.copy_(new_value.to(self.param.device))
 
 
-class SplineParametrization(_Parametrization):
-    def __init__(self, spline: sp.BSpline | sp.Bezier | sp.NURBS, device):
+class SplineParametrization(nn.Module):
+    def __init__(self, spline: sp.BSpline | sp.Bezier | sp.NURBS, device=None):
+        super().__init__()
         self.torch_spline = TorchSpline(spline, device=device)
-        super().__init__(parameters=self.torch_spline.control_points, device=device)
 
-    def __call__(self, queries: torch.Tensor) -> torch.Tensor:
+    def forward(self, queries: torch.Tensor) -> torch.Tensor:
         return self.torch_spline(queries)
 
-    def set_param(self, parameter: torch.Tensor):
-        self.torch_spline.control_points = parameter
+    def set_param(self, new_value: torch.Tensor):
+        with torch.no_grad():
+            self.torch_spline.control_points.copy_(
+                new_value.to(self.torch_spline.control_points.device)
+            )

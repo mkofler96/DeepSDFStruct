@@ -713,12 +713,8 @@ class FlexiCubes:
                 surf_edges[edge_indices.reshape(-1, 4)[:, 0]].reshape(-1)
             ].reshape(-1, 2)
             flip_mask = s_edges[:, 0] > 0
-            quad_vd_idx = torch.cat(
-                (
-                    quad_vd_idx[flip_mask][:, [0, 1, 3, 2]],
-                    quad_vd_idx[~flip_mask][:, [2, 3, 1, 0]],
-                )
-            )
+            quad_vd_idx[flip_mask] = quad_vd_idx[flip_mask][:, [0, 1, 3, 2]]
+            quad_vd_idx[~flip_mask] = quad_vd_idx[~flip_mask][:, [2, 3, 1, 0]]
         if grad_func is not None:
             # when grad_func is given, split quadrilaterals along the diagonals with more consistent gradients.
             with torch.no_grad():
