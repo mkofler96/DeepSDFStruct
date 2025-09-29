@@ -3,7 +3,7 @@ from DeepSDFStruct.SDF import SDFfromDeepSDF, SDFfromLineMesh, SDFfromMesh
 from DeepSDFStruct.mesh import (
     generate_2D_surf_mesh,
     tetrahedralize_surface,
-    create_3D_surface_mesh,
+    create_3D_mesh,
     export_surface_mesh,
     export_sdf_grid_vtk,
 )
@@ -48,16 +48,16 @@ def test_deepsdf_lattice_export():
 
     # Create the lattice structure with deformation and microtile
     lattice_struct = LatticeSDFStruct(
-        tiling=(3, 2, 2),
+        tiling=[3, 2, 2],
         deformation_spline=deformation_spline,
         microtile=sdf,
         parametrization=param_spline,
     )
-    surf_mesh, derivative = create_3D_surface_mesh(
-        lattice_struct, 30, differentiate=True, device=model.device
+    surf_mesh, derivative = create_3D_mesh(
+        lattice_struct, 30, differentiate=True, mesh_type="surface", device=model.device
     )
     export_surface_mesh(
-        "tests/tmp_outputs/mesh_with_derivative.vtk", surf_mesh, derivative
+        "tests/tmp_outputs/mesh_with_derivative.vtk", surf_mesh.to_gus(), derivative
     )
     export_sdf_grid_vtk(
         lattice_struct, "tests/tmp_outputs/sdf.vtk", device=model.device
@@ -68,6 +68,14 @@ def test_deepsdf_lattice_export():
 
     volumes, _ = tetrahedralize_surface(mesh)
     _gus.io.mfem.export("tests/tmp_outputs/volumes.mfem", volumes)
+
+    # test other method to export 3D mesh:
+    volume_mesh, derivative_vols = create_3D_mesh(
+        lattice_struct, 30, differentiate=True, mesh_type="volume", device=model.device
+    )
+    _gus.io.meshio.export(
+        fname="tests/tmp_outputs/volumes.inp", mesh=volume_mesh.to_gus()
+    )
 
     # test reconstruction
     device = model.device
@@ -88,7 +96,7 @@ def test_deepsdf_lattice_export():
         loss_fn="ClampedL1",
         num_iterations=500,
         batch_size=2**17,
-    ).to(device)
+    )
     print("Original parameters:")
     print(control_points)
     print("Reconstructed parameters:")

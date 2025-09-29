@@ -19,7 +19,7 @@ import DeepSDFStruct.deep_sdf.workspace as ws
 import DeepSDFStruct.deep_sdf.data
 from DeepSDFStruct.deep_sdf.models import DeepSDFModel
 from DeepSDFStruct.SDF import SDFfromDeepSDF
-from DeepSDFStruct.mesh import create_3D_surface_mesh, export_surface_mesh
+from DeepSDFStruct.mesh import create_3D_mesh, export_surface_mesh
 
 import numpy as np
 
@@ -686,7 +686,7 @@ def reconstruct_meshs_from_latent(
             continue
         print(f"Reconstructing {fname} ({i}/{len(latent_vectors)})")
         sdf_from_DeepSDF.set_latent_vec(latent_in)
-        surf_mesh, _ = create_3D_surface_mesh(sdf_from_DeepSDF, 30)
+        surf_mesh, _ = create_3D_mesh(sdf_from_DeepSDF, 30, mesh_type="surface")
         export_surface_mesh(fname, surf_mesh)
 
 
@@ -765,7 +765,7 @@ def create_interpolated_meshes_from_latent(
                 continue
             print(f"Reconstructing {fname} ({i}/{len(latent_vectors)})")
             sdf_from_DeepSDF.set_latent_vec(latent_in)
-            surf_mesh, _ = create_3D_surface_mesh(sdf_from_DeepSDF, 30)
+            surf_mesh, _ = create_3D_mesh(sdf_from_DeepSDF, 30, mesh_type="surface")
             export_surface_mesh(fname, surf_mesh)
 
             # end = time.time()

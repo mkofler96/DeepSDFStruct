@@ -16,11 +16,8 @@ def reconstruct_from_samples(
     loss_fn="ClampedL1",
     batch_size=512,
 ):
-    parameters = torch.ones_like(sdf.parameters).normal_(mean=0, std=0.1).to(device)
 
-    parameters.requires_grad = True
-
-    optimizer = torch.optim.Adam([parameters], lr=lr)
+    optimizer = torch.optim.Adam(sdf.parametrization.parameters(), lr=lr)
 
     verts_min = sdfSample.samples.min(axis=0)
     verts_max = sdfSample.samples.max(axis=0)
@@ -31,9 +28,7 @@ def reconstruct_from_samples(
     queries_parameter_space = sdf.deformation_spline.spline.proximities(
         sdfSample.samples.detach().cpu().numpy()
     )
-    queries_ps_torch = torch.tensor(
-        queries_parameter_space, device=device, dtype=parameters.dtype
-    )
+    queries_ps_torch = torch.tensor(queries_parameter_space, device=device, dtype=dtype)
     queries_min = queries_ps_torch.min(dim=0).values
     queries_max = queries_ps_torch.max(dim=0).values
 
@@ -68,7 +63,6 @@ def reconstruct_from_samples(
 
     for e in pbar:
         for querie_batch, gt_batch in dataloader:
-            sdf.parametrization.set_param(parameters)
             optimizer.zero_grad()
             pred_dist = sdf(querie_batch)
             loss = Loss(pred_dist, gt_batch.view(-1))
@@ -78,5 +72,6 @@ def reconstruct_from_samples(
             pbar.set_postfix({"loss": f"{loss_num:.5f}"})
 
     print("Reconstructed parameters:")
-    print(parameters)
-    return parameters
+    params = list(sdf.parametrization.parameters())
+    print(params)
+    return params
