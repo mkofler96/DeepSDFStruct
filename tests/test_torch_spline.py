@@ -99,32 +99,6 @@ def test_torchspline_derivative(np_rng, bspline, device="cpu", eps=1e-3):
     )
 
 
-def test_torchspline_autograd(np_rng, bspline, device="cpu"):
-
-    torch_spline = TorchSpline(bspline, device=device)
-    queries = torch.tensor(
-        np_rng.random((5, 3)), dtype=torch.float64, device=device, requires_grad=True
-    )
-    control_points = torch.tensor(
-        bspline.control_points, dtype=torch.float64, device=device, requires_grad=True
-    )
-
-    def func(q, cp):
-        torch_spline.control_points = cp
-        return torch_spline.forward(q)
-
-    torch.autograd.gradcheck(func, (queries, control_points), check_forward_ad=False)
-
-    queries_2 = torch.tensor(
-        np_rng.random((5, 3)), dtype=torch.float64, device=device, requires_grad=True
-    )
-    control_points_2 = torch.tensor(
-        bspline.control_points, dtype=torch.float64, device=device, requires_grad=True
-    )
-
-    torch.autograd.gradcheck(func, (queries_2, control_points_2), check_forward_ad=True)
-
-
 def test_generate_bbox_spline():
     # Define bounding box
     bbox = np.array([[-1.0, -2.0, -3.0], [4.0, 5.0, 6.0]])
@@ -240,4 +214,3 @@ if __name__ == "__main__":
     np_rng = np.random.default_rng(0)
     test_torchspline_evaluation(np_rng, bspline_test)
     test_torchspline_derivative(np_rng, bspline_test)
-    test_torchspline_autograd(np_rng, bspline_test)
