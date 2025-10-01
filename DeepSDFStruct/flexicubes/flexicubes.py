@@ -109,7 +109,6 @@ class FlexiCubes:
                 [0, 1, 1],
                 [1, 1, 1],
             ],
-            dtype=torch.float,
             device=device,
         )
         self.cube_corners_idx = torch.pow(2, torch.arange(8, requires_grad=False))
@@ -160,7 +159,7 @@ class FlexiCubes:
             res = (res, res, res)
         voxel_grid_template = torch.ones(res, device=self.device)
 
-        res = torch.tensor([res], dtype=torch.float, device=self.device)
+        res = torch.tensor([res], device=self.device)
         coords = torch.nonzero(voxel_grid_template).float() / res  # N, 3
         verts = (self.cube_corners.unsqueeze(0) / res + coords.unsqueeze(1)).reshape(
             -1, 3
@@ -344,19 +343,19 @@ class FlexiCubes:
         if beta_fx12 is not None:
             beta_fx12 = torch.tanh(beta_fx12) * self.weight_scale + 1
         else:
-            beta_fx12 = torch.ones((n_cubes, 12), dtype=torch.float, device=self.device)
+            beta_fx12 = torch.ones((n_cubes, 12), device=self.device)
 
         if alpha_fx8 is not None:
             alpha_fx8 = torch.tanh(alpha_fx8) * self.weight_scale + 1
         else:
-            alpha_fx8 = torch.ones((n_cubes, 8), dtype=torch.float, device=self.device)
+            alpha_fx8 = torch.ones((n_cubes, 8), device=self.device)
 
         if gamma_f is not None:
             gamma_f = (
                 torch.sigmoid(gamma_f) * self.weight_scale + (1 - self.weight_scale) / 2
             )
         else:
-            gamma_f = torch.ones((n_cubes), dtype=torch.float, device=self.device)
+            gamma_f = torch.ones((n_cubes), device=self.device)
 
         return beta_fx12[surf_cubes], alpha_fx8[surf_cubes], gamma_f[surf_cubes]
 
@@ -631,10 +630,8 @@ class FlexiCubes:
             vd = torch.cat(vd)
             L_dev = torch.zeros([1], device=self.device)
         else:
-            vd = torch.zeros((total_num_vd, 3), device=self.device, dtype=x_nx3.dtype)
-            beta_sum = torch.zeros(
-                (total_num_vd, 1), device=self.device, dtype=x_nx3.dtype
-            )
+            vd = torch.zeros((total_num_vd, 3), device=self.device)
+            beta_sum = torch.zeros((total_num_vd, 1), device=self.device)
 
             idx_group = torch.gather(
                 input=idx_map.reshape(-1),
