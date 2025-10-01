@@ -18,5 +18,4 @@ DeepSDFStruct.deep\_sdf
    plotting
    reconstruction
    training
-   utils
    workspace
