@@ -10,7 +10,6 @@ DeepSDFStruct.deep\_sdf
    :toctree:
    :recursive:
 
-   create_libtorch_executable
    create_screenshots_from_plyfiles
    data
    metrics

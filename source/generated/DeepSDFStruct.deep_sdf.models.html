@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>DeepSDFStruct.deep_sdf.models &#8212; DeepSDFStruct 0.1.dev1+g21749772e documentation</title>
+    <title>DeepSDFStruct.deep_sdf.models &#8212; DeepSDFStruct 0.1.dev1+g90d66879e documentation</title>
   
   
   
@@ -38,7 +38,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=996fb79b"></script>
+    <script src="../../_static/documentation_options.js?v=314e423e"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'source/generated/DeepSDFStruct.deep_sdf.models';</script>
@@ -110,7 +110,7 @@
   
   
   
-    <p class="title logo__title">DeepSDFStruct 0.1.dev1+g21749772e documentation</p>
+    <p class="title logo__title">DeepSDFStruct 0.1.dev1+g90d66879e documentation</p>
   
 </a></div>
     
@@ -240,7 +240,6 @@
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="DeepSDFStruct.html">DeepSDFStruct</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.SDF.html">DeepSDFStruct.SDF</a></li>
 <li class="toctree-l2 current active has-children"><a class="reference internal" href="DeepSDFStruct.deep_sdf.html">DeepSDFStruct.deep_sdf</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.deep_sdf.create_libtorch_executable.html">DeepSDFStruct.deep_sdf.create_libtorch_executable</a></li>
 <li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.deep_sdf.data.html">DeepSDFStruct.deep_sdf.data</a></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="DeepSDFStruct.deep_sdf.metrics.html">DeepSDFStruct.deep_sdf.metrics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="DeepSDFStruct.deep_sdf.metrics.mesh_to_analytical.html">DeepSDFStruct.deep_sdf.metrics.mesh_to_analytical</a></li>
@@ -368,10 +367,28 @@
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>decoder</strong> (<em>torch.nn.modules.module.Module</em>)</p></li>
-<li><p><strong>trained_latent_vectors</strong> (<em>list</em><em>[</em><em>torch.Tensor</em><em>]</em>)</p></li>
+<li><p><strong>trained_latent_vectors</strong> (<em>torch.Tensor</em>)</p></li>
 </ul>
 </dd>
 </dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="DeepSDFStruct.deep_sdf.models.DeepSDFModel.export_libtorch_executable">
+<span class="sig-name descname"><span class="pre">export_libtorch_executable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.deep_sdf.models.DeepSDFModel.export_libtorch_executable" title="Link to this definition">#</a></dt>
+<dd><p>Export the trained decoder model to a TorchScript file for use with LibTorch (C++).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>filename</strong> (<em>str</em>) – Path where the TorchScript model will be saved (e.g. “decoder.pt”).</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">export_libtorch_executable</span><span class="p">(</span><span class="s2">&quot;decoder.pt&quot;</span><span class="p">)</span>
+<span class="go">Example input:  tensor([[...]])</span>
+<span class="go">Example Output: tensor([[...]])</span>
+<span class="go"># The file &quot;decoder.pt&quot; is now ready for loading in LibTorch.</span>
+</pre></div>
+</div>
+</dd></dl>
+
 </dd></dl>
 
 </section>
@@ -423,7 +440,10 @@
   </div>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.deep_sdf.models.DeepSDFModel"><code class="docutils literal notranslate"><span class="pre">DeepSDFModel</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.deep_sdf.models.DeepSDFModel"><code class="docutils literal notranslate"><span class="pre">DeepSDFModel</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.deep_sdf.models.DeepSDFModel.export_libtorch_executable"><code class="docutils literal notranslate"><span class="pre">DeepSDFModel.export_libtorch_executable()</span></code></a></li>
+</ul>
+</li>
 </ul>
   </nav></div>
 
