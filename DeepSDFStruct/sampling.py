@@ -6,6 +6,7 @@ import typing
 import gustaf as gus
 import trimesh
 from DeepSDFStruct.SDF import SDFfromMesh, SDFBase
+import DeepSDFStruct
 
 # from analysis.problems.homogenization import computeHomogenizedMaterialProperties
 import splinepy
@@ -15,7 +16,7 @@ from tqdm import tqdm
 import logging
 
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger(DeepSDFStruct.__name__)
 
 
 class DataSetInfo(typing.TypedDict):

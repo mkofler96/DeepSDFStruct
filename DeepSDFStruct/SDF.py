@@ -11,10 +11,11 @@ from DeepSDFStruct.deep_sdf.models import DeepSDFModel
 from DeepSDFStruct.plotting import plot_slice
 from DeepSDFStruct.torch_spline import TorchSpline
 from DeepSDFStruct.parametrization import Constant
+import DeepSDFStruct
 
 import logging
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger(DeepSDFStruct.__name__)
 
 
 class CapType(TypedDict):

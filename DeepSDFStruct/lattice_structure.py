@@ -9,9 +9,10 @@ from splinepy import BSpline as _BSpline
 from .SDF import SDFBase as _SDFBase
 from .SDF import CapBorderDict
 from DeepSDFStruct.torch_spline import TorchSpline
+import DeepSDFStruct
 import gustaf as gus
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger(DeepSDFStruct.__name__)
 
 
 class LatticeSDFStruct(_SDFBase):

@@ -6,6 +6,7 @@ from DeepSDFStruct.mesh import create_3D_mesh, torchVolumeMesh
 from DeepSDFStruct.parametrization import SplineParametrization
 from DeepSDFStruct.optimization import MMA, tet_signed_vol, get_mesh_from_torchfem
 from DeepSDFStruct.utils import configure_logging
+import DeepSDFStruct
 import torchfem.materials
 import torchfem.solid
 import splinepy
@@ -14,7 +15,7 @@ import logging
 import numpy as np
 
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger(DeepSDFStruct.__name__)
 configure_logging()
 
 

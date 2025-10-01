@@ -23,6 +23,8 @@ from DeepSDFStruct.mesh import create_3D_mesh, export_surface_mesh
 
 import numpy as np
 
+logger = logging.getLogger(DeepSDFStruct.__name__)
+
 
 class ClampedL1Loss(torch.nn.Module):
     def __init__(self, clamp_val=0.1):

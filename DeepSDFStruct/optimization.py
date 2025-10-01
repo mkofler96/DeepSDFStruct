@@ -6,8 +6,10 @@ import numpy as np
 from mmapy import mmasub
 import pyvista
 import logging
+import DeepSDFStruct
 
-logger = logging.getLogger(__name__)
+
+logger = logging.getLogger(DeepSDFStruct.__name__)
 
 
 def get_mesh_from_torchfem(Solid: torchfem.Solid) -> pyvista.UnstructuredGrid:

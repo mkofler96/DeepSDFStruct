@@ -17,8 +17,9 @@ from functools import partial
 from DeepSDFStruct.flexicubes.flexicubes import FlexiCubes
 from DeepSDFStruct.lattice_structure import LatticeSDFStruct
 from DeepSDFStruct.SDF import SDFBase
+import DeepSDFStruct
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger(DeepSDFStruct.__name__)
 
 
 class torchSurfMesh:
