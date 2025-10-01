@@ -36,6 +36,6 @@ def test_cpp_file_export():
 
 
 if __name__ == "__main__":
-    test_cpp_file_export()
-    test_latent_recon()
     test_train_model()
+    test_latent_recon()
+    test_cpp_file_export()

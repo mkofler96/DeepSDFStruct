@@ -18,6 +18,7 @@
       },
     "CodeLength" : 1,
     "NumEpochs" : 5,
+    "LogFrequency": 5,
     "SnapshotFrequency" : 100,
     "AdditionalSnapshots" : [1,5],
     "LearningRateSchedule" : [
