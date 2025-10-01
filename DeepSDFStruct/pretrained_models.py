@@ -22,7 +22,9 @@ _MODEL_REGISTRY = {
 }
 
 
-def get_model(model: str | PretrainedModels, checkpoint: str = "latest", device=None):
+def get_model(
+    model: str | PretrainedModels, checkpoint: str = "latest", device=None
+) -> DeepSDFModel:
     """
     Load a pretrained model by name or enum.
 

@@ -3,6 +3,7 @@ from DeepSDFStruct.deep_sdf.training import (
     reconstruct_meshs_from_latent,
     create_interpolated_meshes_from_latent,
 )
+from DeepSDFStruct.pretrained_models import get_model
 from huggingface_hub import snapshot_download
 import torch
 
@@ -28,6 +29,13 @@ def test_latent_recon():
     create_interpolated_meshes_from_latent(exp_dir, [1, 2, 3], 4, device=device)
 
 
+def test_cpp_file_export():
+    exp_dir = "DeepSDFStruct/trained_models/test_experiment"
+    model = get_model(exp_dir)
+    model.export_libtorch_executable("tests/tmp_outputs/test_cpp_model.pt")
+
+
 if __name__ == "__main__":
+    test_cpp_file_export()
     test_latent_recon()
     test_train_model()
