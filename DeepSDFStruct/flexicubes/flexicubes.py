@@ -631,8 +631,10 @@ class FlexiCubes:
             vd = torch.cat(vd)
             L_dev = torch.zeros([1], device=self.device)
         else:
-            vd = torch.zeros((total_num_vd, 3), device=self.device)
-            beta_sum = torch.zeros((total_num_vd, 1), device=self.device)
+            vd = torch.zeros((total_num_vd, 3), device=self.device, dtype=x_nx3.dtype)
+            beta_sum = torch.zeros(
+                (total_num_vd, 1), device=self.device, dtype=x_nx3.dtype
+            )
 
             idx_group = torch.gather(
                 input=idx_map.reshape(-1),

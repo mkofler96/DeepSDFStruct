@@ -22,7 +22,7 @@ def test_train_model():
 
 
 def test_latent_recon():
-    exp_dir = "DeepSDFStruct/trained_models/test_experiment"
+    exp_dir = "DeepSDFStruct/trained_models/analytic_round_cross"
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     device = "cpu"
     reconstruct_meshs_from_latent(exp_dir, filetype="obj", device=device)
@@ -30,7 +30,7 @@ def test_latent_recon():
 
 
 def test_cpp_file_export():
-    exp_dir = "DeepSDFStruct/trained_models/test_experiment"
+    exp_dir = "DeepSDFStruct/trained_models/analytic_round_cross"
     model = get_model(exp_dir)
     model.export_libtorch_executable("tests/tmp_outputs/test_cpp_model.pt")
 
