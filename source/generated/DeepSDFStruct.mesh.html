@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>DeepSDFStruct.mesh &#8212; DeepSDFStruct 0.1.dev1+g094eddf2f documentation</title>
+    <title>DeepSDFStruct.mesh &#8212; DeepSDFStruct 0.1.dev1+g452745b57 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=8f89815a"></script>
+    <script src="../../_static/documentation_options.js?v=a1382808"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'source/generated/DeepSDFStruct.mesh';</script>
@@ -110,7 +110,7 @@
   
   
   
-    <p class="title logo__title">DeepSDFStruct 0.1.dev1+g094eddf2f documentation</p>
+    <p class="title logo__title">DeepSDFStruct 0.1.dev1+g452745b57 documentation</p>
   
 </a></div>
     
@@ -590,6 +590,23 @@ Includes domain boundary and hole polygons.</p>
 </dd>
 </dl>
 <dl class="py method">
+<dt class="sig sig-object py" id="DeepSDFStruct.mesh.torchVolumeMesh.clear_unreferenced_nodes">
+<span class="sig-name descname"><span class="pre">clear_unreferenced_nodes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.mesh.torchVolumeMesh.clear_unreferenced_nodes" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="DeepSDFStruct.mesh.torchVolumeMesh.remove_disconnected_regions">
+<span class="sig-name descname"><span class="pre">remove_disconnected_regions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">support_node</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clear_unused</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.mesh.torchVolumeMesh.remove_disconnected_regions" title="Link to this definition">#</a></dt>
+<dd><p>Removes disconnected parts
+for now, unreferenced vertices are kept</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>support_node</strong> (<em>int</em><em> | </em><em>None</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="DeepSDFStruct.mesh.torchVolumeMesh.to_gus">
 <span class="sig-name descname"><span class="pre">to_gus</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.mesh.torchVolumeMesh.to_gus" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
@@ -667,6 +684,8 @@ Includes domain boundary and hole polygons.</p>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.mesh.torchVolumeMesh"><code class="docutils literal notranslate"><span class="pre">torchVolumeMesh</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.mesh.torchVolumeMesh.clear_unreferenced_nodes"><code class="docutils literal notranslate"><span class="pre">torchVolumeMesh.clear_unreferenced_nodes()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.mesh.torchVolumeMesh.remove_disconnected_regions"><code class="docutils literal notranslate"><span class="pre">torchVolumeMesh.remove_disconnected_regions()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.mesh.torchVolumeMesh.to_gus"><code class="docutils literal notranslate"><span class="pre">torchVolumeMesh.to_gus()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.mesh.torchVolumeMesh.to_trimesh"><code class="docutils literal notranslate"><span class="pre">torchVolumeMesh.to_trimesh()</span></code></a></li>
 </ul>
