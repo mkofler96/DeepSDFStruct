@@ -170,7 +170,7 @@ class SDFBase(ABC):
                     multiplier = 1
                 border_sdf = (
                     queries[:, dim] - multiplier * (location - measure)
-                ) * -multiplier
+                ).reshape(-1, 1) * -multiplier
                 # # border_sdf = border_sdf.view(-1, 1)
                 # border_sdf = border_sdf.to(orig_device)
                 # sdf_values = sdf_values.to(orig_device)
@@ -457,7 +457,7 @@ class SDFfromDeepSDF(SDFBase):
 
             head = end
 
-        return sdf_values.to(orig_device)
+        return sdf_values.to(orig_device).reshape(-1, 1)
 
 
 def _cap_outside_of_unitcube(samples, sdf_values):
@@ -467,7 +467,7 @@ def _cap_outside_of_unitcube(samples, sdf_values):
     ):
         x = samples[:, dim]
         border_sdf = k * (x - dx) + dy
-        sdf_values = torch.maximum(sdf_values, -border_sdf)
+        sdf_values = torch.maximum(sdf_values, -border_sdf.reshape(-1, 1))
     return sdf_values
 
 

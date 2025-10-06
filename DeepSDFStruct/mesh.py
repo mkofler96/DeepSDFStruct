@@ -109,6 +109,8 @@ class torchVolumeMesh:
         ]
         mask = torch.isin(self.volumes, valid_node_ids)
         row_mask = mask.all(dim=1)
+        removed = (~row_mask).sum()
+        logger.info(f"Removed {removed} elements from disconnected regions.")
         self.volumes = self.volumes[row_mask]
         if clear_unused:
             self.clear_unreferenced_nodes()
@@ -400,7 +402,7 @@ def _verts_from_params(
 
     verts_local, faces, _ = constructor(
         voxelgrid_vertices=samples,
-        scalar_field=sdf_values,
+        scalar_field=sdf_values.reshape(-1),
         cube_idx=cube_idx,
         resolution=tuple(N),
         output_tetmesh=output_tetmesh,
@@ -427,7 +429,7 @@ def get_verts(
 
     verts_local, faces, _ = constructor(
         voxelgrid_vertices=samples,
-        scalar_field=sdf_values,
+        scalar_field=sdf_values.reshape(-1),
         cube_idx=cube_idx,
         resolution=tuple(N),
         output_tetmesh=output_tetmesh,
@@ -454,7 +456,7 @@ def export_sdf_grid_vtk(sdf: SDFBase, filename, N=64, bounds=None, device="cpu")
     # Evaluate SDF
     with _torch.no_grad():
         sdf_vals = sdf(_torch.tensor(points, device=device))
-    sdf_vals = sdf_vals.detach().cpu().numpy()
+    sdf_vals = sdf_vals.detach().cpu().numpy().reshape(-1)
 
     # Create vtkPoints
     vtk_points = vtk.vtkPoints()

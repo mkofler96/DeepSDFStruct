@@ -58,7 +58,7 @@ def test_cap_outside_unitcube():
     labels = [False, False, False, False, False, False, True, True]
 
     # Initial SDF values: all negative (e.g., "inside")
-    sdf_values = torch.tensor([-0.5] * samples.shape[0], dtype=torch.float32)
+    sdf_values = torch.tensor([[-0.5]] * samples.shape[0], dtype=torch.float32)
 
     capped_sdf = _cap_outside_of_unitcube(samples, sdf_values.clone())
 
