@@ -62,7 +62,7 @@ class SampledSDF:
     def __add__(self, other):
         return SampledSDF(
             samples=torch.vstack((self.samples, other.samples)),
-            distances=torch.vstack((self.distances, other.distances)),
+            distances=torch.hstack((self.distances, other.distances)),
         )
 
 

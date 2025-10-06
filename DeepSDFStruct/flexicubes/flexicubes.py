@@ -160,7 +160,9 @@ class FlexiCubes:
         voxel_grid_template = torch.ones(res, device=self.device)
 
         res = torch.tensor([res], device=self.device)
-        coords = torch.nonzero(voxel_grid_template).float() / res  # N, 3
+        coords = (
+            torch.nonzero(voxel_grid_template).to(torch.get_default_dtype()) / res
+        )  # N, 3
         verts = (self.cube_corners.unsqueeze(0) / res + coords.unsqueeze(1)).reshape(
             -1, 3
         )
@@ -328,7 +330,7 @@ class FlexiCubes:
         mean_l2 = torch.zeros_like(vd[:, 0])
         mean_l2 = (mean_l2).index_add_(
             0, edge_group_to_vd, dist
-        ) / vd_num_edges.squeeze(1).float()
+        ) / vd_num_edges.squeeze(1).to(torch.get_default_dtype())
         mad = (
             dist - torch.index_select(input=mean_l2, index=edge_group_to_vd, dim=0)
         ).abs()

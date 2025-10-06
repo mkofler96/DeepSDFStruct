@@ -68,11 +68,12 @@ class MMA:
         self.F0 = None
 
     def step(self, F, dF, G, dG):
+        orig_shape = dF.shape
         """
         performs an optimizer step
         """
         F_np = F.detach().cpu().numpy().reshape(-1, 1)
-        dFdx_np = dF.detach().cpu().numpy()
+        dFdx_np = dF.detach().cpu().numpy().reshape(-1, 1)
         G_np = G.detach().cpu().numpy().reshape(-1, 1)
         dGdx_np = dG.detach().cpu().numpy().reshape(1, -1)
         if self.loop == 0:
@@ -115,7 +116,9 @@ class MMA:
         with torch.no_grad():
             self.parameters.copy_(
                 torch.tensor(
-                    xmma, dtype=self.parameters.dtype, device=self.parameters.device
+                    xmma,
+                    dtype=self.parameters.dtype,
+                    device=self.parameters.device,
                 )
             )
         logger.info(

@@ -358,7 +358,7 @@ class SDFfromMesh(SDFBase):
         # Apply threshold
         distances -= self.threshold
 
-        result = distances.reshape(-1, 1)
+        result = distances.reshape(-1)
 
         if is_tensor:
             return torch.tensor(result, device=orig_device, dtype=orig_dtype)
