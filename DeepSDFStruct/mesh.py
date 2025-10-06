@@ -11,6 +11,9 @@ import skimage
 import triangle
 import vtk
 from typing import Optional, Tuple, Union
+import scipy
+import scipy.sparse.csgraph
+
 
 from functools import partial
 
@@ -46,6 +49,75 @@ class torchVolumeMesh:
     def to_trimesh():
         raise NotImplementedError("To trimesh functionality not implemented yet.")
         pass
+
+    def remove_disconnected_regions(
+        self, support_node: int | None = None, clear_unused=True
+    ):
+        """
+        Removes disconnected parts
+        for now, unreferenced vertices are kept
+        """
+        if self.volumes.shape[1] != 4:
+            raise NotImplementedError("Cleanup only supports tetrahedral elements yet.")
+        if support_node is not None:
+            if support_node > self.vertices.shape[0]:
+                raise ValueError(
+                    "Support node must be part of vertices. "
+                    "Support Node: {support_node}, N Vertices: {self.vertices.shape[0]}"
+                )
+        edges = torch.cat(
+            [
+                self.volumes[:, [0, 1]],
+                self.volumes[:, [1, 2]],
+                self.volumes[:, [2, 3]],
+                self.volumes[:, [3, 0]],
+            ],
+            dim=0,
+        )
+
+        # Make it undirected
+        edges = torch.cat([edges, edges[:, [1, 0]]], dim=0)
+        num_nodes = self.vertices.shape[0]
+        row, col = edges.T.cpu().numpy()
+        data = np.ones(len(row), dtype=np.int8)
+        adj = scipy.sparse.coo_matrix((data, (row, col)), shape=(num_nodes, num_nodes))
+
+        # Compute connected components
+        num_comp, component_labels = scipy.sparse.csgraph.connected_components(
+            adj, directed=False
+        )
+        if support_node is None:
+            values, counts = np.unique(component_labels, return_counts=True)
+            sorted_idx = np.argsort(-counts)  # negative for descending
+
+            most_frequent = values[sorted_idx[0]]
+            second_most_frequent = values[sorted_idx[1]]
+
+            # safety check that the second most frequent is not considerably large
+            if counts[most_frequent] < (counts[second_most_frequent] * 1.5):
+                logger.warning(
+                    f"Main body contains {counts[most_frequent]} nodes and the "
+                    f"second largest {counts[second_most_frequent]}. "
+                    "Conside Adding a support node."
+                )
+            remaining_body = most_frequent
+        else:
+            remaining_body = component_labels[support_node]
+
+        valid_node_ids = torch.arange(self.vertices.shape[0])[
+            component_labels == remaining_body
+        ]
+        mask = torch.isin(self.volumes, valid_node_ids)
+        row_mask = mask.all(dim=1)
+        self.volumes = self.volumes[row_mask]
+        if clear_unused:
+            self.clear_unreferenced_nodes()
+
+    def clear_unreferenced_nodes(self):
+        used_nodes, inverse = torch.unique(self.volumes, return_inverse=True)
+        remapped_volumes = inverse.view(self.volumes.shape)
+        self.vertices = self.vertices[used_nodes]
+        self.volumes = remapped_volumes
 
 
 def tetrahedralize_surface(surface_mesh: gus.Faces) -> tuple[gus.Volumes, np.ndarray]:
