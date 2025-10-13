@@ -22,7 +22,7 @@ class LocalShapesSDF(_SDFBase):
         parametrization: _torch.nn.Module | None = None,
         cap_border_dict: CapBorderDict = None,
         cap_outside_of_unitcube: bool = False,
-        bounds=[[-1, 1], [-1, 1], [-1, 1]],
+        bounds=_np.array([[-1, 1], [-1, 1], [-1, 1]]),
     ):
         """Helper class to facilitatae the construction of microstructures.
 
