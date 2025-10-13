@@ -1,3 +1,4 @@
+from DeepSDFStruct.local_shapes import LocalShapesSDF
 from DeepSDFStruct.pretrained_models import get_model, PretrainedModels
 from DeepSDFStruct.SDF import SDFfromDeepSDF, _cap_outside_of_unitcube
 from DeepSDFStruct.lattice_structure import LatticeSDFStruct
@@ -38,6 +39,48 @@ def test_deepsdf_lattice_evaluation():
     print(out)
 
 
+def test_lattice_local_shapes_comparison():
+    # Load a pretrained DeepSDF model
+    model = get_model(PretrainedModels.AnalyticRoundCross)
+    sdf = SDFfromDeepSDF(model)
+
+    # Set the latent vector and visualize a slice of the SDF
+    sdf.set_latent_vec(torch.tensor([0.3]))
+
+    # Define a spline-based deformation field
+    deformation_spline = TorchSpline(
+        splinepy.helpme.create.box(2, 1, 1).bspline, device=model.device
+    )
+
+    # Create the lattice structure with deformation and microtile
+    lattice_struct = LatticeSDFStruct(
+        tiling=(2, 1, 1),
+        deformation_spline=deformation_spline,
+        microtile=sdf,
+        parametrization=Constant([0.5], device=model.device),
+    )
+
+    test_input_param_domain = torch.tensor(
+        [[0, 0, 0], [0, 1, 0], [0.5, 0.5, 0.5]],
+        dtype=torch.float32,
+        device=model.device,
+    )
+
+    out_latt = lattice_struct(test_input_param_domain)
+
+    local_shape_sdf = LocalShapesSDF(
+        tiling=(2, 1, 1),
+        unit_cell=sdf,
+        parametrization=Constant([0.5], device=model.device),
+        bounds=torch.tensor([[0, 0, 0], [2, 1, 1]]),
+    )
+    test_input_global_domain = deformation_spline(test_input_param_domain)
+
+    out_ls = local_shape_sdf(test_input_global_domain)
+
+    torch.testing.assert_close(out_latt, out_ls)
+
+
 def test_cap_outside_unitcube():
 
     samples = torch.tensor(
@@ -72,5 +115,6 @@ def test_cap_outside_unitcube():
 
 
 if __name__ == "__main__":
+    test_lattice_local_shapes_comparison()
     test_cap_outside_unitcube()
     test_deepsdf_lattice_evaluation()

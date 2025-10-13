@@ -263,14 +263,15 @@ def constantLatvec(value):
     return _BSpline([0, 0, 0], [[-1, 1], [-1, 1], [-1, 1]], [value])
 
 
-def transform(x, t):
+def transform(x, t, bounds=[0, 1]):
     # transform x from [0,1] to [0,1]
-    x_transformed = 2 * _torch.abs(t * x / 2 - _torch.floor((t * x + 1) / 2))
+    x_norm = (x - bounds[0]) / (bounds[1] - bounds[0])
+    x_transformed = 2 * _torch.abs(t * x_norm / 2 - _torch.floor((t * x_norm + 1) / 2))
     return x_transformed
 
 
 def check_tiling_input(tiling):
-    if isinstance(tiling, list):
+    if isinstance(tiling, list) or isinstance(tiling, tuple):
         if len(tiling) != 3:
             raise ValueError("Tiling must be a list of 3 integers")
         tiling = _np.array(tiling)
@@ -278,52 +279,3 @@ def check_tiling_input(tiling):
         tiling = _np.array([tiling, tiling, tiling])
     else:
         raise ValueError("Tiling must be a list or an integer")
-
-
-# def _prepare_flexicubes_querypoints(N):
-#     """
-#     takes the tiling and a resolution as input
-#     output: DeepSDFStruct.flexicubes constructor, samples and cube indices
-#             the points are located in the region [0,1] with a margin of 0.025
-#             -> [-0.025, 1.025]
-#     """
-#     # check_tiling_input(tiling)
-
-#     flexi_cubes_constructor = FlexiCubes(device=device)
-#     samples, cube_idx = flexi_cubes_constructor.construct_voxel_grid(
-#         resolution=tuple(N)
-#     )
-
-#     samples = samples * 1.1 + _torch.tensor([0.5, 0.5, 0.5], device=device)
-#     tolerance = 1e-6
-#     _torch._assert(
-#         _torch.all(samples.ge(-0.05 - tolerance) & samples.le(1.05 + tolerance)),
-#         "Samples are out of bounds",
-#     )
-
-#     return flexi_cubes_constructor, samples, cube_idx
-
-#     samples = samples.to(device)
-#     cube_idx = cube_idx.to(device)
-#     # transform samples from [-0.5, 0.5] to [-1.05, 1.05]
-#     N_tot = samples.shape[0]
-#     N = N + 1
-
-#     tx, ty, tz = tiling
-
-#     samples_transformed = _torch.zeros(N_tot, 3)
-#     samples_transformed[:, 0] = transform(samples[:, 0], tx)
-#     samples_transformed[:, 1] = transform(samples[:, 1], ty)
-#     samples_transformed[:, 2] = transform(samples[:, 2], tz)
-
-#     samples_transformed.requires_grad = False
-
-#     inside_domain = torch.where(
-#         (samples[:, 0] >= -1)
-#         & (samples[:, 0] <= 1)
-#         & (samples[:, 1] >= -1)
-#         & (samples[:, 1] <= 1)
-#         & (samples[:, 2] >= -1)
-#         & (samples[:, 2] <= 1)
-#     )
-#     return flexi_cubes_constructor, samples_transformed, samples
