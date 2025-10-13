@@ -65,7 +65,7 @@ def reconstruct_from_samples(
         for querie_batch, gt_batch in dataloader:
             optimizer.zero_grad()
             pred_dist = sdf(querie_batch)
-            loss = Loss(pred_dist, gt_batch.view(-1))
+            loss = Loss(pred_dist, gt_batch)
             loss.backward()
             optimizer.step()
             loss_num = loss.detach().item()
