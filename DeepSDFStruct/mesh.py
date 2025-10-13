@@ -91,6 +91,9 @@ class torchVolumeMesh:
             sorted_idx = np.argsort(-counts)  # negative for descending
 
             most_frequent = values[sorted_idx[0]]
+            if values.shape[0] < 2:
+                logger.info("No disconnected regions found")
+                return
             second_most_frequent = values[sorted_idx[1]]
 
             # safety check that the second most frequent is not considerably large
