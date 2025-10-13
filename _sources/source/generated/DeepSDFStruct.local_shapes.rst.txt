@@ -1,0 +1,12 @@
+DeepSDFStruct.local\_shapes
+===========================
+
+.. automodule:: DeepSDFStruct.local_shapes
+
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      LocalShapesSDF
+   

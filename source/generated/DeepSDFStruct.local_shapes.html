@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>DeepSDFStruct.utils &#8212; DeepSDFStruct 0.1.dev1+g7cdeeb024 documentation</title>
+    <title>DeepSDFStruct.local_shapes &#8212; DeepSDFStruct 0.1.dev1+g7cdeeb024 documentation</title>
   
   
   
@@ -41,10 +41,11 @@
     <script src="../../_static/documentation_options.js?v=c4ec56a2"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'source/generated/DeepSDFStruct.utils';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'source/generated/DeepSDFStruct.local_shapes';</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="prev" title="DeepSDFStruct.torch_spline" href="DeepSDFStruct.torch_spline.html" />
+    <link rel="next" title="DeepSDFStruct.mesh" href="DeepSDFStruct.mesh.html" />
+    <link rel="prev" title="DeepSDFStruct.lattice_structure" href="DeepSDFStruct.lattice_structure.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
@@ -262,7 +263,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.lattice_structure.html">DeepSDFStruct.lattice_structure</a></li>
-<li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.local_shapes.html">DeepSDFStruct.local_shapes</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">DeepSDFStruct.local_shapes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.mesh.html">DeepSDFStruct.mesh</a></li>
 <li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.optimization.html">DeepSDFStruct.optimization</a></li>
 <li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.parametrization.html">DeepSDFStruct.parametrization</a></li>
@@ -278,7 +279,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.torch_spline.html">DeepSDFStruct.torch_spline</a></li>
-<li class="toctree-l2 current active"><a class="current reference internal" href="#">DeepSDFStruct.utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.utils.html">DeepSDFStruct.utils</a></li>
 </ul>
 </details></li>
 </ul>
@@ -327,7 +328,7 @@
     
     <li class="breadcrumb-item"><a href="DeepSDFStruct.html" class="nav-link">DeepSDFStruct</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">DeepSDFStruct.utils</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">DeepSDFStruct.local_shapes</span></li>
   </ul>
 </nav>
 </div>
@@ -344,21 +345,58 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="module-DeepSDFStruct.utils">
-<span id="deepsdfstruct-utils"></span><h1>DeepSDFStruct.utils<a class="headerlink" href="#module-DeepSDFStruct.utils" title="Link to this heading">#</a></h1>
-<p class="rubric">Functions</p>
+  <section id="module-DeepSDFStruct.local_shapes">
+<span id="deepsdfstruct-local-shapes"></span><h1>DeepSDFStruct.local_shapes<a class="headerlink" href="#module-DeepSDFStruct.local_shapes" title="Link to this heading">#</a></h1>
+<p class="rubric">Classes</p>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.utils.configure_logging" title="DeepSDFStruct.utils.configure_logging"><code class="xref py py-obj docutils literal notranslate"><span class="pre">configure_logging</span></code></a>([level, logfile])</p></td>
-<td><p></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.local_shapes.LocalShapesSDF" title="DeepSDFStruct.local_shapes.LocalShapesSDF"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LocalShapesSDF</span></code></a>([tiling, unit_cell, ...])</p></td>
+<td><p>Helper class to facilitatae the construction of Lattice SDF Structures.</p></td>
 </tr>
 </tbody>
 </table>
 </div>
-<dl class="py function">
-<dt class="sig sig-object py" id="DeepSDFStruct.utils.configure_logging">
-<span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.utils.</span></span><span class="sig-name descname"><span class="pre">configure_logging</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logfile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.utils.configure_logging" title="Link to this definition">#</a></dt>
-<dd></dd></dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="DeepSDFStruct.local_shapes.LocalShapesSDF">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.local_shapes.</span></span><span class="sig-name descname"><span class="pre">LocalShapesSDF</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tiling</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unit_cell</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parametrization</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cap_border_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cap_outside_of_unitcube</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bounds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[[-1,</span> <span class="pre">1],</span> <span class="pre">[-1,</span> <span class="pre">1],</span> <span class="pre">[-1,</span> <span class="pre">1]]</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.local_shapes.LocalShapesSDF" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="DeepSDFStruct.SDF.html#DeepSDFStruct.SDF.SDFBase" title="DeepSDFStruct.SDF.SDFBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">DeepSDFStruct.SDF.SDFBase</span></code></a></p>
+<p>Helper class to facilitatae the construction of Lattice SDF Structures.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tiling</strong> (<em>list</em><em>[</em><em>int</em><em>] </em><em>| </em><em>int</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>unit_cell</strong> (<a class="reference internal" href="DeepSDFStruct.SDF.html#DeepSDFStruct.SDF.SDFBase" title="DeepSDFStruct.SDF.SDFBase"><em>DeepSDFStruct.SDF.SDFBase</em></a><em> | </em><em>None</em>)</p></li>
+<li><p><strong>parametrization</strong> (<em>torch.nn.modules.module.Module</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>cap_border_dict</strong> (<a class="reference internal" href="DeepSDFStruct.SDF.html#DeepSDFStruct.SDF.CapBorderDict" title="DeepSDFStruct.SDF.CapBorderDict"><em>DeepSDFStruct.SDF.CapBorderDict</em></a>)</p></li>
+<li><p><strong>cap_outside_of_unitcube</strong> (<em>bool</em>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="DeepSDFStruct.local_shapes.LocalShapesSDF.tiling">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">tiling</span></span><a class="headerlink" href="#DeepSDFStruct.local_shapes.LocalShapesSDF.tiling" title="Link to this definition">#</a></dt>
+<dd><p>Number of microtiles per parametric dimension.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>None</strong></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>tiling</strong></p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list&lt;int&gt;</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="DeepSDFStruct.local_shapes.LocalShapesSDF.unit_cell">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">unit_cell</span></span><a class="headerlink" href="#DeepSDFStruct.local_shapes.LocalShapesSDF.unit_cell" title="Link to this definition">#</a></dt>
+<dd><p>Microtile that is either a spline, a list of splines, or a class
+that provides a <cite>create_tile</cite> function.</p>
+</dd></dl>
+
+</dd></dl>
 
 </section>
 
@@ -373,13 +411,22 @@
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="DeepSDFStruct.torch_spline.html"
+       href="DeepSDFStruct.lattice_structure.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">DeepSDFStruct.torch_spline</p>
+        <p class="prev-next-title">DeepSDFStruct.lattice_structure</p>
       </div>
+    </a>
+    <a class="right-next"
+       href="DeepSDFStruct.mesh.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">DeepSDFStruct.mesh</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
     </a>
 </div>
                 </footer>
@@ -400,7 +447,11 @@
   </div>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.utils.configure_logging"><code class="docutils literal notranslate"><span class="pre">configure_logging()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.local_shapes.LocalShapesSDF"><code class="docutils literal notranslate"><span class="pre">LocalShapesSDF</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.local_shapes.LocalShapesSDF.tiling"><code class="docutils literal notranslate"><span class="pre">LocalShapesSDF.tiling</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.local_shapes.LocalShapesSDF.unit_cell"><code class="docutils literal notranslate"><span class="pre">LocalShapesSDF.unit_cell</span></code></a></li>
+</ul>
+</li>
 </ul>
   </nav></div>
 
@@ -408,7 +459,7 @@
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="../../_sources/source/generated/DeepSDFStruct.utils.rst.txt"
+      <li><a href="../../_sources/source/generated/DeepSDFStruct.local_shapes.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div></div>

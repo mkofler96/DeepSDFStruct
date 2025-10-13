@@ -14,6 +14,7 @@ DeepSDFStruct
    deep_sdf
    flexicubes
    lattice_structure
+   local_shapes
    mesh
    optimization
    parametrization

@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>DeepSDFStruct.lattice_structure &#8212; DeepSDFStruct 0.1.dev1+g5f6a3f9e2 documentation</title>
+    <title>DeepSDFStruct.lattice_structure &#8212; DeepSDFStruct 0.1.dev1+g7cdeeb024 documentation</title>
   
   
   
@@ -38,13 +38,13 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=3e6c880f"></script>
+    <script src="../../_static/documentation_options.js?v=c4ec56a2"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'source/generated/DeepSDFStruct.lattice_structure';</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="DeepSDFStruct.mesh" href="DeepSDFStruct.mesh.html" />
+    <link rel="next" title="DeepSDFStruct.local_shapes" href="DeepSDFStruct.local_shapes.html" />
     <link rel="prev" title="DeepSDFStruct.flexicubes.tables" href="DeepSDFStruct.flexicubes.tables.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -110,7 +110,7 @@
   
   
   
-    <p class="title logo__title">DeepSDFStruct 0.1.dev1+g5f6a3f9e2 documentation</p>
+    <p class="title logo__title">DeepSDFStruct 0.1.dev1+g7cdeeb024 documentation</p>
   
 </a></div>
     
@@ -263,6 +263,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2 current active"><a class="current reference internal" href="#">DeepSDFStruct.lattice_structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.local_shapes.html">DeepSDFStruct.local_shapes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.mesh.html">DeepSDFStruct.mesh</a></li>
 <li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.optimization.html">DeepSDFStruct.optimization</a></li>
 <li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.parametrization.html">DeepSDFStruct.parametrization</a></li>
@@ -355,7 +356,7 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.lattice_structure.constantLatvec" title="DeepSDFStruct.lattice_structure.constantLatvec"><code class="xref py py-obj docutils literal notranslate"><span class="pre">constantLatvec</span></code></a>(value)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.lattice_structure.transform" title="DeepSDFStruct.lattice_structure.transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transform</span></code></a>(x, t)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.lattice_structure.transform" title="DeepSDFStruct.lattice_structure.transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transform</span></code></a>(x, t[, bounds])</p></td>
 <td><p></p></td>
 </tr>
 </tbody>
@@ -466,7 +467,7 @@ that provides a <cite>create_tile</cite> function.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="DeepSDFStruct.lattice_structure.transform">
-<span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.lattice_structure.</span></span><span class="sig-name descname"><span class="pre">transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.lattice_structure.transform" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.lattice_structure.</span></span><span class="sig-name descname"><span class="pre">transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bounds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[0,</span> <span class="pre">1]</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.lattice_structure.transform" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 </section>
@@ -491,11 +492,11 @@ that provides a <cite>create_tile</cite> function.</p>
       </div>
     </a>
     <a class="right-next"
-       href="DeepSDFStruct.mesh.html"
+       href="DeepSDFStruct.local_shapes.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">DeepSDFStruct.mesh</p>
+        <p class="prev-next-title">DeepSDFStruct.local_shapes</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
