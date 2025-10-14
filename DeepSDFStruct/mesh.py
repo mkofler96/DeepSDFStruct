@@ -302,7 +302,7 @@ def process_N_base_input(N, tiling):
     return N_mod
 
 
-def _prepare_flexicubes_querypoints(N, device=None):
+def _prepare_flexicubes_querypoints(N, device=None, bounds=None):
     """
     takes the tiling and a resolution as input
     output: DeepSDFStruct.flexicubes constructor, samples and cube indices
@@ -317,18 +317,33 @@ def _prepare_flexicubes_querypoints(N, device=None):
         resolution=tuple(N)
     )
 
-    samples = samples * 1.1 + _torch.tensor([0.5, 0.5, 0.5], device=device)
+    if bounds is None:
+        bounds = _torch.tensor(
+            [[-0.05, -0.05, -0.05], [1.05, 1.05, 1.05]], device=device
+        )
+    else:
+        bounds = _torch.as_tensor(bounds, device=device, dtype=_torch.float32)
+        assert bounds.shape == (2, 3), "bounds must have shape [2, 3]"
+
+    # Scale samples from [0, 1] to the given bounds
+    # samples = samples * 1.1 + _torch.tensor([0.5, 0.5, 0.5], device=device)
+    samples = (
+        bounds[0] + 0.5 * (bounds[1] - bounds[0]) + (bounds[1] - bounds[0]) * samples
+    )
+
     tolerance = 1e-6
     _torch._assert(
-        _torch.all(samples.ge(-0.05 - tolerance) & samples.le(1.05 + tolerance)),
-        "Samples are out of bounds",
+        _torch.all(
+            samples.ge(bounds[0] - tolerance) & samples.le(bounds[1] + tolerance)
+        ),
+        "Samples are out of specified bounds",
     )
 
     return flexi_cubes_constructor, samples, cube_idx
 
 
 def create_3D_mesh(
-    sdf: SDFBase, N_base, mesh_type: str, differentiate=False, device="cpu"
+    sdf: SDFBase, N_base, mesh_type: str, differentiate=False, device="cpu", bounds=None
 ) -> Tuple[Union[torchSurfMesh, torchVolumeMesh], Optional[torch.Tensor]]:
     if type(sdf) is LatticeSDFStruct:
         tiling = _torch.tensor(sdf.tiling)
@@ -346,7 +361,9 @@ def create_3D_mesh(
 
     N = process_N_base_input(N_base, tiling)
 
-    constructor, samples, cube_idx = _prepare_flexicubes_querypoints(N, device=device)
+    constructor, samples, cube_idx = _prepare_flexicubes_querypoints(
+        N, device=device, bounds=bounds
+    )
     dVerts_dParams = None
 
     verts_fn = partial(
@@ -484,7 +501,7 @@ def export_sdf_grid_vtk(sdf: SDFBase, filename, N=64, bounds=None, device="cpu")
     writer.SetFileName(filename)
     writer.SetInputData(grid)
     writer.Write()
-    print(f"SDF structured grid saved to {filename}")
+    logger.info(f"SDF structured grid saved to {filename}")
 
 
 def _export_surface_mesh_vtk(verts, faces, filename, dSurf=None):

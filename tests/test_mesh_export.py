@@ -7,19 +7,24 @@ from DeepSDFStruct.mesh import (
     export_surface_mesh,
     export_sdf_grid_vtk,
 )
-from DeepSDFStruct.deep_sdf.reconstruction import reconstruct_from_samples
+from DeepSDFStruct.deep_sdf.reconstruction import (
+    reconstruct_from_samples,
+    reconstruct_deepLS_from_samples,
+)
 from DeepSDFStruct.lattice_structure import LatticeSDFStruct
 from DeepSDFStruct.parametrization import SplineParametrization
 from DeepSDFStruct.torch_spline import TorchSpline
 from DeepSDFStruct.sampling import sample_mesh_surface, random_sample_sdf
 import splinepy
 import gustaf as _gus
+import torch
 
 
 def test_deepsdf_lattice_export():
     # Load a pretrained DeepSDF model
     model = get_model(PretrainedModels.AnalyticRoundCross)
     sdf = SDFfromDeepSDF(model)
+    torch.manual_seed(42)
 
     # Define a spline-based deformation field
     deformation_spline = TorchSpline(
@@ -88,19 +93,51 @@ def test_deepsdf_lattice_export():
     )
 
     SDF_samples = uniform_samples + surface_samples
-    recon_param = reconstruct_from_samples(
+    lattice_struct.parametrization
+    # set latent vector to 0.2
+    for p in lattice_struct.parametrization.parameters():
+        p.data *= 0
+        p.data += 0.2
+    recon_param_lattice = reconstruct_from_samples(
         lattice_struct,
         SDF_samples,
         device=model.device,
         lr=1e-3,
         loss_fn="ClampedL1",
         num_iterations=500,
-        batch_size=2**17,
+        batch_size=len(SDF_samples.samples),
+    )
+    # set latent vector to 0.2
+    for p in lattice_struct.parametrization.parameters():
+        p.data *= 0
+        p.data += 0.2
+    recon_param_DeepLS = reconstruct_deepLS_from_samples(
+        lattice_struct,
+        SDF_samples,
+        device=model.device,
+        lr=1e-3,
+        loss_fn="ClampedL1",
+        num_iterations=500,
+        batch_size=len(SDF_samples.samples),
     )
     print("Original parameters:")
     print(control_points)
-    print("Reconstructed parameters:")
-    print(recon_param)
+    print("Reconstructed parameters from Lattice:")
+    print(recon_param_lattice)
+    print("Reconstructed parameters from DeepLS:")
+    print(recon_param_DeepLS)
+    torch.testing.assert_close(
+        torch.tensor(control_points, device=device),
+        recon_param_lattice[0],
+        rtol=0.1,
+        atol=0.1,
+    )
+    torch.testing.assert_close(
+        torch.tensor(control_points, device=device),
+        recon_param_DeepLS[0],
+        rtol=0.1,
+        atol=0.1,
+    )
 
 
 def test_2D_mesh_export():

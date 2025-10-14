@@ -75,3 +75,50 @@ def reconstruct_from_samples(
     params = list(sdf.parametrization.parameters())
     print(params)
     return params
+
+
+def reconstruct_deepLS_from_samples(
+    sdf: SDFBase,
+    sdfSample: SampledSDF,
+    num_iterations=1000,
+    lr=5e-4,
+    device="cpu",
+    dtype=torch.float32,
+    loss_fn="ClampedL1",
+    batch_size=512,
+):
+
+    optimizer = torch.optim.Adam(sdf.parametrization.parameters(), lr=lr)
+
+    gt_dist = sdfSample.distances
+
+    pbar = trange(num_iterations, desc="Reconstructing SDF from mesh", leave=True)
+
+    if loss_fn == "L1":
+        Loss = torch.nn.L1Loss()
+    elif loss_fn == "ClampedL1":
+        Loss = ClampedL1Loss(clamp_val=0.1)
+    elif loss_fn == "MSE":
+        Loss = torch.nn.MSELoss()
+    else:
+        raise NotImplementedError(f"Loss function {loss_fn} not available.")
+
+    dataset = TensorDataset(sdfSample.samples, gt_dist)
+    dataloader = DataLoader(
+        dataset, batch_size=batch_size, shuffle=True, drop_last=True
+    )
+
+    for e in pbar:
+        for querie_batch, gt_batch in dataloader:
+            optimizer.zero_grad()
+            pred_dist = sdf(querie_batch)
+            loss = Loss(pred_dist, gt_batch)
+            loss.backward()
+            optimizer.step()
+            loss_num = loss.detach().item()
+            pbar.set_postfix({"loss": f"{loss_num:.5f}"})
+
+    print("Reconstructed parameters:")
+    params = list(sdf.parametrization.parameters())
+    print(params)
+    return params
