@@ -110,7 +110,7 @@ def test_deepsdf_lattice_export():
     # set latent vector to 0.2
     for p in lattice_struct.parametrization.parameters():
         p.data *= 0
-        p.data += 0.2
+        p.data += 0.25
     recon_param_DeepLS = reconstruct_deepLS_from_samples(
         lattice_struct,
         SDF_samples,
