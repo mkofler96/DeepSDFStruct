@@ -1,0 +1,12 @@
+DeepSDFStruct.deep\_sdf.networks.hierarchical\_deep\_sdf\_decoder
+=================================================================
+
+.. automodule:: DeepSDFStruct.deep_sdf.networks.hierarchical_deep_sdf_decoder
+
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      HierachicalDeepSDFDecoder
+   

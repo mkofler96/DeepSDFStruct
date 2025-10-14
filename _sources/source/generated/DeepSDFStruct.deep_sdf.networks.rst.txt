@@ -12,4 +12,4 @@ DeepSDFStruct.deep\_sdf.networks
 
    analytic_round_cross
    deep_sdf_decoder
-   deep_sdf_decoder_with_homogen
+   hierarchical_deep_sdf_decoder

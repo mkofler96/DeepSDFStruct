@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>DeepSDFStruct.deep_sdf.workspace &#8212; DeepSDFStruct 0.1.dev1+g1a027fc1e documentation</title>
+    <title>DeepSDFStruct.deep_sdf.workspace &#8212; DeepSDFStruct 0.1.dev1+g0b95ffb0d documentation</title>
   
   
   
@@ -38,7 +38,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=61af7517"></script>
+    <script src="../../_static/documentation_options.js?v=1323282a"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'source/generated/DeepSDFStruct.deep_sdf.workspace';</script>
@@ -110,7 +110,7 @@
   
   
   
-    <p class="title logo__title">DeepSDFStruct 0.1.dev1+g1a027fc1e documentation</p>
+    <p class="title logo__title">DeepSDFStruct 0.1.dev1+g0b95ffb0d documentation</p>
   
 </a></div>
     
@@ -249,7 +249,7 @@
 <li class="toctree-l3 has-children"><a class="reference internal" href="DeepSDFStruct.deep_sdf.networks.html">DeepSDFStruct.deep_sdf.networks</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="DeepSDFStruct.deep_sdf.networks.analytic_round_cross.html">DeepSDFStruct.deep_sdf.networks.analytic_round_cross</a></li>
 <li class="toctree-l4"><a class="reference internal" href="DeepSDFStruct.deep_sdf.networks.deep_sdf_decoder.html">DeepSDFStruct.deep_sdf.networks.deep_sdf_decoder</a></li>
-<li class="toctree-l4"><a class="reference internal" href="DeepSDFStruct.deep_sdf.networks.deep_sdf_decoder_with_homogen.html">DeepSDFStruct.deep_sdf.networks.deep_sdf_decoder_with_homogen</a></li>
+<li class="toctree-l4"><a class="reference internal" href="DeepSDFStruct.deep_sdf.networks.hierarchical_deep_sdf_decoder.html">DeepSDFStruct.deep_sdf.networks.hierarchical_deep_sdf_decoder</a></li>
 </ul>
 </details></li>
 <li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.deep_sdf.reconstruction.html">DeepSDFStruct.deep_sdf.reconstruction</a></li>
@@ -398,9 +398,62 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.deep_sdf.workspace.print_model_specifications" title="DeepSDFStruct.deep_sdf.workspace.print_model_specifications"><code class="xref py py-obj docutils literal notranslate"><span class="pre">print_model_specifications</span></code></a>(experiment_directory)</p></td>
 <td><p></p></td>
 </tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.deep_sdf.workspace.save_experiment_summary" title="DeepSDFStruct.deep_sdf.workspace.save_experiment_summary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_experiment_summary</span></code></a>(...)</p></td>
+<td><p></p></td>
+</tr>
 </tbody>
 </table>
 </div>
+<p class="rubric">Classes</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.deep_sdf.workspace.ExperimentSummary" title="DeepSDFStruct.deep_sdf.workspace.ExperimentSummary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ExperimentSummary</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="py class">
+<dt class="sig sig-object py" id="DeepSDFStruct.deep_sdf.workspace.ExperimentSummary">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.deep_sdf.workspace.</span></span><span class="sig-name descname"><span class="pre">ExperimentSummary</span></span><a class="headerlink" href="#DeepSDFStruct.deep_sdf.workspace.ExperimentSummary" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">TypedDict</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="DeepSDFStruct.deep_sdf.workspace.ExperimentSummary.data_dir">
+<span class="sig-name descname"><span class="pre">data_dir</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><a class="headerlink" href="#DeepSDFStruct.deep_sdf.workspace.ExperimentSummary.data_dir" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="DeepSDFStruct.deep_sdf.workspace.ExperimentSummary.device">
+<span class="sig-name descname"><span class="pre">device</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><a class="headerlink" href="#DeepSDFStruct.deep_sdf.workspace.ExperimentSummary.device" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="DeepSDFStruct.deep_sdf.workspace.ExperimentSummary.host_name">
+<span class="sig-name descname"><span class="pre">host_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><a class="headerlink" href="#DeepSDFStruct.deep_sdf.workspace.ExperimentSummary.host_name" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="DeepSDFStruct.deep_sdf.workspace.ExperimentSummary.loss">
+<span class="sig-name descname"><span class="pre">loss</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></em><a class="headerlink" href="#DeepSDFStruct.deep_sdf.workspace.ExperimentSummary.loss" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="DeepSDFStruct.deep_sdf.workspace.ExperimentSummary.num_epochs">
+<span class="sig-name descname"><span class="pre">num_epochs</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></em><a class="headerlink" href="#DeepSDFStruct.deep_sdf.workspace.ExperimentSummary.num_epochs" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="DeepSDFStruct.deep_sdf.workspace.ExperimentSummary.timestamp">
+<span class="sig-name descname"><span class="pre">timestamp</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><a class="headerlink" href="#DeepSDFStruct.deep_sdf.workspace.ExperimentSummary.timestamp" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="DeepSDFStruct.deep_sdf.workspace.ExperimentSummary.training_duration">
+<span class="sig-name descname"><span class="pre">training_duration</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><a class="headerlink" href="#DeepSDFStruct.deep_sdf.workspace.ExperimentSummary.training_duration" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 <dl class="py function">
 <dt class="sig sig-object py" id="DeepSDFStruct.deep_sdf.workspace.get_data_source_map_filename">
 <span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.deep_sdf.workspace.</span></span><span class="sig-name descname"><span class="pre">get_data_source_map_filename</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_dir</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.deep_sdf.workspace.get_data_source_map_filename" title="Link to this definition">#</a></dt>
@@ -489,6 +542,19 @@
 </dl>
 </dd></dl>
 
+<dl class="py function">
+<dt class="sig sig-object py" id="DeepSDFStruct.deep_sdf.workspace.save_experiment_summary">
+<span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.deep_sdf.workspace.</span></span><span class="sig-name descname"><span class="pre">save_experiment_summary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">experiment_directory</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">summary</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.deep_sdf.workspace.save_experiment_summary" title="Link to this definition">#</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>experiment_directory</strong> (<em>str</em>)</p></li>
+<li><p><strong>summary</strong> (<a class="reference internal" href="#DeepSDFStruct.deep_sdf.workspace.ExperimentSummary" title="DeepSDFStruct.deep_sdf.workspace.ExperimentSummary"><em>DeepSDFStruct.deep_sdf.workspace.ExperimentSummary</em></a>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 
 
@@ -538,6 +604,16 @@
   </div>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.deep_sdf.workspace.ExperimentSummary"><code class="docutils literal notranslate"><span class="pre">ExperimentSummary</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.deep_sdf.workspace.ExperimentSummary.data_dir"><code class="docutils literal notranslate"><span class="pre">ExperimentSummary.data_dir</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.deep_sdf.workspace.ExperimentSummary.device"><code class="docutils literal notranslate"><span class="pre">ExperimentSummary.device</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.deep_sdf.workspace.ExperimentSummary.host_name"><code class="docutils literal notranslate"><span class="pre">ExperimentSummary.host_name</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.deep_sdf.workspace.ExperimentSummary.loss"><code class="docutils literal notranslate"><span class="pre">ExperimentSummary.loss</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.deep_sdf.workspace.ExperimentSummary.num_epochs"><code class="docutils literal notranslate"><span class="pre">ExperimentSummary.num_epochs</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.deep_sdf.workspace.ExperimentSummary.timestamp"><code class="docutils literal notranslate"><span class="pre">ExperimentSummary.timestamp</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.deep_sdf.workspace.ExperimentSummary.training_duration"><code class="docutils literal notranslate"><span class="pre">ExperimentSummary.training_duration</span></code></a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.deep_sdf.workspace.get_data_source_map_filename"><code class="docutils literal notranslate"><span class="pre">get_data_source_map_filename()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.deep_sdf.workspace.get_default_device"><code class="docutils literal notranslate"><span class="pre">get_default_device()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.deep_sdf.workspace.get_evaluation_dir"><code class="docutils literal notranslate"><span class="pre">get_evaluation_dir()</span></code></a></li>
@@ -553,6 +629,7 @@
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.deep_sdf.workspace.load_latent_vectors"><code class="docutils literal notranslate"><span class="pre">load_latent_vectors()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.deep_sdf.workspace.load_trained_model"><code class="docutils literal notranslate"><span class="pre">load_trained_model()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.deep_sdf.workspace.print_model_specifications"><code class="docutils literal notranslate"><span class="pre">print_model_specifications()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.deep_sdf.workspace.save_experiment_summary"><code class="docutils literal notranslate"><span class="pre">save_experiment_summary()</span></code></a></li>
 </ul>
   </nav></div>
 

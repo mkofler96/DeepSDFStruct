@@ -23,4 +23,11 @@ DeepSDFStruct.deep\_sdf.workspace
       load_latent_vectors
       load_trained_model
       print_model_specifications
+      save_experiment_summary
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      ExperimentSummary
    
