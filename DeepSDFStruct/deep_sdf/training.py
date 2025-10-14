@@ -13,6 +13,7 @@ import time
 import datetime
 import random
 import pathlib
+import socket
 
 import DeepSDFStruct.deep_sdf
 import DeepSDFStruct.deep_sdf.workspace as ws
@@ -376,7 +377,8 @@ def train_deep_sdf(
     decoder = ws.init_decoder(specs, device, data_parallel)
 
     geom_dimension = decoder.geom_dimension
-    logging.info(f"training on {device_name}")
+    host_name = socket.gethostname()
+    logging.info(f"training on {host_name} with {device_name}")
 
     seed = get_spec_with_default(specs, "seed", 42)
     logging.info(f"Setting random seed to {seed}")
@@ -422,14 +424,18 @@ def train_deep_sdf(
     logging.info("There are {} scenes".format(num_scenes))
 
     logging.debug(decoder)
-
+    if isinstance(latent_size, list):
+        latent_size_embedding = torch.tensor(latent_size).sum()
+    else:
+        latent_size_embedding = latent_size
     lat_vecs = torch.nn.Embedding(
-        num_scenes, latent_size, max_norm=code_bound, device=device
+        num_scenes, latent_size_embedding, max_norm=code_bound, device=device
     )
     torch.nn.init.normal_(
         lat_vecs.weight.data,
         0.0,
-        get_spec_with_default(specs, "CodeInitStdDev", 1.0) / math.sqrt(latent_size),
+        get_spec_with_default(specs, "CodeInitStdDev", 1.0)
+        / math.sqrt(latent_size_embedding),
     )
 
     logging.debug(
@@ -515,7 +521,7 @@ def train_deep_sdf(
     )
     start_train = time.time()
     for epoch in range(start_epoch, num_epochs + 1):
-
+        epoch_error = 0.0
         start = time.time()
 
         decoder.train()
@@ -596,6 +602,9 @@ def train_deep_sdf(
                 torch.nn.utils.clip_grad_norm_(decoder.parameters(), grad_clip)
 
             optimizer_all.step()
+            epoch_error += batch_loss
+
+        error = epoch_error / len(sdf_loader)
 
         end = time.time()
         # logging.info("epoch {}...".format(epoch))
@@ -640,6 +649,16 @@ def train_deep_sdf(
                 param_mag_log,
                 epoch,
             )
+    summary = ws.ExperimentSummary(
+        loss=error,
+        num_epochs=epoch,
+        timestamp=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        host_name=host_name,
+        device=str(device),
+        training_duration=total_time,
+        data_dir=str(data_source),
+    )
+    ws.save_experiment_summary(experiment_directory, summary)
 
 
 def reconstruct_meshs_from_latent(

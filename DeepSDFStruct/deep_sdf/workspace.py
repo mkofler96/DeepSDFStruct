@@ -5,10 +5,11 @@ import json
 import os
 import pathlib
 import torch
+from typing import TypedDict
 
 from .networks.analytic_round_cross import RoundCrossDecoder
 from .networks.deep_sdf_decoder import DeepSDFDecoder
-from .networks.deep_sdf_decoder_with_homogen import HomogenDecoder
+from .networks.hierarchical_deep_sdf_decoder import HierachicalDeepSDFDecoder
 
 
 screenshots_subdir = "Screenshots"
@@ -26,13 +27,13 @@ sdf_samples_subdir = "SdfSamples"
 surface_samples_subdir = "SurfaceSamples"
 normalization_param_subdir = "NormalizationParameters"
 training_meshes_subdir = "TrainingMeshes"
-
+experiment_summary_name = "training_summary.json"
 
 # Map architecture name to Decoder class
 ARCHITECTURES = {
     "analytic_round_cross": RoundCrossDecoder,
     "deep_sdf_decoder": DeepSDFDecoder,
-    "deep_sdf_decoder_with_homogen": HomogenDecoder,
+    "hierarchical_deep_sdf_decoder": HierachicalDeepSDFDecoder,
 }
 
 
@@ -248,3 +249,18 @@ def print_model_specifications(experiment_directory: str):
     for key in specs:
         print(f"  {key}: {specs[key]}")
     print("\n")
+
+
+class ExperimentSummary(TypedDict):
+    loss: float
+    num_epochs: int
+    timestamp: str
+    host_name: str
+    device: str
+    training_duration: str
+    data_dir: str
+
+
+def save_experiment_summary(experiment_directory: str, summary: ExperimentSummary):
+    with open(os.path.join(experiment_directory, experiment_summary_name), "w") as f:
+        json.dump(summary, f, indent=4)
