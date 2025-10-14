@@ -8,5 +8,6 @@ DeepSDFStruct.deep\_sdf.reconstruction
 
    .. autosummary::
    
+      reconstruct_deepLS_from_samples
       reconstruct_from_samples
    

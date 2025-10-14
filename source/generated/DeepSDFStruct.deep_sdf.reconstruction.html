@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>DeepSDFStruct.deep_sdf.reconstruction &#8212; DeepSDFStruct 0.1.dev1+g7cdeeb024 documentation</title>
+    <title>DeepSDFStruct.deep_sdf.reconstruction &#8212; DeepSDFStruct 0.1.dev1+g22877147e documentation</title>
   
   
   
@@ -38,7 +38,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=c4ec56a2"></script>
+    <script src="../../_static/documentation_options.js?v=a1e2343e"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'source/generated/DeepSDFStruct.deep_sdf.reconstruction';</script>
@@ -110,7 +110,7 @@
   
   
   
-    <p class="title logo__title">DeepSDFStruct 0.1.dev1+g7cdeeb024 documentation</p>
+    <p class="title logo__title">DeepSDFStruct 0.1.dev1+g22877147e documentation</p>
   
 </a></div>
     
@@ -353,12 +353,28 @@
 <p class="rubric">Functions</p>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.deep_sdf.reconstruction.reconstruct_from_samples" title="DeepSDFStruct.deep_sdf.reconstruction.reconstruct_from_samples"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reconstruct_from_samples</span></code></a>(sdf, sdfSample[, ...])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.deep_sdf.reconstruction.reconstruct_deepLS_from_samples" title="DeepSDFStruct.deep_sdf.reconstruction.reconstruct_deepLS_from_samples"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reconstruct_deepLS_from_samples</span></code></a>(sdf, sdfSample)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.deep_sdf.reconstruction.reconstruct_from_samples" title="DeepSDFStruct.deep_sdf.reconstruction.reconstruct_from_samples"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reconstruct_from_samples</span></code></a>(sdf, sdfSample[, ...])</p></td>
 <td><p></p></td>
 </tr>
 </tbody>
 </table>
 </div>
+<dl class="py function">
+<dt class="sig sig-object py" id="DeepSDFStruct.deep_sdf.reconstruction.reconstruct_deepLS_from_samples">
+<span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.deep_sdf.reconstruction.</span></span><span class="sig-name descname"><span class="pre">reconstruct_deepLS_from_samples</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sdf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sdfSample</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_iterations</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0005</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cpu'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">torch.float32</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss_fn</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ClampedL1'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">512</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.deep_sdf.reconstruction.reconstruct_deepLS_from_samples" title="Link to this definition">#</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sdf</strong> (<a class="reference internal" href="DeepSDFStruct.SDF.html#DeepSDFStruct.SDF.SDFBase" title="DeepSDFStruct.SDF.SDFBase"><em>DeepSDFStruct.SDF.SDFBase</em></a>)</p></li>
+<li><p><strong>sdfSample</strong> (<a class="reference internal" href="DeepSDFStruct.sampling.html#DeepSDFStruct.sampling.SampledSDF" title="DeepSDFStruct.sampling.SampledSDF"><em>DeepSDFStruct.sampling.SampledSDF</em></a>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py function">
 <dt class="sig sig-object py" id="DeepSDFStruct.deep_sdf.reconstruction.reconstruct_from_samples">
 <span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.deep_sdf.reconstruction.</span></span><span class="sig-name descname"><span class="pre">reconstruct_from_samples</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sdf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sdfSample</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_iterations</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0005</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cpu'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">torch.float32</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss_fn</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ClampedL1'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">512</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.deep_sdf.reconstruction.reconstruct_from_samples" title="Link to this definition">#</a></dt>
@@ -421,6 +437,7 @@
   </div>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.deep_sdf.reconstruction.reconstruct_deepLS_from_samples"><code class="docutils literal notranslate"><span class="pre">reconstruct_deepLS_from_samples()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.deep_sdf.reconstruction.reconstruct_from_samples"><code class="docutils literal notranslate"><span class="pre">reconstruct_from_samples()</span></code></a></li>
 </ul>
   </nav></div>
