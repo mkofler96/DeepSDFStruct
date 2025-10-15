@@ -9,6 +9,7 @@ DeepSDFStruct.SDF
    .. autosummary::
    
       get_equidistant_grid_sample
+      normalize_mesh_to_unit_cube
       point_segment_distance
       union
    

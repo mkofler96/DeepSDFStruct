@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>DeepSDFStruct.SDF &#8212; DeepSDFStruct 0.1.dev1+g0b95ffb0d documentation</title>
+    <title>DeepSDFStruct.SDF &#8212; DeepSDFStruct 0.1.dev1+g7b947d6d1 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=1323282a"></script>
+    <script src="../../_static/documentation_options.js?v=83fbb236"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'source/generated/DeepSDFStruct.SDF';</script>
@@ -110,7 +110,7 @@
   
   
   
-    <p class="title logo__title">DeepSDFStruct 0.1.dev1+g0b95ffb0d documentation</p>
+    <p class="title logo__title">DeepSDFStruct 0.1.dev1+g7b947d6d1 documentation</p>
   
 </a></div>
     
@@ -353,10 +353,13 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.SDF.get_equidistant_grid_sample" title="DeepSDFStruct.SDF.get_equidistant_grid_sample"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_equidistant_grid_sample</span></code></a>(bounds, grid_spacing)</p></td>
 <td><p>Generates an equidistant 3D grid of points within the given bounding box.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.SDF.point_segment_distance" title="DeepSDFStruct.SDF.point_segment_distance"><code class="xref py py-obj docutils literal notranslate"><span class="pre">point_segment_distance</span></code></a>(P1, P2, query_points)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.SDF.normalize_mesh_to_unit_cube" title="DeepSDFStruct.SDF.normalize_mesh_to_unit_cube"><code class="xref py py-obj docutils literal notranslate"><span class="pre">normalize_mesh_to_unit_cube</span></code></a>(mesh)</p></td>
+<td><p>Transform mesh coordinates uniformly to [-1, 1] in all axes.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.SDF.point_segment_distance" title="DeepSDFStruct.SDF.point_segment_distance"><code class="xref py py-obj docutils literal notranslate"><span class="pre">point_segment_distance</span></code></a>(P1, P2, query_points)</p></td>
 <td><p>Calculates the minimum distance from one or more query points to one or more line segments defined by endpoints P1 and P2.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.SDF.union" title="DeepSDFStruct.SDF.union"><code class="xref py py-obj docutils literal notranslate"><span class="pre">union</span></code></a>(D[, k])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.SDF.union" title="DeepSDFStruct.SDF.union"><code class="xref py py-obj docutils literal notranslate"><span class="pre">union</span></code></a>(D[, k])</p></td>
 <td><p>D: np.array of shape (num_points, num_geometries) k: smoothness parameter</p></td>
 </tr>
 </tbody>
@@ -620,6 +623,18 @@ Transformation can be rotation, translation, or scaling.</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="DeepSDFStruct.SDF.normalize_mesh_to_unit_cube">
+<span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.SDF.</span></span><span class="sig-name descname"><span class="pre">normalize_mesh_to_unit_cube</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mesh</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.SDF.normalize_mesh_to_unit_cube" title="Link to this definition">#</a></dt>
+<dd><p>Transform mesh coordinates uniformly to [-1, 1] in all axes.
+Keeps aspect ratio of original mesh.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>mesh</strong> (<em>trimesh.base.Trimesh</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="DeepSDFStruct.SDF.point_segment_distance">
 <span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.SDF.</span></span><span class="sig-name descname"><span class="pre">point_segment_distance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">P1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">P2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">query_points</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.SDF.point_segment_distance" title="Link to this definition">#</a></dt>
 <dd><p>Calculates the minimum distance from one or more query points
@@ -736,6 +751,7 @@ k: smoothness parameter</p>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.SDF.SummedSDF"><code class="docutils literal notranslate"><span class="pre">SummedSDF</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.SDF.TransformedSDF"><code class="docutils literal notranslate"><span class="pre">TransformedSDF</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.SDF.get_equidistant_grid_sample"><code class="docutils literal notranslate"><span class="pre">get_equidistant_grid_sample()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.SDF.normalize_mesh_to_unit_cube"><code class="docutils literal notranslate"><span class="pre">normalize_mesh_to_unit_cube()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.SDF.point_segment_distance"><code class="docutils literal notranslate"><span class="pre">point_segment_distance()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.SDF.union"><code class="docutils literal notranslate"><span class="pre">union()</span></code></a></li>
 </ul>
