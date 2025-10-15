@@ -179,15 +179,16 @@ class SDFSampler:
                             "Add surface samples was specified, but geometry"
                             f"is not given as a trimesh.Trimesh but as {type(geometry)}"
                         )
-                    surf_samples = sample_mesh_surface(
-                        sdf,
-                        sdf.mesh,
-                        int(n_samples // 2),
-                        self.stds,
-                        device="cpu",
-                        dtype=torch.float32,
-                    )
-                    sampled_sdf += surf_samples
+                    else:
+                        surf_samples = sample_mesh_surface(
+                            sdf,
+                            sdf.mesh,
+                            int(n_samples // 2),
+                            self.stds,
+                            device="cpu",
+                            dtype=torch.float32,
+                        )
+                        sampled_sdf += surf_samples
                 pos, neg = sampled_sdf.split_pos_neg()
 
                 np.savez(fname, neg=neg.stacked, pos=pos.stacked)
