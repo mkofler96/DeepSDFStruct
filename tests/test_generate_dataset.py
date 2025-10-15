@@ -5,6 +5,27 @@ from DeepSDFStruct.splinepy_unitcells.cross_lattice import CrossLattice
 import splinepy
 
 
+def test_generate_dataset_from_obj_files():
+    outdir = "./training_data"
+    splitdir = "./training_data/splits"
+    dataset_name = "furniture"
+
+    sdf_sampler = SDFSampler(outdir, splitdir, dataset_name)
+    meshs = sdf_sampler.get_meshs_from_folder(
+        foldername="./tests/data/chairs", mesh_type="obj"
+    )
+    sdf_sampler.add_class(meshs, class_name="chairs")
+
+    sdf_sampler.process_geometries(
+        sampling_strategy="uniform",
+        n_faces=100,
+        add_surface_samples=True,
+        also_save_vtk=True,
+    )
+
+    sdf_sampler.write_json("chairs_train.json")
+
+
 def test_generate_dataset():
     outdir = "./training_data"
     splitdir = "./training_data/splits"
@@ -33,12 +54,11 @@ def test_generate_dataset():
     sdf_sampler.add_class(chi_tiles, class_name="Chi3D_center")
     sdf_sampler.add_class(crosslattice_tiles, class_name="CrossLattice")
 
-    sdf_sampler.process_geometries(
-        sampling_strategy="uniform", n_faces=100, compute_mechanical_properties=False
-    )
+    sdf_sampler.process_geometries(sampling_strategy="uniform", n_faces=100)
 
     sdf_sampler.write_json("chi_and_cross.json")
 
 
 if __name__ == "__main__":
+    test_generate_dataset_from_obj_files()
     test_generate_dataset()

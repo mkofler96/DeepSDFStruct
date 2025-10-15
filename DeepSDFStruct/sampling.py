@@ -1,4 +1,5 @@
 import os
+import vtk
 import numpy as np
 import json
 import pathlib
@@ -74,7 +75,6 @@ def process_single_geometry(args):
         outdir,
         dataset_name,
         unify_multipatches,
-        compute_mechanical_properties,
         n_faces,
         n_samples,
         sampling_strategy,
@@ -101,25 +101,24 @@ def process_single_geometry(args):
         sdf, show=show, n_samples=n_samples, sampling_strategy=sampling_strategy
     )
 
-    if compute_mechanical_properties:
-        mesh_file_name = f"{instance_id}.mesh"
-        raise NotImplementedError("Compute homogenized material not available yet.")
-        mesh_file_path = folder_name / "homogenization" / instance_id / mesh_file_name
-        # E = computeHomogenizedMaterialProperties(
-        #     sdf, mesh_file_path=mesh_file_path, mirror=True
-        # )
-        np.savez(fname, neg=neg.stacked, pos=pos.stacked, E=E)
-    else:
-        np.savez(fname, neg=neg.stacked, pos=pos.stacked)
+    np.savez(fname, neg=neg.stacked, pos=pos.stacked)
 
 
 class SDFSampler:
-    def __init__(self, outdir, splitdir, dataset_name, unify_multipatches=True) -> None:
+    def __init__(
+        self,
+        outdir,
+        splitdir,
+        dataset_name,
+        unify_multipatches=True,
+        stds=[0.05, 0.025],
+    ) -> None:
         self.outdir = outdir
         self.splitdir = splitdir
         self.dataset_name = dataset_name
         self.unify_multipatches = unify_multipatches
         self.geometries = {}
+        self.stds = stds
 
     def add_class(self, geom_list: list, class_name: str) -> None:
         instances = {}
@@ -147,8 +146,8 @@ class SDFSampler:
         n_faces=100,
         n_samples: int = 1e5,
         unify_multipatches=True,
-        compute_mechanical_properties=True,
-        show=False,
+        add_surface_samples=True,
+        also_save_vtk=False,
     ):
         for class_name, instance_list in self.geometries.items():
             logger.info(f"processing geometry list {class_name}")
@@ -162,60 +161,40 @@ class SDFSampler:
                 fname = folder_name / file_name
                 if not os.path.exists(folder_name):
                     os.makedirs(folder_name)
-                if os.path.isfile(fname) and show == False:
+                if os.path.isfile(fname):
                     logger.warning(f"File {fname} already exists")
                     continue
                 sdf = self.get_sdf_from_geometry(
                     geometry, n_faces, self.unify_multipatches
                 )
-                pos, neg = self.sample_sdf(
+                sampled_sdf = random_sample_sdf(
                     sdf,
-                    show=show,
-                    n_samples=n_samples,
-                    sampling_strategy=sampling_strategy,
+                    bounds=(-1, 1),
+                    n_samples=int(n_samples),
+                    type=sampling_strategy,
                 )
-                if compute_mechanical_properties:
-                    mesh_file_name = f"{instance_id}.mesh"
-                    mesh_file_path = (
-                        folder_name / "homogenization" / instance_id / mesh_file_name
+                if add_surface_samples:
+                    if not isinstance(geometry, trimesh.Trimesh):
+                        logger.warning(
+                            "Add surface samples was specified, but geometry"
+                            f"is not given as a trimesh.Trimesh but as {type(geometry)}"
+                        )
+                    surf_samples = sample_mesh_surface(
+                        sdf,
+                        sdf.mesh,
+                        int(n_samples // 2),
+                        self.stds,
+                        device="cpu",
+                        dtype=torch.float32,
                     )
-                    raise NotImplementedError(
-                        "Compute homogenized material not available yet."
+                    sampled_sdf += surf_samples
+                pos, neg = sampled_sdf.split_pos_neg()
+
+                np.savez(fname, neg=neg.stacked, pos=pos.stacked)
+                if also_save_vtk:
+                    save_points_to_vtp(
+                        fname.with_suffix(".vtp"), neg=neg.stacked, pos=pos.stacked
                     )
-                    E = computeHomogenizedMaterialProperties(
-                        sdf, mesh_file_path=mesh_file_path, mirror=True
-                    )
-                    np.savez(fname, neg=neg.stacked, pos=pos.stacked, E=E)
-                else:
-                    np.savez(fname, neg=neg.stacked, pos=pos.stacked)
-
-    def sample_sdf(
-        self,
-        sdf,
-        show=False,
-        n_samples: int = 1e5,
-        sampling_strategy="uniform",
-        box_size=None,
-        stds=[0.0025, 0.00025],
-    ):
-
-        sampled_sdf = random_sample_sdf(
-            sdf, bounds=(-1, 1), n_samples=int(n_samples), type=sampling_strategy
-        )
-
-        pos, neg = sampled_sdf.split_pos_neg()
-
-        if show:
-            vp_pos = pos.create_gus_plottable()
-            vp_neg = neg.create_gus_plottable()
-            vp_pos.show_options["cmap"] = "coolwarm"
-            vp_neg.show_options["cmap"] = "coolwarm"
-            vp_pos.show_options["vmin"] = -0.1
-            vp_pos.show_options["vmax"] = 0.1
-            vp_neg.show_options["vmin"] = -0.1
-            vp_neg.show_options["vmax"] = 0.1
-            gus.show(vp_neg, vp_pos)
-        return pos, neg
 
     def get_sdf_from_geometry(
         self,
@@ -223,7 +202,7 @@ class SDFSampler:
         n_faces: int,
         unify_multipatches: bool = True,
         threshold: float = 1e-5,
-    ) -> SDFBase:
+    ) -> SDFfromMesh:
         if isinstance(geometry, splinepy.Multipatch):
             if unify_multipatches:
                 patch_meshs = []
@@ -241,6 +220,8 @@ class SDFSampler:
                 sdf_geom = SDFfromMesh(
                     geometry.extract.faces(n_faces), threshold=threshold
                 )
+        elif isinstance(geometry, trimesh.Trimesh):
+            sdf_geom = SDFfromMesh(geometry, threshold=threshold)
 
         else:
             raise NotImplementedError(
@@ -248,6 +229,44 @@ class SDFSampler:
             )
 
         return sdf_geom
+
+    def get_meshs_from_folder(self, foldername, mesh_type) -> list:
+        """
+        Reads all mesh files of a given type (extension) from a folder using meshio.
+
+        Parameters
+        ----------
+        foldername : str
+            Path to the folder containing the mesh files.
+        mesh_type : str
+            Mesh file extension (e.g., 'vtk', 'obj', 'stl', 'msh', 'xdmf').
+
+        Returns
+        -------
+        list[trimesh.Trimesh]
+            A list of trimesh.Trimesh objects loaded from the folder.
+        """
+        meshes = []
+
+        # Normalize extension (remove dot if present)
+        mesh_type = mesh_type.lstrip(".")
+
+        # Iterate through all files in the folder
+        for filename in os.listdir(foldername):
+            if filename.lower().endswith("." + mesh_type.lower()):
+                filepath = os.path.join(foldername, filename)
+                try:
+                    faces = gus.io.meshio.load(filepath)
+                    trim = trimesh.Trimesh(faces.vertices, faces.elements)
+                    meshes.append(trim)
+                    logger.info(f"Loaded mesh: {filename}")
+                except ValueError as e:
+                    logger.warning(f"Could not read {filename}: {e}")
+
+        if not meshes:
+            print(f"No .{mesh_type} meshes found in {foldername}.")
+
+        return meshes
 
     def write_json(self, json_fname):
         json_content = defaultdict(lambda: defaultdict(list))
@@ -364,3 +383,46 @@ def sample_mesh_surface(
     distances = sdf(queries)
 
     return SampledSDF(samples=queries, distances=distances)
+
+
+def save_points_to_vtp(filename, neg, pos):
+    """
+    Save pos/neg SDF sample points as a VTU point cloud using vtkPolyData.
+    Each point has an SDF scalar value.
+    """
+    # Combine points
+    all_points = np.vstack((pos, neg))
+    coords = all_points[:, :3]
+    sdf_vals = all_points[:, 3]
+
+    # --- Create vtkPoints ---
+    vtk_points = vtk.vtkPoints()
+    for pt in coords:
+        vtk_points.InsertNextPoint(pt)
+
+    # --- Create PolyData ---
+    polydata = vtk.vtkPolyData()
+    polydata.SetPoints(vtk_points)
+
+    # Add vertex cells (required for points in PolyData)
+    verts = vtk.vtkCellArray()
+    for i in range(len(coords)):
+        verts.InsertNextCell(1)
+        verts.InsertCellPoint(i)
+    polydata.SetVerts(verts)
+
+    # --- Add SDF scalar values ---
+    vtk_array = vtk.vtkDoubleArray()
+    vtk_array.SetName("SDF")
+    vtk_array.SetNumberOfValues(len(sdf_vals))
+    for i, val in enumerate(sdf_vals):
+        vtk_array.SetValue(i, val)
+    polydata.GetPointData().SetScalars(vtk_array)
+
+    # --- Write to VTU ---
+    writer = vtk.vtkXMLPolyDataWriter()
+    writer.SetFileName(filename)
+    writer.SetInputData(polydata)
+    writer.Write()
+
+    logger.debug(f"Saved {len(coords)} points with SDF to '{filename}'")

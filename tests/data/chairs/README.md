@@ -1,0 +1,1 @@
+Chairs obtained from https://huggingface.co/datasets/andyye/simple-chairs/tree/main

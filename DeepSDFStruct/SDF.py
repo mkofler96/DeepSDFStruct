@@ -311,14 +311,7 @@ class SDFfromMesh(SDFBase):
         if scale:
             # scales from [0,1] to [-1,1]
             # https://www.brainvoyager.com/bv/doc/UsersGuide/CoordsAndTransforms/SpatialTransformationMatrices.html
-            rescale = 2.0
-            tform = [-1.0 for i in range(3)]
-            matrix = np.eye(4)
-            matrix[:3, :3] *= rescale
-            mesh.apply_transform(matrix)
-            matrix = np.eye(4)
-            matrix[:3, 3] = tform
-            mesh.apply_transform(matrix)
+            mesh = normalize_mesh_to_unit_cube(mesh)
         self.mesh = mesh
         self.dtype = dtype
         self.flip_sign = flip_sign
@@ -364,6 +357,41 @@ class SDFfromMesh(SDFBase):
             return torch.tensor(result, device=orig_device, dtype=orig_dtype)
         else:
             return result
+
+
+def normalize_mesh_to_unit_cube(mesh: trimesh.Trimesh):
+    """
+    Transform mesh coordinates uniformly to [-1, 1] in all axes.
+    Keeps aspect ratio of original mesh.
+    """
+    logger.debug(f"Scaling mesh from {mesh.bounds.flatten()}")
+    # --- Compute bounding box ---
+    bbox_min = mesh.bounds[0]  # [x_min, y_min, z_min]
+    bbox_max = mesh.bounds[1]  # [x_max, y_max, z_max]
+
+    # Center of the mesh
+    center = (bbox_max + bbox_min) / 2.0
+
+    # Largest extent
+    scale = (
+        np.max(bbox_max - bbox_min) / 2.0
+    )  # divide by 2 because [-1,1] spans 2 units
+
+    # --- Build transformation matrix ---
+    matrix = np.eye(4)
+
+    # Translate to origin
+    matrix[:3, 3] = -center
+
+    # Apply translation
+    mesh.apply_transform(matrix)
+
+    # --- Apply uniform scaling ---
+    scale_matrix = np.eye(4)
+    scale_matrix[:3, :3] *= 1.0 / scale
+    mesh.apply_transform(scale_matrix)
+    logger.debug(f"to {mesh.bounds.flatten()}")
+    return mesh
 
 
 class SDFfromLineMesh(SDFBase):
@@ -438,11 +466,6 @@ class SDFfromDeepSDF(SDFBase):
         queries = queries.to(self.model.device) * 2 - 1
         n_queries = queries.shape[0]
 
-        if self.latvec is None:
-            latvec = self.parametrization(queries).to(self.model.device)
-        else:
-            latvec = self.latvec.to(self.model.device)
-
         sdf_values = torch.zeros(n_queries, device=self.model.device)
 
         head = 0
@@ -450,8 +473,13 @@ class SDFfromDeepSDF(SDFBase):
             end = min(head + self.max_batch, n_queries)
             query_batch = queries[head:end]
 
+            if self.latvec is None:
+                latvec = self.parametrization(query_batch).to(self.model.device)
+            else:
+                latvec = self.latvec.to(self.model.device)[head:end]
+
             sdf_values[head:end] = (
-                self.model._decode_sdf(latvec[head:end], query_batch).squeeze(1)
+                self.model._decode_sdf(latvec, query_batch).squeeze(1)
                 # .detach()
             )
 
