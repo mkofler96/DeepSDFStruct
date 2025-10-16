@@ -259,6 +259,7 @@ class ExperimentSummary(TypedDict):
     device: str
     training_duration: str
     data_dir: str
+    version: str
 
 
 def save_experiment_summary(experiment_directory: str, summary: ExperimentSummary):

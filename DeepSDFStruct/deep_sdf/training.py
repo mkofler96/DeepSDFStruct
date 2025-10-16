@@ -21,7 +21,7 @@ import DeepSDFStruct.deep_sdf.data
 from DeepSDFStruct.deep_sdf.models import DeepSDFModel
 from DeepSDFStruct.SDF import SDFfromDeepSDF
 from DeepSDFStruct.mesh import create_3D_mesh, export_surface_mesh
-
+from importlib.metadata import version
 import numpy as np
 
 logger = logging.getLogger(DeepSDFStruct.__name__)
@@ -657,6 +657,7 @@ def train_deep_sdf(
         device=str(device),
         training_duration=total_time,
         data_dir=str(data_source),
+        version=version("DeepSDFStruct"),
     )
     ws.save_experiment_summary(experiment_directory, summary)
 
