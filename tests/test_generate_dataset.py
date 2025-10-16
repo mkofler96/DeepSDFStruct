@@ -1,5 +1,4 @@
 import numpy as np
-from DeepSDFStruct.SDF import SDFfromDeepSDF
 from DeepSDFStruct.sampling import SDFSampler, augment_by_FFD
 from DeepSDFStruct.splinepy_unitcells.chi_3D import Chi3D
 from DeepSDFStruct.splinepy_unitcells.cross_lattice import CrossLattice
@@ -11,7 +10,7 @@ def test_generate_dataset_from_obj_files():
     splitdir = "./training_data/splits"
     dataset_name = "furniture"
 
-    sdf_sampler = SDFSampler(outdir, splitdir, dataset_name)
+    sdf_sampler = SDFSampler(outdir, splitdir, dataset_name, overwrite_existing=True)
     meshs = sdf_sampler.get_meshs_from_folder(
         foldername="./tests/data/chairs", mesh_type="obj"
     )
@@ -33,7 +32,7 @@ def test_generate_dataset():
     splitdir = "./training_data/splits"
     dataset_name = "microstructure"
 
-    sdf_sampler = SDFSampler(outdir, splitdir, dataset_name)
+    sdf_sampler = SDFSampler(outdir, splitdir, dataset_name, overwrite_existing=True)
 
     t_start = 0.1 * np.sqrt(2) / 2
     t_end = 0.15 * np.sqrt(2) / 2

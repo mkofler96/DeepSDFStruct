@@ -133,24 +133,6 @@ def save_optimizer(experiment_directory, filename, optimizer, epoch):
     )
 
 
-def load_optimizer(experiment_directory, filename, optimizer):
-
-    full_filename = os.path.join(
-        ws.get_optimizer_params_dir(experiment_directory), filename
-    )
-
-    if not os.path.isfile(full_filename):
-        raise Exception(
-            'optimizer state dict "{}" does not exist'.format(full_filename)
-        )
-
-    data = torch.load(full_filename)
-
-    optimizer.load_state_dict(data["optimizer_state_dict"])
-
-    return data["epoch"]
-
-
 def save_latent_vectors(experiment_directory, filename, latent_vec, epoch):
 
     latent_codes_dir = ws.get_latent_codes_dir(experiment_directory, True)
@@ -161,40 +143,6 @@ def save_latent_vectors(experiment_directory, filename, latent_vec, epoch):
         {"epoch": epoch, "latent_codes": all_latents},
         os.path.join(latent_codes_dir, filename),
     )
-
-
-# # TODO: duplicated in workspace
-# def load_latent_vectors(experiment_directory, filename, lat_vecs):
-
-#     full_filename = os.path.join(
-#         ws.get_latent_codes_dir(experiment_directory), filename
-#     )
-
-#     if not os.path.isfile(full_filename):
-#         raise Exception('latent state file "{}" does not exist'.format(full_filename))
-
-#     data = torch.load(full_filename)
-
-#     if isinstance(data["latent_codes"], torch.Tensor):
-
-#         # for backwards compatibility
-#         if not lat_vecs.num_embeddings == data["latent_codes"].size()[0]:
-#             raise Exception(
-#                 "num latent codes mismatched: {} vs {}".format(
-#                     lat_vecs.num_embeddings, data["latent_codes"].size()[0]
-#                 )
-#             )
-
-#         if not lat_vecs.embedding_dim == data["latent_codes"].size()[2]:
-#             raise Exception("latent code dimensionality mismatch")
-
-#         for i, lat_vec in enumerate(data["latent_codes"]):
-#             lat_vecs.weight.data[i, :] = lat_vec
-
-#     else:
-#         lat_vecs.load_state_dict(data["latent_codes"])
-
-#     return data["epoch"]
 
 
 def save_logs(
@@ -473,16 +421,14 @@ def train_deep_sdf(
 
         logging.info('continuing from "{}"'.format(continue_from))
 
-        lat_epoch = ws.load_latent_vectors(
-            experiment_directory, continue_from + ".pth", lat_vecs
-        )
+        _ = ws.load_latent_vectors(experiment_directory, continue_from, device=device)
 
         model_epoch = ws.load_model_parameters(
-            experiment_directory, continue_from, decoder
+            experiment_directory, continue_from, decoder, device=device
         )
 
-        optimizer_epoch = load_optimizer(
-            experiment_directory, continue_from + ".pth", optimizer_all
+        _ = ws.load_optimizer(
+            experiment_directory, continue_from, optimizer_all, device=device
         )
 
         loss_log, lr_log, timing_log, lat_mag_log, param_mag_log, log_epoch = load_logs(
@@ -492,13 +438,6 @@ def train_deep_sdf(
         if not log_epoch == model_epoch:
             loss_log, lr_log, timing_log, lat_mag_log, param_mag_log = clip_logs(
                 loss_log, lr_log, timing_log, lat_mag_log, param_mag_log, model_epoch
-            )
-
-        if not (model_epoch == optimizer_epoch and model_epoch == lat_epoch):
-            raise RuntimeError(
-                "epoch mismatch: {} vs {} vs {} vs {}".format(
-                    model_epoch, optimizer_epoch, lat_epoch, log_epoch
-                )
             )
 
         start_epoch = model_epoch + 1

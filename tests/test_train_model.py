@@ -34,6 +34,19 @@ def test_train_model():
     train_deep_sdf(exp_dir, data_dir, device=device)
 
 
+def test_continue_from():
+    data_dir = snapshot_download(
+        "mkofler/lattice_structure_unit_cells",
+        repo_type="dataset",
+        revision="b80339abc071df77ff81e8abc19ad4856d96ddbd",
+    )
+    exp_dir = "DeepSDFStruct/trained_models/test_experiment"
+
+    device = "cpu"
+    torch.set_default_device("cpu")
+    train_deep_sdf(exp_dir, data_dir, device=device, continue_from="1")
+
+
 def test_latent_recon():
     exp_dir = "DeepSDFStruct/trained_models/analytic_round_cross"
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -51,5 +64,6 @@ def test_cpp_file_export():
 if __name__ == "__main__":
     test_train_hierarchical_model()
     test_train_model()
+    test_continue_from()
     test_latent_recon()
     test_cpp_file_export()

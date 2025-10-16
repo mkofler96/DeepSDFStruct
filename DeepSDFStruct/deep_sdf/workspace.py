@@ -62,7 +62,7 @@ def load_latent_vectors(experiment_directory, checkpoint, device):
             + f" for checkpoint '{checkpoint}'"
         )
 
-    data = torch.load(filename, map_location=device)
+    data = torch.load(filename, map_location=device, weights_only=True)
 
     if isinstance(data["latent_codes"], torch.Tensor):
 
@@ -83,6 +83,42 @@ def load_latent_vectors(experiment_directory, checkpoint, device):
         lat_vecs.load_state_dict(data["latent_codes"])
 
         return lat_vecs.weight.data.detach()
+
+
+def load_model_parameters(
+    experiment_directory, checkpoint, decoder: torch.nn.Module, device
+):
+
+    filename = os.path.join(
+        experiment_directory, model_params_subdir, checkpoint + ".pth"
+    )
+
+    if not os.path.isfile(filename):
+        raise Exception('model state dict "{}" does not exist'.format(filename))
+
+    data = torch.load(filename, map_location=device, weights_only=True)
+
+    decoder.load_state_dict(data["model_state_dict"])
+
+    return data["epoch"]
+
+
+def load_optimizer(
+    experiment_directory, checkpoint, optimizer: torch.nn.Module, device
+):
+
+    filename = os.path.join(
+        experiment_directory, optimizer_params_subdir, checkpoint + ".pth"
+    )
+
+    if not os.path.isfile(filename):
+        raise Exception(f'optimizer state dict "{filename}" does not exist')
+
+    data = torch.load(filename, map_location=device, weights_only=True)
+
+    optimizer.load_state_dict(data["optimizer_state_dict"])
+
+    return data["epoch"]
 
 
 def get_data_source_map_filename(data_dir):
