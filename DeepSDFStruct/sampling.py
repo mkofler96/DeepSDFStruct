@@ -15,14 +15,21 @@ import torch
 from collections import defaultdict
 from tqdm import tqdm
 import logging
-
+import datetime
+from importlib.metadata import version
 
 logger = logging.getLogger(DeepSDFStruct.__name__)
 
 
 class DataSetInfo(typing.TypedDict):
     dataset_name: str
-    class_name: str
+    class_names: list[str]
+    sampling_strategy: str
+    date_created: str
+    stds: list[float]
+    n_samples: int
+    add_surface_samples: bool
+    sdf_struct_version: str
 
 
 class SphereParameters(typing.TypedDict):
@@ -112,6 +119,7 @@ class SDFSampler:
         dataset_name,
         unify_multipatches=True,
         stds=[0.05, 0.025],
+        overwrite_existing=False,
     ) -> None:
         self.outdir = outdir
         self.splitdir = splitdir
@@ -119,6 +127,15 @@ class SDFSampler:
         self.unify_multipatches = unify_multipatches
         self.geometries = {}
         self.stds = stds
+        folder_name = pathlib.Path(outdir) / dataset_name
+        if os.path.exists(folder_name):
+            if not overwrite_existing:
+                raise IsADirectoryError(
+                    "Dataset already exists. "
+                    "Set overwrite_existing to true to overwrite."
+                )
+        else:
+            os.makedirs(folder_name)
 
     def add_class(self, geom_list: list, class_name: str) -> None:
         instances = {}
@@ -195,6 +212,20 @@ class SDFSampler:
                     save_points_to_vtp(
                         fname.with_suffix(".vtp"), neg=neg.stacked, pos=pos.stacked
                     )
+        summary = DataSetInfo(
+            dataset_name=self.dataset_name,
+            class_names=list(self.geometries.keys()),
+            sampling_strategy=sampling_strategy,
+            date_created=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            stds=self.stds,
+            n_samples=n_samples,
+            add_surface_samples=add_surface_samples,
+            sdf_struct_version=version("DeepSDFStruct"),
+        )
+        with open(
+            str(pathlib.Path(self.outdir) / self.dataset_name / "summary.json"), "w"
+        ) as f:
+            json.dump(summary, f, indent=4)
 
     def get_sdf_from_geometry(
         self,
