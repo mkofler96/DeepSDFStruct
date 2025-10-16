@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>DeepSDFStruct.sampling &#8212; DeepSDFStruct 0.1.dev1+g8943287a1 documentation</title>
+    <title>DeepSDFStruct.sampling &#8212; DeepSDFStruct 0.1.dev1+gab4cc0952 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=f06464ed"></script>
+    <script src="../../_static/documentation_options.js?v=abbd0f36"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'source/generated/DeepSDFStruct.sampling';</script>
@@ -110,7 +110,7 @@
   
   
   
-    <p class="title logo__title">DeepSDFStruct 0.1.dev1+g8943287a1 documentation</p>
+    <p class="title logo__title">DeepSDFStruct 0.1.dev1+gab4cc0952 documentation</p>
   
 </a></div>
     
@@ -350,28 +350,31 @@
 <p class="rubric">Functions</p>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.sampling.move" title="DeepSDFStruct.sampling.move"><code class="xref py py-obj docutils literal notranslate"><span class="pre">move</span></code></a>(t_mesh, new_center)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.sampling.augment_by_FFD" title="DeepSDFStruct.sampling.augment_by_FFD"><code class="xref py py-obj docutils literal notranslate"><span class="pre">augment_by_FFD</span></code></a>(meshs[, n_control_points, ...])</p></td>
+<td><p>Takes list of meshs and augments the meshs by applying a freeform deformation</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.sampling.move" title="DeepSDFStruct.sampling.move"><code class="xref py py-obj docutils literal notranslate"><span class="pre">move</span></code></a>(t_mesh, new_center)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.sampling.noisy_sample" title="DeepSDFStruct.sampling.noisy_sample"><code class="xref py py-obj docutils literal notranslate"><span class="pre">noisy_sample</span></code></a>(t_mesh, std, count)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.sampling.noisy_sample" title="DeepSDFStruct.sampling.noisy_sample"><code class="xref py py-obj docutils literal notranslate"><span class="pre">noisy_sample</span></code></a>(t_mesh, std, count)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.sampling.process_single_geometry" title="DeepSDFStruct.sampling.process_single_geometry"><code class="xref py py-obj docutils literal notranslate"><span class="pre">process_single_geometry</span></code></a>(args)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.sampling.process_single_geometry" title="DeepSDFStruct.sampling.process_single_geometry"><code class="xref py py-obj docutils literal notranslate"><span class="pre">process_single_geometry</span></code></a>(args)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.sampling.random_points" title="DeepSDFStruct.sampling.random_points"><code class="xref py py-obj docutils literal notranslate"><span class="pre">random_points</span></code></a>(count)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.sampling.random_points" title="DeepSDFStruct.sampling.random_points"><code class="xref py py-obj docutils literal notranslate"><span class="pre">random_points</span></code></a>(count)</p></td>
 <td><p>random points in a unit sphere centered at (0, 0, 0)</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.sampling.random_points_cube" title="DeepSDFStruct.sampling.random_points_cube"><code class="xref py py-obj docutils literal notranslate"><span class="pre">random_points_cube</span></code></a>(count, box_size)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.sampling.random_points_cube" title="DeepSDFStruct.sampling.random_points_cube"><code class="xref py py-obj docutils literal notranslate"><span class="pre">random_points_cube</span></code></a>(count, box_size)</p></td>
 <td><p>random points in a cube with size box_size centered at (0, 0, 0)</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.sampling.random_sample_sdf" title="DeepSDFStruct.sampling.random_sample_sdf"><code class="xref py py-obj docutils literal notranslate"><span class="pre">random_sample_sdf</span></code></a>(sdf, bounds, n_samples[, ...])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.sampling.random_sample_sdf" title="DeepSDFStruct.sampling.random_sample_sdf"><code class="xref py py-obj docutils literal notranslate"><span class="pre">random_sample_sdf</span></code></a>(sdf, bounds, n_samples[, ...])</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.sampling.sample_mesh_surface" title="DeepSDFStruct.sampling.sample_mesh_surface"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sample_mesh_surface</span></code></a>(sdf, mesh, n_samples, stds)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.sampling.sample_mesh_surface" title="DeepSDFStruct.sampling.sample_mesh_surface"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sample_mesh_surface</span></code></a>(sdf, mesh, n_samples, stds)</p></td>
 <td><p>Sample noisy points around a mesh surface and evaluate them with a signed distance function (SDF).</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.sampling.save_points_to_vtp" title="DeepSDFStruct.sampling.save_points_to_vtp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_points_to_vtp</span></code></a>(filename, neg, pos)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.sampling.save_points_to_vtp" title="DeepSDFStruct.sampling.save_points_to_vtp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_points_to_vtp</span></code></a>(filename, neg, pos)</p></td>
 <td><p>Save pos/neg SDF sample points as a VTU point cloud using vtkPolyData.</p></td>
 </tr>
 </tbody>
@@ -504,8 +507,8 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>samples</strong> (<em>torch._VariableFunctionsClass.tensor</em>)</p></li>
-<li><p><strong>distances</strong> (<em>torch._VariableFunctionsClass.tensor</em>)</p></li>
+<li><p><strong>samples</strong> (<em>torch.Tensor</em>)</p></li>
+<li><p><strong>distances</strong> (<em>torch.Tensor</em>)</p></li>
 </ul>
 </dd>
 </dl>
@@ -516,12 +519,12 @@
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="DeepSDFStruct.sampling.SampledSDF.distances">
-<span class="sig-name descname"><span class="pre">distances</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">tensor</span></code></em><a class="headerlink" href="#DeepSDFStruct.sampling.SampledSDF.distances" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">distances</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></em><a class="headerlink" href="#DeepSDFStruct.sampling.SampledSDF.distances" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="DeepSDFStruct.sampling.SampledSDF.samples">
-<span class="sig-name descname"><span class="pre">samples</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">tensor</span></code></em><a class="headerlink" href="#DeepSDFStruct.sampling.SampledSDF.samples" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">samples</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></em><a class="headerlink" href="#DeepSDFStruct.sampling.SampledSDF.samples" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -560,6 +563,25 @@
 <span class="sig-name descname"><span class="pre">r</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></em><a class="headerlink" href="#DeepSDFStruct.sampling.SphereParameters.r" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="DeepSDFStruct.sampling.augment_by_FFD">
+<span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.sampling.</span></span><span class="sig-name descname"><span class="pre">augment_by_FFD</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">meshs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_control_points</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">std_dev_fraction</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_transformations</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_meshs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.sampling.augment_by_FFD" title="Link to this definition">#</a></dt>
+<dd><p>Takes list of meshs and augments the meshs by applying a freeform deformation</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Trimesh</span></code>]</span></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>meshs</strong> (<em>list</em><em>[</em><em>trimesh.base.Trimesh</em><em>]</em>)</p></li>
+<li><p><strong>n_control_points</strong> (<em>int</em>)</p></li>
+<li><p><strong>std_dev_fraction</strong> (<em>float</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>n_transformations</strong> (<em>int</em>)</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -715,6 +737,7 @@ Each point has an SDF scalar value.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.sampling.SphereParameters.r"><code class="docutils literal notranslate"><span class="pre">SphereParameters.r</span></code></a></li>
 </ul>
 </li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.sampling.augment_by_FFD"><code class="docutils literal notranslate"><span class="pre">augment_by_FFD()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.sampling.move"><code class="docutils literal notranslate"><span class="pre">move()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.sampling.noisy_sample"><code class="docutils literal notranslate"><span class="pre">noisy_sample()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.sampling.process_single_geometry"><code class="docutils literal notranslate"><span class="pre">process_single_geometry()</span></code></a></li>

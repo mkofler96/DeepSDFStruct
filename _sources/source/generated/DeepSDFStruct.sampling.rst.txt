@@ -8,6 +8,7 @@ DeepSDFStruct.sampling
 
    .. autosummary::
    
+      augment_by_FFD
       move
       noisy_sample
       process_single_geometry
