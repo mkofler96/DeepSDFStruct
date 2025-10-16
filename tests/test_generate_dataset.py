@@ -1,5 +1,6 @@
 import numpy as np
-from DeepSDFStruct.sampling import SDFSampler
+from DeepSDFStruct.SDF import SDFfromDeepSDF
+from DeepSDFStruct.sampling import SDFSampler, augment_by_FFD
 from DeepSDFStruct.splinepy_unitcells.chi_3D import Chi3D
 from DeepSDFStruct.splinepy_unitcells.cross_lattice import CrossLattice
 import splinepy
@@ -14,7 +15,8 @@ def test_generate_dataset_from_obj_files():
     meshs = sdf_sampler.get_meshs_from_folder(
         foldername="./tests/data/chairs", mesh_type="obj"
     )
-    sdf_sampler.add_class(meshs, class_name="chairs")
+    meshs_augment = augment_by_FFD(meshs)
+    sdf_sampler.add_class(meshs_augment, class_name="chairs")
 
     sdf_sampler.process_geometries(
         sampling_strategy="uniform",

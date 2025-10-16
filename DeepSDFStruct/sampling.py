@@ -33,8 +33,8 @@ class SphereParameters(typing.TypedDict):
 
 
 class SampledSDF:
-    samples: torch.tensor
-    distances: torch.tensor
+    samples: torch.Tensor
+    distances: torch.Tensor
 
     def split_pos_neg(self):
         pos_mask = torch.where(self.distances >= 0.0)[0]
@@ -154,7 +154,6 @@ class SDFSampler:
             for instance_id, geometry in tqdm(
                 instance_list.items(), desc="Processing instances"
             ):
-
                 file_name = f"{instance_id}.npz"
 
                 folder_name = pathlib.Path(self.outdir) / self.dataset_name / class_name
@@ -253,7 +252,8 @@ class SDFSampler:
         mesh_type = mesh_type.lstrip(".")
 
         # Iterate through all files in the folder
-        for filename in os.listdir(foldername):
+
+        for filename in tqdm(os.listdir(foldername), desc="Loading meshs"):
             if filename.lower().endswith("." + mesh_type.lower()):
                 filepath = os.path.join(foldername, filename)
                 try:
@@ -317,7 +317,6 @@ def random_points_cube(count, box_size):
 def random_sample_sdf(
     sdf, bounds, n_samples, type="uniform", device="cpu", dtype=torch.float32
 ):
-
     bounds = torch.tensor(bounds, dtype=dtype, device=device)
     if type == "plane":
         samples = torch.random.uniform(
@@ -427,3 +426,43 @@ def save_points_to_vtp(filename, neg, pos):
     writer.Write()
 
     logger.debug(f"Saved {len(coords)} points with SDF to '{filename}'")
+
+
+def augment_by_FFD(
+    meshs: list[trimesh.Trimesh],
+    n_control_points: int = 5,
+    std_dev_fraction: float | None = 0.05,
+    n_transformations: int = 10,
+    save_meshs=False,
+) -> list[trimesh.Trimesh]:
+    """
+    Takes list of meshs and augments the meshs by applying a freeform deformation
+    """
+    new_meshs = []
+
+    for i_mesh, mesh in enumerate(tqdm(meshs, desc="Augmenting meshs")):
+        bbox = mesh.bounds  # shape (2, 3)
+        # Compute approximate spacing between control points along each axis
+        spacing = (bbox[1] - bbox[0]) / (n_control_points - 1)
+        # Use a fraction of spacing (e.g., 15%) as std_dev
+        std_dev_local = std_dev_fraction * spacing
+
+        for i_FFD in range(n_transformations):
+            ffd = splinepy.FFD()
+            ffd.mesh = gus.Faces(mesh.vertices, mesh.faces)
+            ffd.spline.insert_knots(0, np.linspace(0, 1, n_control_points)[1:-1])
+            ffd.spline.insert_knots(1, np.linspace(0, 1, n_control_points)[1:-1])
+            ffd.spline.insert_knots(2, np.linspace(0, 1, n_control_points)[1:-1])
+            ffd.spline.elevate_degrees([0, 1, 2])
+            ffd.spline.control_points += np.random.normal(
+                loc=0.0, scale=std_dev_local, size=ffd.spline.control_points.shape
+            )
+            new_meshs.append(trimesh.Trimesh(ffd.mesh.vertices, ffd.mesh.faces))
+            if save_meshs:
+                save_meshs = True
+
+                # Make sure the directory exists
+                os.makedirs("tmp", exist_ok=True)
+                gus.io.meshio.export(f"tmp/mesh_{i_mesh}_{i_FFD}.obj", ffd.mesh)
+
+    return new_meshs
