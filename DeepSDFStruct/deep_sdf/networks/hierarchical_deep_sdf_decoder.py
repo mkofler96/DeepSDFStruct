@@ -5,6 +5,18 @@ import torch.nn as nn
 import torch
 import torch.nn.functional as F
 
+activations = {
+    "relu": nn.ReLU(),
+    "tanh": nn.Tanh(),
+    "gelu": nn.GELU(),
+    "silu": nn.SiLU(),
+    "leaky_relu": nn.LeakyReLU(),
+    "elu": nn.ELU(),
+    "selu": nn.SELU(),
+    "sigmoid": nn.Sigmoid(),
+    "softplus": nn.Softplus(),
+}
+
 
 class HierachicalDeepSDFDecoder(nn.Module):
     def __init__(
@@ -18,7 +30,7 @@ class HierachicalDeepSDFDecoder(nn.Module):
         weight_norm=False,
         norm_layers=[],
         xyz_in_all=None,
-        use_tanh=False,
+        activation_fun="relu",
         latent_dropout=False,
     ):
         super(HierachicalDeepSDFDecoder, self).__init__()
@@ -64,10 +76,13 @@ class HierachicalDeepSDFDecoder(nn.Module):
                     self, "lin" + str(layer), nn.Linear(self.layer_dims[layer], out_dim)
                 )
 
-        self.use_tanh = use_tanh
-        if use_tanh:
-            self.tanh = nn.Tanh()
-        self.relu = nn.ReLU()
+        if activation_fun not in activations:
+            raise ValueError(
+                f"Unsupported activation function '{activation_fun}'. "
+                f"Available options are: {list(activations.keys())}"
+            )
+
+        self.activation = activations[activation_fun]
 
         self.dropout_prob = dropout_prob
         self.dropout = dropout
@@ -91,9 +106,7 @@ class HierachicalDeepSDFDecoder(nn.Module):
                 x = torch.cat([x, latent_chunk], 1)
                 # print(f"Latent chunk in layer {layer}: {latent_chunk}")
             x = lin(x)
-            # last layer Tanh
-            if layer == self.num_layers - 2 and self.use_tanh:
-                x = self.tanh(x)
+
             if layer < self.num_layers - 2:
                 if (
                     self.norm_layers is not None
@@ -102,11 +115,10 @@ class HierachicalDeepSDFDecoder(nn.Module):
                 ):
                     bn = getattr(self, "bn" + str(layer))
                     x = bn(x)
-                x = self.relu(x)
                 if self.dropout is not None and layer in self.dropout:
                     x = F.dropout(x, p=self.dropout_prob, training=self.training)
 
-        if hasattr(self, "th"):
-            x = self.th(x)
+            if layer <= (self.num_layers - 2):
+                x = self.activation(x)
 
         return x
