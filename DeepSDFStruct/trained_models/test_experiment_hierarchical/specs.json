@@ -11,7 +11,7 @@
       "norm_layers" : [0, 1, 2, 3, 4, 5, 6, 7],
       "latent_in" : [1,2,3,4],
       "xyz_in_all" : false,
-      "use_tanh" : false,
+      "activation_fun" : "relu",
       "latent_dropout" : false,
       "weight_norm" : true,
       "geom_dimension": 3
