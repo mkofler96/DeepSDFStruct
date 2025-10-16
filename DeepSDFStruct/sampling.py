@@ -131,7 +131,7 @@ class SDFSampler:
         if os.path.exists(folder_name):
             if not overwrite_existing:
                 raise IsADirectoryError(
-                    "Dataset already exists. "
+                    f"Dataset {folder_name} already exists. "
                     "Set overwrite_existing to true to overwrite."
                 )
         else:
