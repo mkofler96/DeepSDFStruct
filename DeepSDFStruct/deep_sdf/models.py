@@ -15,18 +15,28 @@ class DeepSDFModel:
         """
         Decode SDF values from latent vector and xyz queries.
         Handles both per-query and constant latent vectors.
+        If latent vec is constant, the latent vector must be a flat tensor of
+        length d_lat, otherwise [n_samples, d_lat]
         """
+        latent_dim = self._trained_latent_vectors[0].shape[0]
         num_samples = queries.shape[0]
-
-        # todo: check something like this
-        # raise ValueError(
-        #     f"Latent vector shape mismatch: {latent_vec.shape} does not align with {num_samples} queries."
-        # )
-
-        if latent_vec.shape[0] == num_samples:
-            latent_repeat = latent_vec
-        else:
+        if latent_vec.ndim == 1:
+            if latent_vec.shape[0] != latent_dim:
+                raise ValueError(
+                    f"Latent vector shape mismatch: {latent_vec.shape} does"
+                    f"not align with latent dimension {latent_dim}."
+                )
             latent_repeat = latent_vec.expand(-1, num_samples).T
+        elif latent_vec.ndim == 2:
+            if (latent_vec.shape[0] != num_samples) or (
+                latent_vec.shape[1] != latent_dim
+            ):
+                raise ValueError(
+                    f"Latent vector shape mismatch: {latent_vec.shape} does"
+                    f" not align with {num_samples} queries."
+                    f" Must be of shape ({num_samples}, {latent_dim})"
+                )
+            latent_repeat = latent_vec
 
         model_input = torch.cat([latent_repeat, queries], dim=1)
         return self._decoder(model_input)

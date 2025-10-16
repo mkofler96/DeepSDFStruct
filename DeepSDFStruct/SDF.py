@@ -448,7 +448,10 @@ class SDFfromDeepSDF(SDFBase):
         if latent_vec.ndim == 1:
             self.parametrization = Constant(latent_vec, device=self.model.device)
         elif latent_vec.ndim == 2:
-            self.latvec = latent_vec  # (latent_dim, n_query_points)
+            assert (
+                latent_vec.shape[1] == self.model._trained_latent_vectors[0].shape[0]
+            ), "Learned latent shape and assigned latent shape mismatch"
+            self.latvec = latent_vec  # (n_query_points, latent_dim)
         else:
             raise ValueError(
                 f"Expected latent_vec to have 1 or 2 dimensions, got shape {latent_vec.shape}"
@@ -469,20 +472,36 @@ class SDFfromDeepSDF(SDFBase):
         sdf_values = torch.zeros(n_queries, device=self.model.device)
 
         head = 0
+        if self.latvec is None:
+            latvec = self.parametrization(queries).to(self.model.device)
+        else:
+            latent_dim = self.model._trained_latent_vectors[0].shape[0]
+            num_samples = queries.shape[0]
+            if self.latvec.ndim == 1:
+                if self.latvec.shape[0] != latent_dim:
+                    raise ValueError(
+                        f"Latent vector shape mismatch: {self.latvec.shape} does"
+                        f"not align with latent dimension {latent_dim}."
+                    )
+                latvec = self.latvec.expand(-1, num_samples).T
+            elif self.latvec.ndim == 2:
+                if (self.latvec.shape[0] != num_samples) or (
+                    self.latvec.shape[1] != latent_dim
+                ):
+                    raise ValueError(
+                        f"Latent vector shape mismatch: {self.latvec.shape} does"
+                        f" not align with {num_samples} queries."
+                        f" Must be of shape ({num_samples}, {latent_dim})"
+                    )
+                latvec = self.latvec
+
         while head < n_queries:
             end = min(head + self.max_batch, n_queries)
             query_batch = queries[head:end]
-
-            if self.latvec is None:
-                latvec = self.parametrization(query_batch).to(self.model.device)
-            else:
-                latvec = self.latvec.to(self.model.device)[head:end]
-
             sdf_values[head:end] = (
-                self.model._decode_sdf(latvec, query_batch).squeeze(1)
+                self.model._decode_sdf(latvec[head:end], query_batch).squeeze(1)
                 # .detach()
             )
-
             head = end
 
         return sdf_values.to(orig_device).reshape(-1, 1)

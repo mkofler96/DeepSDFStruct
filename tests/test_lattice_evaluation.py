@@ -8,6 +8,24 @@ import splinepy
 import torch
 
 
+def test_deepsdf_evaluation():
+    # Load a pretrained DeepSDF model
+    model = get_model(PretrainedModels.ChiAndCross)
+    sdf = SDFfromDeepSDF(model)
+
+    # Set the latent vector and visualize a slice of the SDF
+    sdf.set_latent_vec(torch.tensor([0.3, 0.3]))
+
+    out = sdf(
+        torch.tensor(
+            [[0, 0, 0], [0, 1, 0], [0.5, 0.5, 0.5]],
+            dtype=torch.float32,
+            device=model.device,
+        )
+    )
+    print(out)
+
+
 def test_deepsdf_lattice_evaluation():
     # Load a pretrained DeepSDF model
     model = get_model(PretrainedModels.AnalyticRoundCross)
@@ -115,6 +133,7 @@ def test_cap_outside_unitcube():
 
 
 if __name__ == "__main__":
+    test_deepsdf_evaluation()
     test_lattice_local_shapes_comparison()
     test_cap_outside_unitcube()
     test_deepsdf_lattice_evaluation()
