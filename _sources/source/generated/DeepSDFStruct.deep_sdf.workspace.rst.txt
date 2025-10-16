@@ -21,6 +21,8 @@ DeepSDFStruct.deep\_sdf.workspace
       init_decoder
       load_experiment_specifications
       load_latent_vectors
+      load_model_parameters
+      load_optimizer
       load_trained_model
       print_model_specifications
       save_experiment_summary

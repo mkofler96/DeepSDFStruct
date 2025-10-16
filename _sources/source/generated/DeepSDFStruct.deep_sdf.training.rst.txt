@@ -15,7 +15,6 @@ DeepSDFStruct.deep\_sdf.training
       get_mean_latent_vector_magnitude
       get_spec_with_default
       load_logs
-      load_optimizer
       reconstruct_meshs_from_latent
       save_latent_vectors
       save_logs

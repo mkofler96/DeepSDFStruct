@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>DeepSDFStruct.deep_sdf.workspace &#8212; DeepSDFStruct 0.1.dev1+g9ed6a2f62 documentation</title>
+    <title>DeepSDFStruct.deep_sdf.workspace &#8212; DeepSDFStruct 0.1.dev1+gac35095a2 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=195809d8"></script>
+    <script src="../../_static/documentation_options.js?v=6c0b8cb3"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'source/generated/DeepSDFStruct.deep_sdf.workspace';</script>
@@ -110,7 +110,7 @@
   
   
   
-    <p class="title logo__title">DeepSDFStruct 0.1.dev1+g9ed6a2f62 documentation</p>
+    <p class="title logo__title">DeepSDFStruct 0.1.dev1+gac35095a2 documentation</p>
   
 </a></div>
     
@@ -392,6 +392,12 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.deep_sdf.workspace.load_latent_vectors" title="DeepSDFStruct.deep_sdf.workspace.load_latent_vectors"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_latent_vectors</span></code></a>(experiment_directory, ...)</p></td>
 <td><p></p></td>
 </tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.deep_sdf.workspace.load_model_parameters" title="DeepSDFStruct.deep_sdf.workspace.load_model_parameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_model_parameters</span></code></a>(experiment_directory, ...)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.deep_sdf.workspace.load_optimizer" title="DeepSDFStruct.deep_sdf.workspace.load_optimizer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_optimizer</span></code></a>(experiment_directory, ...)</p></td>
+<td><p></p></td>
+</tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.deep_sdf.workspace.load_trained_model" title="DeepSDFStruct.deep_sdf.workspace.load_trained_model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_trained_model</span></code></a>(experiment_directory, ...)</p></td>
 <td><p></p></td>
 </tr>
@@ -525,6 +531,26 @@
 <dd></dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="DeepSDFStruct.deep_sdf.workspace.load_model_parameters">
+<span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.deep_sdf.workspace.</span></span><span class="sig-name descname"><span class="pre">load_model_parameters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">experiment_directory</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">checkpoint</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decoder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.deep_sdf.workspace.load_model_parameters" title="Link to this definition">#</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>decoder</strong> (<em>torch.nn.modules.module.Module</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="DeepSDFStruct.deep_sdf.workspace.load_optimizer">
+<span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.deep_sdf.workspace.</span></span><span class="sig-name descname"><span class="pre">load_optimizer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">experiment_directory</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">checkpoint</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.deep_sdf.workspace.load_optimizer" title="Link to this definition">#</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>optimizer</strong> (<em>torch.nn.modules.module.Module</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="DeepSDFStruct.deep_sdf.workspace.load_trained_model">
 <span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.deep_sdf.workspace.</span></span><span class="sig-name descname"><span class="pre">load_trained_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">experiment_directory</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">checkpoint</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_parallel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.deep_sdf.workspace.load_trained_model" title="Link to this definition">#</a></dt>
 <dd><dl class="field-list simple">
@@ -633,6 +659,8 @@
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.deep_sdf.workspace.init_decoder"><code class="docutils literal notranslate"><span class="pre">init_decoder()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.deep_sdf.workspace.load_experiment_specifications"><code class="docutils literal notranslate"><span class="pre">load_experiment_specifications()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.deep_sdf.workspace.load_latent_vectors"><code class="docutils literal notranslate"><span class="pre">load_latent_vectors()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.deep_sdf.workspace.load_model_parameters"><code class="docutils literal notranslate"><span class="pre">load_model_parameters()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.deep_sdf.workspace.load_optimizer"><code class="docutils literal notranslate"><span class="pre">load_optimizer()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.deep_sdf.workspace.load_trained_model"><code class="docutils literal notranslate"><span class="pre">load_trained_model()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.deep_sdf.workspace.print_model_specifications"><code class="docutils literal notranslate"><span class="pre">print_model_specifications()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.deep_sdf.workspace.save_experiment_summary"><code class="docutils literal notranslate"><span class="pre">save_experiment_summary()</span></code></a></li>
