@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>DeepSDFStruct &#8212; DeepSDFStruct 0.1.dev1+g5cc47fc8a documentation</title>
+    <title>DeepSDFStruct.deep_sdf.plotting &#8212; DeepSDFStruct 0.1.dev1+g5cc47fc8a documentation</title>
   
   
   
@@ -41,11 +41,11 @@
     <script src="../../_static/documentation_options.js?v=6e60b84e"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'source/generated/DeepSDFStruct';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'source/generated/DeepSDFStruct.deep_sdf.plotting';</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="DeepSDFStruct.SDF" href="DeepSDFStruct.SDF.html" />
-    <link rel="prev" title="&lt;no title&gt;" href="../../api_reference.html" />
+    <link rel="next" title="DeepSDFStruct.deep_sdf.reconstruction" href="DeepSDFStruct.deep_sdf.reconstruction.html" />
+    <link rel="prev" title="DeepSDFStruct.deep_sdf.networks.hierarchical_deep_sdf_decoder" href="DeepSDFStruct.deep_sdf.networks.hierarchical_deep_sdf_decoder.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
@@ -237,9 +237,9 @@
      aria-label="Section Navigation">
   <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
   <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
-<li class="toctree-l1 current active has-children"><a class="current reference internal" href="#">DeepSDFStruct</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="DeepSDFStruct.html">DeepSDFStruct</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.SDF.html">DeepSDFStruct.SDF</a></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="DeepSDFStruct.deep_sdf.html">DeepSDFStruct.deep_sdf</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="DeepSDFStruct.deep_sdf.html">DeepSDFStruct.deep_sdf</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.deep_sdf.data.html">DeepSDFStruct.deep_sdf.data</a></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="DeepSDFStruct.deep_sdf.metrics.html">DeepSDFStruct.deep_sdf.metrics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="DeepSDFStruct.deep_sdf.metrics.mesh_to_analytical.html">DeepSDFStruct.deep_sdf.metrics.mesh_to_analytical</a></li>
@@ -252,7 +252,7 @@
 <li class="toctree-l4"><a class="reference internal" href="DeepSDFStruct.deep_sdf.networks.hierarchical_deep_sdf_decoder.html">DeepSDFStruct.deep_sdf.networks.hierarchical_deep_sdf_decoder</a></li>
 </ul>
 </details></li>
-<li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.deep_sdf.plotting.html">DeepSDFStruct.deep_sdf.plotting</a></li>
+<li class="toctree-l3 current active"><a class="current reference internal" href="#">DeepSDFStruct.deep_sdf.plotting</a></li>
 <li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.deep_sdf.reconstruction.html">DeepSDFStruct.deep_sdf.reconstruction</a></li>
 <li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.deep_sdf.training.html">DeepSDFStruct.deep_sdf.training</a></li>
 <li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.deep_sdf.workspace.html">DeepSDFStruct.deep_sdf.workspace</a></li>
@@ -326,7 +326,13 @@
     
     <li class="breadcrumb-item"><a href="../../api_reference.html" class="nav-link">&lt;no title&gt;</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">DeepSDFStruct</span></li>
+    
+    <li class="breadcrumb-item"><a href="DeepSDFStruct.html" class="nav-link">DeepSDFStruct</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="DeepSDFStruct.deep_sdf.html" class="nav-link">DeepSDFStruct.deep_sdf</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">DeepSDFStruct.deep_sdf.plotting</span></li>
   </ul>
 </nav>
 </div>
@@ -343,59 +349,38 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="module-DeepSDFStruct">
-<span id="deepsdfstruct"></span><h1>DeepSDFStruct<a class="headerlink" href="#module-DeepSDFStruct" title="Link to this heading">#</a></h1>
-<p class="rubric">Modules</p>
+  <section id="module-DeepSDFStruct.deep_sdf.plotting">
+<span id="deepsdfstruct-deep-sdf-plotting"></span><h1>DeepSDFStruct.deep_sdf.plotting<a class="headerlink" href="#module-DeepSDFStruct.deep_sdf.plotting" title="Link to this heading">#</a></h1>
+<p class="rubric">Functions</p>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="DeepSDFStruct.SDF.html#module-DeepSDFStruct.SDF" title="DeepSDFStruct.SDF"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SDF</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.deep_sdf.plotting.extract_paths" title="DeepSDFStruct.deep_sdf.plotting.extract_paths"><code class="xref py py-obj docutils literal notranslate"><span class="pre">extract_paths</span></code></a>(data[, current_path])</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="DeepSDFStruct.deep_sdf.html#module-DeepSDFStruct.deep_sdf" title="DeepSDFStruct.deep_sdf"><code class="xref py py-obj docutils literal notranslate"><span class="pre">deep_sdf</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.deep_sdf.plotting.plot_logs" title="DeepSDFStruct.deep_sdf.plotting.plot_logs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_logs</span></code></a>(experiment_directory[, show_lr, ...])</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="DeepSDFStruct.flexicubes.html#module-DeepSDFStruct.flexicubes" title="DeepSDFStruct.flexicubes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">flexicubes</span></code></a></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="DeepSDFStruct.lattice_structure.html#module-DeepSDFStruct.lattice_structure" title="DeepSDFStruct.lattice_structure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lattice_structure</span></code></a></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="DeepSDFStruct.local_shapes.html#module-DeepSDFStruct.local_shapes" title="DeepSDFStruct.local_shapes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">local_shapes</span></code></a></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="DeepSDFStruct.mesh.html#module-DeepSDFStruct.mesh" title="DeepSDFStruct.mesh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mesh</span></code></a></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="DeepSDFStruct.optimization.html#module-DeepSDFStruct.optimization" title="DeepSDFStruct.optimization"><code class="xref py py-obj docutils literal notranslate"><span class="pre">optimization</span></code></a></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="DeepSDFStruct.parametrization.html#module-DeepSDFStruct.parametrization" title="DeepSDFStruct.parametrization"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parametrization</span></code></a></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="DeepSDFStruct.plotting.html#module-DeepSDFStruct.plotting" title="DeepSDFStruct.plotting"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plotting</span></code></a></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="DeepSDFStruct.pretrained_models.html#module-DeepSDFStruct.pretrained_models" title="DeepSDFStruct.pretrained_models"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pretrained_models</span></code></a></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="DeepSDFStruct.sampling.html#module-DeepSDFStruct.sampling" title="DeepSDFStruct.sampling"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sampling</span></code></a></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="DeepSDFStruct.sdf_primitives.html#module-DeepSDFStruct.sdf_primitives" title="DeepSDFStruct.sdf_primitives"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sdf_primitives</span></code></a></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="DeepSDFStruct.splinepy_unitcells.html#module-DeepSDFStruct.splinepy_unitcells" title="DeepSDFStruct.splinepy_unitcells"><code class="xref py py-obj docutils literal notranslate"><span class="pre">splinepy_unitcells</span></code></a></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="DeepSDFStruct.torch_spline.html#module-DeepSDFStruct.torch_spline" title="DeepSDFStruct.torch_spline"><code class="xref py py-obj docutils literal notranslate"><span class="pre">torch_spline</span></code></a></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="DeepSDFStruct.utils.html#module-DeepSDFStruct.utils" title="DeepSDFStruct.utils"><code class="xref py py-obj docutils literal notranslate"><span class="pre">utils</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.deep_sdf.plotting.running_mean" title="DeepSDFStruct.deep_sdf.plotting.running_mean"><code class="xref py py-obj docutils literal notranslate"><span class="pre">running_mean</span></code></a>(x, N)</p></td>
 <td><p></p></td>
 </tr>
 </tbody>
 </table>
 </div>
+<dl class="py function">
+<dt class="sig sig-object py" id="DeepSDFStruct.deep_sdf.plotting.extract_paths">
+<span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.deep_sdf.plotting.</span></span><span class="sig-name descname"><span class="pre">extract_paths</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.deep_sdf.plotting.extract_paths" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="DeepSDFStruct.deep_sdf.plotting.plot_logs">
+<span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.deep_sdf.plotting.</span></span><span class="sig-name descname"><span class="pre">plot_logs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">experiment_directory</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_lr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.deep_sdf.plotting.plot_logs" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="DeepSDFStruct.deep_sdf.plotting.running_mean">
+<span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.deep_sdf.plotting.</span></span><span class="sig-name descname"><span class="pre">running_mean</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.deep_sdf.plotting.running_mean" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
 </section>
 
 
@@ -409,20 +394,20 @@
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="../../api_reference.html"
+       href="DeepSDFStruct.deep_sdf.networks.hierarchical_deep_sdf_decoder.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">&lt;no title&gt;</p>
+        <p class="prev-next-title">DeepSDFStruct.deep_sdf.networks.hierarchical_deep_sdf_decoder</p>
       </div>
     </a>
     <a class="right-next"
-       href="DeepSDFStruct.SDF.html"
+       href="DeepSDFStruct.deep_sdf.reconstruction.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">DeepSDFStruct.SDF</p>
+        <p class="prev-next-title">DeepSDFStruct.deep_sdf.reconstruction</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -438,10 +423,24 @@
 
 
   <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.deep_sdf.plotting.extract_paths"><code class="docutils literal notranslate"><span class="pre">extract_paths()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.deep_sdf.plotting.plot_logs"><code class="docutils literal notranslate"><span class="pre">plot_logs()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.deep_sdf.plotting.running_mean"><code class="docutils literal notranslate"><span class="pre">running_mean()</span></code></a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="../../_sources/source/generated/DeepSDFStruct.rst.txt"
+      <li><a href="../../_sources/source/generated/DeepSDFStruct.deep_sdf.plotting.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div></div>
