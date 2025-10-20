@@ -19,6 +19,7 @@ import DeepSDFStruct.deep_sdf
 import DeepSDFStruct.deep_sdf.workspace as ws
 import DeepSDFStruct.deep_sdf.data
 from DeepSDFStruct.deep_sdf.models import DeepSDFModel
+from DeepSDFStruct.deep_sdf.plotting import plot_logs
 from DeepSDFStruct.SDF import SDFfromDeepSDF
 from DeepSDFStruct.mesh import create_3D_mesh, export_surface_mesh
 from importlib.metadata import version
@@ -165,6 +166,11 @@ def save_logs(
             "param_magnitude": param_mag_log,
         },
         os.path.join(experiment_directory, ws.logs_filename),
+    )
+    plot_logs(
+        experiment_directory,
+        show_lr=True,
+        filename=os.path.join(experiment_directory, ws.logplot_filename),
     )
 
 
