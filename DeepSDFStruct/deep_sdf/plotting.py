@@ -64,6 +64,7 @@ def plot_logs(experiment_directory, show_lr=False, ax=None, filename=None):
         smoothed_loss_41,
         "#2a9edd",
     )
+    ax[0].set_yscale("log")
 
     ax[0].set(xlabel="Epoch", ylabel="Loss")
     ax[0].legend(["Loss", "Loss (Running Mean)", "Loss (Running Mean 41)"])
