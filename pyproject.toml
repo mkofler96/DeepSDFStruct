@@ -41,6 +41,7 @@ dependencies = [
     "vtk>=9.5.1",
     "torch-fem>=0.4.5",
     "pypardiso>=0.4.6",
+    "mlflow>=3.5.0",
 ]
 
 [tool.setuptools_scm]

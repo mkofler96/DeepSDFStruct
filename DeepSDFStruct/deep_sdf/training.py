@@ -605,6 +605,7 @@ def train_deep_sdf(
         version=version("DeepSDFStruct"),
     )
     ws.save_experiment_summary(experiment_directory, summary)
+    return summary
 
 
 def reconstruct_meshs_from_latent(

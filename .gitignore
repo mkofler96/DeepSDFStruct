@@ -125,3 +125,6 @@ confidential*
 
 # slurm files
 slurm-*.out
+
+# intermediate model runs
+mlruns
