@@ -12,6 +12,7 @@ DeepSDFStruct
 
    SDF
    deep_sdf
+   design_of_experiments
    flexicubes
    lattice_structure
    local_shapes
