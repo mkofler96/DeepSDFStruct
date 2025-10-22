@@ -9,6 +9,11 @@ DeepSDFStruct.design\_of\_experiments
    .. autosummary::
    
       create_experiment
-      recursive_update
       run_experiment
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      ExperimentSpecifications
    
