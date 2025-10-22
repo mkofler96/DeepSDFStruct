@@ -68,6 +68,38 @@ class ExperimentSpecifications(dict):
         """Return a deep copy of the specifications."""
         return ExperimentSpecifications(copy.deepcopy(self))
 
+    def flatten(self, parent_key: str = "", sep: str = ".") -> Dict[str, Any]:
+        """
+        Flatten nested dictionary (including lists of dicts) into a single-level dict
+        with dot-separated keys.
+        """
+        items = {}
+        for k, v in self.items():
+            new_key = f"{parent_key}{sep}{k}" if parent_key else k
+
+            if isinstance(v, dict):
+                items.update(
+                    ExperimentSpecifications(v).flatten(parent_key=new_key, sep=sep)
+                )
+
+            elif isinstance(v, list):
+                # Check if the list contains dictionaries
+                if all(isinstance(i, dict) for i in v):
+                    for idx, elem in enumerate(v):
+                        items.update(
+                            ExperimentSpecifications(elem).flatten(
+                                parent_key=f"{new_key}.{idx}", sep=sep
+                            )
+                        )
+                else:
+                    # Just convert the list/tuple to a string for MLflow
+                    items[new_key] = str(v)
+
+            else:
+                items[new_key] = v
+
+        return items
+
     def __repr__(self):
         return f"ExperimentSpecifications({dict(self)})"
 
@@ -94,9 +126,9 @@ def create_experiment(exp_dir, specs):
 def run_experiment(
     exp_name,
     data_dir,
-    specs=None,
+    run_name=None,
+    specs: ExperimentSpecifications | None = None,
     device="cpu",
-    mlflow_experiment_name="DeepSDFStruct_Experiment",
     tracking_uri="mlruns",
 ):
     """
@@ -110,11 +142,10 @@ def run_experiment(
         mlflow_experiment_name (str): Name of the MLflow experiment.
         register_model (bool): If True, register the final model in MLflow Model Registry.
     """
-    exp_dir = os.path.join("DeepSDFStruct/trained_models", exp_name)
     mlflow.set_tracking_uri(tracking_uri)
     # Start MLflow run
-    mlflow.set_experiment(mlflow_experiment_name)
-    with mlflow.start_run():
+    mlflow.set_experiment(exp_name)
+    with mlflow.start_run(run_name=run_name):
         parsed = urlparse(mlflow.get_artifact_uri())
         if parsed.path == "":
             raise NotImplementedError("Remote Tracking URI not implemented yet.")
@@ -124,9 +155,7 @@ def run_experiment(
         specs_path = os.path.join(exp_dir, "specs.json")
         mlflow.log_artifact(specs_path)
 
-        with open(specs_path, "r") as f:
-            specs = json.load(f)
-        mlflow.log_params(specs)
+        mlflow.log_params(specs.flatten())
 
         summary = train_deep_sdf(exp_dir, data_dir, device=device)
         mlflow.set_tags(summary)
