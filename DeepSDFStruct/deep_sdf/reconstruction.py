@@ -15,6 +15,7 @@ def reconstruct_from_samples(
     dtype=torch.float32,
     loss_fn="ClampedL1",
     batch_size=512,
+    drop_last=True,
 ):
 
     optimizer = torch.optim.Adam(sdf.parametrization.parameters(), lr=lr)
@@ -57,8 +58,16 @@ def reconstruct_from_samples(
         raise NotImplementedError(f"Loss function {loss_fn} not available.")
 
     dataset = TensorDataset(queries_ps_torch, gt_dist)
+    if drop_last and (batch_size > len(dataset)):
+        print(
+            "Warning: drop_last was set to true, "
+            f"but batch size ({batch_size}) is larger "
+            f"than the size of the dataset ({len(dataset)})."
+            " setting drop_last=False"
+        )
+        drop_last = False
     dataloader = DataLoader(
-        dataset, batch_size=batch_size, shuffle=True, drop_last=True
+        dataset, batch_size=batch_size, shuffle=True, drop_last=drop_last
     )
 
     for e in pbar:
@@ -86,6 +95,7 @@ def reconstruct_deepLS_from_samples(
     dtype=torch.float32,
     loss_fn="ClampedL1",
     batch_size=512,
+    drop_last=True,
 ):
 
     optimizer = torch.optim.Adam(sdf.parametrization.parameters(), lr=lr)
@@ -104,8 +114,16 @@ def reconstruct_deepLS_from_samples(
         raise NotImplementedError(f"Loss function {loss_fn} not available.")
 
     dataset = TensorDataset(sdfSample.samples, gt_dist)
+    if drop_last and (batch_size > len(dataset)):
+        print(
+            "Warning: drop_last was set to true, "
+            f"but batch size ({batch_size}) is larger "
+            f"than the size of the dataset ({len(dataset)})."
+            " setting drop_last=False"
+        )
+        drop_last = False
     dataloader = DataLoader(
-        dataset, batch_size=batch_size, shuffle=True, drop_last=True
+        dataset, batch_size=batch_size, shuffle=True, drop_last=drop_last
     )
 
     for e in pbar:
