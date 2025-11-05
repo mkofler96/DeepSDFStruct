@@ -126,6 +126,7 @@ def create_experiment(exp_dir, specs):
 def run_experiment(
     exp_name,
     data_dir,
+    batch_split=1,
     run_name=None,
     specs: ExperimentSpecifications | None = None,
     device="cpu",
@@ -157,7 +158,9 @@ def run_experiment(
 
         mlflow.log_params(specs.flatten())
 
-        summary = train_deep_sdf(exp_dir, data_dir, device=device)
+        summary = train_deep_sdf(
+            exp_dir, data_dir, device=device, batch_split=batch_split
+        )
         mlflow.set_tags(summary)
 
         mlflow.log_metric("train_loss", summary["loss"])
