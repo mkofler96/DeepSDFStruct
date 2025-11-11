@@ -9,6 +9,7 @@ class PretrainedModels(Enum):
     ChiAndCross = "chi_and_cross"
     AnalyticRoundCross = "analytic_round_cross"
     RoundCross = "round_cross"
+    Primitives = "primitives"
 
 
 # Maps enum entries to file paths
@@ -19,6 +20,7 @@ _MODEL_REGISTRY = {
     / "trained_models"
     / "analytic_round_cross",
     PretrainedModels.RoundCross: main_dir / "trained_models" / "round_cross",
+    PretrainedModels.Primitives: main_dir / "trained_models" / "primitives",
 }
 
 
