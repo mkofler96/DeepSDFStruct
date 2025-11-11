@@ -26,18 +26,19 @@ def reconstruct_from_samples(
     print("Min/Max in PHYSICAL space:\n")
     for name, mn, mx in zip(["x", "y", "z"], verts_min.values, verts_max.values):
         print(f"{name}: min={mn:.6f}, max={mx:.6f}")
+    
+    # return verbose can be enabled to get more information from splinepy
+    return_verbose=False
     queries_parameter_space = sdf.deformation_spline.spline.proximities(
-        sdfSample.samples.detach().cpu().numpy()
+        sdfSample.samples.detach().cpu().numpy(),
+        return_verbose=return_verbose
     )
+    if return_verbose:
+        queries_parameter_space, phys_coord, phys_diff, distance, convergence_norm, first_derivatives, second_derivatives = queries_parameter_space
     queries_ps_torch = torch.tensor(queries_parameter_space, device=device, dtype=dtype)
     queries_min = queries_ps_torch.min(dim=0).values
     queries_max = queries_ps_torch.max(dim=0).values
-
-    print("\nMin/Max in QUERY space:\n")
-    for name, mn, mx in zip(
-        ["x", "y", "z"], queries_min.tolist(), queries_max.tolist()
-    ):
-        print(f"{name}: min={mn:.6f}, max={mx:.6f}")
+    
     print("\nMin/Max in QUERY space:\n")
     for name, mn, mx in zip(
         ["x", "y", "z"], queries_min.tolist(), queries_max.tolist()
