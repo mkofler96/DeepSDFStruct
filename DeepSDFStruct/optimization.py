@@ -122,7 +122,7 @@ class MMA:
                 )
             )
         logger.info(
-            "It.: {0:4} | C.: {1:1.3e} | Constr.:  {2:1.3e} | ch.: {3:1.3e}".format(
+            "It.: {0:4} | J.: {1:1.3e} | Constr.:  {2:1.3e} | ch.: {3:1.3e}".format(
                 self.loop, F_np[0][0], G_np[0][0], ch
             )
         )
