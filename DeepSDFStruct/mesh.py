@@ -18,11 +18,25 @@ import scipy.sparse.csgraph
 from functools import partial
 
 from DeepSDFStruct.flexicubes.flexicubes import FlexiCubes
+from DeepSDFStruct.flexisquares.flexisquares import FlexiSquares
 from DeepSDFStruct.lattice_structure import LatticeSDFStruct
 from DeepSDFStruct.SDF import SDFBase
 import DeepSDFStruct
 
 logger = logging.getLogger(DeepSDFStruct.__name__)
+
+
+class torchLineMesh:
+    def __init__(self, vertices: _torch.Tensor, lines: _torch.Tensor):
+        self.vertices = vertices
+        self.lines = lines
+
+    def to_gus(self):
+        return gus.Edges(self.vertices.detach().cpu(), self.lines.detach().cpu())
+
+    def to_trimesh():
+        raise NotImplementedError("To trimesh functionality not implemented yet.")
+        pass
 
 
 class torchSurfMesh:
@@ -288,13 +302,13 @@ def prune_collinear(points, tol=1e-9):
     return np.array(pruned)
 
 
-def process_N_base_input(N, tiling):
+def process_N_base_input(N, tiling, dim=3):
     if isinstance(N, list):
-        if len(N) != 3:
+        if len(N) != dim:
             raise ValueError("Number of grid points must be a list of 3 integers")
         N = _torch.tensor(N)
     elif isinstance(N, int):
-        N = _torch.tensor([N, N, N])
+        N = _torch.tensor([N] * dim)
     else:
         raise ValueError("Number of grid points must be a list or an integer")
     # add 1 on each side to slightly include the border
@@ -302,7 +316,9 @@ def process_N_base_input(N, tiling):
     return N_mod
 
 
-def _prepare_flexicubes_querypoints(N, device=None, bounds=None):
+def _prepare_flexicubes_querypoints(
+    N, device=None, bounds=None, extr_type="flexicubes"
+):
     """
     takes the tiling and a resolution as input
     output: DeepSDFStruct.flexicubes constructor, samples and cube indices
@@ -310,33 +326,19 @@ def _prepare_flexicubes_querypoints(N, device=None, bounds=None):
             -> [-0.025, 1.025]
     """
     # check_tiling_input(tiling)
+    if extr_type not in ["flexicubes", "flexisquares"]:
+        raise TypeError(
+            f"Argument extr_type must be either flexicubes or flexisquares, not {extr_type}"
+        )
     if device is None:
         device = "cuda" if _torch.cuda.is_available() else "cpu"
-    flexi_cubes_constructor = FlexiCubes(device=device)
-    samples, cube_idx = flexi_cubes_constructor.construct_voxel_grid(
-        resolution=tuple(N)
-    )
-
-    if bounds is None:
-        bounds = _torch.tensor(
-            [[-0.05, -0.05, -0.05], [1.05, 1.05, 1.05]], device=device
-        )
+    if extr_type == "flexicubes":
+        flexi_cubes_constructor = FlexiCubes(device=device)
     else:
-        bounds = _torch.as_tensor(bounds, device=device, dtype=_torch.float32)
-        assert bounds.shape == (2, 3), "bounds must have shape [2, 3]"
+        flexi_cubes_constructor = FlexiSquares(device=device)
 
-    # Scale samples from [0, 1] to the given bounds
-    # samples = samples * 1.1 + _torch.tensor([0.5, 0.5, 0.5], device=device)
-    samples = (
-        bounds[0] + 0.5 * (bounds[1] - bounds[0]) + (bounds[1] - bounds[0]) * samples
-    )
-
-    tolerance = 1e-6
-    _torch._assert(
-        _torch.all(
-            samples.ge(bounds[0] - tolerance) & samples.le(bounds[1] + tolerance)
-        ),
-        "Samples are out of specified bounds",
+    samples, cube_idx = flexi_cubes_constructor.construct_voxel_grid(
+        resolution=tuple(N), bounds=bounds
     )
 
     return flexi_cubes_constructor, samples, cube_idx
@@ -405,6 +407,71 @@ def create_3D_mesh(
         return torchVolumeMesh(verts, faces_or_volumes), dVerts_dParams
     else:
         return torchSurfMesh(verts, faces_or_volumes), dVerts_dParams
+
+
+def create_2D_mesh(
+    sdf: SDFBase, N_base, mesh_type: str, differentiate=False, device="cpu", bounds=None
+) -> Tuple[Union[torchLineMesh, torchSurfMesh], Optional[torch.Tensor]]:
+    if type(sdf) is LatticeSDFStruct:
+        tiling = _torch.tensor(sdf.tiling)
+    else:
+        tiling = _torch.tensor([1, 1])
+
+    if mesh_type == "line":
+        output_trimesh = False
+    elif mesh_type == "surface":
+        output_trimesh = True
+    else:
+        raise RuntimeError(
+            f"mesh_type {mesh_type} unavailable. Must be either line or surface"
+        )
+
+    N = process_N_base_input(N_base, tiling, dim=2)
+
+    constructor, samples, cube_idx = _prepare_flexicubes_querypoints(
+        N, device=device, bounds=bounds, extr_type="flexisquares"
+    )
+    dVerts_dParams = None
+
+    verts_fn = partial(
+        _verts_from_params,
+        sdf=sdf,
+        samples=samples,
+        constructor=constructor,
+        cube_idx=cube_idx,
+        N=N,
+        return_faces=False,
+        output_tetmesh=output_trimesh,
+    )
+    # returns faces or volumes depending on the output_tetmesh flag
+    # if output_tetmesh -> returns volumes
+    # if not output_tetmesh -> returns faces
+    verts, faces_or_volumes = get_verts(
+        sdf=sdf,
+        samples=samples,
+        constructor=constructor,
+        cube_idx=cube_idx,
+        N=N,
+        return_faces=True,
+        output_tetmesh=output_trimesh,
+    )
+    if differentiate:
+        if sdf.parametrization is None:
+            raise RuntimeError("No parametrization found for given SDF")
+        if len(list(sdf.parametrization.parameters())) > 1:
+            raise NotImplementedError(
+                "Jacobian with more than one parameter list not supported yet."
+            )
+        dVerts_dParams = torch.autograd.functional.jacobian(
+            verts_fn,
+            list(sdf.parametrization.parameters())[0],
+            strategy="forward-mode",
+            vectorize=True,
+        )
+    if output_trimesh:
+        return torchSurfMesh(verts, faces_or_volumes), dVerts_dParams
+    else:
+        return torchLineMesh(verts, faces_or_volumes), dVerts_dParams
 
 
 def _verts_from_params(
@@ -512,7 +579,10 @@ def _export_surface_mesh_vtk(verts, faces, filename, dSurf=None):
     """
     vtk_points = vtk.vtkPoints()
     for v in verts:
-        vtk_points.InsertNextPoint(v.tolist())
+        vert = v.tolist()
+        if len(vert) == 2:
+            vert.append(0.0)
+        vtk_points.InsertNextPoint(vert)
 
     vtk_cells = vtk.vtkCellArray()
     for f in faces:
@@ -543,7 +613,10 @@ def _export_surface_mesh_vtk(verts, faces, filename, dSurf=None):
             vectors.SetName(name)
 
             for vec in dSurf_flat[:, :, j]:
-                vectors.InsertNextTuple(vec.tolist())
+                vecND = vec.tolist()
+                if len(vecND) == 2:
+                    vecND.append(0.0)
+                vectors.InsertNextTuple(vecND)
 
             polydata.GetPointData().AddArray(vectors)
             polydata.GetPointData().SetActiveVectors(name)

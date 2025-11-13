@@ -24,14 +24,16 @@ class CylinderSDF(SDFBase):
 
     def _compute(self, queries: torch.Tensor) -> torch.Tensor:
         diff = queries - self.point
-        if self.axis == "x":
+        if self.axis == "x" or self.axis == 0:
             dist = torch.sqrt(diff[:, 1] ** 2 + diff[:, 2] ** 2)
-        elif self.axis == "y":
+        elif self.axis == "y" or self.axis == 1:
             dist = torch.sqrt(diff[:, 0] ** 2 + diff[:, 2] ** 2)
-        elif self.axis == "z":
+        elif self.axis == "z" or self.axis == 2:
             dist = torch.sqrt(diff[:, 0] ** 2 + diff[:, 1] ** 2)
         else:
-            raise ValueError("Axis must be 'x', 'y', or 'z'")
+            raise ValueError(
+                "Axis must be either ['x', 'y','z'] or [0, 1, 2]." f" got {self.axis}"
+            )
         return (dist - self.r).reshape(-1, 1)
 
     def _get_domain_bounds(self) -> torch.Tensor:

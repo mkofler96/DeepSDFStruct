@@ -82,6 +82,52 @@ def bspline_basis(t, p, queries: torch.tensor):
     return i, y
 
 
+def torch_spline_2D(knot_vectors, control_points, degrees, queries):
+    """
+    Evaluate a 2D B-spline volume at query points.
+
+    Args:
+        tx, ty knot vectors for x, y
+        px, py degrees
+        cp: control points, shape (nx, ny, 2)
+        qx, qy,query coordinates, shape (N,)
+
+    Returns:
+        y: evaluated spline, shape (N, 2)
+    """
+    tx, ty = knot_vectors
+    px, py = degrees
+    qx = queries[:, 0]
+    qy = queries[:, 1]
+
+    # Basis functions along each axis
+    ix, bx = bspline_basis(tx, px, qx)  # (N, px+1), (N, px+1)
+    iy, by = bspline_basis(ty, py, qy)
+
+    torch.testing.assert_close(bx.sum(dim=1), torch.ones_like(qx))
+    torch.testing.assert_close(by.sum(dim=1), torch.ones_like(qy))
+
+    nx = len(tx) - px - 1
+    ny = len(ty) - py - 1
+
+    assert nx * ny == control_points.shape[0]
+
+    bx_ = bx[:, :, None]  # (N, px+1, 1)
+    by_ = by[:, None, :]  # (N, 1, py+1)
+
+    # Compute outer product of weights: (N, px+1, py+1, pz+1)
+    weights = bx_ * by_
+
+    ix_ = ix[:, :, None]  # (N, px+1, 1)
+    iy_ = iy[:, None, :]  # (N, 1, py+1)
+
+    flat_idx = ix_ + nx * iy_
+    cp_selected = control_points[flat_idx]
+    y = (weights[:, :, :, None] * cp_selected).sum(dim=(1, 2))  # (N,)
+
+    return y
+
+
 def torch_spline_3D(knot_vectors, control_points, degrees, queries):
     """
     Evaluate a 3D B-spline volume at query points.
@@ -157,7 +203,7 @@ class TorchSpline(torch.nn.Module):
             case 1:
                 self.spline_fun = torch_spline_1D
             case 2:
-                raise NotImplementedError("2D spline not implemented yet")
+                self.spline_fun = torch_spline_2D
             case 3:
                 self.spline_fun = torch_spline_3D
 

@@ -137,7 +137,9 @@ class FlexiCubes:
         self.qef_reg_scale = qef_reg_scale
         self.weight_scale = weight_scale
 
-    def construct_voxel_grid(self, resolution) -> tuple[torch.tensor, torch.tensor]:
+    def construct_voxel_grid(
+        self, resolution, bounds=None
+    ) -> tuple[torch.tensor, torch.tensor]:
         """
         Generates a voxel grid based on the specified resolution.
 
@@ -176,8 +178,36 @@ class FlexiCubes:
             verts_rounded, dim=0, return_inverse=True
         )
         cubes = inverse_indices[cubes.reshape(-1)].reshape(-1, 8)
+        # changes mkofler: added option to generate points in arbitrary bounds
+        if bounds is None:
+            bounds = torch.tensor(
+                [[-0.05, -0.05, -0.05], [1.05, 1.05, 1.05]],
+                device=verts_unique.device,
+                dtype=verts_unique.dtype,
+            )
+        else:
+            bounds = torch.as_tensor(
+                bounds, device=verts_unique.device, dtype=verts_unique.dtype
+            )
+            assert bounds.shape == (2, 2), "bounds must have shape [2, 2]"
 
-        return verts_unique - 0.5, cubes
+        # Scale samples from [0, 1] to the given bounds
+        # samples = samples * 1.1 + _torch.tensor([0.5, 0.5, 0.5], device=device)
+        samples = verts_unique - 0.5
+        verts_scaled = (
+            bounds[0]
+            + 0.5 * (bounds[1] - bounds[0])
+            + (bounds[1] - bounds[0]) * samples
+        )
+        tolerance = 1e-6
+        torch._assert(
+            torch.all(
+                verts_scaled.ge(bounds[0] - tolerance)
+                & verts_scaled.le(bounds[1] + tolerance)
+            ),
+            "Samples are out of specified bounds",
+        )
+        return verts_scaled, cubes
 
     # changes mkofler: adapted function signature to match the kaolin package
     # function signature on kaolin package:

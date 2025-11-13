@@ -4,6 +4,7 @@ from DeepSDFStruct.mesh import (
     generate_2D_surf_mesh,
     tetrahedralize_surface,
     create_3D_mesh,
+    create_2D_mesh,
     export_surface_mesh,
     export_sdf_grid_vtk,
 )
@@ -20,7 +21,7 @@ import gustaf as _gus
 import torch
 
 
-def test_deepsdf_lattice_export():
+def test_deepsdf_lattice_export_3D():
     # Load a pretrained DeepSDF model
     model = get_model(PretrainedModels.AnalyticRoundCross)
     sdf = SDFfromDeepSDF(model)
@@ -128,6 +129,38 @@ def test_deepsdf_lattice_export():
     print(recon_param_DeepLS)
 
 
+def test_deepsdf_lattice_export_2D():
+    # Load a pretrained DeepSDF model
+    model = get_model(PretrainedModels.AnalyticRoundCross)
+    sdf = SDFfromDeepSDF(model)
+    torch.manual_seed(42)
+
+    # Define a spline-based deformation field
+    deformation_spline = TorchSpline(
+        splinepy.helpme.create.box(1.5, 1).bspline, device=model.device
+    )
+    control_points = [[0.3], [0.3], [0.3], [0.3], [0.3], [0.3]]
+    param_spline = SplineParametrization(
+        splinepy.BSpline([0, 0], [[0, 1 / 3, 2 / 3, 1], [0, 0.5, 1]], control_points),
+        device=model.device,
+    )
+
+    # Create the lattice structure with deformation and microtile
+    lattice_struct = LatticeSDFStruct(
+        tiling=[3, 2],
+        deformation_spline=deformation_spline,
+        microtile=sdf.to2D(axes=[0, 1], offset=0.5),
+        parametrization=param_spline,
+    )
+
+    surf_mesh, derivative = create_2D_mesh(
+        lattice_struct, 30, differentiate=True, mesh_type="surface", device=model.device
+    )
+    export_surface_mesh(
+        "tests/tmp_outputs/mesh2D_with_derivative.vtk", surf_mesh.to_gus(), derivative
+    )
+
+
 def test_2D_mesh_export():
     linemesh = _gus.io.meshio.load("tests/data/example_line_mesh.vtk")
     linemesh.vertices = linemesh.vertices[:, :2]
@@ -142,5 +175,7 @@ def test_2D_mesh_export():
 
 
 if __name__ == "__main__":
-    test_deepsdf_lattice_export()
+    test_deepsdf_lattice_export_2D()
+    test_deepsdf_lattice_export_3D()
+
     test_2D_mesh_export()

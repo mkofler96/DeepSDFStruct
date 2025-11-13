@@ -51,129 +51,13 @@ class LatticeSDFStruct(_SDFBase):
             cap_border_dict=cap_border_dict,
             cap_outside_of_unitcube=cap_outside_of_unitcube,
         )
-        self.tiling = [tiling] * 3 if isinstance(tiling, int) else tiling
+        self.tiling = tiling
         self.microtile = microtile
+        self.geometric_dim = len(tiling)
 
     @property
-    def deformation_spline(self):
-        """Deformation function defining the outer geometry (contour) of the
-        microstructure.
-
-        Parameters
-        ----------
-        None
-
-        Returns
-        -------
-        deformation_function : spline
-        """
-        if hasattr(self, "_deformation_spline"):
-            return self._deformation_spline
-        else:
-            return None
-
-    @deformation_spline.setter
-    def deformation_spline(self, deformation_spline):
-        """Deformation function setter defining the outer geometry of the
-        microstructure. Must be spline type and as such inherit from
-        splinepy.Spline.
-
-        Parameters
-        ----------
-        deformation_function : spline
-
-        Returns
-        -------
-        None
-        """
-
-        if not isinstance(deformation_spline, _SplinepyBase):
-            raise ValueError(
-                "Deformation spline must be splinepy-Spline." " e.g. splinepy.NURBS"
-            )
-        self._deformation_spline = deformation_spline
-        self._sanity_check()
-
-    @property
-    def tiling(self):
-        """Number of microtiles per parametric dimension.
-
-        Parameters
-        ----------
-        None
-
-        Returns
-        -------
-        tiling : list<int>
-        """
-        if hasattr(self, "_tiling"):
-            return self._tiling
-        else:
-            return None
-
-    @tiling.setter
-    def tiling(self, tiling):
-        """Setter for the tiling attribute, defining the number of microtiles
-        per parametric dimension.
-
-        Parameters
-        ----------
-        tiling : int / list<int>
-          Number of tiles for each dimension respectively
-        Returns
-        -------
-        None
-        """
-        if (
-            not isinstance(tiling, list)
-            and not isinstance(tiling, int)
-            and not isinstance(tiling, tuple)
-        ):
-            raise ValueError(
-                "Tiling mus be either list of integers of integer " "value"
-            )
-        self._tiling = tiling
-        # Is defaulted to False using function arguments
-        self._sanity_check()
-        logger.debug(f"Successfully set tiling to : {self.tiling}")
-
-    @property
-    def microtile(self):
-        """Microtile that is either a spline, a list of splines, or a class
-        that provides a `create_tile` function."""
-        if hasattr(self, "_microtile"):
-            return self._microtile
-        else:
-            self._logi(
-                "microtile is empty. "
-                "Please checkout splinepy.microstructure.tiles.show() for "
-                "predefined tile collections."
-            )
-            return None
-
-    @microtile.setter
-    def microtile(self, microtile):
-        """Setter for microtile.
-
-        Microtile must be either a spline, a list of splines, or a class that
-        provides (at least) a `create_tile` function and a `dim` member.
-
-        Parameters
-        ----------
-        microtile : spline / list<splines> / user-object
-          arbitrary long list of splines that define the microtile
-
-        Returns
-        -------
-        None
-        """
-        # place single tiles into a list to provide common interface
-        if not isinstance(microtile, _SDFBase):
-            raise TypeError(f"Microtile must be SDF, not {type(microtile)}")
-        # Assign Microtile object to member variable
-        self._microtile = microtile
-
-        self._sanity_check()
+    def parametric_dimension(self):
+        return len(self.tiling)
 
     def _get_domain_bounds(self):
         return _np.array([[-1, 1], [-1, 1], [-1, 1]])
@@ -206,20 +90,16 @@ class LatticeSDFStruct(_SDFBase):
             device=orig_device,
             dtype=orig_dtype,
         )
-        spline_domain_samples = _torch.clamp(samples, min=bounds[0], max=bounds[1])
         if self.parametrization is not None:
+            spline_domain_samples = _torch.clamp(samples, min=bounds[0], max=bounds[1])
             parameters = self.parametrization(spline_domain_samples)
             self.microtile._set_param(parameters)
 
         queries_transformed = _torch.zeros_like(samples)
-        tx, ty, tz = self._tiling
-        queries_transformed[:, 0] = transform(samples[:, 0], tx)
-        queries_transformed[:, 1] = transform(samples[:, 1], ty)
-        queries_transformed[:, 2] = transform(samples[:, 2], tz)
-
+        for i_dim, t in enumerate(self.tiling):
+            queries_transformed[:, i_dim] = transform(samples[:, i_dim], t)
         sdf_values = self.microtile(queries_transformed)
         # self.plot_transformed_untransformed(queries, queries_transformed)
-
         return sdf_values
 
     def _sanity_check(self):

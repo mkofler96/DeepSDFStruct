@@ -119,6 +119,7 @@ class SDFBase(ABC):
         parametrization: torch.nn.Module | None = None,
         cap_border_dict: CapBorderDict = None,
         cap_outside_of_unitcube=False,
+        geometric_dim=3,
     ):
         self._deformation_spline = deformation_spline
 
@@ -130,6 +131,7 @@ class SDFBase(ABC):
 
         self._cap_border_dict = cap_border_dict
         self.cap_outside_of_unitcube = cap_outside_of_unitcube
+        self.geometric_dim = geometric_dim
 
     @property
     def deformation_spline(self):
@@ -186,7 +188,9 @@ class SDFBase(ABC):
             # cap everything outside of the unit cube
             # k and d are y = k*(x-dx) + dy
         if self.cap_outside_of_unitcube:
-            sdf_values = _cap_outside_of_unitcube(queries, sdf_values)
+            sdf_values = _cap_outside_of_unitcube(
+                queries, sdf_values, max_dim=self.geometric_dim
+            )
         return sdf_values
 
     def _validate_input(self, queries: torch.Tensor):
@@ -215,6 +219,46 @@ class SDFBase(ABC):
 
     def __add__(self, other):
         return SummedSDF(self, other)
+
+    def to2D(self, axes: list[int], offset=0.0):
+        """
+        Converts SDF to 2D
+
+        :param axis: list of axes that will be used for the 2D
+        """
+        sdf2D = SDF2D(self, axes, offset=offset)
+        sdf2D.deformation_spline = self.deformation_spline
+        sdf2D.parametrization = self.parametrization
+        return sdf2D
+
+
+class SDF2D(SDFBase):
+    def __init__(self, obj: SDFBase, axes: list[int], offset=0.0):
+        super().__init__()
+        self.obj = obj
+        assert (
+            len(axes) == 2
+        ), "List of axes must be of size 2 and needs to correspond to the 2D plane"
+        self.axes = axes
+        self.offset = offset
+
+    def _compute(self, queries):
+        queries_3D = (
+            torch.zeros(
+                (queries.shape[0], 3), dtype=queries.dtype, device=queries.device
+            )
+            + self.offset
+        )
+        queries_3D[:, self.axes[0]] = queries[:, 0]
+        queries_3D[:, self.axes[1]] = queries[:, 1]
+        result = self.obj._compute(queries_3D)
+        return result
+
+    def _get_domain_bounds(self):
+        return self.obj._get_domain_bounds()
+
+    def _set_param(self, parameter):
+        return self.obj._set_param(parameter)
 
 
 class SummedSDF(SDFBase):
@@ -267,7 +311,26 @@ class BoxSDF(SDFBase):
         return output.reshape(-1, 1)
 
 
-def union(D, k=0):
+def union_torch(D, k=0):
+    """
+    D: np.array of shape (num_points, num_geometries)
+    k: smoothness parameter
+    """
+    if k == 0:
+        return torch.min(D, axis=1)[0]
+    # Start with the first column as d1
+    d1 = D[:, 0].copy()
+
+    # Loop over remaining columns
+    for i in range(1, D.shape[1]):
+        d2 = D[:, i]
+        h = torch.clip(0.5 + 0.5 * (d2 - d1) / k, 0, 1)
+        d1 = d2 + (d1 - d2) * h - k * h * (1 - h)
+
+    return d1
+
+
+def union_numpy(D, k=0):
     """
     D: np.array of shape (num_points, num_geometries)
     k: smoothness parameter
@@ -428,7 +491,9 @@ class SDFfromLineMesh(SDFBase):
         sdf = point_segment_distance(lines[:, 0], lines[:, 1], queries_np) - self.t / 2
         if is_tensor:
             sdf = torch.tensor(sdf, dtype=orig_dtype, device=orig_device)
-        return union(sdf, k=self.smoothness)
+            return union_torch(sdf, k=self.smoothness)
+        else:
+            return union_numpy(sdf, k=self.smoothness)
 
 
 class SDFfromDeepSDF(SDFBase):
@@ -507,13 +572,12 @@ class SDFfromDeepSDF(SDFBase):
         return sdf_values.to(orig_device).reshape(-1, 1)
 
 
-def _cap_outside_of_unitcube(samples, sdf_values):
-    dy = 0
-    for dim, k, dx in zip(
-        [0, 0, 1, 1, 2, 2], [1, -1, 1, -1, 1, -1], [0, 1, 0, 1, 0, 1]
-    ):
-        x = samples[:, dim]
-        border_sdf = k * (x - dx) + dy
+def _cap_outside_of_unitcube(samples, sdf_values, max_dim=3):
+
+    for dim in range(max_dim):
+        border_sdf = samples[:, dim]
+        sdf_values = torch.maximum(sdf_values, -border_sdf.reshape(-1, 1))
+        border_sdf = 1 - samples[:, dim]
         sdf_values = torch.maximum(sdf_values, -border_sdf.reshape(-1, 1))
     return sdf_values
 
