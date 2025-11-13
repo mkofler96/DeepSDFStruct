@@ -2,10 +2,9 @@ import logging
 import DeepSDFStruct
 
 
-def configure_logging(level=logging.DEBUG, logfile=None):
+def configure_logging(level=logging.INFO, logfile=None):
     logger = logging.getLogger(DeepSDFStruct.__name__)
-    print(f"deepsdfstruct name: {DeepSDFStruct.__name__}")
-    logger.setLevel(logging.DEBUG)
+    logger.setLevel(level)
 
     logger_handler = logging.StreamHandler()
     formatter = logging.Formatter("%(asctime)s %(message)s", datefmt="%H:%M:%S")
