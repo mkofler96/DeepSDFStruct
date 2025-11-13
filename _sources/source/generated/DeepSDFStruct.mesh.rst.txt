@@ -8,6 +8,7 @@ DeepSDFStruct.mesh
 
    .. autosummary::
    
+      create_2D_mesh
       create_3D_mesh
       export_abaqus_surf_mesh
       export_sdf_grid_vtk
@@ -24,6 +25,7 @@ DeepSDFStruct.mesh
 
    .. autosummary::
    
+      torchLineMesh
       torchSurfMesh
       torchVolumeMesh
    

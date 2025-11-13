@@ -11,6 +11,7 @@ DeepSDFStruct.torch\_spline
       bspline_basis
       generate_bbox_spline
       torch_spline_1D
+      torch_spline_2D
       torch_spline_3D
    
    .. rubric:: Classes

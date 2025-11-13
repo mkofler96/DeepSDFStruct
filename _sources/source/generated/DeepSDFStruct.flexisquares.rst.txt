@@ -1,0 +1,14 @@
+DeepSDFStruct.flexisquares
+==========================
+
+.. automodule:: DeepSDFStruct.flexisquares
+
+   
+.. rubric:: Modules
+
+.. autosummary::
+   :toctree:
+   :recursive:
+
+   flexisquares
+   tables

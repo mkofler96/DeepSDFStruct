@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>DeepSDFStruct.torch_spline &#8212; DeepSDFStruct 1.1.1.dev21+g6e6b422e6 documentation</title>
+    <title>DeepSDFStruct.torch_spline &#8212; DeepSDFStruct 1.1.1.dev23+g6170b62c2 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=c7b45000"></script>
+    <script src="../../_static/documentation_options.js?v=16cb862e"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'source/generated/DeepSDFStruct.torch_spline';</script>
@@ -110,7 +110,7 @@
   
   
   
-    <p class="title logo__title">DeepSDFStruct 1.1.1.dev21+g6e6b422e6 documentation</p>
+    <p class="title logo__title">DeepSDFStruct 1.1.1.dev23+g6170b62c2 documentation</p>
   
 </a></div>
     
@@ -264,6 +264,11 @@
 <li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.flexicubes.tables.html">DeepSDFStruct.flexicubes.tables</a></li>
 </ul>
 </details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="DeepSDFStruct.flexisquares.html">DeepSDFStruct.flexisquares</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.flexisquares.flexisquares.html">DeepSDFStruct.flexisquares.flexisquares</a></li>
+<li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.flexisquares.tables.html">DeepSDFStruct.flexisquares.tables</a></li>
+</ul>
+</details></li>
 <li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.lattice_structure.html">DeepSDFStruct.lattice_structure</a></li>
 <li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.local_shapes.html">DeepSDFStruct.local_shapes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.mesh.html">DeepSDFStruct.mesh</a></li>
@@ -361,7 +366,10 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.torch_spline.torch_spline_1D" title="DeepSDFStruct.torch_spline.torch_spline_1D"><code class="xref py py-obj docutils literal notranslate"><span class="pre">torch_spline_1D</span></code></a>(knot_vectors, ...)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.torch_spline.torch_spline_3D" title="DeepSDFStruct.torch_spline.torch_spline_3D"><code class="xref py py-obj docutils literal notranslate"><span class="pre">torch_spline_3D</span></code></a>(knot_vectors, ...)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.torch_spline.torch_spline_2D" title="DeepSDFStruct.torch_spline.torch_spline_2D"><code class="xref py py-obj docutils literal notranslate"><span class="pre">torch_spline_2D</span></code></a>(knot_vectors, ...)</p></td>
+<td><p>Evaluate a 2D B-spline volume at query points.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.torch_spline.torch_spline_3D" title="DeepSDFStruct.torch_spline.torch_spline_3D"><code class="xref py py-obj docutils literal notranslate"><span class="pre">torch_spline_3D</span></code></a>(knot_vectors, ...)</p></td>
 <td><p>Evaluate a 3D B-spline volume at query points.</p></td>
 </tr>
 </tbody>
@@ -454,6 +462,34 @@ registered hooks while the latter silently ignores them.</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="DeepSDFStruct.torch_spline.torch_spline_2D">
+<span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.torch_spline.</span></span><span class="sig-name descname"><span class="pre">torch_spline_2D</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">knot_vectors</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">control_points</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">degrees</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">queries</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.torch_spline.torch_spline_2D" title="Link to this definition">#</a></dt>
+<dd><p>Evaluate a 2D B-spline volume at query points.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tx</strong></p></li>
+<li><p><strong>x</strong> (<em>ty knot vectors for</em>)</p></li>
+<li><p><strong>y</strong></p></li>
+<li><p><strong>px</strong></p></li>
+<li><p><strong>degrees</strong> (<em>py</em>)</p></li>
+<li><p><strong>cp</strong> – control points, shape (nx, ny, 2)</p></li>
+<li><p><strong>qx</strong> (<em>N</em><em>,</em>)</p></li>
+<li><p><strong>qy</strong> (<em>N</em><em>,</em>)</p></li>
+<li><p><strong>coordinates</strong> (<em>query</em>)</p></li>
+<li><p><strong>shape</strong> (<em>N</em><em>,</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>evaluated spline, shape (N, 2)</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>y</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="DeepSDFStruct.torch_spline.torch_spline_3D">
 <span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.torch_spline.</span></span><span class="sig-name descname"><span class="pre">torch_spline_3D</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">knot_vectors</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">control_points</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">degrees</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">queries</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.torch_spline.torch_spline_3D" title="Link to this definition">#</a></dt>
 <dd><p>Evaluate a 3D B-spline volume at query points.</p>
@@ -538,6 +574,7 @@ registered hooks while the latter silently ignores them.</p>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.torch_spline.bspline_basis"><code class="docutils literal notranslate"><span class="pre">bspline_basis()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.torch_spline.generate_bbox_spline"><code class="docutils literal notranslate"><span class="pre">generate_bbox_spline()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.torch_spline.torch_spline_1D"><code class="docutils literal notranslate"><span class="pre">torch_spline_1D()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.torch_spline.torch_spline_2D"><code class="docutils literal notranslate"><span class="pre">torch_spline_2D()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.torch_spline.torch_spline_3D"><code class="docutils literal notranslate"><span class="pre">torch_spline_3D()</span></code></a></li>
 </ul>
   </nav></div>

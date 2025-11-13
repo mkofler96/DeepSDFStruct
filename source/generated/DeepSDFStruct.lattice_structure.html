@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>DeepSDFStruct.lattice_structure &#8212; DeepSDFStruct 1.1.1.dev21+g6e6b422e6 documentation</title>
+    <title>DeepSDFStruct.lattice_structure &#8212; DeepSDFStruct 1.1.1.dev23+g6170b62c2 documentation</title>
   
   
   
@@ -38,14 +38,14 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=c7b45000"></script>
+    <script src="../../_static/documentation_options.js?v=16cb862e"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'source/generated/DeepSDFStruct.lattice_structure';</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="DeepSDFStruct.local_shapes" href="DeepSDFStruct.local_shapes.html" />
-    <link rel="prev" title="DeepSDFStruct.flexicubes.tables" href="DeepSDFStruct.flexicubes.tables.html" />
+    <link rel="prev" title="DeepSDFStruct.flexisquares.tables" href="DeepSDFStruct.flexisquares.tables.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
@@ -110,7 +110,7 @@
   
   
   
-    <p class="title logo__title">DeepSDFStruct 1.1.1.dev21+g6e6b422e6 documentation</p>
+    <p class="title logo__title">DeepSDFStruct 1.1.1.dev23+g6170b62c2 documentation</p>
   
 </a></div>
     
@@ -264,6 +264,11 @@
 <li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.flexicubes.tables.html">DeepSDFStruct.flexicubes.tables</a></li>
 </ul>
 </details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="DeepSDFStruct.flexisquares.html">DeepSDFStruct.flexisquares</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.flexisquares.flexisquares.html">DeepSDFStruct.flexisquares.flexisquares</a></li>
+<li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.flexisquares.tables.html">DeepSDFStruct.flexisquares.tables</a></li>
+</ul>
+</details></li>
 <li class="toctree-l2 current active"><a class="current reference internal" href="#">DeepSDFStruct.lattice_structure</a></li>
 <li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.local_shapes.html">DeepSDFStruct.local_shapes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.mesh.html">DeepSDFStruct.mesh</a></li>
@@ -391,29 +396,9 @@
 </dd>
 </dl>
 <dl class="py property">
-<dt class="sig sig-object py" id="DeepSDFStruct.lattice_structure.LatticeSDFStruct.deformation_spline">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">deformation_spline</span></span><a class="headerlink" href="#DeepSDFStruct.lattice_structure.LatticeSDFStruct.deformation_spline" title="Link to this definition">#</a></dt>
-<dd><p>Deformation function defining the outer geometry (contour) of the
-microstructure.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>None</strong></p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>deformation_function</strong></p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>spline</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="DeepSDFStruct.lattice_structure.LatticeSDFStruct.microtile">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">microtile</span></span><a class="headerlink" href="#DeepSDFStruct.lattice_structure.LatticeSDFStruct.microtile" title="Link to this definition">#</a></dt>
-<dd><p>Microtile that is either a spline, a list of splines, or a class
-that provides a <cite>create_tile</cite> function.</p>
-</dd></dl>
+<dt class="sig sig-object py" id="DeepSDFStruct.lattice_structure.LatticeSDFStruct.parametric_dimension">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">parametric_dimension</span></span><a class="headerlink" href="#DeepSDFStruct.lattice_structure.LatticeSDFStruct.parametric_dimension" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="DeepSDFStruct.lattice_structure.LatticeSDFStruct.plot_intermesh">
@@ -437,23 +422,6 @@ that provides a <cite>create_tile</cite> function.</p>
 <dt class="sig sig-object py" id="DeepSDFStruct.lattice_structure.LatticeSDFStruct.plot_slice">
 <span class="sig-name descname"><span class="pre">plot_slice</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.lattice_structure.LatticeSDFStruct.plot_slice" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="DeepSDFStruct.lattice_structure.LatticeSDFStruct.tiling">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">tiling</span></span><a class="headerlink" href="#DeepSDFStruct.lattice_structure.LatticeSDFStruct.tiling" title="Link to this definition">#</a></dt>
-<dd><p>Number of microtiles per parametric dimension.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>None</strong></p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>tiling</strong></p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>list&lt;int&gt;</p>
-</dd>
-</dl>
-</dd></dl>
 
 </dd></dl>
 
@@ -485,12 +453,12 @@ that provides a <cite>create_tile</cite> function.</p>
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="DeepSDFStruct.flexicubes.tables.html"
+       href="DeepSDFStruct.flexisquares.tables.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">DeepSDFStruct.flexicubes.tables</p>
+        <p class="prev-next-title">DeepSDFStruct.flexisquares.tables</p>
       </div>
     </a>
     <a class="right-next"
@@ -522,12 +490,10 @@ that provides a <cite>create_tile</cite> function.</p>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.lattice_structure.LatticeSDFStruct"><code class="docutils literal notranslate"><span class="pre">LatticeSDFStruct</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.lattice_structure.LatticeSDFStruct.deformation_spline"><code class="docutils literal notranslate"><span class="pre">LatticeSDFStruct.deformation_spline</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.lattice_structure.LatticeSDFStruct.microtile"><code class="docutils literal notranslate"><span class="pre">LatticeSDFStruct.microtile</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.lattice_structure.LatticeSDFStruct.parametric_dimension"><code class="docutils literal notranslate"><span class="pre">LatticeSDFStruct.parametric_dimension</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.lattice_structure.LatticeSDFStruct.plot_intermesh"><code class="docutils literal notranslate"><span class="pre">LatticeSDFStruct.plot_intermesh()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.lattice_structure.LatticeSDFStruct.plot_samples"><code class="docutils literal notranslate"><span class="pre">LatticeSDFStruct.plot_samples()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.lattice_structure.LatticeSDFStruct.plot_slice"><code class="docutils literal notranslate"><span class="pre">LatticeSDFStruct.plot_slice()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.lattice_structure.LatticeSDFStruct.tiling"><code class="docutils literal notranslate"><span class="pre">LatticeSDFStruct.tiling</span></code></a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.lattice_structure.check_tiling_input"><code class="docutils literal notranslate"><span class="pre">check_tiling_input()</span></code></a></li>

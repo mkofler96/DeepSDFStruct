@@ -1,0 +1,12 @@
+DeepSDFStruct.flexisquares.flexisquares
+=======================================
+
+.. automodule:: DeepSDFStruct.flexisquares.flexisquares
+
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      FlexiSquares
+   

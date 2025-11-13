@@ -1,0 +1,6 @@
+DeepSDFStruct.flexisquares.tables
+=================================
+
+.. automodule:: DeepSDFStruct.flexisquares.tables
+
+   
