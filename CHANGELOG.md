@@ -5,7 +5,7 @@ All notable changes to DeepSDFStruct are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [v1.3.0] - 2025-11-13
+## [v1.3.0] - 2025-11-13 - Michael Kofler
 
 ### Added
 - **2D mesh extraction capabilities**: Added flexisquares module for 2D mesh generation
@@ -34,7 +34,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [v1.2.0] - 2025-10-20
+## [v1.2.0] - 2025-10-20 - Michael Kofler
 
 ### Added
 - **Free-Form Deformation (FFD) support**: Random FFD data augmentation capability
@@ -59,7 +59,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [v1.1.0] - 2025-10-15
+## [v1.1.0] - 2025-10-15 - Michael Kofler
 
 ### Added
 - **Object file support**: Added capability to generate training data from .obj files
@@ -104,7 +104,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [v1.0.9] - 2025-09-25
+## [v1.0.9] - 2025-09-25 - Michael Kofler
 
 ### Removed
 - **Old torch spline implementation**: Cleaned up legacy torch spline code
@@ -120,7 +120,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [v1.0.8] - 2025-09-25
+## [v1.0.8] - 2025-09-25 - Michael Kofler
 
 ### Added
 - **Torch spline as nn.Module**: Major enhancement to torch_spline module
@@ -138,7 +138,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [v1.0.7] - 2025-09-25
+## [v1.0.7] - 2025-09-25 - Michael Kofler
 
 ### Changed
 - Added reconstructions directory to .gitignore to exclude generated files from version control
