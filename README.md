@@ -25,6 +25,11 @@ If you encounter issues during installation, contact Michael Kofler.
 ## 🚀 Quick Start
 An example on how to use this library can be found [here](example.ipynb).
 For the full documentation, visit [mkofler96.github.io/DeepSDFStruct/](mkofler96.github.io/DeepSDFStruct/).
+
+## 📝 Changelog
+
+For a detailed history of changes between versions, see the [CHANGELOG.md](./CHANGELOG.md).
+
 ## 🔗 Repository
 
 GitHub: [https://github.com/mkofler96/DeepSDFStruct](https://github.com/mkofler96/DeepSDFStruct)
