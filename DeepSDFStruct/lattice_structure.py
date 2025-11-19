@@ -1,3 +1,27 @@
+"""
+Lattice Structure Generation
+=============================
+
+This module provides tools for creating periodic lattice structures with
+deformable geometries. Lattices are built by tiling a unit cell (microtile)
+in a regular pattern and applying optional smooth deformations via B-splines.
+
+The main class, LatticeSDFStruct, enables creation of complex microstructured
+materials with spatially-varying properties, useful for applications in:
+- Topology optimization
+- Additive manufacturing
+- Metamaterial design
+- Lightweight structural components
+
+Key Features
+------------
+- Periodic tiling of arbitrary unit cell geometries
+- Smooth deformations via spline-based mapping
+- Spatially-varying parametrization (e.g., varying strut thickness)
+- Support for 2D and 3D lattices
+- Integration with boundary conditions and capping
+"""
+
 import logging
 
 
@@ -16,7 +40,77 @@ logger = logging.getLogger(DeepSDFStruct.__name__)
 
 
 class LatticeSDFStruct(_SDFBase):
-    """Helper class to facilitatae the construction of Lattice SDF Structures."""
+    """Helper class to facilitate the construction of periodic lattice SDF structures.
+    
+    This class creates periodic lattice structures by tiling a unit cell geometry
+    (microtile) in a regular pattern and optionally deforming the result through
+    a spline-based mapping. The microtile can be parametrized to have spatially-
+    varying properties (e.g., thickness that varies across the structure).
+    
+    The lattice is defined in parametric space [0,1]^d and can be mapped to
+    physical space through a deformation spline. Boundary conditions can be
+    applied to cap the structure at domain boundaries.
+    
+    Parameters
+    ----------
+    tiling : list of int or int, optional
+        Number of repetitions of the microtile in each parametric dimension.
+        If an int, uses the same tiling in all dimensions.
+    deformation_spline : TorchSpline, optional
+        Spline function that maps from parametric to physical space,
+        enabling smooth geometric deformations of the lattice.
+    microtile : SDFBase, optional
+        The unit cell geometry to be tiled. Should be defined in the
+        unit cube [0,1]^d.
+    parametrization : torch.nn.Module, optional
+        Function that provides spatially-varying parameters for the microtile
+        (e.g., varying strut thickness). Takes parametric coordinates and
+        returns parameter values.
+    cap_border_dict : CapBorderDict, optional
+        Dictionary specifying boundary conditions for domain faces.
+    cap_outside_of_unitcube : bool, default True
+        If True, caps geometry outside the unit cube.
+        
+    Attributes
+    ----------
+    tiling : list of int
+        Number of tiles in each dimension.
+    microtile : SDFBase
+        The unit cell geometry.
+    geometric_dim : int
+        Geometric dimensionality (2 or 3).
+    parametric_dimension : int
+        Parametric dimensionality (equal to geometric_dim).
+        
+    Notes
+    -----
+    The microtile should ideally have periodic boundary conditions to ensure
+    smooth connections between adjacent tiles. For parametrized microtiles,
+    the microtile must provide:
+    - `evaluation_points`: Points where parameters are evaluated
+    - `para_dim`: Dimensionality of the parameter space
+    - `_set_param`: Method to update parameters
+    
+    Examples
+    --------
+    >>> from DeepSDFStruct.lattice_structure import LatticeSDFStruct
+    >>> from DeepSDFStruct.sdf_primitives import SphereSDF
+    >>> from DeepSDFStruct.torch_spline import TorchSpline
+    >>> import torch
+    >>> 
+    >>> # Create a simple unit cell
+    >>> unit_cell = SphereSDF(center=[0.5, 0.5, 0.5], radius=0.3)
+    >>> 
+    >>> # Create lattice with 3x3x3 tiling
+    >>> lattice = LatticeSDFStruct(
+    ...     tiling=[3, 3, 3],
+    ...     microtile=unit_cell
+    ... )
+    >>> 
+    >>> # Query lattice SDF
+    >>> points = torch.rand(100, 3)
+    >>> distances = lattice(points)
+    """
 
     deformation_spline: _SplinepyBase
 
@@ -29,7 +123,7 @@ class LatticeSDFStruct(_SDFBase):
         cap_border_dict: CapBorderDict = None,
         cap_outside_of_unitcube: bool = True,
     ):
-        """Helper class to facilitatae the construction of microstructures.
+        """Helper class to facilitate the construction of microstructures.
 
         Parameters
         ----------

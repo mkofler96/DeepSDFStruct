@@ -1,3 +1,51 @@
+"""
+SDF Sampling and Dataset Generation
+====================================
+
+This module provides tools for sampling points from SDF representations and
+generating datasets for training neural networks (DeepSDF models). It supports
+various sampling strategies to create well-distributed training data.
+
+Key Features
+------------
+
+Sampling Strategies
+    - Uniform sampling in a bounding box
+    - Surface-focused sampling near the zero level set
+    - Importance sampling based on SDF gradients
+    - Sphere-based sampling patterns
+    - Combined strategies for balanced datasets
+
+Dataset Generation
+    - Batch processing of multiple geometries
+    - Automatic data normalization and standardization
+    - Support for multiple geometry classes
+    - Metadata tracking (version, sampling parameters)
+    - Export to formats compatible with DeepSDF training
+
+The module is designed to generate high-quality training data for implicit
+neural representations, with careful attention to sampling near surfaces
+where accurate reconstruction is most critical.
+
+Classes
+-------
+SampledSDF
+    Container for sampled points and their SDF values, with utilities
+    for splitting by sign and visualization.
+    
+DataSetInfo
+    TypedDict for dataset metadata (name, classes, sampling strategy, etc.).
+    
+Functions
+---------
+process_single_geometry
+    Process a single geometry to generate training samples.
+generate_dataset
+    Batch process multiple geometries to create a complete dataset.
+sample_sdf_*
+    Various sampling strategies for different use cases.
+"""
+
 import os
 import vtk
 import numpy as np
@@ -22,6 +70,27 @@ logger = logging.getLogger(DeepSDFStruct.__name__)
 
 
 class DataSetInfo(typing.TypedDict):
+    """Metadata for a generated SDF dataset.
+    
+    Attributes
+    ----------
+    dataset_name : str
+        Unique identifier for the dataset.
+    class_names : list of str
+        Names of geometry classes in the dataset.
+    sampling_strategy : str
+        Description of how points were sampled.
+    date_created : str
+        ISO format timestamp of dataset creation.
+    stds : list of float
+        Standard deviations used for normalization.
+    n_samples : int
+        Number of sample points per geometry.
+    add_surface_samples : bool
+        Whether surface points were included.
+    sdf_struct_version : str
+        Version of DeepSDFStruct used to create the dataset.
+    """
     dataset_name: str
     class_names: list[str]
     sampling_strategy: str
@@ -33,6 +102,7 @@ class DataSetInfo(typing.TypedDict):
 
 
 class SphereParameters(typing.TypedDict):
+    """Parameters defining a sampling sphere."""
     cx: float
     cy: float
     cz: float
@@ -40,10 +110,63 @@ class SphereParameters(typing.TypedDict):
 
 
 class SampledSDF:
+    """Container for sampled SDF points and their distance values.
+    
+    This class stores point samples and their corresponding SDF values,
+    providing utilities for data manipulation, splitting, and visualization.
+    
+    Parameters
+    ----------
+    samples : torch.Tensor
+        Point coordinates of shape (N, 3).
+    distances : torch.Tensor
+        SDF values at sample points of shape (N, 1).
+        
+    Attributes
+    ----------
+    samples : torch.Tensor
+        The sampled point coordinates.
+    distances : torch.Tensor
+        The SDF distance values.
+        
+    Methods
+    -------
+    split_pos_neg()
+        Split into separate datasets for inside (negative) and outside
+        (positive) points.
+    create_gus_plottable()
+        Convert to gustaf Vertices for visualization.
+    stacked
+        Property returning concatenated samples and distances.
+        
+    Examples
+    --------
+    >>> import torch
+    >>> from DeepSDFStruct.sampling import SampledSDF
+    >>> 
+    >>> points = torch.rand(100, 3)
+    >>> distances = torch.randn(100, 1)
+    >>> sampled = SampledSDF(points, distances)
+    >>> 
+    >>> # Split by sign
+    >>> inside, outside = sampled.split_pos_neg()
+    >>> print(f"Inside points: {inside.samples.shape[0]}")
+    >>> print(f"Outside points: {outside.samples.shape[0]}")
+    """
+    
     samples: torch.Tensor
     distances: torch.Tensor
 
     def split_pos_neg(self):
+        """Split samples into inside (negative) and outside (positive) points.
+        
+        Returns
+        -------
+        pos : SampledSDF
+            Samples with non-negative distances (outside or on surface).
+        neg : SampledSDF
+            Samples with negative distances (inside geometry).
+        """
         pos_mask = torch.where(self.distances >= 0.0)[0]
         neg_mask = torch.where(self.distances < 0.0)[0]
         pos = SampledSDF(
@@ -55,12 +178,26 @@ class SampledSDF:
         return pos, neg
 
     def create_gus_plottable(self):
+        """Create a gustaf Vertices object for visualization.
+        
+        Returns
+        -------
+        gustaf.Vertices
+            Vertices with distance values stored as vertex data.
+        """
         vp = gus.Vertices(vertices=self.samples)
         vp.vertex_data["distance"] = self.distances
         return vp
 
     @property
     def stacked(self):
+        """Concatenate samples and distances into a single tensor.
+        
+        Returns
+        -------
+        torch.Tensor
+            Tensor of shape (N, 4) with [x, y, z, distance] per row.
+        """
         return torch.hstack((self.samples, self.distances))
 
     def __init__(self, samples, distances):
@@ -68,6 +205,18 @@ class SampledSDF:
         self.distances = distances
 
     def __add__(self, other):
+        """Concatenate two SampledSDF objects.
+        
+        Parameters
+        ----------
+        other : SampledSDF
+            Another SampledSDF to concatenate.
+            
+        Returns
+        -------
+        SampledSDF
+            Combined dataset with all samples from both objects.
+        """
         return SampledSDF(
             samples=torch.vstack((self.samples, other.samples)),
             distances=torch.vstack((self.distances, other.distances)),

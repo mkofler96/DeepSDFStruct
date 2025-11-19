@@ -1,3 +1,36 @@
+"""
+Mesh Generation and Processing
+===============================
+
+This module provides comprehensive tools for generating, processing, and exporting
+meshes from SDF representations. It supports both surface (triangle) meshes and
+volume (tetrahedral) meshes, with advanced algorithms for high-quality mesh extraction.
+
+Key Capabilities
+----------------
+
+Mesh Extraction
+    - FlexiCubes: State-of-the-art dual contouring for smooth, feature-preserving 3D meshes
+    - FlexiSquares: 2D mesh extraction for cross-sections and planar geometries
+    - Marching Cubes: Traditional isosurface extraction (via skimage)
+
+Mesh Processing
+    - Tetrahedral meshing for finite element analysis
+    - Mesh cleanup and repair (disconnected regions, degenerate elements)
+    - Mesh decimation and simplification
+    - Normal computation and smoothing
+
+Export Formats
+    - VTK (.vtk) for visualization in ParaView
+    - Abaqus (.inp) for finite element analysis
+    - PLY (.ply) for general 3D interchange
+    - MFEM format for MFEM solvers
+
+The module provides both PyTorch-based mesh representations (torchLineMesh,
+torchSurfMesh, torchVolumeMesh) for differentiable operations and conversion
+to standard formats (gustaf, trimesh) for I/O and visualization.
+"""
+
 import logging
 import torch as _torch
 import torch.autograd.functional
@@ -27,6 +60,25 @@ logger = logging.getLogger(DeepSDFStruct.__name__)
 
 
 class torchLineMesh:
+    """PyTorch-based line mesh representation for differentiable operations.
+    
+    Stores line segments with vertices and connectivity, supporting
+    gradient propagation for optimization tasks.
+    
+    Parameters
+    ----------
+    vertices : torch.Tensor
+        Vertex coordinates of shape (N, 3).
+    lines : torch.Tensor
+        Line connectivity of shape (M, 2), where each row contains
+        indices into the vertices array.
+        
+    Methods
+    -------
+    to_gus()
+        Convert to gustaf Edges format for visualization and I/O.
+    """
+    
     def __init__(self, vertices: _torch.Tensor, lines: _torch.Tensor):
         self.vertices = vertices
         self.lines = lines
@@ -40,6 +92,25 @@ class torchLineMesh:
 
 
 class torchSurfMesh:
+    """PyTorch-based surface mesh representation for differentiable operations.
+    
+    Stores triangle mesh with vertices and face connectivity, supporting
+    gradient propagation for shape optimization and learning tasks.
+    
+    Parameters
+    ----------
+    vertices : torch.Tensor
+        Vertex coordinates of shape (N, 3).
+    faces : torch.Tensor
+        Triangle face connectivity of shape (M, 3), where each row
+        contains indices into the vertices array.
+        
+    Methods
+    -------
+    to_gus()
+        Convert to gustaf Faces format for visualization and I/O.
+    """
+    
     def __init__(self, vertices: _torch.Tensor, faces: _torch.Tensor):
         self.vertices = vertices
         self.faces = faces
@@ -53,6 +124,29 @@ class torchSurfMesh:
 
 
 class torchVolumeMesh:
+    """PyTorch-based volume mesh representation for differentiable operations.
+    
+    Stores tetrahedral mesh with vertices and element connectivity, supporting
+    gradient propagation through finite element analysis and other volume-based
+    operations.
+    
+    Parameters
+    ----------
+    vertices : torch.Tensor
+        Vertex coordinates of shape (N, 3).
+    volumes : torch.Tensor
+        Tetrahedral element connectivity of shape (M, 4), where each row
+        contains indices into the vertices array.
+        
+    Methods
+    -------
+    to_gus()
+        Convert to gustaf Volumes format for visualization and I/O.
+    remove_disconnected_regions(support_node, clear_unused)
+        Remove disconnected mesh components, optionally keeping only
+        the region connected to a specific node.
+    """
+    
     def __init__(self, vertices: _torch.Tensor, volumes: _torch.Tensor):
         self.vertices = vertices
         self.volumes = volumes
@@ -67,9 +161,31 @@ class torchVolumeMesh:
     def remove_disconnected_regions(
         self, support_node: int | None = None, clear_unused=True
     ):
-        """
-        Removes disconnected parts
-        for now, unreferenced vertices are kept
+        """Remove disconnected parts from the mesh.
+        
+        Uses graph connectivity analysis to identify and remove mesh regions
+        that are not connected to the main component or a specified support node.
+        Useful for cleaning up meshes after optimization or level set extraction.
+        
+        Parameters
+        ----------
+        support_node : int, optional
+            If specified, keeps only the connected component containing this
+            vertex index. If None, keeps the largest component.
+        clear_unused : bool, default True
+            If True, removes unreferenced vertices after pruning elements.
+            
+        Raises
+        ------
+        NotImplementedError
+            If mesh contains non-tetrahedral elements.
+        ValueError
+            If support_node is out of range.
+            
+        Notes
+        -----
+        Currently only supports tetrahedral elements (4 nodes per element).
+        For now, unreferenced vertices are kept even when clear_unused=True.
         """
         if self.volumes.shape[1] != 4:
             raise NotImplementedError("Cleanup only supports tetrahedral elements yet.")
@@ -346,7 +462,73 @@ def _prepare_flexicubes_querypoints(
 
 def create_3D_mesh(
     sdf: SDFBase, N_base, mesh_type: str, differentiate=False, device="cpu", bounds=None
-) -> Tuple[Union[torchSurfMesh, torchVolumeMesh], Optional[torch.Tensor]]:
+) -> Tuple[Union[torchSurfMesh, torchVolumeMesh], Optional[_torch.Tensor]]:
+    """Generate a 3D mesh from an SDF using FlexiCubes dual contouring.
+    
+    This is the main entry point for extracting high-quality meshes from SDF
+    representations. It uses the FlexiCubes algorithm, which produces smooth,
+    feature-preserving meshes that are superior to marching cubes.
+    
+    The function supports both surface meshes (triangles) and volume meshes
+    (tetrahedra) and can compute gradients for optimization if requested.
+    
+    Parameters
+    ----------
+    sdf : SDFBase
+        The signed distance function to mesh. Can be any SDFBase subclass
+        including primitives, lattice structures, or learned representations.
+    N_base : int or list of int
+        Base resolution per unit cell. If an int, uses the same resolution
+        in all dimensions. If a list, specifies resolution [nx, ny, nz].
+        For lattice structures, the total resolution is N_base * tiling.
+    mesh_type : {'surface', 'volume'}
+        Type of mesh to generate:
+        - 'surface': Triangle surface mesh (torchSurfMesh)
+        - 'volume': Tetrahedral volume mesh (torchVolumeMesh)
+    differentiate : bool, default False
+        If True, computes and returns gradients of vertex positions with
+        respect to SDF parameters, enabling gradient-based optimization.
+    device : str, default 'cpu'
+        Device for computation ('cpu' or 'cuda').
+    bounds : array-like of shape (2, 3), optional
+        Spatial bounds [[xmin, ymin, zmin], [xmax, ymax, zmax]].
+        If None, uses the SDF's domain bounds.
+        
+    Returns
+    -------
+    mesh : torchSurfMesh or torchVolumeMesh
+        The extracted mesh with vertices and connectivity.
+    dVerts_dParams : torch.Tensor or None
+        If differentiate=True, returns gradients of vertex positions with
+        respect to parameters. Otherwise returns None.
+        
+    Examples
+    --------
+    >>> from DeepSDFStruct.sdf_primitives import SphereSDF
+    >>> from DeepSDFStruct.mesh import create_3D_mesh
+    >>> 
+    >>> # Create a sphere SDF
+    >>> sphere = SphereSDF(center=[0, 0, 0], radius=1.0)
+    >>> 
+    >>> # Extract surface mesh
+    >>> mesh, _ = create_3D_mesh(sphere, N_base=64, mesh_type='surface')
+    >>> print(f"Vertices: {mesh.vertices.shape}")
+    >>> print(f"Faces: {mesh.faces.shape}")
+    >>> 
+    >>> # Extract volume mesh for FEA
+    >>> vol_mesh, _ = create_3D_mesh(sphere, N_base=32, mesh_type='volume')
+    >>> print(f"Tetrahedra: {vol_mesh.volumes.shape}")
+    
+    Notes
+    -----
+    FlexiCubes produces higher quality meshes than marching cubes by:
+    - Using flexible vertex positions within each cube
+    - Preserving sharp features and corners
+    - Minimizing mesh artifacts and degeneracies
+    
+    For lattice structures, the resolution is automatically scaled by the
+    tiling factor to maintain consistent resolution per unit cell.
+    """
     if type(sdf) is LatticeSDFStruct:
         tiling = _torch.tensor(sdf.tiling)
     else:
