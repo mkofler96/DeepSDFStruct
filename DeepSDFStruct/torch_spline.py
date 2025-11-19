@@ -1,3 +1,69 @@
+"""
+PyTorch-Compatible B-Spline Operations
+=======================================
+
+This module provides differentiable B-spline evaluation using PyTorch,
+enabling spline-based deformations and parametrizations in gradient-based
+optimization workflows.
+
+Key Features
+------------
+
+TorchSpline Class
+    Main interface for PyTorch-compatible spline evaluation. Wraps splinepy
+    splines and provides forward evaluation with automatic differentiation
+    support.
+
+Low-level Functions
+    - torch_spline_1D: Evaluate 1D B-splines using de Boor's algorithm
+    - torch_spline_2D: Evaluate 2D tensor product B-splines
+    - torch_spline_3D: Evaluate 3D tensor product B-splines
+    - bspline_basis: Compute B-spline basis functions
+
+The implementation uses vectorized de Boor's algorithm for efficient
+batch evaluation on GPU. All operations are differentiable with respect
+to control points and query coordinates.
+
+Examples
+--------
+Create and evaluate a TorchSpline::
+
+    import splinepy
+    import torch
+    from DeepSDFStruct.torch_spline import TorchSpline
+    
+    # Create a splinepy B-spline
+    spline = splinepy.BSpline(
+        degrees=[2, 2, 2],
+        control_points=torch.rand(27, 3),
+        knot_vectors=[
+            [0, 0, 0, 1, 1, 1],
+            [0, 0, 0, 1, 1, 1],
+            [0, 0, 0, 1, 1, 1]
+        ]
+    )
+    
+    # Wrap in TorchSpline
+    torch_spline = TorchSpline(spline, device='cuda')
+    
+    # Evaluate at query points
+    queries = torch.rand(1000, 3, device='cuda')
+    values = torch_spline(queries)
+    
+    # Compute gradients
+    values.sum().backward()
+    print(torch_spline.control_points.grad)
+
+Notes
+-----
+The module supports:
+- B-splines (non-rational)
+- NURBS (rational B-splines)
+- Bezier splines (special case of B-splines)
+- 1D, 2D, and 3D parametric dimensions
+- Arbitrary output dimensions
+"""
+
 import torch
 import splinepy as sp
 import numpy as np
