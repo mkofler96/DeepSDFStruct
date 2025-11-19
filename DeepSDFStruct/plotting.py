@@ -1,3 +1,22 @@
+"""
+Visualization and Plotting Utilities
+=====================================
+
+This module provides utilities for visualizing SDF representations, particularly
+for creating 2D cross-sectional views of 3D signed distance functions.
+
+Functions
+---------
+plot_slice
+    Create a contour plot of an SDF on a 2D plane slice.
+generate_plane_points
+    Generate a regular grid of points on a plane in 3D space.
+
+The primary use case is visualizing SDF values on axis-aligned planes
+to understand the geometry and verify correctness during development
+and debugging.
+"""
+
 import matplotlib.pyplot as plt
 import numpy as np
 import torch
@@ -15,6 +34,66 @@ def plot_slice(
     cmap="seismic",
     show_zero_level=True,
 ):
+    """Plot a 2D slice through an SDF as a contour plot.
+    
+    This function evaluates an SDF on a planar grid and visualizes the
+    signed distance values using a color map. The zero level set (the
+    actual surface) can be highlighted with a contour line.
+    
+    Parameters
+    ----------
+    fun : callable
+        The SDF function to visualize. Should accept a torch.Tensor
+        of shape (N, 3) and return distances of shape (N, 1).
+    origin : tuple of float, default (0, 0, 0)
+        A point on the slice plane.
+    normal : tuple of float, default (0, 0, 1)
+        Normal vector of the slice plane. Currently supports only
+        axis-aligned planes: (1,0,0), (0,1,0), or (0,0,1).
+    res : tuple of int, default (100, 100)
+        Resolution of the slice grid (num_points_u, num_points_v).
+    ax : matplotlib.axes.Axes, optional
+        Axes to plot on. If None, creates a new figure.
+    xlim : tuple of float, default (-1, 1)
+        Range along the first plane axis.
+    ylim : tuple of float, default (-1, 1)
+        Range along the second plane axis.
+    clim : tuple of float, default (-1, 1)
+        Color map limits for distance values.
+    cmap : str, default 'seismic'
+        Matplotlib colormap name.
+    show_zero_level : bool, default True
+        If True, draws a black contour line at distance=0 (the surface).
+        
+    Returns
+    -------
+    fig, ax : matplotlib.figure.Figure, matplotlib.axes.Axes
+        Only returned if ax was None (i.e., a new figure was created).
+        
+    Examples
+    --------
+    >>> from DeepSDFStruct.sdf_primitives import SphereSDF
+    >>> from DeepSDFStruct.plotting import plot_slice
+    >>> import matplotlib.pyplot as plt
+    >>> 
+    >>> # Create a sphere
+    >>> sphere = SphereSDF(center=[0, 0, 0], radius=0.5)
+    >>> 
+    >>> # Plot XY slice at z=0
+    >>> fig, ax = plot_slice(
+    ...     sphere,
+    ...     origin=(0, 0, 0),
+    ...     normal=(0, 0, 1),
+    ...     res=(200, 200)
+    ... )
+    >>> plt.title("XY Slice of Sphere")
+    >>> plt.show()
+    
+    Notes
+    -----
+    The 'seismic' colormap is well-suited for SDFs as it uses blue for
+    negative (inside) and red for positive (outside), with white near zero.
+    """
     plt_show = False
     if ax is None:
         fig, ax = plt.subplots()
@@ -43,18 +122,62 @@ def plot_slice(
 
 
 def generate_plane_points(origin, normal, res, xlim, ylim):
-    """
-    Generates evenly spaced points on a plane.
-
-    Parameters:
-    origin (array-like): A point on the plane (3D vector).
-    normal (array-like): Normal vector of the plane (3D vector).
-    num_points_u (int): Number of points along the first direction (u-axis).
-    num_points_v (int): Number of points along the second direction (v-axis).
-    spacing (float): Distance between adjacent points.
-
-    Returns:
-    points (numpy.ndarray): Array of points on the plane of shape (num_points_u * num_points_v, 3).
+    """Generate evenly spaced points on a plane in 3D space.
+    
+    Creates a regular grid of points on a plane defined by a point and normal
+    vector. The grid is axis-aligned in the plane's local coordinate system.
+    
+    Parameters
+    ----------
+    origin : array-like of shape (3,)
+        A point on the plane (3D vector).
+    normal : array-like of shape (3,)
+        Normal vector of the plane (3D vector). Currently supports only
+        axis-aligned normals: [1,0,0], [0,1,0], or [0,0,1].
+    res : tuple of int
+        Grid resolution (num_points_u, num_points_v).
+    xlim : tuple of float
+        Range along the first plane axis (umin, umax).
+    ylim : tuple of float
+        Range along the second plane axis (vmin, vmax).
+        
+    Returns
+    -------
+    points : np.ndarray of shape (num_points_u * num_points_v, 3)
+        3D coordinates of grid points.
+    u : np.ndarray of shape (num_points_u * num_points_v,)
+        First plane coordinate for each point.
+    v : np.ndarray of shape (num_points_u * num_points_v,)
+        Second plane coordinate for each point.
+        
+    Raises
+    ------
+    NotImplementedError
+        If normal is not axis-aligned.
+        
+    Examples
+    --------
+    >>> from DeepSDFStruct.plotting import generate_plane_points
+    >>> import numpy as np
+    >>> 
+    >>> # Generate points on XY plane at z=0.5
+    >>> points, u, v = generate_plane_points(
+    ...     origin=[0, 0, 0.5],
+    ...     normal=[0, 0, 1],
+    ...     res=(10, 10),
+    ...     xlim=(-1, 1),
+    ...     ylim=(-1, 1)
+    ... )
+    >>> print(points.shape)  # (100, 3)
+    >>> print(np.allclose(points[:, 2], 0.5))  # True (all on z=0.5 plane)
+    
+    Notes
+    -----
+    The function determines two orthogonal axes (u and v) in the plane
+    based on the normal vector. For axis-aligned planes:
+    - Normal [0,0,1] (XY plane): u=[1,0,0], v=[0,1,0]
+    - Normal [0,1,0] (XZ plane): u=[1,0,0], v=[0,0,1]
+    - Normal [1,0,0] (YZ plane): u=[0,1,0], v=[0,0,1]
     """
     normal = np.array(normal)
     normal = normal / np.linalg.norm(normal)
