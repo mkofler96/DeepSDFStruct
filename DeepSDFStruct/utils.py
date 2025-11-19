@@ -1,8 +1,53 @@
+"""
+Utility Functions
+=================
+
+This module provides general utility functions used throughout DeepSDFStruct,
+including logging configuration and color scheme definitions.
+
+Functions
+---------
+configure_logging
+    Set up logging for the DeepSDFStruct package with customizable
+    output format and destinations.
+
+Constants
+---------
+_TUWIEN_COLOR_SCHEME
+    TU Wien corporate color scheme for consistent visualization styling.
+"""
+
 import logging
 import DeepSDFStruct
 
 
 def configure_logging(level=logging.INFO, logfile=None):
+    """Configure logging for the DeepSDFStruct package.
+    
+    Sets up a logger with a standard format and optional file output.
+    This is called automatically when DeepSDFStruct is imported.
+    
+    Parameters
+    ----------
+    level : int, default logging.INFO
+        Logging level (e.g., logging.DEBUG, logging.INFO, logging.WARNING).
+    logfile : str, optional
+        Path to log file. If provided, logs are written to both console
+        and file. If None, logs only to console.
+        
+    Examples
+    --------
+    >>> from DeepSDFStruct.utils import configure_logging
+    >>> import logging
+    >>> 
+    >>> # Set debug level and log to file
+    >>> configure_logging(level=logging.DEBUG, logfile='deepsdf.log')
+    
+    Notes
+    -----
+    The log format is: "HH:MM:SS message"
+    All log messages are prefixed with a timestamp for easy debugging.
+    """
     logger = logging.getLogger(DeepSDFStruct.__name__)
     logger.setLevel(level)
 
@@ -17,6 +62,13 @@ def configure_logging(level=logging.INFO, logfile=None):
         logger.addHandler(file_logger_handler)
 
 
+#: TU Wien corporate color scheme
+#: 
+#: Dictionary mapping color names to RGB tuples (0-255 range).
+#: Includes primary colors (blue, black, white) and secondary colors
+#: (green, magenta, yellow, grey) with multiple shades of each.
+#: 
+#: Useful for creating plots and visualizations with consistent branding.
 _TUWIEN_COLOR_SCHEME = {
     "blue": (0, 102, 153),
     "black": (0, 0, 0),
