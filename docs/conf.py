@@ -5,12 +5,17 @@
 
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
-from importlib.metadata import version as package_version
 
 project = "DeepSDFStruct"
 copyright = "2025, Michael Kofler"
 author = "Michael Kofler"
-release = str(package_version("DeepSDFStruct"))
+
+# Try to get version from package, fallback to default if not installed
+try:
+    from importlib.metadata import version as package_version
+    release = str(package_version("DeepSDFStruct"))
+except Exception:
+    release = "1.3.1"
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
