@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>DeepSDFStruct.plotting &#8212; DeepSDFStruct 1.1.1.dev23+g6170b62c2 documentation</title>
+    <title>DeepSDFStruct.plotting &#8212; DeepSDFStruct 1.3.1.dev6+g429a410c6 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=16cb862e"></script>
+    <script src="../../_static/documentation_options.js?v=013e8d0b"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'source/generated/DeepSDFStruct.plotting';</script>
@@ -110,7 +110,7 @@
   
   
   
-    <p class="title logo__title">DeepSDFStruct 1.1.1.dev23+g6170b62c2 documentation</p>
+    <p class="title logo__title">DeepSDFStruct 1.3.1.dev6+g429a410c6 documentation</p>
   
 </a></div>
     
@@ -354,14 +354,31 @@
                   
   <section id="module-DeepSDFStruct.plotting">
 <span id="deepsdfstruct-plotting"></span><h1>DeepSDFStruct.plotting<a class="headerlink" href="#module-DeepSDFStruct.plotting" title="Link to this heading">#</a></h1>
+<section id="visualization-and-plotting-utilities">
+<h2>Visualization and Plotting Utilities<a class="headerlink" href="#visualization-and-plotting-utilities" title="Link to this heading">#</a></h2>
+<p>This module provides utilities for visualizing SDF representations, particularly
+for creating 2D cross-sectional views of 3D signed distance functions.</p>
+<section id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Link to this heading">#</a></h3>
+<dl class="simple">
+<dt>plot_slice</dt><dd><p>Create a contour plot of an SDF on a 2D plane slice.</p>
+</dd>
+<dt>generate_plane_points</dt><dd><p>Generate a regular grid of points on a plane in 3D space.</p>
+</dd>
+</dl>
+<p>The primary use case is visualizing SDF values on axis-aligned planes
+to understand the geometry and verify correctness during development
+and debugging.</p>
+</section>
+</section>
 <p class="rubric">Functions</p>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.plotting.generate_plane_points" title="DeepSDFStruct.plotting.generate_plane_points"><code class="xref py py-obj docutils literal notranslate"><span class="pre">generate_plane_points</span></code></a>(origin, normal, res, ...)</p></td>
-<td><p>Generates evenly spaced points on a plane.</p></td>
+<td><p>Generate evenly spaced points on a plane in 3D space.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.plotting.plot_slice" title="DeepSDFStruct.plotting.plot_slice"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_slice</span></code></a>(fun[, origin, normal, res, ax, ...])</p></td>
-<td><p></p></td>
+<td><p>Plot a 2D slice through an SDF as a contour plot.</p></td>
 </tr>
 </tbody>
 </table>
@@ -369,21 +386,110 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="DeepSDFStruct.plotting.generate_plane_points">
 <span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.plotting.</span></span><span class="sig-name descname"><span class="pre">generate_plane_points</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">origin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normal</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">res</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xlim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylim</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.plotting.generate_plane_points" title="Link to this definition">#</a></dt>
-<dd><p>Generates evenly spaced points on a plane.</p>
-<p>Parameters:
-origin (array-like): A point on the plane (3D vector).
-normal (array-like): Normal vector of the plane (3D vector).
-num_points_u (int): Number of points along the first direction (u-axis).
-num_points_v (int): Number of points along the second direction (v-axis).
-spacing (float): Distance between adjacent points.</p>
-<p>Returns:
-points (numpy.ndarray): Array of points on the plane of shape (num_points_u * num_points_v, 3).</p>
+<dd><p>Generate evenly spaced points on a plane in 3D space.</p>
+<p>Creates a regular grid of points on a plane defined by a point and normal
+vector. The grid is axis-aligned in the plane’s local coordinate system.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>origin</strong> (<em>array-like</em><em> of </em><em>shape</em><em> (</em><em>3</em><em>,</em><em>)</em>) – A point on the plane (3D vector).</p></li>
+<li><p><strong>normal</strong> (<em>array-like</em><em> of </em><em>shape</em><em> (</em><em>3</em><em>,</em><em>)</em>) – Normal vector of the plane (3D vector). Currently supports only
+axis-aligned normals: [1,0,0], [0,1,0], or [0,0,1].</p></li>
+<li><p><strong>res</strong> (<em>tuple</em><em> of </em><em>int</em>) – Grid resolution (num_points_u, num_points_v).</p></li>
+<li><p><strong>xlim</strong> (<em>tuple</em><em> of </em><em>float</em>) – Range along the first plane axis (umin, umax).</p></li>
+<li><p><strong>ylim</strong> (<em>tuple</em><em> of </em><em>float</em>) – Range along the second plane axis (vmin, vmax).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>points</strong> (<em>np.ndarray of shape (num_points_u * num_points_v, 3)</em>) – 3D coordinates of grid points.</p></li>
+<li><p><strong>u</strong> (<em>np.ndarray of shape (num_points_u * num_points_v,)</em>) – First plane coordinate for each point.</p></li>
+<li><p><strong>v</strong> (<em>np.ndarray of shape (num_points_u * num_points_v,)</em>) – Second plane coordinate for each point.</p></li>
+</ul>
+</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>NotImplementedError</strong> – If normal is not axis-aligned.</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">DeepSDFStruct.plotting</span><span class="w"> </span><span class="kn">import</span> <span class="n">generate_plane_points</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Generate points on XY plane at z=0.5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">points</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span> <span class="o">=</span> <span class="n">generate_plane_points</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">origin</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span>
+<span class="gp">... </span>    <span class="n">normal</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+<span class="gp">... </span>    <span class="n">res</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="n">xlim</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="n">ylim</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">points</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>  <span class="c1"># (100, 3)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">points</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">],</span> <span class="mf">0.5</span><span class="p">))</span>  <span class="c1"># True (all on z=0.5 plane)</span>
+</pre></div>
+</div>
+<p class="rubric">Notes</p>
+<p>The function determines two orthogonal axes (u and v) in the plane
+based on the normal vector. For axis-aligned planes:
+- Normal [0,0,1] (XY plane): u=[1,0,0], v=[0,1,0]
+- Normal [0,1,0] (XZ plane): u=[1,0,0], v=[0,0,1]
+- Normal [1,0,0] (YZ plane): u=[0,1,0], v=[0,0,1]</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="DeepSDFStruct.plotting.plot_slice">
 <span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.plotting.</span></span><span class="sig-name descname"><span class="pre">plot_slice</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fun</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">origin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0,</span> <span class="pre">0,</span> <span class="pre">0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0,</span> <span class="pre">0,</span> <span class="pre">1)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">res</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(100,</span> <span class="pre">100)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xlim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(-1,</span> <span class="pre">1)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(-1,</span> <span class="pre">1)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(-1,</span> <span class="pre">1)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'seismic'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_zero_level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.plotting.plot_slice" title="Link to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><p>Plot a 2D slice through an SDF as a contour plot.</p>
+<p>This function evaluates an SDF on a planar grid and visualizes the
+signed distance values using a color map. The zero level set (the
+actual surface) can be highlighted with a contour line.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fun</strong> (<em>callable</em>) – The SDF function to visualize. Should accept a torch.Tensor
+of shape (N, 3) and return distances of shape (N, 1).</p></li>
+<li><p><strong>origin</strong> (<em>tuple</em><em> of </em><em>float</em><em>, </em><em>default</em><em> (</em><em>0</em><em>, </em><em>0</em><em>, </em><em>0</em><em>)</em>) – A point on the slice plane.</p></li>
+<li><p><strong>normal</strong> (<em>tuple</em><em> of </em><em>float</em><em>, </em><em>default</em><em> (</em><em>0</em><em>, </em><em>0</em><em>, </em><em>1</em><em>)</em>) – Normal vector of the slice plane. Currently supports only
+axis-aligned planes: (1,0,0), (0,1,0), or (0,0,1).</p></li>
+<li><p><strong>res</strong> (<em>tuple</em><em> of </em><em>int</em><em>, </em><em>default</em><em> (</em><em>100</em><em>, </em><em>100</em><em>)</em>) – Resolution of the slice grid (num_points_u, num_points_v).</p></li>
+<li><p><strong>ax</strong> (<em>matplotlib.axes.Axes</em><em>, </em><em>optional</em>) – Axes to plot on. If None, creates a new figure.</p></li>
+<li><p><strong>xlim</strong> (<em>tuple</em><em> of </em><em>float</em><em>, </em><em>default</em><em> (</em><em>-1</em><em>, </em><em>1</em><em>)</em>) – Range along the first plane axis.</p></li>
+<li><p><strong>ylim</strong> (<em>tuple</em><em> of </em><em>float</em><em>, </em><em>default</em><em> (</em><em>-1</em><em>, </em><em>1</em><em>)</em>) – Range along the second plane axis.</p></li>
+<li><p><strong>clim</strong> (<em>tuple</em><em> of </em><em>float</em><em>, </em><em>default</em><em> (</em><em>-1</em><em>, </em><em>1</em><em>)</em>) – Color map limits for distance values.</p></li>
+<li><p><strong>cmap</strong> (<em>str</em><em>, </em><em>default 'seismic'</em>) – Matplotlib colormap name.</p></li>
+<li><p><strong>show_zero_level</strong> (<em>bool</em><em>, </em><em>default True</em>) – If True, draws a black contour line at distance=0 (the surface).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>fig, ax</strong> – Only returned if ax was None (i.e., a new figure was created).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>matplotlib.figure.Figure, matplotlib.axes.Axes</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">DeepSDFStruct.sdf_primitives</span><span class="w"> </span><span class="kn">import</span> <span class="n">SphereSDF</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">DeepSDFStruct.plotting</span><span class="w"> </span><span class="kn">import</span> <span class="n">plot_slice</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Create a sphere</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sphere</span> <span class="o">=</span> <span class="n">SphereSDF</span><span class="p">(</span><span class="n">center</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">radius</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Plot XY slice at z=0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plot_slice</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">sphere</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">origin</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="n">normal</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="n">res</span><span class="o">=</span><span class="p">(</span><span class="mi">200</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;XY Slice of Sphere&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p class="rubric">Notes</p>
+<p>The ‘seismic’ colormap is well-suited for SDFs as it uses blue for
+negative (inside) and red for positive (outside), with white near zero.</p>
+</dd></dl>
 
 </section>
 
@@ -434,6 +540,10 @@ points (numpy.ndarray): Array of points on the plane of shape (num_points_u * nu
   </div>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#visualization-and-plotting-utilities">Visualization and Plotting Utilities</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#functions">Functions</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.plotting.generate_plane_points"><code class="docutils literal notranslate"><span class="pre">generate_plane_points()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.plotting.plot_slice"><code class="docutils literal notranslate"><span class="pre">plot_slice()</span></code></a></li>
 </ul>

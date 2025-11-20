@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>DeepSDFStruct.deep_sdf &#8212; DeepSDFStruct 1.1.1.dev23+g6170b62c2 documentation</title>
+    <title>DeepSDFStruct.deep_sdf &#8212; DeepSDFStruct 1.3.1.dev6+g429a410c6 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=16cb862e"></script>
+    <script src="../../_static/documentation_options.js?v=013e8d0b"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'source/generated/DeepSDFStruct.deep_sdf';</script>
@@ -110,7 +110,7 @@
   
   
   
-    <p class="title logo__title">DeepSDFStruct 1.1.1.dev23+g6170b62c2 documentation</p>
+    <p class="title logo__title">DeepSDFStruct 1.3.1.dev6+g429a410c6 documentation</p>
   
 </a></div>
     
@@ -354,6 +354,71 @@
                   
   <section id="module-DeepSDFStruct.deep_sdf">
 <span id="deepsdfstruct-deep-sdf"></span><h1>DeepSDFStruct.deep_sdf<a class="headerlink" href="#module-DeepSDFStruct.deep_sdf" title="Link to this heading">#</a></h1>
+<section id="deep-learning-for-signed-distance-functions-deepsdf">
+<h2>Deep Learning for Signed Distance Functions (DeepSDF)<a class="headerlink" href="#deep-learning-for-signed-distance-functions-deepsdf" title="Link to this heading">#</a></h2>
+<p>This submodule implements the DeepSDF approach for learning implicit neural
+representations of 3D geometry. It provides complete workflows for:</p>
+<ul class="simple">
+<li><p>Training neural networks to represent geometry as learned SDFs</p></li>
+<li><p>Generating datasets from explicit geometry</p></li>
+<li><p>Reconstructing shapes from latent codes</p></li>
+<li><p>Optimizing latent codes for shape fitting</p></li>
+</ul>
+<p>The implementation is based on “DeepSDF: Learning Continuous Signed Distance
+Functions for Shape Representation” (Park et al., CVPR 2019) with extensions
+for microstructured materials and lattice geometries.</p>
+<section id="key-components">
+<h3>Key Components<a class="headerlink" href="#key-components" title="Link to this heading">#</a></h3>
+<dl class="simple">
+<dt>models.py</dt><dd><p>DeepSDFModel class wrapping trained decoder networks and latent codes.</p>
+</dd>
+<dt>training.py</dt><dd><p>Complete training pipeline including loss functions, learning rate
+schedules, and training loops.</p>
+</dd>
+<dt>data.py</dt><dd><p>Dataset classes for loading and batching SDF samples.</p>
+</dd>
+<dt>reconstruction.py</dt><dd><p>Methods for fitting latent codes to target geometries.</p>
+</dd>
+<dt>workspace.py</dt><dd><p>Utilities for managing experiments, checkpoints, and results.</p>
+</dd>
+<dt>networks/</dt><dd><p>Neural network architectures (decoders, hierarchical models).</p>
+</dd>
+</dl>
+</section>
+<section id="typical-workflow">
+<h3>Typical Workflow<a class="headerlink" href="#typical-workflow" title="Link to this heading">#</a></h3>
+<ol class="arabic">
+<li><p>Generate training data from explicit geometries:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">DeepSDFStruct.sampling</span><span class="w"> </span><span class="kn">import</span> <span class="n">generate_dataset</span>
+<span class="n">generate_dataset</span><span class="p">(</span><span class="n">geometries</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">,</span> <span class="n">n_samples</span><span class="o">=</span><span class="mi">500000</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p>Train a DeepSDF model:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">DeepSDFStruct.deep_sdf</span><span class="w"> </span><span class="kn">import</span> <span class="n">training</span>
+<span class="n">training</span><span class="o">.</span><span class="n">main</span><span class="p">(</span><span class="n">specs</span><span class="p">)</span>  <span class="c1"># specs define architecture, training params</span>
+</pre></div>
+</div>
+</li>
+<li><p>Use the trained model:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">DeepSDFStruct.SDF</span><span class="w"> </span><span class="kn">import</span> <span class="n">SDFfromDeepSDF</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">DeepSDFStruct.deep_sdf.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">DeepSDFModel</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">DeepSDFModel</span><span class="p">(</span><span class="n">decoder</span><span class="p">,</span> <span class="n">latent_vectors</span><span class="p">,</span> <span class="n">device</span><span class="p">)</span>
+<span class="n">sdf</span> <span class="o">=</span> <span class="n">SDFfromDeepSDF</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">latent_code</span><span class="o">=</span><span class="n">latent_vectors</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+</pre></div>
+</div>
+</li>
+<li><p>Reconstruct new shapes:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">DeepSDFStruct.deep_sdf</span><span class="w"> </span><span class="kn">import</span> <span class="n">reconstruction</span>
+<span class="n">latent_code</span> <span class="o">=</span> <span class="n">reconstruction</span><span class="o">.</span><span class="n">reconstruct</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">target_sdf</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+</ol>
+<p>For complete examples, see the example notebook and test files.</p>
+</section>
+</section>
 <p class="rubric">Modules</p>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
@@ -364,7 +429,7 @@
 <td><p></p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="DeepSDFStruct.deep_sdf.models.html#module-DeepSDFStruct.deep_sdf.models" title="DeepSDFStruct.deep_sdf.models"><code class="xref py py-obj docutils literal notranslate"><span class="pre">models</span></code></a></p></td>
-<td><p></p></td>
+<td><p>DeepSDF Model Classes</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="DeepSDFStruct.deep_sdf.networks.html#module-DeepSDFStruct.deep_sdf.networks" title="DeepSDFStruct.deep_sdf.networks"><code class="xref py py-obj docutils literal notranslate"><span class="pre">networks</span></code></a></p></td>
 <td><p></p></td>
@@ -424,6 +489,22 @@
                 <dialog id="pst-secondary-sidebar-modal"></dialog>
                 <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#deep-learning-for-signed-distance-functions-deepsdf">Deep Learning for Signed Distance Functions (DeepSDF)</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#key-components">Key Components</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#typical-workflow">Typical Workflow</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
 
   <div class="sidebar-secondary-item">
   <div role="note" aria-label="source link">

@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>DeepSDFStruct.optimization &#8212; DeepSDFStruct 1.1.1.dev23+g6170b62c2 documentation</title>
+    <title>DeepSDFStruct.optimization &#8212; DeepSDFStruct 1.3.1.dev6+g429a410c6 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=16cb862e"></script>
+    <script src="../../_static/documentation_options.js?v=013e8d0b"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'source/generated/DeepSDFStruct.optimization';</script>
@@ -110,7 +110,7 @@
   
   
   
-    <p class="title logo__title">DeepSDFStruct 1.1.1.dev23+g6170b62c2 documentation</p>
+    <p class="title logo__title">DeepSDFStruct 1.3.1.dev6+g429a410c6 documentation</p>
   
 </a></div>
     
@@ -354,14 +354,49 @@
                   
   <section id="module-DeepSDFStruct.optimization">
 <span id="deepsdfstruct-optimization"></span><h1>DeepSDFStruct.optimization<a class="headerlink" href="#module-DeepSDFStruct.optimization" title="Link to this heading">#</a></h1>
+<section id="structural-optimization-utilities">
+<h2>Structural Optimization Utilities<a class="headerlink" href="#structural-optimization-utilities" title="Link to this heading">#</a></h2>
+<p>This module provides tools for gradient-based optimization of SDF-based geometries,
+with a focus on structural design problems. It integrates with TorchFEM for
+finite element analysis and provides optimization algorithms suitable for
+constrained design problems.</p>
+<section id="key-features">
+<h3>Key Features<a class="headerlink" href="#key-features" title="Link to this heading">#</a></h3>
+<dl class="simple">
+<dt>MMA Optimizer</dt><dd><p>Implementation of the Method of Moving Asymptotes (MMA), a gradient-based
+algorithm well-suited for structural optimization with nonlinear constraints.
+MMA is particularly effective for:
+- Topology optimization
+- Shape optimization with constraints
+- Problems with expensive objective evaluations
+- Highly nonlinear design spaces</p>
+</dd>
+<dt>Finite Element Integration</dt><dd><ul class="simple">
+<li><p>Conversion between TorchFEM and PyVista mesh formats</p></li>
+<li><p>Support for tetrahedral and hexahedral elements</p></li>
+<li><p>Linear and quadratic element types</p></li>
+<li><p>Integration with gradient computation</p></li>
+</ul>
+</dd>
+<dt>Mesh Quality Utilities</dt><dd><ul class="simple">
+<li><p>Signed volume computation for tetrahedra</p></li>
+<li><p>Mesh quality metrics</p></li>
+<li><p>Degeneracy detection</p></li>
+</ul>
+</dd>
+</dl>
+<p>The module is designed to work seamlessly with differentiable SDF representations,
+enabling gradient-based optimization of complex 3D structures.</p>
+</section>
+</section>
 <p class="rubric">Functions</p>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.optimization.get_mesh_from_torchfem" title="DeepSDFStruct.optimization.get_mesh_from_torchfem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_mesh_from_torchfem</span></code></a>(Solid)</p></td>
-<td><p></p></td>
+<td><p>Convert a TorchFEM Solid mesh to PyVista UnstructuredGrid.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.optimization.tet_signed_vol" title="DeepSDFStruct.optimization.tet_signed_vol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tet_signed_vol</span></code></a>(vertices, tets)</p></td>
-<td><p></p></td>
+<td><p>Compute signed volumes of tetrahedral elements.</p></td>
 </tr>
 </tbody>
 </table>
@@ -370,7 +405,7 @@
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.optimization.MMA" title="DeepSDFStruct.optimization.MMA"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MMA</span></code></a>(parameters, bounds[, max_step])</p></td>
-<td><p></p></td>
+<td><p>Method of Moving Asymptotes (MMA) optimizer for constrained problems.</p></td>
 </tr>
 </tbody>
 </table>
@@ -379,30 +414,239 @@
 <dt class="sig sig-object py" id="DeepSDFStruct.optimization.MMA">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.optimization.</span></span><span class="sig-name descname"><span class="pre">MMA</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parameters</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bounds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_step</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.optimization.MMA" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Method of Moving Asymptotes (MMA) optimizer for constrained problems.</p>
+<p>MMA is a gradient-based optimization algorithm designed for nonlinear
+constrained problems. It constructs convex subproblems using moving
+asymptotes and is particularly effective for structural optimization.</p>
+<p>The optimizer handles a single objective function and a single constraint,
+with box bounds on design variables. It automatically normalizes the
+objective by its initial value for better numerical behavior.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>parameters</strong> (<em>torch.Tensor</em>) – Initial design variables (will be optimized in-place).</p></li>
+<li><p><strong>bounds</strong> (<em>array-like</em><em> of </em><em>shape</em><em> (</em><em>n</em><em>, </em><em>2</em><em>)</em>) – Box constraints [[lower_1, upper_1], …, [lower_n, upper_n]]
+for each design variable.</p></li>
+<li><p><strong>max_step</strong> (<em>float</em><em>, </em><em>default 0.1</em>) – Maximum allowed change in design variables per iteration,
+as a fraction of the bound range.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="DeepSDFStruct.optimization.MMA.parameters">
+<span class="sig-name descname"><span class="pre">parameters</span></span><a class="headerlink" href="#DeepSDFStruct.optimization.MMA.parameters" title="Link to this definition">#</a></dt>
+<dd><p>Current design variables (updated in-place each iteration).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>torch.Tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="DeepSDFStruct.optimization.MMA.loop">
+<span class="sig-name descname"><span class="pre">loop</span></span><a class="headerlink" href="#DeepSDFStruct.optimization.MMA.loop" title="Link to this definition">#</a></dt>
+<dd><p>Current iteration number.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="DeepSDFStruct.optimization.MMA.x">
+<span class="sig-name descname"><span class="pre">x</span></span><a class="headerlink" href="#DeepSDFStruct.optimization.MMA.x" title="Link to this definition">#</a></dt>
+<dd><p>Current design variables in numpy format.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">xold1,</span> <span class="pre">xold2</span></span></dt>
+<dd><p>Design variables from previous two iterations (for MMA history).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="DeepSDFStruct.optimization.MMA.step">
 <span class="sig-name descname"><span class="pre">step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">F</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dF</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">G</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dG</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.optimization.MMA.step" title="Link to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><p>Perform one MMA optimization step given objective, constraint,
+and their gradients.</p>
+</dd></dl>
+
+<p class="rubric">Notes</p>
+<p>MMA was developed by Krister Svanberg and is widely used in topology
+optimization. It is particularly effective for problems where:
+- The objective and constraints are expensive to evaluate
+- Gradients are available (via automatic differentiation)
+- The design space is high-dimensional
+- Strong nonlinearity is present</p>
+<p>The implementation uses the mmapy package for the core MMA algorithm.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">DeepSDFStruct.optimization</span><span class="w"> </span><span class="kn">import</span> <span class="n">MMA</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Define design variables</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">params</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bounds</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">]]</span> <span class="o">*</span> <span class="mi">10</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Create optimizer</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">optimizer</span> <span class="o">=</span> <span class="n">MMA</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">bounds</span><span class="p">,</span> <span class="n">max_step</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Optimization loop</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="c1"># Compute objective and constraint</span>
+<span class="gp">... </span>    <span class="n">objective</span> <span class="o">=</span> <span class="p">(</span><span class="n">params</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+<span class="gp">... </span>    <span class="n">constraint</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">-</span> <span class="mf">5.0</span>
+<span class="gp">...</span>
+<span class="gp">... </span>    <span class="c1"># Compute gradients</span>
+<span class="gp">... </span>    <span class="n">dF</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">autograd</span><span class="o">.</span><span class="n">grad</span><span class="p">(</span><span class="n">objective</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">create_graph</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="gp">... </span>    <span class="n">dG</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">autograd</span><span class="o">.</span><span class="n">grad</span><span class="p">(</span><span class="n">constraint</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">create_graph</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="gp">...</span>
+<span class="gp">... </span>    <span class="c1"># MMA step</span>
+<span class="gp">... </span>    <span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">objective</span><span class="p">,</span> <span class="n">dF</span><span class="p">,</span> <span class="n">constraint</span><span class="p">,</span> <span class="n">dG</span><span class="p">)</span>
+<span class="gp">...</span>
+<span class="gp">... </span>    <span class="k">if</span> <span class="n">optimizer</span><span class="o">.</span><span class="n">ch</span> <span class="o">&lt;</span> <span class="mf">1e-3</span><span class="p">:</span>
+<span class="gp">... </span>        <span class="k">break</span>
+</pre></div>
+</div>
+<p class="rubric">References</p>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="id1" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></span>
+<p>Svanberg, K. (1987). “The method of moving asymptotes—a new method
+for structural optimization.” International Journal for Numerical
+Methods in Engineering, 24(2), 359-373.</p>
+</aside>
+<aside class="footnote brackets" id="id2" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></span>
+<p>mmapy: Python implementation of MMA
+<a class="github reference external" href="https://github.com/arjendeetman/mmapy">arjendeetman/mmapy</a></p>
+</aside>
+</aside>
+<dl class="py method">
+<dt class="sig sig-object py" id="id0">
+<span class="sig-name descname"><span class="pre">step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">F</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dF</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">G</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dG</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id0" title="Link to this definition">#</a></dt>
+<dd><p>Perform one MMA optimization step.</p>
+<p>Updates design variables by solving a convex subproblem constructed
+from the objective, constraint, and their gradients.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>F</strong> (<em>torch.Tensor</em><em> or </em><em>float</em>) – Objective function value at current design.</p></li>
+<li><p><strong>dF</strong> (<em>torch.Tensor</em>) – Gradient of objective w.r.t. design variables, shape (n,).</p></li>
+<li><p><strong>G</strong> (<em>torch.Tensor</em><em> or </em><em>float</em>) – Constraint function value at current design (≤ 0 is feasible).</p></li>
+<li><p><strong>dG</strong> (<em>torch.Tensor</em>) – Gradient of constraint w.r.t. design variables, shape (n,).</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The method automatically:
+- Normalizes the objective by its initial value
+- Enforces move limits based on max_step
+- Updates MMA history (xold1, xold2)
+- Computes and logs convergence metric (ch)
+- Updates self.parameters in-place</p>
+<p>The convergence metric ch is the relative change in design variables.</p>
+</dd></dl>
 
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="DeepSDFStruct.optimization.get_mesh_from_torchfem">
 <span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.optimization.</span></span><span class="sig-name descname"><span class="pre">get_mesh_from_torchfem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Solid</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.optimization.get_mesh_from_torchfem" title="Link to this definition">#</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">UnstructuredGrid</span></code></span></p>
+<dd><p>Convert a TorchFEM Solid mesh to PyVista UnstructuredGrid.</p>
+<p>This function enables visualization and export of TorchFEM finite element
+meshes using PyVista. It supports both tetrahedral and hexahedral elements
+with linear and quadratic shape functions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Solid</strong> (<em>torchfem.Solid</em>) – TorchFEM solid mesh object containing nodes, elements, and element type.</p>
 </dd>
-<dt class="field-even">Parameters<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>Solid</strong> (<em>torchfem.solid.Solid</em>)</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>PyVista mesh representation suitable for visualization and I/O.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pyvista.UnstructuredGrid</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>NotImplementedError</strong> – If input is not a torchfem.Solid object.</p>
 </dd>
 </dl>
+<p class="rubric">Notes</p>
+<p>Supported element types:
+- Tetra1: 4-node linear tetrahedron
+- Tetra2: 10-node quadratic tetrahedron
+- Hexa1: 8-node linear hexahedron
+- Hexa2: 20-node quadratic hexahedron</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">DeepSDFStruct.optimization</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_mesh_from_torchfem</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">torchfem</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Assume we have a TorchFEM solid mesh</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># solid = torchfem.Solid(...)</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Convert to PyVista for visualization</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pv_mesh</span> <span class="o">=</span> <span class="n">get_mesh_from_torchfem</span><span class="p">(</span><span class="n">solid</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pv_mesh</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="DeepSDFStruct.optimization.tet_signed_vol">
 <span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.optimization.</span></span><span class="sig-name descname"><span class="pre">tet_signed_vol</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vertices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tets</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.optimization.tet_signed_vol" title="Link to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><p>Compute signed volumes of tetrahedral elements.</p>
+<p>Calculates the signed volume of each tetrahedron, which is positive for
+correctly oriented elements and negative for inverted elements. This is
+useful for detecting mesh degeneracies and enforcing mesh quality constraints.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>vertices</strong> (<em>torch.Tensor</em>) – Vertex coordinates of shape (N, 3).</p></li>
+<li><p><strong>tets</strong> (<em>torch.Tensor</em>) – Tetrahedral connectivity of shape (M, 4), where each row contains
+vertex indices [v0, v1, v2, v3].</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Signed volumes of shape (M,), one per tetrahedron. Positive volumes
+indicate correctly oriented elements.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>torch.Tensor</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<dl class="simple">
+<dt>The signed volume is computed as:</dt><dd><p>V = (1/6) * ((v1-v0) × (v2-v0)) · (v3-v0)</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">DeepSDFStruct.optimization</span><span class="w"> </span><span class="kn">import</span> <span class="n">tet_signed_vol</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Define a simple tetrahedron</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">vertices</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
+<span class="gp">... </span>    <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+<span class="gp">... </span>    <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+<span class="gp">... </span>    <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+<span class="gp">... </span>    <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]</span>
+<span class="gp">... </span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tets</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">volumes</span> <span class="o">=</span> <span class="n">tet_signed_vol</span><span class="p">(</span><span class="n">vertices</span><span class="p">,</span> <span class="n">tets</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Volume: </span><span class="si">{</span><span class="n">volumes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>  <span class="c1"># Should be 1/6 ≈ 0.167</span>
+</pre></div>
+</div>
+</dd></dl>
 
 </section>
 
@@ -453,8 +697,16 @@
   </div>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#structural-optimization-utilities">Structural Optimization Utilities</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#key-features">Key Features</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.optimization.MMA"><code class="docutils literal notranslate"><span class="pre">MMA</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.optimization.MMA.parameters"><code class="docutils literal notranslate"><span class="pre">MMA.parameters</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.optimization.MMA.loop"><code class="docutils literal notranslate"><span class="pre">MMA.loop</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.optimization.MMA.x"><code class="docutils literal notranslate"><span class="pre">MMA.x</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.optimization.MMA.step"><code class="docutils literal notranslate"><span class="pre">MMA.step()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id0"><code class="docutils literal notranslate"><span class="pre">MMA.step()</span></code></a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.optimization.get_mesh_from_torchfem"><code class="docutils literal notranslate"><span class="pre">get_mesh_from_torchfem()</span></code></a></li>

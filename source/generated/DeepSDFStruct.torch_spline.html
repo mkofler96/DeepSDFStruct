@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>DeepSDFStruct.torch_spline &#8212; DeepSDFStruct 1.1.1.dev23+g6170b62c2 documentation</title>
+    <title>DeepSDFStruct.torch_spline &#8212; DeepSDFStruct 1.3.1.dev6+g429a410c6 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=16cb862e"></script>
+    <script src="../../_static/documentation_options.js?v=013e8d0b"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'source/generated/DeepSDFStruct.torch_spline';</script>
@@ -110,7 +110,7 @@
   
   
   
-    <p class="title logo__title">DeepSDFStruct 1.1.1.dev23+g6170b62c2 documentation</p>
+    <p class="title logo__title">DeepSDFStruct 1.3.1.dev6+g429a410c6 documentation</p>
   
 </a></div>
     
@@ -354,6 +354,67 @@
                   
   <section id="module-DeepSDFStruct.torch_spline">
 <span id="deepsdfstruct-torch-spline"></span><h1>DeepSDFStruct.torch_spline<a class="headerlink" href="#module-DeepSDFStruct.torch_spline" title="Link to this heading">#</a></h1>
+<section id="pytorch-compatible-b-spline-operations">
+<h2>PyTorch-Compatible B-Spline Operations<a class="headerlink" href="#pytorch-compatible-b-spline-operations" title="Link to this heading">#</a></h2>
+<p>This module provides differentiable B-spline evaluation using PyTorch,
+enabling spline-based deformations and parametrizations in gradient-based
+optimization workflows.</p>
+<section id="key-features">
+<h3>Key Features<a class="headerlink" href="#key-features" title="Link to this heading">#</a></h3>
+<dl class="simple">
+<dt>TorchSpline Class</dt><dd><p>Main interface for PyTorch-compatible spline evaluation. Wraps splinepy
+splines and provides forward evaluation with automatic differentiation
+support.</p>
+</dd>
+<dt>Low-level Functions</dt><dd><ul class="simple">
+<li><p>torch_spline_1D: Evaluate 1D B-splines using de Boor’s algorithm</p></li>
+<li><p>torch_spline_2D: Evaluate 2D tensor product B-splines</p></li>
+<li><p>torch_spline_3D: Evaluate 3D tensor product B-splines</p></li>
+<li><p>bspline_basis: Compute B-spline basis functions</p></li>
+</ul>
+</dd>
+</dl>
+<p>The implementation uses vectorized de Boor’s algorithm for efficient
+batch evaluation on GPU. All operations are differentiable with respect
+to control points and query coordinates.</p>
+<p class="rubric">Examples</p>
+<p>Create and evaluate a TorchSpline:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">splinepy</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">DeepSDFStruct.torch_spline</span><span class="w"> </span><span class="kn">import</span> <span class="n">TorchSpline</span>
+
+<span class="c1"># Create a splinepy B-spline</span>
+<span class="n">spline</span> <span class="o">=</span> <span class="n">splinepy</span><span class="o">.</span><span class="n">BSpline</span><span class="p">(</span>
+    <span class="n">degrees</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span>
+    <span class="n">control_points</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">27</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+    <span class="n">knot_vectors</span><span class="o">=</span><span class="p">[</span>
+        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="p">]</span>
+<span class="p">)</span>
+
+<span class="c1"># Wrap in TorchSpline</span>
+<span class="n">torch_spline</span> <span class="o">=</span> <span class="n">TorchSpline</span><span class="p">(</span><span class="n">spline</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s1">&#39;cuda&#39;</span><span class="p">)</span>
+
+<span class="c1"># Evaluate at query points</span>
+<span class="n">queries</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s1">&#39;cuda&#39;</span><span class="p">)</span>
+<span class="n">values</span> <span class="o">=</span> <span class="n">torch_spline</span><span class="p">(</span><span class="n">queries</span><span class="p">)</span>
+
+<span class="c1"># Compute gradients</span>
+<span class="n">values</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">torch_spline</span><span class="o">.</span><span class="n">control_points</span><span class="o">.</span><span class="n">grad</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="rubric">Notes</p>
+<p>The module supports:
+- B-splines (non-rational)
+- NURBS (rational B-splines)
+- Bezier splines (special case of B-splines)
+- 1D, 2D, and 3D parametric dimensions
+- Arbitrary output dimensions</p>
+</section>
+</section>
 <p class="rubric">Functions</p>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
@@ -566,6 +627,10 @@ registered hooks while the latter silently ignores them.</p>
   </div>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pytorch-compatible-b-spline-operations">PyTorch-Compatible B-Spline Operations</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#key-features">Key Features</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.torch_spline.TorchSpline"><code class="docutils literal notranslate"><span class="pre">TorchSpline</span></code></a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.torch_spline.TorchSpline.forward"><code class="docutils literal notranslate"><span class="pre">TorchSpline.forward()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.torch_spline.TorchSpline.spline"><code class="docutils literal notranslate"><span class="pre">TorchSpline.spline</span></code></a></li>

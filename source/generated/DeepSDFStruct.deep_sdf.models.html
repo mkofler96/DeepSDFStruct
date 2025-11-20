@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>DeepSDFStruct.deep_sdf.models &#8212; DeepSDFStruct 1.1.1.dev23+g6170b62c2 documentation</title>
+    <title>DeepSDFStruct.deep_sdf.models &#8212; DeepSDFStruct 1.3.1.dev6+g429a410c6 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=16cb862e"></script>
+    <script src="../../_static/documentation_options.js?v=013e8d0b"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'source/generated/DeepSDFStruct.deep_sdf.models';</script>
@@ -110,7 +110,7 @@
   
   
   
-    <p class="title logo__title">DeepSDFStruct 1.1.1.dev23+g6170b62c2 documentation</p>
+    <p class="title logo__title">DeepSDFStruct 1.3.1.dev6+g429a410c6 documentation</p>
   
 </a></div>
     
@@ -357,11 +357,28 @@
                   
   <section id="module-DeepSDFStruct.deep_sdf.models">
 <span id="deepsdfstruct-deep-sdf-models"></span><h1>DeepSDFStruct.deep_sdf.models<a class="headerlink" href="#module-DeepSDFStruct.deep_sdf.models" title="Link to this heading">#</a></h1>
+<section id="deepsdf-model-classes">
+<h2>DeepSDF Model Classes<a class="headerlink" href="#deepsdf-model-classes" title="Link to this heading">#</a></h2>
+<p>This module provides the DeepSDFModel class, which wraps a trained decoder
+network and latent vectors for evaluating learned implicit representations.</p>
+<p>The model can be used to:
+- Decode latent codes to SDF values at query points
+- Export models for deployment (TorchScript/LibTorch)
+- Integrate with gradient-based optimization</p>
+<section id="classes">
+<h3>Classes<a class="headerlink" href="#classes" title="Link to this heading">#</a></h3>
+<dl class="simple">
+<dt>DeepSDFModel</dt><dd><p>Main interface for trained DeepSDF models, combining a decoder network
+with learned latent vectors.</p>
+</dd>
+</dl>
+</section>
+</section>
 <p class="rubric">Classes</p>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.deep_sdf.models.DeepSDFModel" title="DeepSDFStruct.deep_sdf.models.DeepSDFModel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DeepSDFModel</span></code></a>(decoder, ...)</p></td>
-<td><p></p></td>
+<td><p>Wrapper for trained DeepSDF decoder and latent vectors.</p></td>
 </tr>
 </tbody>
 </table>
@@ -370,17 +387,110 @@
 <dt class="sig sig-object py" id="DeepSDFStruct.deep_sdf.models.DeepSDFModel">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.deep_sdf.models.</span></span><span class="sig-name descname"><span class="pre">DeepSDFModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">decoder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trained_latent_vectors</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.deep_sdf.models.DeepSDFModel" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Wrapper for trained DeepSDF decoder and latent vectors.</p>
+<p>This class provides a convenient interface for using trained DeepSDF models.
+It combines the decoder network (which maps latent+position to SDF values)
+with the trained latent vectors (which encode different shapes).</p>
+<p>The model supports both constant latent codes (one code for all query points)
+and spatially-varying codes (different codes per query point), enabling
+flexible shape representation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>decoder</strong> (<em>torch.nn.modules.module.Module</em>)</p></li>
-<li><p><strong>trained_latent_vectors</strong> (<em>torch.Tensor</em>)</p></li>
+<li><p><strong>decoder</strong> (<em>torch.nn.Module</em>) – The trained decoder network. Should accept input of shape
+(N, latent_dim + 3) and output SDF values of shape (N, 1).</p></li>
+<li><p><strong>trained_latent_vectors</strong> (<em>torch.Tensor</em>) – Trained latent codes of shape (num_shapes, latent_dim).
+Each row encodes one learned shape.</p></li>
+<li><p><strong>device</strong> (<em>str</em><em> or </em><em>torch.device</em>) – Device for computation (‘cpu’ or ‘cuda’).</p></li>
 </ul>
 </dd>
 </dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="DeepSDFStruct.deep_sdf.models.DeepSDFModel._decoder">
+<span class="sig-name descname"><span class="pre">_decoder</span></span><a class="headerlink" href="#DeepSDFStruct.deep_sdf.models.DeepSDFModel._decoder" title="Link to this definition">#</a></dt>
+<dd><p>The decoder network.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>torch.nn.Module</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="DeepSDFStruct.deep_sdf.models.DeepSDFModel._trained_latent_vectors">
+<span class="sig-name descname"><span class="pre">_trained_latent_vectors</span></span><a class="headerlink" href="#DeepSDFStruct.deep_sdf.models.DeepSDFModel._trained_latent_vectors" title="Link to this definition">#</a></dt>
+<dd><p>The latent code library.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>torch.Tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="DeepSDFStruct.deep_sdf.models.DeepSDFModel.device">
+<span class="sig-name descname"><span class="pre">device</span></span><a class="headerlink" href="#DeepSDFStruct.deep_sdf.models.DeepSDFModel.device" title="Link to this definition">#</a></dt>
+<dd><p>Computation device.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str or torch.device</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="DeepSDFStruct.deep_sdf.models.DeepSDFModel._decode_sdf">
+<span class="sig-name descname"><span class="pre">_decode_sdf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">latent_vec</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">queries</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.deep_sdf.models.DeepSDFModel._decode_sdf" title="Link to this definition">#</a></dt>
+<dd><p>Decode SDF values from a latent code and spatial queries.</p>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="DeepSDFStruct.deep_sdf.models.DeepSDFModel.export_libtorch_executable">
 <span class="sig-name descname"><span class="pre">export_libtorch_executable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.deep_sdf.models.DeepSDFModel.export_libtorch_executable" title="Link to this definition">#</a></dt>
+<dd><p>Export model to TorchScript for C++ deployment.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>filename</strong> (<em>str</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">DeepSDFStruct.deep_sdf.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">DeepSDFModel</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Assume we have a trained decoder and latent vectors</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># decoder = ...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># latents = torch.randn(10, 256)  # 10 shapes, 256-dim codes</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Create model</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">DeepSDFModel</span><span class="p">(</span><span class="n">decoder</span><span class="p">,</span> <span class="n">latents</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s1">&#39;cuda&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Query first shape</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">points</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s1">&#39;cuda&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">distances</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">_decode_sdf</span><span class="p">(</span><span class="n">latents</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">points</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Use with SDFfromDeepSDF</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">DeepSDFStruct.SDF</span><span class="w"> </span><span class="kn">import</span> <span class="n">SDFfromDeepSDF</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sdf</span> <span class="o">=</span> <span class="n">SDFfromDeepSDF</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">latent_code</span><span class="o">=</span><span class="n">latents</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mesh</span> <span class="o">=</span> <span class="n">create_3D_mesh</span><span class="p">(</span><span class="n">sdf</span><span class="p">,</span> <span class="n">N_base</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span> <span class="n">mesh_type</span><span class="o">=</span><span class="s1">&#39;surface&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="rubric">Notes</p>
+<p>The decoder architecture typically consists of multiple fully-connected
+layers with skip connections. See networks/ for architecture definitions.</p>
+<p class="rubric">References</p>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="id1" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></span>
+<p>Park, J. J., Florence, P., Straub, J., Newcombe, R., &amp; Lovegrove, S.
+(2019). DeepSDF: Learning continuous signed distance functions for
+shape representation. In CVPR.</p>
+</aside>
+</aside>
+<dl class="py method">
+<dt class="sig sig-object py" id="id0">
+<span class="sig-name descname"><span class="pre">export_libtorch_executable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id0" title="Link to this definition">#</a></dt>
 <dd><p>Export the trained decoder model to a TorchScript file for use with LibTorch (C++).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -447,8 +557,17 @@
   </div>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#deepsdf-model-classes">DeepSDF Model Classes</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#classes">Classes</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.deep_sdf.models.DeepSDFModel"><code class="docutils literal notranslate"><span class="pre">DeepSDFModel</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.deep_sdf.models.DeepSDFModel._decoder"><code class="docutils literal notranslate"><span class="pre">DeepSDFModel._decoder</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.deep_sdf.models.DeepSDFModel._trained_latent_vectors"><code class="docutils literal notranslate"><span class="pre">DeepSDFModel._trained_latent_vectors</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.deep_sdf.models.DeepSDFModel.device"><code class="docutils literal notranslate"><span class="pre">DeepSDFModel.device</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.deep_sdf.models.DeepSDFModel._decode_sdf"><code class="docutils literal notranslate"><span class="pre">DeepSDFModel._decode_sdf()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.deep_sdf.models.DeepSDFModel.export_libtorch_executable"><code class="docutils literal notranslate"><span class="pre">DeepSDFModel.export_libtorch_executable()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id0"><code class="docutils literal notranslate"><span class="pre">DeepSDFModel.export_libtorch_executable()</span></code></a></li>
 </ul>
 </li>
 </ul>

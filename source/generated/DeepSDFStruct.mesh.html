@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>DeepSDFStruct.mesh &#8212; DeepSDFStruct 1.1.1.dev23+g6170b62c2 documentation</title>
+    <title>DeepSDFStruct.mesh &#8212; DeepSDFStruct 1.3.1.dev6+g429a410c6 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=16cb862e"></script>
+    <script src="../../_static/documentation_options.js?v=013e8d0b"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'source/generated/DeepSDFStruct.mesh';</script>
@@ -110,7 +110,7 @@
   
   
   
-    <p class="title logo__title">DeepSDFStruct 1.1.1.dev23+g6170b62c2 documentation</p>
+    <p class="title logo__title">DeepSDFStruct 1.3.1.dev6+g429a410c6 documentation</p>
   
 </a></div>
     
@@ -354,6 +354,40 @@
                   
   <section id="module-DeepSDFStruct.mesh">
 <span id="deepsdfstruct-mesh"></span><h1>DeepSDFStruct.mesh<a class="headerlink" href="#module-DeepSDFStruct.mesh" title="Link to this heading">#</a></h1>
+<section id="mesh-generation-and-processing">
+<h2>Mesh Generation and Processing<a class="headerlink" href="#mesh-generation-and-processing" title="Link to this heading">#</a></h2>
+<p>This module provides comprehensive tools for generating, processing, and exporting
+meshes from SDF representations. It supports both surface (triangle) meshes and
+volume (tetrahedral) meshes, with advanced algorithms for high-quality mesh extraction.</p>
+<section id="key-capabilities">
+<h3>Key Capabilities<a class="headerlink" href="#key-capabilities" title="Link to this heading">#</a></h3>
+<dl class="simple">
+<dt>Mesh Extraction</dt><dd><ul class="simple">
+<li><p>FlexiCubes: State-of-the-art dual contouring for smooth, feature-preserving 3D meshes</p></li>
+<li><p>FlexiSquares: 2D mesh extraction for cross-sections and planar geometries</p></li>
+<li><p>Marching Cubes: Traditional isosurface extraction (via skimage)</p></li>
+</ul>
+</dd>
+<dt>Mesh Processing</dt><dd><ul class="simple">
+<li><p>Tetrahedral meshing for finite element analysis</p></li>
+<li><p>Mesh cleanup and repair (disconnected regions, degenerate elements)</p></li>
+<li><p>Mesh decimation and simplification</p></li>
+<li><p>Normal computation and smoothing</p></li>
+</ul>
+</dd>
+<dt>Export Formats</dt><dd><ul class="simple">
+<li><p>VTK (.vtk) for visualization in ParaView</p></li>
+<li><p>Abaqus (.inp) for finite element analysis</p></li>
+<li><p>PLY (.ply) for general 3D interchange</p></li>
+<li><p>MFEM format for MFEM solvers</p></li>
+</ul>
+</dd>
+</dl>
+<p>The module provides both PyTorch-based mesh representations (torchLineMesh,
+torchSurfMesh, torchVolumeMesh) for differentiable operations and conversion
+to standard formats (gustaf, trimesh) for I/O and visualization.</p>
+</section>
+</section>
 <p class="rubric">Functions</p>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
@@ -361,7 +395,7 @@
 <td><p></p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.mesh.create_3D_mesh" title="DeepSDFStruct.mesh.create_3D_mesh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_3D_mesh</span></code></a>(sdf, N_base, mesh_type[, ...])</p></td>
-<td><p></p></td>
+<td><p>Generate a 3D mesh from an SDF using FlexiCubes dual contouring.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.mesh.export_abaqus_surf_mesh" title="DeepSDFStruct.mesh.export_abaqus_surf_mesh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">export_abaqus_surf_mesh</span></code></a>(surf_mesh, filename)</p></td>
 <td><p>export a mesh and adds corresponding boundary conditions</p></td>
@@ -400,13 +434,13 @@
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.mesh.torchLineMesh" title="DeepSDFStruct.mesh.torchLineMesh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">torchLineMesh</span></code></a>(vertices, lines)</p></td>
-<td><p></p></td>
+<td><p>PyTorch-based line mesh representation for differentiable operations.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.mesh.torchSurfMesh" title="DeepSDFStruct.mesh.torchSurfMesh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">torchSurfMesh</span></code></a>(vertices, faces)</p></td>
-<td><p></p></td>
+<td><p>PyTorch-based surface mesh representation for differentiable operations.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.mesh.torchVolumeMesh" title="DeepSDFStruct.mesh.torchVolumeMesh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">torchVolumeMesh</span></code></a>(vertices, volumes)</p></td>
-<td><p></p></td>
+<td><p>PyTorch-based volume mesh representation for differentiable operations.</p></td>
 </tr>
 </tbody>
 </table>
@@ -430,17 +464,66 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="DeepSDFStruct.mesh.create_3D_mesh">
 <span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.mesh.</span></span><span class="sig-name descname"><span class="pre">create_3D_mesh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sdf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N_base</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mesh_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">differentiate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cpu'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bounds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.mesh.create_3D_mesh" title="Link to this definition">#</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<a class="reference internal" href="#DeepSDFStruct.mesh.torchSurfMesh" title="DeepSDFStruct.mesh.torchSurfMesh"><code class="xref py py-class docutils literal notranslate"><span class="pre">torchSurfMesh</span></code></a>, <a class="reference internal" href="#DeepSDFStruct.mesh.torchVolumeMesh" title="DeepSDFStruct.mesh.torchVolumeMesh"><code class="xref py py-class docutils literal notranslate"><span class="pre">torchVolumeMesh</span></code></a>], <code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code>]]</span></p>
-</dd>
-<dt class="field-even">Parameters<span class="colon">:</span></dt>
-<dd class="field-even"><ul class="simple">
-<li><p><strong>sdf</strong> (<a class="reference internal" href="DeepSDFStruct.SDF.html#DeepSDFStruct.SDF.SDFBase" title="DeepSDFStruct.SDF.SDFBase"><em>DeepSDFStruct.SDF.SDFBase</em></a>)</p></li>
-<li><p><strong>mesh_type</strong> (<em>str</em>)</p></li>
+<dd><p>Generate a 3D mesh from an SDF using FlexiCubes dual contouring.</p>
+<p>This is the main entry point for extracting high-quality meshes from SDF
+representations. It uses the FlexiCubes algorithm, which produces smooth,
+feature-preserving meshes that are superior to marching cubes.</p>
+<p>The function supports both surface meshes (triangles) and volume meshes
+(tetrahedra) and can compute gradients for optimization if requested.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sdf</strong> (<a class="reference internal" href="DeepSDFStruct.SDF.html#DeepSDFStruct.SDF.SDFBase" title="DeepSDFStruct.SDF.SDFBase"><em>SDFBase</em></a>) – The signed distance function to mesh. Can be any SDFBase subclass
+including primitives, lattice structures, or learned representations.</p></li>
+<li><p><strong>N_base</strong> (<em>int</em><em> or </em><em>list</em><em> of </em><em>int</em>) – Base resolution per unit cell. If an int, uses the same resolution
+in all dimensions. If a list, specifies resolution [nx, ny, nz].
+For lattice structures, the total resolution is N_base * tiling.</p></li>
+<li><p><strong>mesh_type</strong> (<em>{'surface'</em><em>, </em><em>'volume'}</em>) – Type of mesh to generate:
+- ‘surface’: Triangle surface mesh (torchSurfMesh)
+- ‘volume’: Tetrahedral volume mesh (torchVolumeMesh)</p></li>
+<li><p><strong>differentiate</strong> (<em>bool</em><em>, </em><em>default False</em>) – If True, computes and returns gradients of vertex positions with
+respect to SDF parameters, enabling gradient-based optimization.</p></li>
+<li><p><strong>device</strong> (<em>str</em><em>, </em><em>default 'cpu'</em>) – Device for computation (‘cpu’ or ‘cuda’).</p></li>
+<li><p><strong>bounds</strong> (<em>array-like</em><em> of </em><em>shape</em><em> (</em><em>2</em><em>, </em><em>3</em><em>)</em><em>, </em><em>optional</em>) – Spatial bounds [[xmin, ymin, zmin], [xmax, ymax, zmax]].
+If None, uses the SDF’s domain bounds.</p></li>
 </ul>
 </dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<a class="reference internal" href="#DeepSDFStruct.mesh.torchSurfMesh" title="DeepSDFStruct.mesh.torchSurfMesh"><code class="xref py py-class docutils literal notranslate"><span class="pre">torchSurfMesh</span></code></a>, <a class="reference internal" href="#DeepSDFStruct.mesh.torchVolumeMesh" title="DeepSDFStruct.mesh.torchVolumeMesh"><code class="xref py py-class docutils literal notranslate"><span class="pre">torchVolumeMesh</span></code></a>], <code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code>]]</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p><strong>mesh</strong> (<em>torchSurfMesh or torchVolumeMesh</em>) – The extracted mesh with vertices and connectivity.</p></li>
+<li><p><strong>dVerts_dParams</strong> (<em>torch.Tensor or None</em>) – If differentiate=True, returns gradients of vertex positions with
+respect to parameters. Otherwise returns None.</p></li>
+</ul>
+</p>
+</dd>
 </dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">DeepSDFStruct.sdf_primitives</span><span class="w"> </span><span class="kn">import</span> <span class="n">SphereSDF</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">DeepSDFStruct.mesh</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_3D_mesh</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Create a sphere SDF</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sphere</span> <span class="o">=</span> <span class="n">SphereSDF</span><span class="p">(</span><span class="n">center</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">radius</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Extract surface mesh</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mesh</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">create_3D_mesh</span><span class="p">(</span><span class="n">sphere</span><span class="p">,</span> <span class="n">N_base</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span> <span class="n">mesh_type</span><span class="o">=</span><span class="s1">&#39;surface&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Vertices: </span><span class="si">{</span><span class="n">mesh</span><span class="o">.</span><span class="n">vertices</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Faces: </span><span class="si">{</span><span class="n">mesh</span><span class="o">.</span><span class="n">faces</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Extract volume mesh for FEA</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">vol_mesh</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">create_3D_mesh</span><span class="p">(</span><span class="n">sphere</span><span class="p">,</span> <span class="n">N_base</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">mesh_type</span><span class="o">=</span><span class="s1">&#39;volume&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Tetrahedra: </span><span class="si">{</span><span class="n">vol_mesh</span><span class="o">.</span><span class="n">volumes</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="rubric">Notes</p>
+<p>FlexiCubes produces higher quality meshes than marching cubes by:
+- Using flexible vertex positions within each cube
+- Preserving sharp features and corners
+- Minimizing mesh artifacts and degeneracies</p>
+<p>For lattice structures, the resolution is automatically scaled by the
+tiling factor to maintain consistent resolution per unit cell.</p>
 </dd></dl>
 
 <dl class="py function">
@@ -587,17 +670,27 @@ Includes domain boundary and hole polygons.</p>
 <dt class="sig sig-object py" id="DeepSDFStruct.mesh.torchLineMesh">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.mesh.</span></span><span class="sig-name descname"><span class="pre">torchLineMesh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vertices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lines</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.mesh.torchLineMesh" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>PyTorch-based line mesh representation for differentiable operations.</p>
+<p>Stores line segments with vertices and connectivity, supporting
+gradient propagation for optimization tasks.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>vertices</strong> (<em>torch.Tensor</em>)</p></li>
-<li><p><strong>lines</strong> (<em>torch.Tensor</em>)</p></li>
+<li><p><strong>vertices</strong> (<em>torch.Tensor</em>) – Vertex coordinates of shape (N, 3).</p></li>
+<li><p><strong>lines</strong> (<em>torch.Tensor</em>) – Line connectivity of shape (M, 2), where each row contains
+indices into the vertices array.</p></li>
 </ul>
 </dd>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="DeepSDFStruct.mesh.torchLineMesh.to_gus">
 <span class="sig-name descname"><span class="pre">to_gus</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.mesh.torchLineMesh.to_gus" title="Link to this definition">#</a></dt>
+<dd><p>Convert to gustaf Edges format for visualization and I/O.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id0">
+<span class="sig-name descname"><span class="pre">to_gus</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#id0" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -611,17 +704,27 @@ Includes domain boundary and hole polygons.</p>
 <dt class="sig sig-object py" id="DeepSDFStruct.mesh.torchSurfMesh">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.mesh.</span></span><span class="sig-name descname"><span class="pre">torchSurfMesh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vertices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">faces</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.mesh.torchSurfMesh" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>PyTorch-based surface mesh representation for differentiable operations.</p>
+<p>Stores triangle mesh with vertices and face connectivity, supporting
+gradient propagation for shape optimization and learning tasks.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>vertices</strong> (<em>torch.Tensor</em>)</p></li>
-<li><p><strong>faces</strong> (<em>torch.Tensor</em>)</p></li>
+<li><p><strong>vertices</strong> (<em>torch.Tensor</em>) – Vertex coordinates of shape (N, 3).</p></li>
+<li><p><strong>faces</strong> (<em>torch.Tensor</em>) – Triangle face connectivity of shape (M, 3), where each row
+contains indices into the vertices array.</p></li>
 </ul>
 </dd>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="DeepSDFStruct.mesh.torchSurfMesh.to_gus">
 <span class="sig-name descname"><span class="pre">to_gus</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.mesh.torchSurfMesh.to_gus" title="Link to this definition">#</a></dt>
+<dd><p>Convert to gustaf Faces format for visualization and I/O.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id1">
+<span class="sig-name descname"><span class="pre">to_gus</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#id1" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -635,24 +738,30 @@ Includes domain boundary and hole polygons.</p>
 <dt class="sig sig-object py" id="DeepSDFStruct.mesh.torchVolumeMesh">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.mesh.</span></span><span class="sig-name descname"><span class="pre">torchVolumeMesh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vertices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">volumes</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.mesh.torchVolumeMesh" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>PyTorch-based volume mesh representation for differentiable operations.</p>
+<p>Stores tetrahedral mesh with vertices and element connectivity, supporting
+gradient propagation through finite element analysis and other volume-based
+operations.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>vertices</strong> (<em>torch.Tensor</em>)</p></li>
-<li><p><strong>volumes</strong> (<em>torch.Tensor</em>)</p></li>
+<li><p><strong>vertices</strong> (<em>torch.Tensor</em>) – Vertex coordinates of shape (N, 3).</p></li>
+<li><p><strong>volumes</strong> (<em>torch.Tensor</em>) – Tetrahedral element connectivity of shape (M, 4), where each row
+contains indices into the vertices array.</p></li>
 </ul>
 </dd>
 </dl>
 <dl class="py method">
-<dt class="sig sig-object py" id="DeepSDFStruct.mesh.torchVolumeMesh.clear_unreferenced_nodes">
-<span class="sig-name descname"><span class="pre">clear_unreferenced_nodes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.mesh.torchVolumeMesh.clear_unreferenced_nodes" title="Link to this definition">#</a></dt>
-<dd></dd></dl>
+<dt class="sig sig-object py" id="DeepSDFStruct.mesh.torchVolumeMesh.to_gus">
+<span class="sig-name descname"><span class="pre">to_gus</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.mesh.torchVolumeMesh.to_gus" title="Link to this definition">#</a></dt>
+<dd><p>Convert to gustaf Volumes format for visualization and I/O.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="DeepSDFStruct.mesh.torchVolumeMesh.remove_disconnected_regions">
-<span class="sig-name descname"><span class="pre">remove_disconnected_regions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">support_node</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clear_unused</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.mesh.torchVolumeMesh.remove_disconnected_regions" title="Link to this definition">#</a></dt>
-<dd><p>Removes disconnected parts
-for now, unreferenced vertices are kept</p>
+<span class="sig-name descname"><span class="pre">remove_disconnected_regions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">support_node</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clear_unused</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.mesh.torchVolumeMesh.remove_disconnected_regions" title="Link to this definition">#</a></dt>
+<dd><p>Remove disconnected mesh components, optionally keeping only
+the region connected to a specific node.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>support_node</strong> (<em>int</em><em> | </em><em>None</em>)</p>
@@ -661,8 +770,40 @@ for now, unreferenced vertices are kept</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="DeepSDFStruct.mesh.torchVolumeMesh.to_gus">
-<span class="sig-name descname"><span class="pre">to_gus</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.mesh.torchVolumeMesh.to_gus" title="Link to this definition">#</a></dt>
+<dt class="sig sig-object py" id="DeepSDFStruct.mesh.torchVolumeMesh.clear_unreferenced_nodes">
+<span class="sig-name descname"><span class="pre">clear_unreferenced_nodes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.mesh.torchVolumeMesh.clear_unreferenced_nodes" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id2">
+<span class="sig-name descname"><span class="pre">remove_disconnected_regions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">support_node</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clear_unused</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id2" title="Link to this definition">#</a></dt>
+<dd><p>Remove disconnected parts from the mesh.</p>
+<p>Uses graph connectivity analysis to identify and remove mesh regions
+that are not connected to the main component or a specified support node.
+Useful for cleaning up meshes after optimization or level set extraction.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>support_node</strong> (<em>int</em><em>, </em><em>optional</em>) – If specified, keeps only the connected component containing this
+vertex index. If None, keeps the largest component.</p></li>
+<li><p><strong>clear_unused</strong> (<em>bool</em><em>, </em><em>default True</em>) – If True, removes unreferenced vertices after pruning elements.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>NotImplementedError</strong> – If mesh contains non-tetrahedral elements.</p></li>
+<li><p><strong>ValueError</strong> – If support_node is out of range.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Currently only supports tetrahedral elements (4 nodes per element).
+For now, unreferenced vertices are kept even when clear_unused=True.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id3">
+<span class="sig-name descname"><span class="pre">to_gus</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#id3" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -721,6 +862,10 @@ for now, unreferenced vertices are kept</p>
   </div>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mesh-generation-and-processing">Mesh Generation and Processing</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#key-capabilities">Key Capabilities</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.mesh.create_2D_mesh"><code class="docutils literal notranslate"><span class="pre">create_2D_mesh()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.mesh.create_3D_mesh"><code class="docutils literal notranslate"><span class="pre">create_3D_mesh()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.mesh.export_abaqus_surf_mesh"><code class="docutils literal notranslate"><span class="pre">export_abaqus_surf_mesh()</span></code></a></li>
@@ -735,18 +880,22 @@ for now, unreferenced vertices are kept</p>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.mesh.tetrahedralize_surface"><code class="docutils literal notranslate"><span class="pre">tetrahedralize_surface()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.mesh.torchLineMesh"><code class="docutils literal notranslate"><span class="pre">torchLineMesh</span></code></a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.mesh.torchLineMesh.to_gus"><code class="docutils literal notranslate"><span class="pre">torchLineMesh.to_gus()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id0"><code class="docutils literal notranslate"><span class="pre">torchLineMesh.to_gus()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.mesh.torchLineMesh.to_trimesh"><code class="docutils literal notranslate"><span class="pre">torchLineMesh.to_trimesh()</span></code></a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.mesh.torchSurfMesh"><code class="docutils literal notranslate"><span class="pre">torchSurfMesh</span></code></a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.mesh.torchSurfMesh.to_gus"><code class="docutils literal notranslate"><span class="pre">torchSurfMesh.to_gus()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1"><code class="docutils literal notranslate"><span class="pre">torchSurfMesh.to_gus()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.mesh.torchSurfMesh.to_trimesh"><code class="docutils literal notranslate"><span class="pre">torchSurfMesh.to_trimesh()</span></code></a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.mesh.torchVolumeMesh"><code class="docutils literal notranslate"><span class="pre">torchVolumeMesh</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.mesh.torchVolumeMesh.clear_unreferenced_nodes"><code class="docutils literal notranslate"><span class="pre">torchVolumeMesh.clear_unreferenced_nodes()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.mesh.torchVolumeMesh.remove_disconnected_regions"><code class="docutils literal notranslate"><span class="pre">torchVolumeMesh.remove_disconnected_regions()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.mesh.torchVolumeMesh.to_gus"><code class="docutils literal notranslate"><span class="pre">torchVolumeMesh.to_gus()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.mesh.torchVolumeMesh.remove_disconnected_regions"><code class="docutils literal notranslate"><span class="pre">torchVolumeMesh.remove_disconnected_regions()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.mesh.torchVolumeMesh.clear_unreferenced_nodes"><code class="docutils literal notranslate"><span class="pre">torchVolumeMesh.clear_unreferenced_nodes()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2"><code class="docutils literal notranslate"><span class="pre">torchVolumeMesh.remove_disconnected_regions()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3"><code class="docutils literal notranslate"><span class="pre">torchVolumeMesh.to_gus()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.mesh.torchVolumeMesh.to_trimesh"><code class="docutils literal notranslate"><span class="pre">torchVolumeMesh.to_trimesh()</span></code></a></li>
 </ul>
 </li>
