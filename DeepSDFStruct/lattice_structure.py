@@ -67,7 +67,8 @@ class LatticeSDFStruct(_SDFBase):
         (e.g., varying strut thickness). Takes parametric coordinates and
         returns parameter values.
     cap_border_dict : CapBorderDict, optional
-        Dictionary specifying boundary conditions for domain faces.
+        Dictionary specifying whether material should be added or removed
+        at domain faces (for capping the structure at boundaries).
     cap_outside_of_unitcube : bool, default True
         If True, caps geometry outside the unit cube.
         

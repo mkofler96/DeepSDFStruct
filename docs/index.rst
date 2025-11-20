@@ -35,7 +35,6 @@ DeepSDFStruct uses B-splines for smooth, parametric deformations:
 
 * **TorchSpline**: PyTorch-compatible spline evaluation for differentiable operations
 * **Parametrization**: Define spatially-varying material properties or geometry parameters
-* **Deformation Mapping**: Apply smooth deformations to base geometries
 
 Mesh Generation
 ~~~~~~~~~~~~~~~

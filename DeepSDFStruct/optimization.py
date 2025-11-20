@@ -247,6 +247,8 @@ class MMA:
     .. [1] Svanberg, K. (1987). "The method of moving asymptotes—a new method
            for structural optimization." International Journal for Numerical
            Methods in Engineering, 24(2), 359-373.
+    .. [2] mmapy: Python implementation of MMA
+           https://github.com/arjendeetman/mmapy
     """
     
     def __init__(self, parameters, bounds, max_step=0.1):

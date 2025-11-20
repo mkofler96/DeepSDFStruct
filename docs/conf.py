@@ -15,7 +15,7 @@ try:
     from importlib.metadata import version as package_version
     release = str(package_version("DeepSDFStruct"))
 except Exception:
-    release = "1.3.1"
+    release = "latest"
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
