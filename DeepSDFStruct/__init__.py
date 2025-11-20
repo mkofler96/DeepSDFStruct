@@ -64,5 +64,4 @@ import DeepSDFStruct.utils
 
 DeepSDFStruct.utils.configure_logging()
 
-__version__ = "1.3.1"
 __author__ = "Michael Kofler"
