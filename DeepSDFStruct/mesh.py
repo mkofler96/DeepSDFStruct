@@ -47,7 +47,6 @@ from typing import Optional, Tuple, Union
 import scipy
 import scipy.sparse.csgraph
 
-
 from functools import partial
 
 from DeepSDFStruct.flexicubes.flexicubes import FlexiCubes
@@ -61,10 +60,10 @@ logger = logging.getLogger(DeepSDFStruct.__name__)
 
 class torchLineMesh:
     """PyTorch-based line mesh representation for differentiable operations.
-    
+
     Stores line segments with vertices and connectivity, supporting
     gradient propagation for optimization tasks.
-    
+
     Parameters
     ----------
     vertices : torch.Tensor
@@ -72,13 +71,13 @@ class torchLineMesh:
     lines : torch.Tensor
         Line connectivity of shape (M, 2), where each row contains
         indices into the vertices array.
-        
+
     Methods
     -------
     to_gus()
         Convert to gustaf Edges format for visualization and I/O.
     """
-    
+
     def __init__(self, vertices: _torch.Tensor, lines: _torch.Tensor):
         self.vertices = vertices
         self.lines = lines
@@ -90,13 +89,79 @@ class torchLineMesh:
         raise NotImplementedError("To trimesh functionality not implemented yet.")
         pass
 
+    def triangulate(self, x_nx2, s_n):
+        tolerance = 0.5
+        holes = x_nx2[torch.where(s_n > tolerance)[0], :]
+        # N_elements = 1000 * np.prod(tiling)
+        # surf_area = 2
+        # max_a = round(surf_area / N_elements, 5)
+        # max_a = 1e-4
+
+        # Compute bounding box
+        xmin, ymin = x_nx2.min(dim=0).values.detach()
+        xmax, ymax = x_nx2.max(dim=0).values.detach()
+
+        # Add 4 corner vertices for the bounding rectangle
+        bbox_vertices = torch.tensor(
+            [[xmin, ymin], [xmax, ymin], [xmax, ymax], [xmin, ymax]],
+            dtype=self.vertices.dtype,
+            device=self.vertices.device,
+        )
+
+        # Offset for new vertex indices
+        offset = self.vertices.shape[0]
+        vertices_with_boundary = torch.cat([self.vertices, bbox_vertices], dim=0)
+
+        # Create segments for the rectangle boundary
+        bbox_segments = torch.tensor(
+            [
+                [offset + 0, offset + 1],
+                [offset + 1, offset + 2],
+                [offset + 2, offset + 3],
+                [offset + 3, offset + 0],
+            ],
+            dtype=self.lines.dtype,
+            device=self.lines.device,
+        )
+
+        # Combine with original segments
+        segments_with_boundary = torch.cat([self.lines, bbox_segments], dim=0)
+
+        # compute the mean side length of the first 100 line segments
+        first_100_lines = self.lines[: min(100, self.lines.shape[0]), :]
+        first_100_line_vertices = self.vertices[first_100_lines]
+        mean_side_length = torch.norm(
+            first_100_line_vertices[:, 0, :] - first_100_line_vertices[:, 1, :], dim=1
+        ).mean()
+
+        a = (np.sqrt(3) / 4) * mean_side_length.item() ** 2
+        triangle_string = f"pqa{a}"
+
+        A = dict(
+            vertices=vertices_with_boundary.detach().cpu().numpy(),
+            segments=segments_with_boundary.detach().cpu().numpy(),
+            holes=holes.detach().cpu().numpy(),
+        )
+
+        logger.info("Calling triangulate with " + triangle_string)
+        B = triangle.triangulate(A, triangle_string)
+
+        return torchSurfMesh(
+            torch.tensor(
+                B["vertices"], dtype=self.vertices.dtype, device=self.vertices.device
+            ),
+            torch.tensor(
+                B["triangles"], device=self.vertices.device, dtype=self.lines.dtype
+            ),
+        )
+
 
 class torchSurfMesh:
     """PyTorch-based surface mesh representation for differentiable operations.
-    
+
     Stores triangle mesh with vertices and face connectivity, supporting
     gradient propagation for shape optimization and learning tasks.
-    
+
     Parameters
     ----------
     vertices : torch.Tensor
@@ -104,13 +169,13 @@ class torchSurfMesh:
     faces : torch.Tensor
         Triangle face connectivity of shape (M, 3), where each row
         contains indices into the vertices array.
-        
+
     Methods
     -------
     to_gus()
         Convert to gustaf Faces format for visualization and I/O.
     """
-    
+
     def __init__(self, vertices: _torch.Tensor, faces: _torch.Tensor):
         self.vertices = vertices
         self.faces = faces
@@ -125,11 +190,11 @@ class torchSurfMesh:
 
 class torchVolumeMesh:
     """PyTorch-based volume mesh representation for differentiable operations.
-    
+
     Stores tetrahedral mesh with vertices and element connectivity, supporting
     gradient propagation through finite element analysis and other volume-based
     operations.
-    
+
     Parameters
     ----------
     vertices : torch.Tensor
@@ -137,7 +202,7 @@ class torchVolumeMesh:
     volumes : torch.Tensor
         Tetrahedral element connectivity of shape (M, 4), where each row
         contains indices into the vertices array.
-        
+
     Methods
     -------
     to_gus()
@@ -146,7 +211,7 @@ class torchVolumeMesh:
         Remove disconnected mesh components, optionally keeping only
         the region connected to a specific node.
     """
-    
+
     def __init__(self, vertices: _torch.Tensor, volumes: _torch.Tensor):
         self.vertices = vertices
         self.volumes = volumes
@@ -162,11 +227,11 @@ class torchVolumeMesh:
         self, support_node: int | None = None, clear_unused=True
     ):
         """Remove disconnected parts from the mesh.
-        
+
         Uses graph connectivity analysis to identify and remove mesh regions
         that are not connected to the main component or a specified support node.
         Useful for cleaning up meshes after optimization or level set extraction.
-        
+
         Parameters
         ----------
         support_node : int, optional
@@ -174,14 +239,14 @@ class torchVolumeMesh:
             vertex index. If None, keeps the largest component.
         clear_unused : bool, default True
             If True, removes unreferenced vertices after pruning elements.
-            
+
         Raises
         ------
         NotImplementedError
             If mesh contains non-tetrahedral elements.
         ValueError
             If support_node is out of range.
-            
+
         Notes
         -----
         Currently only supports tetrahedral elements (4 nodes per element).
@@ -464,14 +529,14 @@ def create_3D_mesh(
     sdf: SDFBase, N_base, mesh_type: str, differentiate=False, device="cpu", bounds=None
 ) -> Tuple[Union[torchSurfMesh, torchVolumeMesh], Optional[_torch.Tensor]]:
     """Generate a 3D mesh from an SDF using FlexiCubes dual contouring.
-    
+
     This is the main entry point for extracting high-quality meshes from SDF
     representations. It uses the FlexiCubes algorithm, which produces smooth,
     feature-preserving meshes that are superior to marching cubes.
-    
+
     The function supports both surface meshes (triangles) and volume meshes
     (tetrahedra) and can compute gradients for optimization if requested.
-    
+
     Parameters
     ----------
     sdf : SDFBase
@@ -493,7 +558,7 @@ def create_3D_mesh(
     bounds : array-like of shape (2, 3), optional
         Spatial bounds [[xmin, ymin, zmin], [xmax, ymax, zmax]].
         If None, uses the SDF's domain bounds.
-        
+
     Returns
     -------
     mesh : torchSurfMesh or torchVolumeMesh
@@ -501,31 +566,31 @@ def create_3D_mesh(
     dVerts_dParams : torch.Tensor or None
         If differentiate=True, returns gradients of vertex positions with
         respect to parameters. Otherwise returns None.
-        
+
     Examples
     --------
     >>> from DeepSDFStruct.sdf_primitives import SphereSDF
     >>> from DeepSDFStruct.mesh import create_3D_mesh
-    >>> 
+    >>>
     >>> # Create a sphere SDF
     >>> sphere = SphereSDF(center=[0, 0, 0], radius=1.0)
-    >>> 
+    >>>
     >>> # Extract surface mesh
     >>> mesh, _ = create_3D_mesh(sphere, N_base=64, mesh_type='surface')
     >>> print(f"Vertices: {mesh.vertices.shape}")
     >>> print(f"Faces: {mesh.faces.shape}")
-    >>> 
+    >>>
     >>> # Extract volume mesh for FEA
     >>> vol_mesh, _ = create_3D_mesh(sphere, N_base=32, mesh_type='volume')
     >>> print(f"Tetrahedra: {vol_mesh.volumes.shape}")
-    
+
     Notes
     -----
     FlexiCubes produces higher quality meshes than marching cubes by:
     - Using flexible vertex positions within each cube
     - Preserving sharp features and corners
     - Minimizing mesh artifacts and degeneracies
-    
+
     For lattice structures, the resolution is automatically scaled by the
     tiling factor to maintain consistent resolution per unit cell.
     """
@@ -599,10 +664,10 @@ def create_2D_mesh(
     else:
         tiling = _torch.tensor([1, 1])
 
-    if mesh_type == "line":
-        output_trimesh = False
+    if mesh_type in ["line", "surface_triangle"]:
+        output_tetmesh = False
     elif mesh_type == "surface":
-        output_trimesh = True
+        output_tetmesh = True
     else:
         raise RuntimeError(
             f"mesh_type {mesh_type} unavailable. Must be either line or surface"
@@ -623,20 +688,26 @@ def create_2D_mesh(
         cube_idx=cube_idx,
         N=N,
         return_faces=False,
-        output_tetmesh=output_trimesh,
+        output_tetmesh=output_tetmesh,
     )
     # returns faces or volumes depending on the output_tetmesh flag
     # if output_tetmesh -> returns volumes
     # if not output_tetmesh -> returns faces
-    verts, faces_or_volumes = get_verts(
-        sdf=sdf,
-        samples=samples,
-        constructor=constructor,
+    sdf_values = sdf(samples)
+
+    verts_local, faces_or_volumes, _ = constructor(
+        voxelgrid_vertices=samples,
+        scalar_field=sdf_values.reshape(-1),
         cube_idx=cube_idx,
-        N=N,
-        return_faces=True,
-        output_tetmesh=output_trimesh,
+        resolution=tuple(N),
+        output_tetmesh=output_tetmesh,
     )
+
+    if sdf.deformation_spline is not None:
+        verts_local = sdf.deformation_spline.forward(verts_local)
+        with torch.no_grad():
+            samples_deformed = sdf.deformation_spline.forward(samples)
+
     if differentiate:
         if sdf.parametrization is None:
             raise RuntimeError("No parametrization found for given SDF")
@@ -650,10 +721,19 @@ def create_2D_mesh(
             strategy="forward-mode",
             vectorize=True,
         )
-    if output_trimesh:
-        return torchSurfMesh(verts, faces_or_volumes), dVerts_dParams
+
+    if mesh_type == "line":
+        return torchLineMesh(verts_local, faces_or_volumes), dVerts_dParams
+    elif mesh_type == "surface":
+        return torchSurfMesh(verts_local, faces_or_volumes), dVerts_dParams
+    elif mesh_type == "surface_triangle":
+        line_mesh = torchLineMesh(verts_local, faces_or_volumes)
+        surf_mesh = line_mesh.triangulate(samples_deformed, sdf_values.reshape(-1))
+        return surf_mesh, dVerts_dParams
     else:
-        return torchLineMesh(verts, faces_or_volumes), dVerts_dParams
+        raise RuntimeError(
+            f"mesh_type {mesh_type} unavailable. Must be either line or surface"
+        )
 
 
 def _verts_from_params(
