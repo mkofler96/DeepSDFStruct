@@ -757,6 +757,18 @@ def create_2D_mesh(
     elif mesh_type == "surface_triangle":
         line_mesh = torchLineMesh(verts_local, faces_or_volumes)
         surf_mesh = line_mesh.triangulate(samples_deformed, sdf_values.reshape(-1))
+        surf_mesh.vertices.requires_grad = True
+        dist = torch.cdist(surf_mesh.vertices, line_mesh.vertices)  # (N, M)
+
+        # find nearest original vertex index
+        min_dist, min_idx = dist.min(dim=1)
+
+        # mask where surf vertex matches original vertex
+        mask = min_dist < 1e-7  # or some tolerance
+        orig_idx = min_idx
+        surf_mesh.vertices = torch.where(
+            mask[:, None], line_mesh.vertices[orig_idx], surf_mesh.vertices
+        )
         return surf_mesh, dVerts_dParams
     else:
         raise RuntimeError(
