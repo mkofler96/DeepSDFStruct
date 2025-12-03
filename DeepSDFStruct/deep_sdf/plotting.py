@@ -86,3 +86,31 @@ def plot_logs(experiment_directory, show_lr=False, ax=None, filename=None):
         plt.savefig(filename, bbox_inches="tight")
     elif show_plt:
         plt.show()
+
+
+def plot_reconstruction_loss(loss_history, iters_per_epoch, filename=None):
+
+    losses = np.array(loss_history)
+    num_iters = len(losses)
+
+    latest_epoch = num_iters / iters_per_epoch
+    logging.info("latest epoch is {}".format(latest_epoch))
+    logging.info("{} iters per epoch".format(iters_per_epoch))
+
+    smoothed_loss_41 = running_mean(losses, 41)
+
+    fig, ax = plt.subplots()
+
+    ax.plot(
+        np.arange(num_iters) / iters_per_epoch,
+        losses,
+        "#82c6eb",
+        np.arange(20, num_iters - 20) / iters_per_epoch,
+        smoothed_loss_41,
+        "#2a9edd",
+    )
+    ax.set_yscale("log")
+    ax.set(xlabel="Epoch", ylabel="Loss")
+    ax.legend(["Loss", "Loss (Running Mean 41)"])
+    ax.grid()
+    plt.savefig(filename, bbox_inches="tight")

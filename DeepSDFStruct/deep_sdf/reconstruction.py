@@ -2,6 +2,7 @@ from DeepSDFStruct.SDF import SDFBase
 from DeepSDFStruct.deep_sdf.training import ClampedL1Loss
 from torch.utils.data import TensorDataset, DataLoader
 from DeepSDFStruct.sampling import SampledSDF
+from DeepSDFStruct.deep_sdf.plotting import plot_reconstruction_loss
 from tqdm import trange
 import torch
 
@@ -16,6 +17,7 @@ def reconstruct_from_samples(
     loss_fn="ClampedL1",
     batch_size=512,
     drop_last=True,
+    loss_plot_path=None,
 ):
 
     optimizer = torch.optim.Adam(sdf.parametrization.parameters(), lr=lr)
@@ -71,6 +73,7 @@ def reconstruct_from_samples(
         dataset, batch_size=batch_size, shuffle=True, drop_last=drop_last
     )
 
+    loss_history = []
     for e in pbar:
         for querie_batch, gt_batch in dataloader:
             optimizer.zero_grad()
@@ -80,11 +83,19 @@ def reconstruct_from_samples(
             optimizer.step()
             loss_num = loss.detach().item()
             pbar.set_postfix({"loss": f"{loss_num:.5f}"})
+            loss_history.append(loss_num)
 
-    print("Reconstructed parameters:")
-    params = list(sdf.parametrization.parameters())
-    print(params)
-    return params
+    if loss_plot_path is not None:
+        plot_reconstruction_loss(
+            loss_history,
+            iters_per_epoch=len(dataloader),
+            filename=loss_plot_path,
+        )
+
+        params = list(sdf.parametrization.parameters())
+        print(params)
+
+        return params
 
 
 def reconstruct_deepLS_from_samples(
