@@ -478,7 +478,7 @@ def _verts_from_params(
     p: _torch.Tensor,
     sdf: SDFBase,
     samples: _torch.Tensor,
-    constructor: FlexiCubes,
+    constructor: FlexiCubes | FlexiSquares,
     cube_idx: _torch.Tensor,
     N,
     return_faces=False,
