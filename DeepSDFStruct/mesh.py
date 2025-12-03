@@ -89,8 +89,7 @@ class torchLineMesh:
         raise NotImplementedError("To trimesh functionality not implemented yet.")
         pass
 
-    def triangulate(self, x_nx2, s_n):
-        tolerance = 0.5
+    def triangulate(self, x_nx2, s_n, bbox_vertices=None, tolerance=0.05):
         holes = x_nx2[torch.where(s_n > tolerance)[0], :]
         # N_elements = 1000 * np.prod(tiling)
         # surf_area = 2
