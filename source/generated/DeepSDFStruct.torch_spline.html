@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>DeepSDFStruct.torch_spline &#8212; DeepSDFStruct 1.3.1.dev7+g8cfebe80a documentation</title>
+    <title>DeepSDFStruct.torch_spline &#8212; DeepSDFStruct 1.3.1.dev12+g9f1eb4ce7 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=1ecf96a4"></script>
+    <script src="../../_static/documentation_options.js?v=3757f4d4"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'source/generated/DeepSDFStruct.torch_spline';</script>
@@ -110,7 +110,7 @@
   
   
   
-    <p class="title logo__title">DeepSDFStruct 1.3.1.dev7+g8cfebe80a documentation</p>
+    <p class="title logo__title">DeepSDFStruct 1.3.1.dev12+g9f1eb4ce7 documentation</p>
   
 </a></div>
     
@@ -494,11 +494,13 @@ registered hooks while the latter silently ignores them.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="DeepSDFStruct.torch_spline.generate_bbox_spline">
 <span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.torch_spline.</span></span><span class="sig-name descname"><span class="pre">generate_bbox_spline</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bounds</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.torch_spline.generate_bbox_spline" title="Link to this definition">#</a></dt>
-<dd><p>Takes bounding box and generates a spline box.</p>
+<dd><p>Takes bounding box and generates a spline box.
+Works for 2D [[xmin, ymin], [xmax, ymax]]
+and 3D [[xmin, ymin, zmin], [xmax, ymax, zmax]].</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>bounds</strong> (<em>(</em><em>2</em><em>, </em><em>3</em><em>) </em><em>array-like</em>) – <dl class="simple">
-<dt>[[xmin, ymin, zmin],</dt><dd><p>[xmax, ymax, zmax]]</p>
+<dd class="field-odd"><p><strong>bounds</strong> (<em>(</em><em>2</em><em>, </em><em>d</em><em>) </em><em>array-like</em>) – <dl class="simple">
+<dt>[[min1, min2, …],</dt><dd><p>[max1, max2, …]]</p>
 </dd>
 </dl>
 </p>

@@ -10,5 +10,6 @@ DeepSDFStruct.deep\_sdf.plotting
    
       extract_paths
       plot_logs
+      plot_reconstruction_loss
       running_mean
    

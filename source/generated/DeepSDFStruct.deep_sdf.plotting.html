@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>DeepSDFStruct.deep_sdf.plotting &#8212; DeepSDFStruct 1.3.1.dev7+g8cfebe80a documentation</title>
+    <title>DeepSDFStruct.deep_sdf.plotting &#8212; DeepSDFStruct 1.3.1.dev12+g9f1eb4ce7 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=1ecf96a4"></script>
+    <script src="../../_static/documentation_options.js?v=3757f4d4"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'source/generated/DeepSDFStruct.deep_sdf.plotting';</script>
@@ -110,7 +110,7 @@
   
   
   
-    <p class="title logo__title">DeepSDFStruct 1.3.1.dev7+g8cfebe80a documentation</p>
+    <p class="title logo__title">DeepSDFStruct 1.3.1.dev12+g9f1eb4ce7 documentation</p>
   
 </a></div>
     
@@ -366,7 +366,10 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.deep_sdf.plotting.plot_logs" title="DeepSDFStruct.deep_sdf.plotting.plot_logs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_logs</span></code></a>(experiment_directory[, show_lr, ...])</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.deep_sdf.plotting.running_mean" title="DeepSDFStruct.deep_sdf.plotting.running_mean"><code class="xref py py-obj docutils literal notranslate"><span class="pre">running_mean</span></code></a>(x, N)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.deep_sdf.plotting.plot_reconstruction_loss" title="DeepSDFStruct.deep_sdf.plotting.plot_reconstruction_loss"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_reconstruction_loss</span></code></a>(loss_history, ...)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.deep_sdf.plotting.running_mean" title="DeepSDFStruct.deep_sdf.plotting.running_mean"><code class="xref py py-obj docutils literal notranslate"><span class="pre">running_mean</span></code></a>(x, N)</p></td>
 <td><p></p></td>
 </tr>
 </tbody>
@@ -380,6 +383,11 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="DeepSDFStruct.deep_sdf.plotting.plot_logs">
 <span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.deep_sdf.plotting.</span></span><span class="sig-name descname"><span class="pre">plot_logs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">experiment_directory</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_lr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.deep_sdf.plotting.plot_logs" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="DeepSDFStruct.deep_sdf.plotting.plot_reconstruction_loss">
+<span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.deep_sdf.plotting.</span></span><span class="sig-name descname"><span class="pre">plot_reconstruction_loss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">loss_history</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iters_per_epoch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.deep_sdf.plotting.plot_reconstruction_loss" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
@@ -438,6 +446,7 @@
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.deep_sdf.plotting.extract_paths"><code class="docutils literal notranslate"><span class="pre">extract_paths()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.deep_sdf.plotting.plot_logs"><code class="docutils literal notranslate"><span class="pre">plot_logs()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.deep_sdf.plotting.plot_reconstruction_loss"><code class="docutils literal notranslate"><span class="pre">plot_reconstruction_loss()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.deep_sdf.plotting.running_mean"><code class="docutils literal notranslate"><span class="pre">running_mean()</span></code></a></li>
 </ul>
   </nav></div>
