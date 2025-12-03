@@ -218,12 +218,14 @@ class TorchSpline(torch.nn.Module):
 def generate_bbox_spline(bounds):
     """
     Takes bounding box and generates a spline box.
+    Works for 2D [[xmin, ymin], [xmax, ymax]]
+    and 3D [[xmin, ymin, zmin], [xmax, ymax, zmax]].
 
     Parameters
     ----------
-    bounds : (2, 3) array-like
-        [[xmin, ymin, zmin],
-         [xmax, ymax, zmax]]
+    bounds : (2, d) array-like
+        [[min1, min2, ...],
+         [max1, max2, ...]]
 
     Returns
     -------
@@ -233,17 +235,17 @@ def generate_bbox_spline(bounds):
     bounds = np.asarray(bounds)
     mins, maxs = bounds[0], bounds[1]
 
-    knots = [[0, 0, 1, 1], [0, 0, 1, 1], [0, 0, 1, 1]]
+    dim = bounds.shape[1]         
+    degrees = [1] * dim
+    knots = [[0, 0, 1, 1] for _ in range(dim)]
+    n = 2                      
 
-    nx, ny, nz = 2, 2, 2
+    # Create 1D grids per dimension
+    axes = [np.linspace(mins[i], maxs[i], n) for i in range(dim)]
 
-    # Create regular grid of control points
-    xs = np.linspace(mins[0], maxs[0], nx)
-    ys = np.linspace(mins[1], maxs[1], ny)
-    zs = np.linspace(mins[2], maxs[2], nz)
-
+    mg = np.meshgrid(*axes, indexing="xy")
     # Generate full grid
-    control_points = np.array([[x, y, z] for z in zs for y in ys for x in xs])
+    control_points = np.stack(mg, axis=-1).reshape(-1, dim)
 
-    spline = sp.BSpline([1, 1, 1], knots, control_points)
+    spline = sp.BSpline(degrees, knots, control_points)
     return spline
