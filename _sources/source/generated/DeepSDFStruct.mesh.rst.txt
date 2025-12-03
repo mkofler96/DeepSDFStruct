@@ -16,6 +16,7 @@ DeepSDFStruct.mesh
       export_volume_mesh
       generate_2D_surf_mesh
       get_verts
+      mergeMeshs
       process_N_base_input
       prune_collinear
       sdf_to_triangle_dict

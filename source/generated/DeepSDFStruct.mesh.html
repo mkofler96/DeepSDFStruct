@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>DeepSDFStruct.mesh &#8212; DeepSDFStruct 1.3.1.dev12+g9f1eb4ce7 documentation</title>
+    <title>DeepSDFStruct.mesh &#8212; DeepSDFStruct 1.3.2 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=3757f4d4"></script>
+    <script src="../../_static/documentation_options.js?v=8ca9e7a0"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'source/generated/DeepSDFStruct.mesh';</script>
@@ -110,7 +110,7 @@
   
   
   
-    <p class="title logo__title">DeepSDFStruct 1.3.1.dev12+g9f1eb4ce7 documentation</p>
+    <p class="title logo__title">DeepSDFStruct 1.3.2 documentation</p>
   
 </a></div>
     
@@ -415,16 +415,19 @@ to standard formats (gustaf, trimesh) for I/O and visualization.</p>
 <tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.mesh.get_verts" title="DeepSDFStruct.mesh.get_verts"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_verts</span></code></a>(sdf, samples, constructor, cube_idx, N)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.mesh.process_N_base_input" title="DeepSDFStruct.mesh.process_N_base_input"><code class="xref py py-obj docutils literal notranslate"><span class="pre">process_N_base_input</span></code></a>(N, tiling[, dim])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.mesh.mergeMeshs" title="DeepSDFStruct.mesh.mergeMeshs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mergeMeshs</span></code></a>(mesh1, mesh2[, tol])</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.mesh.prune_collinear" title="DeepSDFStruct.mesh.prune_collinear"><code class="xref py py-obj docutils literal notranslate"><span class="pre">prune_collinear</span></code></a>(points[, tol])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.mesh.process_N_base_input" title="DeepSDFStruct.mesh.process_N_base_input"><code class="xref py py-obj docutils literal notranslate"><span class="pre">process_N_base_input</span></code></a>(N, tiling[, dim])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.mesh.prune_collinear" title="DeepSDFStruct.mesh.prune_collinear"><code class="xref py py-obj docutils literal notranslate"><span class="pre">prune_collinear</span></code></a>(points[, tol])</p></td>
 <td><p>Remove nearly collinear points from a polyline (closed loop).</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.mesh.sdf_to_triangle_dict" title="DeepSDFStruct.mesh.sdf_to_triangle_dict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sdf_to_triangle_dict</span></code></a>(x, y, sdf[, level, ...])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.mesh.sdf_to_triangle_dict" title="DeepSDFStruct.mesh.sdf_to_triangle_dict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sdf_to_triangle_dict</span></code></a>(x, y, sdf[, level, ...])</p></td>
 <td><p>Convert an SDF array to a PSLG dict for triangle.triangulate.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.mesh.tetrahedralize_surface" title="DeepSDFStruct.mesh.tetrahedralize_surface"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tetrahedralize_surface</span></code></a>(surface_mesh)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.mesh.tetrahedralize_surface" title="DeepSDFStruct.mesh.tetrahedralize_surface"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tetrahedralize_surface</span></code></a>(surface_mesh)</p></td>
 <td><p></p></td>
 </tr>
 </tbody>
@@ -607,6 +610,11 @@ tiling factor to maintain consistent resolution per unit cell.</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="DeepSDFStruct.mesh.mergeMeshs">
+<span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.mesh.</span></span><span class="sig-name descname"><span class="pre">mergeMeshs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mesh1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mesh2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-08</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.mesh.mergeMeshs" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="DeepSDFStruct.mesh.process_N_base_input">
 <span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.mesh.</span></span><span class="sig-name descname"><span class="pre">process_N_base_input</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">N</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tiling</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.mesh.process_N_base_input" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
@@ -700,7 +708,7 @@ indices into the vertices array.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="DeepSDFStruct.mesh.torchLineMesh.triangulate">
-<span class="sig-name descname"><span class="pre">triangulate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x_nx2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s_n</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.mesh.torchLineMesh.triangulate" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">triangulate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x_nx2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s_n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bbox_vertices</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tolerance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.05</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.mesh.torchLineMesh.triangulate" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -725,6 +733,20 @@ contains indices into the vertices array.</p></li>
 <dt class="sig sig-object py" id="DeepSDFStruct.mesh.torchSurfMesh.to_gus">
 <span class="sig-name descname"><span class="pre">to_gus</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.mesh.torchSurfMesh.to_gus" title="Link to this definition">#</a></dt>
 <dd><p>Convert to gustaf Faces format for visualization and I/O.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="DeepSDFStruct.mesh.torchSurfMesh.clean">
+<span class="sig-name descname"><span class="pre">clean</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.mesh.torchSurfMesh.clean" title="Link to this definition">#</a></dt>
+<dd><p>Remove unused vertices and remap face indices.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A new cleaned mesh with only the vertices used by faces.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#DeepSDFStruct.mesh.torchSurfMesh" title="DeepSDFStruct.mesh.torchSurfMesh">torchSurfMesh</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -879,6 +901,7 @@ For now, unreferenced vertices are kept even when clear_unused=True.</p>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.mesh.export_volume_mesh"><code class="docutils literal notranslate"><span class="pre">export_volume_mesh()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.mesh.generate_2D_surf_mesh"><code class="docutils literal notranslate"><span class="pre">generate_2D_surf_mesh()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.mesh.get_verts"><code class="docutils literal notranslate"><span class="pre">get_verts()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.mesh.mergeMeshs"><code class="docutils literal notranslate"><span class="pre">mergeMeshs()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.mesh.process_N_base_input"><code class="docutils literal notranslate"><span class="pre">process_N_base_input()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.mesh.prune_collinear"><code class="docutils literal notranslate"><span class="pre">prune_collinear()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.mesh.sdf_to_triangle_dict"><code class="docutils literal notranslate"><span class="pre">sdf_to_triangle_dict()</span></code></a></li>
@@ -892,6 +915,7 @@ For now, unreferenced vertices are kept even when clear_unused=True.</p>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.mesh.torchSurfMesh"><code class="docutils literal notranslate"><span class="pre">torchSurfMesh</span></code></a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.mesh.torchSurfMesh.to_gus"><code class="docutils literal notranslate"><span class="pre">torchSurfMesh.to_gus()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.mesh.torchSurfMesh.clean"><code class="docutils literal notranslate"><span class="pre">torchSurfMesh.clean()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1"><code class="docutils literal notranslate"><span class="pre">torchSurfMesh.to_gus()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.mesh.torchSurfMesh.to_trimesh"><code class="docutils literal notranslate"><span class="pre">torchSurfMesh.to_trimesh()</span></code></a></li>
 </ul>
