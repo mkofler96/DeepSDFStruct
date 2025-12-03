@@ -186,6 +186,35 @@ class torchSurfMesh:
         raise NotImplementedError("To trimesh functionality not implemented yet.")
         pass
 
+    def clean(self):
+        """
+        Remove unused vertices and remap face indices.
+
+        Returns
+        -------
+        torchSurfMesh
+            A new cleaned mesh with only the vertices used by faces.
+        """
+
+        # Find unique vertices referenced by faces
+        used_idx = _torch.unique(self.faces.reshape(-1))
+
+        # Build mapping from old indices → new compacted indices
+        new_index = -_torch.ones(
+            self.vertices.shape[0], dtype=_torch.long, device=self.vertices.device
+        )
+        new_index[used_idx] = _torch.arange(
+            used_idx.numel(), device=self.vertices.device
+        )
+
+        # Compact vertex array
+        new_vertices = self.vertices[used_idx]
+
+        # Remap face indices
+        new_faces = new_index[self.faces]
+
+        return torchSurfMesh(new_vertices, new_faces)
+
 
 class torchVolumeMesh:
     """PyTorch-based volume mesh representation for differentiable operations.
@@ -903,3 +932,42 @@ def export_surface_mesh(
             _export_surface_mesh_vtk(mesh.vertices, mesh.faces, export_filename, dSurf)
         case _:
             gus.io.meshio.export(export_filename, mesh)
+
+
+def mergeMeshs(mesh1, mesh2, tol=1e-8):
+    vertices1 = mesh1.vertices
+    vertices2 = mesh2.vertices
+
+    diff = vertices2.unsqueeze(1) - vertices1.unsqueeze(0)
+    dist2 = (diff**2).sum(dim=-1)
+    min_dist, nearest_idx = dist2.min(dim=1)
+
+    duplicates = min_dist < tol
+
+    mapping = torch.empty(vertices2.shape[0], dtype=torch.long)
+    mapping[duplicates] = nearest_idx[duplicates]
+
+    unique_vertices_mask = ~duplicates
+    mapping[unique_vertices_mask] = torch.arange(
+        vertices1.shape[0], vertices1.shape[0] + unique_vertices_mask.sum()
+    )
+
+    merged_vertices = torch.cat([vertices1, vertices2[unique_vertices_mask]], dim=0)
+
+    if isinstance(mesh1, torchLineMesh):
+        merged_lines = mapping[mesh2.lines]
+        merged_lines = torch.cat([mesh1.lines, merged_lines], dim=0)
+        return torchLineMesh(merged_vertices, merged_lines)
+
+    elif isinstance(mesh1, torchSurfMesh):
+        merged_faces = mapping[mesh2.faces]
+        merged_faces = torch.cat([mesh1.faces, merged_faces], dim=0)
+        return torchSurfMesh(merged_vertices, merged_faces)
+
+    elif isinstance(mesh1, torchVolumeMesh):
+        merged_volumes = mapping[mesh2.volumes]
+        merged_volumes = torch.cat([mesh1.volumes, merged_volumes], dim=0)
+        return torchVolumeMesh(merged_vertices, merged_volumes)
+
+    else:
+        raise TypeError(f"Unsupported mesh type: {type(mesh1)}")
