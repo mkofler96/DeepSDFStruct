@@ -186,7 +186,7 @@ class torchSurfMesh:
         raise NotImplementedError("To trimesh functionality not implemented yet.")
         pass
 
-    def clean(self):
+    def clean(self, clean_jacobian=True):
         """
         Remove unused vertices and remap face indices.
 
@@ -195,6 +195,35 @@ class torchSurfMesh:
         torchSurfMesh
             A new cleaned mesh with only the vertices used by faces.
         """
+        n_elements_orig = self.faces.shape[0]
+        n_vertices_orig = self.vertices.shape[0]
+        if clean_jacobian:
+            v0 = self.vertices[self.faces[:, 0]]
+            v1 = self.vertices[self.faces[:, 1]]
+            v2 = self.vertices[self.faces[:, 2]]
+
+            if self.vertices.shape[1] == 2:
+                # 2D Jacobian: signed area of triangle
+                # det( [v1-v0, v2-v0] ) = e1.x*e2.y - e1.y*e2.x
+                e1 = v1 - v0
+                e2 = v2 - v0
+                jac_det = e1[:, 0] * e2[:, 1] - e1[:, 1] * e2[:, 0]
+            elif self.vertices.shape[1] == 3:
+                # 3D Jakob: sign from oriented area using cross product direction
+                e1 = v1 - v0
+                e2 = v2 - v0
+                cross = torch.cross(e1, e2, dim=-1)  # (F,3)
+                # Signed Jacobian: oriented area relative to a stable axis
+                # Use the largest-magnitude axis to avoid degeneracy
+                abs_cross = cross.abs()
+                axis = abs_cross.argmax(dim=1)  # (F,)
+
+                signed_area = cross[torch.arange(cross.size(0)), axis]
+                jac_det = signed_area  # sign preserved
+
+            # remove elements with zero surface area
+            valid_mask = jac_det > 0
+            self.faces = self.faces[valid_mask]
 
         # Find unique vertices referenced by faces
         used_idx = _torch.unique(self.faces.reshape(-1))
@@ -212,7 +241,15 @@ class torchSurfMesh:
 
         # Remap face indices
         new_faces = new_index[self.faces]
-
+        n_elements_after = new_faces.shape[0]
+        n_vertices_after = new_vertices.shape[0]
+        info_string = ""
+        if n_elements_after < n_elements_orig:
+            info_string += f"removed {n_elements_orig-n_elements_after} elements"
+        if n_vertices_after < n_vertices_orig:
+            info_string += f" removed {n_vertices_orig-n_vertices_after} vertices"
+        if info_string != "":
+            logger.info(info_string)
         return torchSurfMesh(new_vertices, new_faces)
 
 
@@ -764,7 +801,7 @@ def create_2D_mesh(
         min_dist, min_idx = dist.min(dim=1)
 
         # mask where surf vertex matches original vertex
-        mask = min_dist < 1e-7  # or some tolerance
+        mask = min_dist < 1e-10  # or some tolerance
         orig_idx = min_idx
         surf_mesh.vertices = torch.where(
             mask[:, None], line_mesh.vertices[orig_idx], surf_mesh.vertices
@@ -946,7 +983,7 @@ def export_surface_mesh(
             gus.io.meshio.export(export_filename, mesh)
 
 
-def mergeMeshs(mesh1, mesh2, tol=1e-8):
+def mergeMeshs(mesh1, mesh2, tol=1e-10):
     vertices1 = mesh1.vertices
     vertices2 = mesh2.vertices
 
