@@ -1,10 +1,5 @@
-from DeepSDFStruct.local_shapes import LocalShapesSDF
 from DeepSDFStruct.pretrained_models import get_model, PretrainedModels
-from DeepSDFStruct.SDF import SDFfromDeepSDF, _cap_outside_of_unitcube
-from DeepSDFStruct.lattice_structure import LatticeSDFStruct
-from DeepSDFStruct.parametrization import Constant
-from DeepSDFStruct.torch_spline import TorchSpline
-import splinepy
+from DeepSDFStruct.SDF import SDFfromDeepSDF
 import torch
 
 
