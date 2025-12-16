@@ -301,10 +301,10 @@ def generate_bbox_spline(bounds):
     bounds = np.asarray(bounds)
     mins, maxs = bounds[0], bounds[1]
 
-    dim = bounds.shape[1]         
+    dim = bounds.shape[1]
     degrees = [1] * dim
     knots = [[0, 0, 1, 1] for _ in range(dim)]
-    n = 2                      
+    n = 2
 
     # Create 1D grids per dimension
     axes = [np.linspace(mins[i], maxs[i], n) for i in range(dim)]

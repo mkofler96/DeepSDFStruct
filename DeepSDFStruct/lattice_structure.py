@@ -41,16 +41,16 @@ logger = logging.getLogger(DeepSDFStruct.__name__)
 
 class LatticeSDFStruct(_SDFBase):
     """Helper class to facilitate the construction of periodic lattice SDF structures.
-    
+
     This class creates periodic lattice structures by tiling a unit cell geometry
     (microtile) in a regular pattern and optionally deforming the result through
     a spline-based mapping. The microtile can be parametrized to have spatially-
     varying properties (e.g., thickness that varies across the structure).
-    
+
     The lattice is defined in parametric space [0,1]^d and can be mapped to
     physical space through a deformation spline. Boundary conditions can be
     applied to cap the structure at domain boundaries.
-    
+
     Parameters
     ----------
     tiling : list of int or int, optional
@@ -71,7 +71,7 @@ class LatticeSDFStruct(_SDFBase):
         at domain faces (for capping the structure at boundaries).
     cap_outside_of_unitcube : bool, default True
         If True, caps geometry outside the unit cube.
-        
+
     Attributes
     ----------
     tiling : list of int
@@ -82,7 +82,7 @@ class LatticeSDFStruct(_SDFBase):
         Geometric dimensionality (2 or 3).
     parametric_dimension : int
         Parametric dimensionality (equal to geometric_dim).
-        
+
     Notes
     -----
     The microtile should ideally have periodic boundary conditions to ensure
@@ -91,23 +91,23 @@ class LatticeSDFStruct(_SDFBase):
     - `evaluation_points`: Points where parameters are evaluated
     - `para_dim`: Dimensionality of the parameter space
     - `_set_param`: Method to update parameters
-    
+
     Examples
     --------
     >>> from DeepSDFStruct.lattice_structure import LatticeSDFStruct
     >>> from DeepSDFStruct.sdf_primitives import SphereSDF
     >>> from DeepSDFStruct.torch_spline import TorchSpline
     >>> import torch
-    >>> 
+    >>>
     >>> # Create a simple unit cell
     >>> unit_cell = SphereSDF(center=[0.5, 0.5, 0.5], radius=0.3)
-    >>> 
+    >>>
     >>> # Create lattice with 3x3x3 tiling
     >>> lattice = LatticeSDFStruct(
     ...     tiling=[3, 3, 3],
     ...     microtile=unit_cell
     ... )
-    >>> 
+    >>>
     >>> # Query lattice SDF
     >>> points = torch.rand(100, 3)
     >>> distances = lattice(points)

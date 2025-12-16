@@ -13,6 +13,7 @@ author = "Michael Kofler"
 # Try to get version from package, fallback to default if not installed
 try:
     from importlib.metadata import version as package_version
+
     release = str(package_version("DeepSDFStruct"))
 except Exception:
     release = "latest"

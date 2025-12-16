@@ -35,11 +35,11 @@ def plot_slice(
     show_zero_level=True,
 ):
     """Plot a 2D slice through an SDF as a contour plot.
-    
+
     This function evaluates an SDF on a planar grid and visualizes the
     signed distance values using a color map. The zero level set (the
     actual surface) can be highlighted with a contour line.
-    
+
     Parameters
     ----------
     fun : callable
@@ -64,21 +64,21 @@ def plot_slice(
         Matplotlib colormap name.
     show_zero_level : bool, default True
         If True, draws a black contour line at distance=0 (the surface).
-        
+
     Returns
     -------
     fig, ax : matplotlib.figure.Figure, matplotlib.axes.Axes
         Only returned if ax was None (i.e., a new figure was created).
-        
+
     Examples
     --------
     >>> from DeepSDFStruct.sdf_primitives import SphereSDF
     >>> from DeepSDFStruct.plotting import plot_slice
     >>> import matplotlib.pyplot as plt
-    >>> 
+    >>>
     >>> # Create a sphere
     >>> sphere = SphereSDF(center=[0, 0, 0], radius=0.5)
-    >>> 
+    >>>
     >>> # Plot XY slice at z=0
     >>> fig, ax = plot_slice(
     ...     sphere,
@@ -88,7 +88,7 @@ def plot_slice(
     ... )
     >>> plt.title("XY Slice of Sphere")
     >>> plt.show()
-    
+
     Notes
     -----
     The 'seismic' colormap is well-suited for SDFs as it uses blue for
@@ -123,10 +123,10 @@ def plot_slice(
 
 def generate_plane_points(origin, normal, res, xlim, ylim):
     """Generate evenly spaced points on a plane in 3D space.
-    
+
     Creates a regular grid of points on a plane defined by a point and normal
     vector. The grid is axis-aligned in the plane's local coordinate system.
-    
+
     Parameters
     ----------
     origin : array-like of shape (3,)
@@ -140,7 +140,7 @@ def generate_plane_points(origin, normal, res, xlim, ylim):
         Range along the first plane axis (umin, umax).
     ylim : tuple of float
         Range along the second plane axis (vmin, vmax).
-        
+
     Returns
     -------
     points : np.ndarray of shape (num_points_u * num_points_v, 3)
@@ -149,17 +149,17 @@ def generate_plane_points(origin, normal, res, xlim, ylim):
         First plane coordinate for each point.
     v : np.ndarray of shape (num_points_u * num_points_v,)
         Second plane coordinate for each point.
-        
+
     Raises
     ------
     NotImplementedError
         If normal is not axis-aligned.
-        
+
     Examples
     --------
     >>> from DeepSDFStruct.plotting import generate_plane_points
     >>> import numpy as np
-    >>> 
+    >>>
     >>> # Generate points on XY plane at z=0.5
     >>> points, u, v = generate_plane_points(
     ...     origin=[0, 0, 0.5],
@@ -170,7 +170,7 @@ def generate_plane_points(origin, normal, res, xlim, ylim):
     ... )
     >>> print(points.shape)  # (100, 3)
     >>> print(np.allclose(points[:, 2], 0.5))  # True (all on z=0.5 plane)
-    
+
     Notes
     -----
     The function determines two orthogonal axes (u and v) in the plane
