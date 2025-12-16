@@ -71,7 +71,7 @@ logger = logging.getLogger(DeepSDFStruct.__name__)
 
 class DataSetInfo(typing.TypedDict):
     """Metadata for a generated SDF dataset.
-    
+
     Attributes
     ----------
     dataset_name : str
@@ -91,6 +91,7 @@ class DataSetInfo(typing.TypedDict):
     sdf_struct_version : str
         Version of DeepSDFStruct used to create the dataset.
     """
+
     dataset_name: str
     class_names: list[str]
     sampling_strategy: str
@@ -103,6 +104,7 @@ class DataSetInfo(typing.TypedDict):
 
 class SphereParameters(typing.TypedDict):
     """Parameters defining a sampling sphere."""
+
     cx: float
     cy: float
     cz: float
@@ -111,24 +113,24 @@ class SphereParameters(typing.TypedDict):
 
 class SampledSDF:
     """Container for sampled SDF points and their distance values.
-    
+
     This class stores point samples and their corresponding SDF values,
     providing utilities for data manipulation, splitting, and visualization.
-    
+
     Parameters
     ----------
     samples : torch.Tensor
         Point coordinates of shape (N, 3).
     distances : torch.Tensor
         SDF values at sample points of shape (N, 1).
-        
+
     Attributes
     ----------
     samples : torch.Tensor
         The sampled point coordinates.
     distances : torch.Tensor
         The SDF distance values.
-        
+
     Methods
     -------
     split_pos_neg()
@@ -138,28 +140,28 @@ class SampledSDF:
         Convert to gustaf Vertices for visualization.
     stacked
         Property returning concatenated samples and distances.
-        
+
     Examples
     --------
     >>> import torch
     >>> from DeepSDFStruct.sampling import SampledSDF
-    >>> 
+    >>>
     >>> points = torch.rand(100, 3)
     >>> distances = torch.randn(100, 1)
     >>> sampled = SampledSDF(points, distances)
-    >>> 
+    >>>
     >>> # Split by sign
     >>> inside, outside = sampled.split_pos_neg()
     >>> print(f"Inside points: {inside.samples.shape[0]}")
     >>> print(f"Outside points: {outside.samples.shape[0]}")
     """
-    
+
     samples: torch.Tensor
     distances: torch.Tensor
 
     def split_pos_neg(self):
         """Split samples into inside (negative) and outside (positive) points.
-        
+
         Returns
         -------
         pos : SampledSDF
@@ -179,7 +181,7 @@ class SampledSDF:
 
     def create_gus_plottable(self):
         """Create a gustaf Vertices object for visualization.
-        
+
         Returns
         -------
         gustaf.Vertices
@@ -192,7 +194,7 @@ class SampledSDF:
     @property
     def stacked(self):
         """Concatenate samples and distances into a single tensor.
-        
+
         Returns
         -------
         torch.Tensor
@@ -206,12 +208,12 @@ class SampledSDF:
 
     def __add__(self, other):
         """Concatenate two SampledSDF objects.
-        
+
         Parameters
         ----------
         other : SampledSDF
             Another SampledSDF to concatenate.
-            
+
         Returns
         -------
         SampledSDF

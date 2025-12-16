@@ -54,14 +54,14 @@ from DeepSDFStruct.torch_spline import TorchSpline
 
 class Constant(nn.Module):
     """Spatially-constant parameter value.
-    
+
     This parametrization returns the same parameter value(s) for all query
     points, independent of position. Useful for uniform structures or as
     a simple baseline.
-    
+
     The parameter is stored as a torch.nn.Parameter, making it automatically
     discoverable for optimization.
-    
+
     Parameters
     ----------
     value : float, list, or torch.Tensor
@@ -70,30 +70,30 @@ class Constant(nn.Module):
         Device for computation ('cpu' or 'cuda').
     dtype : torch.dtype, optional
         Data type for the parameter.
-        
+
     Attributes
     ----------
     param : torch.nn.Parameter
         The learnable constant parameter.
-        
+
     Examples
     --------
     >>> from DeepSDFStruct.parametrization import Constant
     >>> import torch
-    >>> 
+    >>>
     >>> # Scalar constant
     >>> const = Constant(0.5)
     >>> queries = torch.rand(100, 3)
     >>> params = const(queries)
     >>> print(params.shape)  # (100, 1)
     >>> print(params[0])  # tensor([0.5])
-    >>> 
+    >>>
     >>> # Vector constant
     >>> const_vec = Constant([0.5, 1.0, 1.5])
     >>> params = const_vec(queries)
     >>> print(params.shape)  # (100, 3)
     """
-    
+
     def __init__(self, value, device=None, dtype=None):
         super().__init__()
         if not isinstance(value, torch.Tensor):
@@ -102,13 +102,13 @@ class Constant(nn.Module):
 
     def forward(self, queries: torch.Tensor) -> torch.Tensor:
         """Evaluate constant parameter at query points.
-        
+
         Parameters
         ----------
         queries : torch.Tensor
             Query point coordinates of shape (N, d). The spatial
             coordinates are ignored.
-            
+
         Returns
         -------
         torch.Tensor
@@ -120,7 +120,7 @@ class Constant(nn.Module):
 
     def set_param(self, new_value: torch.Tensor):
         """Update the constant parameter value.
-        
+
         Parameters
         ----------
         new_value : torch.Tensor
@@ -132,14 +132,14 @@ class Constant(nn.Module):
 
 class SplineParametrization(nn.Module):
     """B-spline-based spatially-varying parametrization.
-    
+
     Uses a B-spline, Bezier, or NURBS function to provide smoothly-varying
     parameters across space. The spline control points are learnable parameters
     that can be optimized.
-    
+
     This is useful for creating gradual transitions in material properties,
     thickness variations, or other spatially-dependent design variables.
-    
+
     Parameters
     ----------
     spline : splinepy.BSpline, splinepy.Bezier, or splinepy.NURBS
@@ -147,18 +147,18 @@ class SplineParametrization(nn.Module):
         output dimension determines the parameter dimension.
     device : str or torch.device, optional
         Device for computation ('cpu' or 'cuda').
-        
+
     Attributes
     ----------
     torch_spline : TorchSpline
         PyTorch-compatible wrapper for the spline.
-        
+
     Examples
     --------
     >>> from DeepSDFStruct.parametrization import SplineParametrization
     >>> import splinepy
     >>> import torch
-    >>> 
+    >>>
     >>> # Create a 3D B-spline for thickness variation
     >>> spline = splinepy.BSpline(
     ...     degrees=[2, 2, 2],
@@ -169,29 +169,29 @@ class SplineParametrization(nn.Module):
     ...         [0, 0, 0, 1, 1, 1]
     ...     ]
     ... )
-    >>> 
+    >>>
     >>> # Create parametrization
     >>> param = SplineParametrization(spline)
-    >>> 
+    >>>
     >>> # Evaluate at query points
     >>> queries = torch.rand(100, 3)
     >>> thickness = param(queries)
     >>> print(thickness.shape)  # (100, 1)
     """
-    
+
     def __init__(self, spline: sp.BSpline | sp.Bezier | sp.NURBS, device=None):
         super().__init__()
         self.torch_spline = TorchSpline(spline, device=device)
 
     def forward(self, queries: torch.Tensor) -> torch.Tensor:
         """Evaluate spline parametrization at query points.
-        
+
         Parameters
         ----------
         queries : torch.Tensor
             Query point coordinates of shape (N, d) where d matches
             the spline's parametric dimension.
-            
+
         Returns
         -------
         torch.Tensor
@@ -202,7 +202,7 @@ class SplineParametrization(nn.Module):
 
     def set_param(self, new_value: torch.Tensor):
         """Update the spline control points.
-        
+
         Parameters
         ----------
         new_value : torch.Tensor

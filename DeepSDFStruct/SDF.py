@@ -111,19 +111,19 @@ def get_equidistant_grid_sample(
 class SDFBase(ABC):
     """Abstract base class for Signed Distance Functions with optional
     deformation and parametrization.
-    
+
     This class provides the foundation for all SDF representations in DeepSDFStruct.
     SDFs represent geometry as an implicit function that returns the signed distance
     from any query point to the nearest surface. Negative values indicate points
     inside the geometry, positive values indicate points outside, and zero indicates
     points on the surface.
-    
+
     The class supports:
     - Optional spline-based deformations for smooth geometric transformations
     - Parametrization functions for spatially-varying properties
     - Border capping to constrain geometry within specified bounds
     - Composition operations (union, intersection) via operator overloading
-    
+
     Parameters
     ----------
     deformation_spline : TorchSpline, optional
@@ -140,21 +140,21 @@ class SDFBase(ABC):
         a bounded geometry.
     geometric_dim : int, default 3
         Geometric dimension of the SDF (2 or 3).
-        
+
     Notes
     -----
     Subclasses must implement:
     - ``_compute(queries)``: Calculate SDF values for query points
     - ``_get_domain_bounds()``: Return the bounding box of the geometry
-    
+
     Examples
     --------
     >>> from DeepSDFStruct.sdf_primitives import SphereSDF
     >>> import torch
-    >>> 
+    >>>
     >>> # Create a sphere SDF
     >>> sphere = SphereSDF(center=[0, 0, 0], radius=1.0)
-    >>> 
+    >>>
     >>> # Query SDF values
     >>> points = torch.tensor([[0.0, 0.0, 0.0], [2.0, 0.0, 0.0]])
     >>> distances = sphere(points)
@@ -207,22 +207,22 @@ class SDFBase(ABC):
 
     def __call__(self, queries: torch.Tensor) -> torch.Tensor:
         """Evaluate the SDF at given query points.
-        
+
         This method validates input, computes SDF values using the subclass
         implementation, and applies optional boundary conditions and capping.
-        
+
         Parameters
         ----------
         queries : torch.Tensor
             Query points of shape (N, 2) for 2D or (N, 3) for 3D, where N is
             the number of points to evaluate.
-            
+
         Returns
         -------
         torch.Tensor
             Signed distance values of shape (N, 1). Negative values indicate
             points inside the geometry, positive values outside.
-            
+
         Raises
         ------
         ValueError
@@ -275,17 +275,17 @@ class SDFBase(ABC):
     @abstractmethod
     def _compute(self, queries: torch.Tensor) -> torch.Tensor:
         """Compute SDF values for query points.
-        
+
         Subclasses must implement this method to define their specific
         geometry. The method should return signed distances without
         applying any boundary conditions or capping (those are handled
         by __call__).
-        
+
         Parameters
         ----------
         queries : torch.Tensor
             Query points of shape (N, dim) where dim is 2 or 3.
-            
+
         Returns
         -------
         torch.Tensor
@@ -296,10 +296,10 @@ class SDFBase(ABC):
     @abstractmethod
     def _get_domain_bounds(self) -> np.array:
         """Return the bounding box of the SDF's domain.
-        
+
         Subclasses must implement this to specify the spatial extent
         of their geometry. This is used for mesh generation and sampling.
-        
+
         Returns
         -------
         np.ndarray
@@ -445,15 +445,15 @@ def union_numpy(D, k=0):
 
 class SDFfromMesh(SDFBase):
     """Create an SDF from a triangle mesh using closest-point queries.
-    
+
     This class wraps a triangle mesh and computes signed distances by finding
     the closest point on the mesh surface to each query point. The sign is
     determined using winding number or ray casting to determine inside/outside.
-    
+
     The mesh can be optionally normalized to fit within a unit cube centered
     at the origin, which is useful for consistent scaling across different
     geometries.
-    
+
     Parameters
     ----------
     mesh : trimesh.Trimesh or gustaf.faces.Faces
@@ -469,7 +469,7 @@ class SDFfromMesh(SDFBase):
         centered at the origin.
     threshold : float, default 1e-5
         Small threshold value for numerical stability in distance computations.
-        
+
     Attributes
     ----------
     mesh : trimesh.Trimesh
@@ -480,29 +480,29 @@ class SDFfromMesh(SDFBase):
         Whether distances are sign-flipped.
     threshold : float
         Numerical threshold for stability.
-        
+
     Notes
     -----
     This class uses libigl for efficient closest-point queries and embree
     for ray intersection tests to determine inside/outside status.
-    
+
     Examples
     --------
     >>> import trimesh
     >>> from DeepSDFStruct.SDF import SDFfromMesh
     >>> import torch
-    >>> 
+    >>>
     >>> # Load or create a mesh
     >>> mesh = trimesh.creation.box(extents=[1, 1, 1])
-    >>> 
+    >>>
     >>> # Create SDF from mesh
     >>> sdf = SDFfromMesh(mesh, scale=True)
-    >>> 
+    >>>
     >>> # Query distances
     >>> points = torch.tensor([[0.0, 0.0, 0.0], [2.0, 0.0, 0.0]])
     >>> distances = sdf(points)
     """
-    
+
     def __init__(
         self, mesh, dtype=np.float32, flip_sign=False, scale=True, threshold=1e-5
     ):

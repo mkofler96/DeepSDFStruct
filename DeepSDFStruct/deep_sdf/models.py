@@ -22,15 +22,15 @@ import torch
 
 class DeepSDFModel:
     """Wrapper for trained DeepSDF decoder and latent vectors.
-    
+
     This class provides a convenient interface for using trained DeepSDF models.
     It combines the decoder network (which maps latent+position to SDF values)
     with the trained latent vectors (which encode different shapes).
-    
+
     The model supports both constant latent codes (one code for all query points)
     and spatially-varying codes (different codes per query point), enabling
     flexible shape representation.
-    
+
     Parameters
     ----------
     decoder : torch.nn.Module
@@ -41,7 +41,7 @@ class DeepSDFModel:
         Each row encodes one learned shape.
     device : str or torch.device
         Device for computation ('cpu' or 'cuda').
-        
+
     Attributes
     ----------
     _decoder : torch.nn.Module
@@ -50,47 +50,47 @@ class DeepSDFModel:
         The latent code library.
     device : str or torch.device
         Computation device.
-        
+
     Methods
     -------
     _decode_sdf(latent_vec, queries)
         Decode SDF values from a latent code and spatial queries.
     export_libtorch_executable(filename)
         Export model to TorchScript for C++ deployment.
-        
+
     Examples
     --------
     >>> import torch
     >>> from DeepSDFStruct.deep_sdf.models import DeepSDFModel
-    >>> 
+    >>>
     >>> # Assume we have a trained decoder and latent vectors
     >>> # decoder = ...
     >>> # latents = torch.randn(10, 256)  # 10 shapes, 256-dim codes
-    >>> 
+    >>>
     >>> # Create model
     >>> model = DeepSDFModel(decoder, latents, device='cuda')
-    >>> 
+    >>>
     >>> # Query first shape
     >>> points = torch.rand(1000, 3, device='cuda')
     >>> distances = model._decode_sdf(latents[0], points)
-    >>> 
+    >>>
     >>> # Use with SDFfromDeepSDF
     >>> from DeepSDFStruct.SDF import SDFfromDeepSDF
     >>> sdf = SDFfromDeepSDF(model, latent_code=latents[0])
     >>> mesh = create_3D_mesh(sdf, N_base=64, mesh_type='surface')
-    
+
     Notes
     -----
     The decoder architecture typically consists of multiple fully-connected
     layers with skip connections. See networks/ for architecture definitions.
-    
+
     References
     ----------
     .. [1] Park, J. J., Florence, P., Straub, J., Newcombe, R., & Lovegrove, S.
            (2019). DeepSDF: Learning continuous signed distance functions for
            shape representation. In CVPR.
     """
-    
+
     def __init__(
         self, decoder: torch.nn.Module, trained_latent_vectors: torch.Tensor, device
     ):
@@ -102,11 +102,11 @@ class DeepSDFModel:
         self, latent_vec: torch.Tensor, queries: torch.Tensor
     ) -> torch.Tensor:
         """Decode SDF values from latent vector and xyz queries.
-        
+
         Combines latent codes with spatial coordinates and passes through
         the decoder to obtain SDF values. Handles both per-query and
         constant latent vectors.
-        
+
         Parameters
         ----------
         latent_vec : torch.Tensor
@@ -115,17 +115,17 @@ class DeepSDFModel:
             - Shape (num_samples, latent_dim): Per-query codes
         queries : torch.Tensor
             Query point coordinates of shape (num_samples, 3).
-            
+
         Returns
         -------
         torch.Tensor
             SDF values of shape (num_samples, 1).
-            
+
         Raises
         ------
         ValueError
             If latent_vec shape doesn't match expected dimensions.
-            
+
         Notes
         -----
         If latent_vec is constant (1D), it's expanded to match the number
