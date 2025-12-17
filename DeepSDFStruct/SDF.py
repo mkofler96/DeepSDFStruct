@@ -814,3 +814,50 @@ class TransformedSDF(SDFBase):
 
     def _get_domain_bounds(self) -> torch.Tensor:
         return self.sdf._get_domain_bounds()
+
+
+class CappedBorderSDF(SDFBase):
+    """
+    Applies planar boundary caps to another SDF.
+    """
+
+    def __init__(self, sdf: SDFBase, cap_border_dict):
+        super().__init__(geometric_dim=sdf.geometric_dim)
+        self.sdf = sdf
+        self.cap_border_dict = cap_border_dict
+
+    def _compute(self, queries: torch.Tensor) -> torch.Tensor:
+        sdf_values = self.sdf(queries)
+
+        bounds = self.sdf._get_domain_bounds().to(
+            device=queries.device, dtype=queries.dtype
+        )
+
+        for loc, cap_dict in self.cap_border_dict.items():
+            cap = cap_dict["cap"]
+            measure = cap_dict["measure"]
+
+            dim, side = location_lookup[loc]
+
+            if side == 0:
+                plane = bounds[side, dim] + measure
+                normal = -1.0
+            else:
+                plane = bounds[side, dim] - measure
+                normal = +1.0
+
+            border_sdf = ((queries[:, dim] - plane) * normal).view(-1, 1)
+
+            outside = border_sdf > 0
+
+            if cap == -1:
+                sdf_values = torch.where(outside, -border_sdf, sdf_values)
+            elif cap == 1:
+                sdf_values = torch.where(outside, border_sdf, sdf_values)
+            else:
+                raise ValueError("Cap must be -1 or 1")
+
+        return sdf_values
+
+    def _get_domain_bounds(self):
+        return self.sdf._get_domain_bounds()
