@@ -89,19 +89,6 @@ class CylinderSDF(SDFBase):
 
     def __init__(self, point, axis, radius):
         super().__init__()
-        self.center = torch.tensor(center, dtype=torch.float32)
-        self.r = radius
-
-    def _compute(self, queries: torch.Tensor) -> torch.Tensor:
-        return (torch.linalg.norm(queries - self.center, dim=1) - self.r).reshape(-1, 1)
-
-    def _get_domain_bounds(self) -> torch.Tensor:
-        return torch.tensor([[-1, -1, -1], [1, 1, 1]], dtype=torch.float32)
-
-
-class CylinderSDF(SDFBase):
-    def __init__(self, point, axis, radius):
-        super().__init__()
         self.point = torch.tensor(point, dtype=torch.float32)
         self.axis = axis
         self.r = radius

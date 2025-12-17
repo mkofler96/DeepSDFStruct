@@ -108,7 +108,7 @@ def get_equidistant_grid_sample(
     return points
 
 
-class SDFBase(ABC):
+class SDFBase(torch.nn.Module, ABC):
     """Abstract base class for Signed Distance Functions with optional
     deformation and parametrization.
 
@@ -165,47 +165,14 @@ class SDFBase(ABC):
         self,
         deformation_spline: TorchSpline | None = None,
         parametrization: torch.nn.Module | None = None,
-        cap_border_dict: CapBorderDict = None,
-        cap_outside_of_unitcube=False,
         geometric_dim=3,
     ):
-        self._deformation_spline = deformation_spline
-
-        self._parametrization = parametrization
-        if parametrization is not None:
-            self.parameters = parametrization.parameters
-        else:
-            self.parameters = None
-
-        self._cap_border_dict = cap_border_dict
-        self.cap_outside_of_unitcube = cap_outside_of_unitcube
+        super().__init__()
+        self.deformation_spline = deformation_spline
+        self.parametrization = parametrization
         self.geometric_dim = geometric_dim
 
-    @property
-    def deformation_spline(self):
-        return self._deformation_spline
-
-    @deformation_spline.setter
-    def deformation_spline(self, spline):
-        self._deformation_spline = spline
-
-    @property
-    def parametrization(self):
-        return self._parametrization
-
-    @parametrization.setter
-    def parametrization(self, p):
-        self._parametrization = p
-
-    @property
-    def cap_border_dict(self):
-        return self._cap_border_dict
-
-    @cap_border_dict.setter
-    def cap_border_dict(self, d):
-        self._cap_border_dict = d
-
-    def __call__(self, queries: torch.Tensor) -> torch.Tensor:
+    def forward(self, queries: torch.Tensor) -> torch.Tensor:
         """Evaluate the SDF at given query points.
 
         This method validates input, computes SDF values using the subclass
@@ -234,35 +201,6 @@ class SDFBase(ABC):
         sdf_values = self._compute(queries)
         if sdf_values is None:
             raise RuntimeError("Invalid SDF output")
-        if self._cap_border_dict is not None:
-            for loc, cap_dict in self._cap_border_dict.items():
-                cap, measure = cap_dict["cap"], cap_dict["measure"]
-                dim, location = location_lookup[loc]
-                if "0" in loc:
-                    multiplier = -1
-                elif "1" in loc:
-                    multiplier = 1
-                border_sdf = (
-                    queries[:, dim] - multiplier * (location - measure)
-                ).reshape(-1, 1) * -multiplier
-                # # border_sdf = border_sdf.view(-1, 1)
-                # border_sdf = border_sdf.to(orig_device)
-                # sdf_values = sdf_values.to(orig_device)
-                if cap == -1:
-                    # sdf_values = _torch.maximum(sdf_values, -border_sdf)
-
-                    sdf_values = torch.maximum(sdf_values, -border_sdf)
-                elif cap == 1:
-                    sdf_values = torch.minimum(sdf_values, border_sdf)
-                else:
-                    raise ValueError("Cap must be -1 or 1")
-
-            # cap everything outside of the unit cube
-            # k and d are y = k*(x-dx) + dy
-        if self.cap_outside_of_unitcube:
-            sdf_values = _cap_outside_of_unitcube(
-                queries, sdf_values, max_dim=self.geometric_dim
-            )
         return sdf_values
 
     def _validate_input(self, queries: torch.Tensor):
@@ -821,6 +759,8 @@ class CappedBorderSDF(SDFBase):
     Applies planar boundary caps to another SDF.
     """
 
+    cap_border_dict: CapBorderDict
+
     def __init__(self, sdf: SDFBase, cap_border_dict):
         super().__init__(geometric_dim=sdf.geometric_dim)
         self.sdf = sdf
@@ -838,24 +778,36 @@ class CappedBorderSDF(SDFBase):
             measure = cap_dict["measure"]
 
             dim, side = location_lookup[loc]
+            bound = bounds[side, dim]
+            x = queries[:, dim].view(-1, 1)
 
-            if side == 0:
-                plane = bounds[side, dim] + measure
-                normal = -1.0
+            if side == 0 and cap == -1:
+                border_sdf = x - (bound + measure)
+                outside = x < (bound + measure)
+            elif side == 0 and cap == 1:
+                border_sdf = (bound + measure) - x
+                outside = x < (bound + measure)
+            elif side == 1 and cap == -1:
+                border_sdf = (bound - measure) - x
+                outside = x > (bound - measure)
+            elif side == 1 and cap == 1:
+                border_sdf = x - (bound - measure)
+                outside = x > (bound - measure)
             else:
-                plane = bounds[side, dim] - measure
-                normal = +1.0
+                raise RuntimeError(f"Side must be either 0 or 1, not {side}")
 
-            border_sdf = ((queries[:, dim] - plane) * normal).view(-1, 1)
-
-            outside = border_sdf > 0
-
-            if cap == -1:
-                sdf_values = torch.where(outside, -border_sdf, sdf_values)
-            elif cap == 1:
+            # cap == 1 means add material
+            if cap == 1:
+                border_sdf = torch.minimum(sdf_values, border_sdf)
                 sdf_values = torch.where(outside, border_sdf, sdf_values)
+
+            # cap == -1 means remove material
+            elif cap == -1:
+                border_sdf = torch.maximum(sdf_values, -border_sdf)
+                sdf_values = torch.where(outside, border_sdf, sdf_values)
+
             else:
-                raise ValueError("Cap must be -1 or 1")
+                raise ValueError("Cap must be -1 (remove) or 1 (add)")
 
         return sdf_values
 

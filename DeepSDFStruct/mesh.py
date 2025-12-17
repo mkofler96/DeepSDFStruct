@@ -673,6 +673,9 @@ def create_3D_mesh(
             f"mesh_type {mesh_type} unavailable. Must be either surface or volume"
         )
 
+    if bounds is None:
+        bounds = sdf._get_domain_bounds()
+
     N = process_N_base_input(N_base, tiling)
 
     constructor, samples, cube_idx = _prepare_flexicubes_querypoints(
@@ -793,19 +796,29 @@ def create_2D_mesh(
         return torchSurfMesh(verts_local, faces_or_volumes), dVerts_dParams
     elif mesh_type == "surface_triangle":
         line_mesh = torchLineMesh(verts_local, faces_or_volumes)
+        gus.io.meshio.export("lines.inp", line_mesh.to_gus())
         surf_mesh = line_mesh.triangulate(samples_deformed, sdf_values.reshape(-1))
+        gus.io.meshio.export(
+            "surfs_straight_after_triangulation.inp", surf_mesh.to_gus()
+        )
         surf_mesh.vertices.requires_grad = True
-        dist = torch.cdist(surf_mesh.vertices, line_mesh.vertices)  # (N, M)
+        dist = torch.cdist(
+            surf_mesh.vertices.double(),
+            line_mesh.vertices.double(),
+            compute_mode="use_mm_for_euclid_dist",
+        )  # (N, M)
 
         # find nearest original vertex index
         min_dist, min_idx = dist.min(dim=1)
-
         # mask where surf vertex matches original vertex
-        mask = min_dist < 1e-10  # or some tolerance
+        mask = min_dist < 1e-5  # or some tolerance
+        if mask.sum() != line_mesh.vertices.shape[0]:
+            raise ValueError("Not all boundary vertices were found in the surface mesh")
         orig_idx = min_idx
         surf_mesh.vertices = torch.where(
             mask[:, None], line_mesh.vertices[orig_idx], surf_mesh.vertices
         )
+        gus.io.meshio.export("surfs_straight_after_replacement.inp", surf_mesh.to_gus())
         return surf_mesh, dVerts_dParams
     else:
         raise RuntimeError(
@@ -873,6 +886,8 @@ def export_sdf_grid_vtk(
     sdf: SDFBase, filename, N=64, bounds=None, device="cpu", dtype=torch.float32
 ):
     if bounds is None:
+        bounds = sdf._get_domain_bounds()
+    if bounds is None:
         bounds = np.array([[0, 0, 0], [1, 1, 1]])
     # Generate grid points
     x = np.linspace(bounds[0, 0], bounds[1, 0], N)
@@ -883,7 +898,11 @@ def export_sdf_grid_vtk(
 
     # Evaluate SDF
     with _torch.no_grad():
-        sdf_vals = sdf(_torch.tensor(points, device=device, dtype=dtype))
+        if sdf.geometric_dim == 2:
+            input_points = points[:, :2]
+        elif sdf.geometric_dim == 3:
+            input_points = points
+        sdf_vals = sdf(_torch.tensor(input_points, device=device, dtype=dtype))
     sdf_vals = sdf_vals.detach().cpu().numpy().reshape(-1)
 
     # Create vtkPoints
