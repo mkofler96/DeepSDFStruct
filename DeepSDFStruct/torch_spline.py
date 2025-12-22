@@ -31,7 +31,7 @@ Create and evaluate a TorchSpline::
     import splinepy
     import torch
     from DeepSDFStruct.torch_spline import TorchSpline
-    
+
     # Create a splinepy B-spline
     spline = splinepy.BSpline(
         degrees=[2, 2, 2],
@@ -42,14 +42,14 @@ Create and evaluate a TorchSpline::
             [0, 0, 0, 1, 1, 1]
         ]
     )
-    
+
     # Wrap in TorchSpline
     torch_spline = TorchSpline(spline, device='cuda')
-    
+
     # Evaluate at query points
     queries = torch.rand(1000, 3, device='cuda')
     values = torch_spline(queries)
-    
+
     # Compute gradients
     values.sum().backward()
     print(torch_spline.control_points.grad)

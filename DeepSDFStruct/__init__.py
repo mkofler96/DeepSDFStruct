@@ -39,7 +39,7 @@ Create a simple sphere and generate a mesh::
 
     from DeepSDFStruct.sdf_primitives import SphereSDF
     from DeepSDFStruct.mesh import create_3D_mesh
-    
+
     sphere = SphereSDF(center=[0, 0, 0], radius=0.5)
     mesh = create_3D_mesh(sphere, resolution=64)
 
@@ -47,10 +47,10 @@ Create a lattice structure::
 
     from DeepSDFStruct.lattice_structure import LatticeSDFStruct
     from DeepSDFStruct.torch_spline import TorchSpline
-    
+
     # Define deformation spline and unit cell
     # ... (see documentation for details)
-    
+
     lattice = LatticeSDFStruct(
         tiling=[3, 3, 3],
         deformation_spline=deformation,
