@@ -152,9 +152,9 @@ class LatticeSDFStruct(_SDFBase):
     def _get_domain_bounds(self):
         match self.microtile.geometric_dim:
             case 2:
-                return _torch.tensor([[0, 0], [1, 1]])
+                return _torch.tensor([[0.0, 0.0], [1.0, 1.0]])
             case 3:
-                return _torch.tensor([[0, 0, 0], [1, 1, 1]])
+                return _torch.tensor([[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]])
 
     def _compute(self, samples: _torch.Tensor):
         """Function, that - if required - parametrizes the microtiles.

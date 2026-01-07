@@ -284,6 +284,7 @@ class SDF2D(SDFBase):
     def __init__(self, obj: SDFBase, axes: list[int], offset=0.0):
         super().__init__()
         self.obj = obj
+        self.deformation_spline = obj.deformation_spline
         assert (
             len(axes) == 2
         ), "List of axes must be of size 2 and needs to correspond to the 2D plane"
@@ -314,6 +315,7 @@ class SummedSDF(SDFBase):
         super().__init__()
         self.obj1 = obj1
         self.obj2 = obj2
+        self.deformation_spline = obj1.deformation_spline
 
     def _compute(self, queries):
         result1 = self.obj1._compute(queries)
@@ -337,6 +339,7 @@ class NegatedCallable(SDFBase):
     def __init__(self, obj):
         super().__init__()
         self.obj = obj
+        self.deformation_spline = obj.deformation_spline
 
     def _compute(self, input_param):
         result = self.obj(input_param)
@@ -780,6 +783,7 @@ class CappedBorderSDF(SDFBase):
     def __init__(self, sdf: SDFBase, cap_border_dict=None):
         super().__init__(geometric_dim=sdf.geometric_dim)
         self.sdf = sdf
+        self.deformation_spline = sdf.deformation_spline
         if cap_border_dict is None:
             match self.sdf.geometric_dim:
                 case 2:

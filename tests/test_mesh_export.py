@@ -1,5 +1,10 @@
 from DeepSDFStruct.pretrained_models import get_model, PretrainedModels
-from DeepSDFStruct.SDF import SDFfromDeepSDF, SDFfromLineMesh, SDFfromMesh
+from DeepSDFStruct.SDF import (
+    SDFfromDeepSDF,
+    SDFfromLineMesh,
+    SDFfromMesh,
+    CappedBorderSDF,
+)
 from DeepSDFStruct.mesh import (
     generate_2D_surf_mesh,
     tetrahedralize_surface,
@@ -53,11 +58,13 @@ def test_deepsdf_lattice_export_3D():
     )
 
     # Create the lattice structure with deformation and microtile
-    lattice_struct = LatticeSDFStruct(
-        tiling=[3, 2, 2],
-        deformation_spline=deformation_spline,
-        microtile=sdf,
-        parametrization=param_spline,
+    lattice_struct = CappedBorderSDF(
+        LatticeSDFStruct(
+            tiling=[3, 2, 2],
+            deformation_spline=deformation_spline,
+            microtile=sdf,
+            parametrization=param_spline,
+        )
     )
     surf_mesh, derivative = create_3D_mesh(
         lattice_struct, 30, differentiate=True, mesh_type="surface", device=model.device
@@ -96,7 +103,7 @@ def test_deepsdf_lattice_export_3D():
     SDF_samples = uniform_samples + surface_samples
     lattice_struct.parametrization
     # set latent vector to 0.2
-    for p in lattice_struct.parametrization.parameters():
+    for p in lattice_struct.sdf.parametrization.parameters():
         p.data *= 0
         p.data += 0.2
     recon_param_lattice = reconstruct_from_samples(
@@ -109,14 +116,14 @@ def test_deepsdf_lattice_export_3D():
         batch_size=len(SDF_samples.samples),
     )
     # set latent vector to 0.2
-    for p in lattice_struct.parametrization.parameters():
+    for p in lattice_struct.sdf.parametrization.parameters():
         p.data *= 0
         p.data += 0.25
     recon_param_DeepLS = reconstruct_deepLS_from_samples(
         lattice_struct,
         SDF_samples,
         device=model.device,
-        lr=1e-3,
+        lr=1e-2,
         loss_fn="ClampedL1",
         num_iterations=5,
         batch_size=len(SDF_samples.samples),
@@ -146,11 +153,13 @@ def test_deepsdf_lattice_export_2D():
     )
 
     # Create the lattice structure with deformation and microtile
-    lattice_struct = LatticeSDFStruct(
-        tiling=[3, 2],
-        deformation_spline=deformation_spline,
-        microtile=sdf.to2D(axes=[0, 1], offset=0.5),
-        parametrization=param_spline,
+    lattice_struct = CappedBorderSDF(
+        LatticeSDFStruct(
+            tiling=[3, 2],
+            deformation_spline=deformation_spline,
+            microtile=sdf.to2D(axes=[0, 1], offset=0.5),
+            parametrization=param_spline,
+        )
     )
 
     surf_mesh, derivative = create_2D_mesh(

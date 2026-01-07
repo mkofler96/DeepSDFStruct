@@ -20,7 +20,7 @@ def reconstruct_from_samples(
     loss_plot_path=None,
 ):
 
-    optimizer = torch.optim.Adam(sdf.parametrization.parameters(), lr=lr)
+    optimizer = torch.optim.Adam(sdf.parameters(), lr=lr)
 
     verts_min = sdfSample.samples.min(axis=0)
     verts_max = sdfSample.samples.max(axis=0)
@@ -97,7 +97,7 @@ def reconstruct_from_samples(
             loss_history, iters_per_epoch=len(dataloader), filename=loss_plot_path
         )
 
-        params = list(sdf.parametrization.parameters())
+        params = list(sdf.parameters())
         print(params)
 
         return params
@@ -115,7 +115,7 @@ def reconstruct_deepLS_from_samples(
     drop_last=True,
 ):
 
-    optimizer = torch.optim.Adam(sdf.parametrization.parameters(), lr=lr)
+    optimizer = torch.optim.Adam(sdf.parameters(), lr=lr)
 
     gt_dist = sdfSample.distances
 
@@ -154,6 +154,6 @@ def reconstruct_deepLS_from_samples(
             pbar.set_postfix({"loss": f"{loss_num:.5f}"})
 
     print("Reconstructed parameters:")
-    params = list(sdf.parametrization.parameters())
+    params = list(sdf.parameters())
     print(params)
     return params

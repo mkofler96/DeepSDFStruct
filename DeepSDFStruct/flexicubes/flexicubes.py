@@ -503,12 +503,16 @@ class FlexiCubes:
             [
                 torch.index_select(
                     input=edges_weight,
-                    index=torch.tensor(1, device=self.device),
+                    index=torch.tensor(
+                        [1], device=self.device
+                    ),  # change mkofler: 1 -> [1]
                     dim=edge_dim,
                 ),
                 -torch.index_select(
                     input=edges_weight,
-                    index=torch.tensor(0, device=self.device),
+                    index=torch.tensor(
+                        [0], device=self.device
+                    ),  # change mkofler: 0 -> [0]
                     dim=edge_dim,
                 ),
             ],
