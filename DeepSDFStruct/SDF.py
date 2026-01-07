@@ -56,6 +56,22 @@ class CapBorderDict(TypedDict):
     z1: CapType = {"cap": -1, "measure": 0}
 
 
+UNIT_CUBE_CAPS_2D: CapBorderDict = {
+    "x0": {"cap": -1, "measure": 0},
+    "x1": {"cap": -1, "measure": 0},
+    "y0": {"cap": -1, "measure": 0},
+    "y1": {"cap": -1, "measure": 0},
+}
+UNIT_CUBE_CAPS_3D: CapBorderDict = {
+    "x0": {"cap": -1, "measure": 0},
+    "x1": {"cap": -1, "measure": 0},
+    "y0": {"cap": -1, "measure": 0},
+    "y1": {"cap": -1, "measure": 0},
+    "z0": {"cap": -1, "measure": 0},
+    "z1": {"cap": -1, "measure": 0},
+}
+
+
 def get_equidistant_grid_sample(
     bounds: torch.Tensor | np.ndarray,
     grid_spacing: float,
@@ -761,9 +777,15 @@ class CappedBorderSDF(SDFBase):
 
     cap_border_dict: CapBorderDict
 
-    def __init__(self, sdf: SDFBase, cap_border_dict):
+    def __init__(self, sdf: SDFBase, cap_border_dict=None):
         super().__init__(geometric_dim=sdf.geometric_dim)
         self.sdf = sdf
+        if cap_border_dict is None:
+            match self.sdf.geometric_dim:
+                case 2:
+                    cap_border_dict = UNIT_CUBE_CAPS_2D
+                case 3:
+                    cap_border_dict = UNIT_CUBE_CAPS_3D
         self.cap_border_dict = cap_border_dict
 
     def _compute(self, queries: torch.Tensor) -> torch.Tensor:

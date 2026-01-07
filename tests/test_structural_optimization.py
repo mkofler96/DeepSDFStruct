@@ -1,5 +1,5 @@
 from DeepSDFStruct.pretrained_models import get_model, PretrainedModels
-from DeepSDFStruct.SDF import SDFfromDeepSDF
+from DeepSDFStruct.SDF import SDFfromDeepSDF, CappedBorderSDF
 from DeepSDFStruct.lattice_structure import LatticeSDFStruct
 from DeepSDFStruct.torch_spline import TorchSpline
 from DeepSDFStruct.mesh import create_3D_mesh, torchVolumeMesh
@@ -49,16 +49,15 @@ def test_structural_optimization(num_iter=1):
     )
 
     # Create the lattice structure with deformation and microtile
-    lattice_struct = LatticeSDFStruct(
+    lattice_struct_uncapped = LatticeSDFStruct(
         tiling=tiling,
         deformation_spline=deformation_spline,
         microtile=sdf,
         parametrization=param_spline,
-        cap_border_dict=cap_border_dict,
     )
-
+    lattice_struct = CappedBorderSDF(lattice_struct_uncapped, cap_border_dict)
     lr = 1e-2
-    param = next(lattice_struct.parametrization.parameters())
+    param = next(lattice_struct_uncapped.parametrization.parameters())
     # optimizer = torch.optim.Adam([param], lr=lr)
     init_vol = None
     init_compl = None
@@ -145,6 +144,8 @@ def test_structural_optimization(num_iter=1):
     out_file_name = "sim_out.vtk"
     logger.info(f"Writing Output to {out_file_name}")
     mesh.save(out_file_name)
+    assert abs(dF.sum().item()) > 1e-8, "Derivative of objective is zero"
+    assert abs(dG.sum().item()) > 1e-8, "Derivative of constraint is zero"
 
 
 if __name__ == "__main__":

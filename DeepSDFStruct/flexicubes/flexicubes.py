@@ -192,7 +192,7 @@ class FlexiCubes:
             assert bounds.shape == (
                 2,
                 3,
-            ), f"bounds must have shape [2, 2] but have shape {bounds.shape}"
+            ), f"bounds must have shape [2, 3] but have shape {bounds.shape}"
 
         # Scale samples from [0, 1] to the given bounds
         # samples = samples * 1.1 + _torch.tensor([0.5, 0.5, 0.5], device=device)

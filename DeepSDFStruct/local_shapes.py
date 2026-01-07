@@ -41,12 +41,7 @@ class LocalShapesSDF(_SDFBase):
         if not isinstance(parametrization, _torch.nn.Module):
             raise TypeError("Parametrization must be of type _Parametrization")
         check_tiling_input(tiling)
-        super().__init__(
-            deformation_spline=None,
-            parametrization=parametrization,
-            cap_border_dict=cap_border_dict,
-            cap_outside_of_unitcube=cap_outside_of_unitcube,
-        )
+        super().__init__(deformation_spline=None, parametrization=parametrization)
         self.tiling = [tiling] * 3 if isinstance(tiling, int) else tiling
         self.unit_cell = unit_cell
         self.bounds = bounds
