@@ -87,10 +87,6 @@ class torchLineMesh:
     def to_gus(self):
         return gus.Edges(self.vertices.detach().cpu(), self.lines.detach().cpu())
 
-    def to_trimesh():
-        raise NotImplementedError("To trimesh functionality not implemented yet.")
-        pass
-
     def triangulate(self, x_nx2, s_n, bbox_vertices=None, tolerance=0.05):
         holes = x_nx2[torch.where(s_n > tolerance)[0], :]
         # N_elements = 1000 * np.prod(tiling)
@@ -286,9 +282,9 @@ class torchVolumeMesh:
     def to_gus(self):
         return gus.Volumes(self.vertices.detach().cpu(), self.volumes.detach().cpu())
 
-    def to_trimesh():
-        raise NotImplementedError("To trimesh functionality not implemented yet.")
-        pass
+    def to_trimesh(self):
+        gus_mesh = self.to_gus()
+        return trimesh.Trimesh(gus_mesh.vertices, gus_mesh.volumes)
 
     def remove_disconnected_regions(
         self, support_node: int | None = None, clear_unused=True
