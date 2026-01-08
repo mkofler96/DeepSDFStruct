@@ -121,8 +121,6 @@ class LatticeSDFStruct(_SDFBase):
         deformation_spline: TorchSpline | None = None,
         microtile: _SDFBase | None = None,
         parametrization: _torch.nn.Module | None = None,
-        cap_border_dict: CapBorderDict = None,
-        cap_outside_of_unitcube: bool = True,
     ):
         """Helper class to facilitate the construction of microstructures.
 
@@ -141,10 +139,7 @@ class LatticeSDFStruct(_SDFBase):
         if not isinstance(parametrization, _torch.nn.Module):
             raise TypeError("Parametrization must be of type _Parametrization")
         super().__init__(
-            deformation_spline=deformation_spline,
-            parametrization=parametrization,
-            cap_border_dict=cap_border_dict,
-            cap_outside_of_unitcube=cap_outside_of_unitcube,
+            deformation_spline=deformation_spline, parametrization=parametrization
         )
         self.tiling = tiling
         self.microtile = microtile
@@ -155,7 +150,11 @@ class LatticeSDFStruct(_SDFBase):
         return len(self.tiling)
 
     def _get_domain_bounds(self):
-        return _np.array([[-1, 1], [-1, 1], [-1, 1]])
+        match self.microtile.geometric_dim:
+            case 2:
+                return _torch.tensor([[0.0, 0.0], [1.0, 1.0]])
+            case 3:
+                return _torch.tensor([[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]])
 
     def _compute(self, samples: _torch.Tensor):
         """Function, that - if required - parametrizes the microtiles.

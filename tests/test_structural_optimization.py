@@ -1,5 +1,5 @@
 from DeepSDFStruct.pretrained_models import get_model, PretrainedModels
-from DeepSDFStruct.SDF import SDFfromDeepSDF
+from DeepSDFStruct.SDF import SDFfromDeepSDF, CappedBorderSDF
 from DeepSDFStruct.lattice_structure import LatticeSDFStruct
 from DeepSDFStruct.torch_spline import TorchSpline
 from DeepSDFStruct.mesh import create_3D_mesh, torchVolumeMesh
@@ -29,7 +29,7 @@ def test_structural_optimization(num_iter=1):
 
     cap_border_dict = {
         "x0": {"cap": 1, "measure": 0.05},
-        "z1": {"cap": 1, "measure": 0.025},
+        "z1": {"cap": 1, "measure": 0.1},
     }
 
     param_spline_sp = splinepy.BSpline(
@@ -49,16 +49,18 @@ def test_structural_optimization(num_iter=1):
     )
 
     # Create the lattice structure with deformation and microtile
-    lattice_struct = LatticeSDFStruct(
+    lattice_struct_uncapped = LatticeSDFStruct(
         tiling=tiling,
         deformation_spline=deformation_spline,
         microtile=sdf,
         parametrization=param_spline,
-        cap_border_dict=cap_border_dict,
+    )
+    lattice_struct = CappedBorderSDF(
+        CappedBorderSDF(lattice_struct_uncapped, cap_border_dict)
     )
 
     lr = 1e-2
-    param = next(lattice_struct.parametrization.parameters())
+    param = next(lattice_struct_uncapped.parametrization.parameters())
     # optimizer = torch.optim.Adam([param], lr=lr)
     init_vol = None
     init_compl = None
@@ -73,13 +75,23 @@ def test_structural_optimization(num_iter=1):
         # )
         # torch.set_default_device("cuda")
         torch.set_default_dtype(torch.float32)
-        mesh, derivative = create_3D_mesh(
+        mesh, _ = create_3D_mesh(
             lattice_struct,
-            20,
+            30,
             mesh_type="volume",
             differentiate=False,
             device=model.device,
         )
+        surf_mesh, _ = create_3D_mesh(
+            lattice_struct,
+            30,
+            mesh_type="surface",
+            differentiate=False,
+            device=model.device,
+        )
+
+        surf_trimesh = surf_mesh.to_trimesh()
+        assert surf_trimesh.is_watertight
         if isinstance(mesh, torchVolumeMesh):
             tets = mesh.volumes
             verts = mesh.vertices
@@ -145,7 +157,12 @@ def test_structural_optimization(num_iter=1):
     out_file_name = "sim_out.vtk"
     logger.info(f"Writing Output to {out_file_name}")
     mesh.save(out_file_name)
+    assert abs(dF.sum().item()) > 1e-8, "Derivative of objective is zero"
+    assert abs(dG.sum().item()) > 1e-8, "Derivative of constraint is zero"
 
 
 if __name__ == "__main__":
+    import warnings
+
+    warnings.filterwarnings("error")
     test_structural_optimization()

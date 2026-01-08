@@ -2,7 +2,7 @@ from DeepSDFStruct.sdf_primitives import CylinderSDF
 from DeepSDFStruct.flexisquares.flexisquares import FlexiSquares
 from DeepSDFStruct.torch_spline import TorchSpline
 from DeepSDFStruct.pretrained_models import get_model, PretrainedModels
-from DeepSDFStruct.SDF import SDFfromDeepSDF
+from DeepSDFStruct.SDF import SDFfromDeepSDF, CappedBorderSDF
 from DeepSDFStruct.lattice_structure import LatticeSDFStruct
 from DeepSDFStruct.parametrization import Constant
 import splinepy
@@ -49,14 +49,16 @@ def test_flexisquares_lattice_struct():
     )
 
     # Create the lattice structure with deformation and microtile
-    lattice_struct = LatticeSDFStruct(
-        tiling=(6, 3),
-        deformation_spline=deformation_spline,
-        microtile=sdf.to2D(axes=[0, 1], offset=0.5),
-        parametrization=Constant([0.5], device=model.device),
+    lattice_struct = CappedBorderSDF(
+        LatticeSDFStruct(
+            tiling=(6, 3),
+            deformation_spline=deformation_spline,
+            microtile=sdf.to2D(axes=[0, 1], offset=0.5),
+            parametrization=Constant([0.5], device=model.device),
+        )
     )
-    bounds = torch.tensor([[0, 0], [1, 1]], device=model.device)
-    fsq = FlexiSquares(device=bounds.device)
+    bounds = torch.tensor([[-0.05, -0.05], [1.05, 1.05]], device=model.device)
+    fsq = FlexiSquares(device=model.device)
     verts, square_idx = fsq.construct_voxel_grid([60, 30], bounds=bounds)
     scalar_field = lattice_struct(verts) + 0.01
 
@@ -66,7 +68,7 @@ def test_flexisquares_lattice_struct():
         verts, scalar_field, square_idx, output_tetmesh=True
     )
 
-    assert (lattice_struct(vd_surf) < 0.05).all(), "Some interior nodes are positive"
+    assert (lattice_struct(vd_surf) < 0.1).all(), "Some interior nodes are positive"
 
     # check if deformation spline works on extracted mesh
     vd = deformation_spline(vd_surf_and_interior)

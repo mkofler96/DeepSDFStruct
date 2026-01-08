@@ -62,6 +62,9 @@ def test_cpp_file_export():
 
 
 if __name__ == "__main__":
+    import warnings
+
+    warnings.filterwarnings("error")
     test_train_hierarchical_model()
     test_train_model()
     test_continue_from()

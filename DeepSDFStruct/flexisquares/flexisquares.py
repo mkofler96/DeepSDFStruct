@@ -395,12 +395,12 @@ class FlexiSquares:
             [
                 torch.index_select(
                     input=edges_weight,
-                    index=torch.tensor(1, device=self.device),
+                    index=torch.tensor([1], device=self.device),
                     dim=edge_dim,
                 ),
                 -torch.index_select(
                     input=edges_weight,
-                    index=torch.tensor(0, device=self.device),
+                    index=torch.tensor([0], device=self.device),
                     dim=edge_dim,
                 ),
             ],

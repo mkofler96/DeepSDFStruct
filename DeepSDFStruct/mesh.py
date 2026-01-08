@@ -34,6 +34,7 @@ to standard formats (gustaf, trimesh) for I/O and visualization.
 import logging
 import torch as _torch
 import torch.autograd.functional
+from torch.func import functional_call, jacrev, jacfwd
 import tetgenpy
 import numpy as np
 import napf
@@ -42,6 +43,7 @@ import pathlib
 import os
 import skimage
 import triangle
+import trimesh
 import vtk
 from typing import Optional, Tuple, Union
 import scipy
@@ -84,10 +86,6 @@ class torchLineMesh:
 
     def to_gus(self):
         return gus.Edges(self.vertices.detach().cpu(), self.lines.detach().cpu())
-
-    def to_trimesh():
-        raise NotImplementedError("To trimesh functionality not implemented yet.")
-        pass
 
     def triangulate(self, x_nx2, s_n, bbox_vertices=None, tolerance=0.05):
         holes = x_nx2[torch.where(s_n > tolerance)[0], :]
@@ -182,9 +180,9 @@ class torchSurfMesh:
     def to_gus(self):
         return gus.Faces(self.vertices.detach().cpu(), self.faces.detach().cpu())
 
-    def to_trimesh():
-        raise NotImplementedError("To trimesh functionality not implemented yet.")
-        pass
+    def to_trimesh(self):
+        gus_mesh = self.to_gus()
+        return trimesh.Trimesh(gus_mesh.vertices, gus_mesh.faces)
 
     def clean(self, clean_jacobian=True):
         """
@@ -284,9 +282,9 @@ class torchVolumeMesh:
     def to_gus(self):
         return gus.Volumes(self.vertices.detach().cpu(), self.volumes.detach().cpu())
 
-    def to_trimesh():
-        raise NotImplementedError("To trimesh functionality not implemented yet.")
-        pass
+    def to_trimesh(self):
+        gus_mesh = self.to_gus()
+        return trimesh.Trimesh(gus_mesh.vertices, gus_mesh.volumes)
 
     def remove_disconnected_regions(
         self, support_node: int | None = None, clear_unused=True
@@ -591,7 +589,13 @@ def _prepare_flexicubes_querypoints(
 
 
 def create_3D_mesh(
-    sdf: SDFBase, N_base, mesh_type: str, differentiate=False, device="cpu", bounds=None
+    sdf: SDFBase,
+    N_base,
+    mesh_type: str,
+    differentiate=False,
+    device="cpu",
+    bounds=None,
+    diffmode="fwd",
 ) -> Tuple[Union[torchSurfMesh, torchVolumeMesh], Optional[_torch.Tensor]]:
     """Generate a 3D mesh from an SDF using FlexiCubes dual contouring.
 
@@ -673,15 +677,24 @@ def create_3D_mesh(
             f"mesh_type {mesh_type} unavailable. Must be either surface or volume"
         )
 
+    if bounds is None:
+        bounds = sdf._get_domain_bounds()
+    extended_bounds = bounds.clone()
+    off = (extended_bounds[1] - extended_bounds[0]) * 0.05
+    extended_bounds[0] -= off
+    extended_bounds[1] += off
+
     N = process_N_base_input(N_base, tiling)
 
     constructor, samples, cube_idx = _prepare_flexicubes_querypoints(
-        N, device=device, bounds=bounds
+        N, device=device, bounds=extended_bounds
     )
     dVerts_dParams = None
 
+    buffers = dict(sdf.named_buffers())
     verts_fn = partial(
         _verts_from_params,
+        buffers=buffers,
         sdf=sdf,
         samples=samples,
         constructor=constructor,
@@ -703,18 +716,12 @@ def create_3D_mesh(
         output_tetmesh=output_tetmesh,
     )
     if differentiate:
-        if sdf.parametrization is None:
-            raise RuntimeError("No parametrization found for given SDF")
-        if len(list(sdf.parametrization.parameters())) > 1:
-            raise NotImplementedError(
-                "Jacobian with more than one parameter list not supported yet."
-            )
-        dVerts_dParams = torch.autograd.functional.jacobian(
-            verts_fn,
-            list(sdf.parametrization.parameters())[0],
-            strategy="forward-mode",
-            vectorize=True,
-        )
+        if diffmode == "rev":
+            dVerts_dParams = jacrev(verts_fn)(dict(sdf.named_parameters()))
+        elif diffmode == "fwd":
+            dVerts_dParams = jacfwd(verts_fn)(dict(sdf.named_parameters()))
+        else:
+            raise NotImplementedError("diffmode must be either fwd or rev")
     if output_tetmesh:
         return torchVolumeMesh(verts, faces_or_volumes), dVerts_dParams
     else:
@@ -722,7 +729,13 @@ def create_3D_mesh(
 
 
 def create_2D_mesh(
-    sdf: SDFBase, N_base, mesh_type: str, differentiate=False, device="cpu", bounds=None
+    sdf: SDFBase,
+    N_base,
+    mesh_type: str,
+    differentiate=False,
+    device="cpu",
+    bounds=None,
+    diffmode="rev",
 ) -> Tuple[Union[torchLineMesh, torchSurfMesh], Optional[torch.Tensor]]:
     if type(sdf) is LatticeSDFStruct:
         tiling = _torch.tensor(sdf.tiling)
@@ -745,8 +758,10 @@ def create_2D_mesh(
     )
     dVerts_dParams = None
 
+    buffers = dict(sdf.named_buffers())
     verts_fn = partial(
         _verts_from_params,
+        buffers=buffers,
         sdf=sdf,
         samples=samples,
         constructor=constructor,
@@ -774,18 +789,12 @@ def create_2D_mesh(
             samples_deformed = sdf.deformation_spline.forward(samples)
 
     if differentiate:
-        if sdf.parametrization is None:
-            raise RuntimeError("No parametrization found for given SDF")
-        if len(list(sdf.parametrization.parameters())) > 1:
-            raise NotImplementedError(
-                "Jacobian with more than one parameter list not supported yet."
-            )
-        dVerts_dParams = torch.autograd.functional.jacobian(
-            verts_fn,
-            list(sdf.parametrization.parameters())[0],
-            strategy="forward-mode",
-            vectorize=True,
-        )
+        if diffmode == "rev":
+            dVerts_dParams = jacrev(verts_fn)(dict(sdf.named_parameters()))
+        elif diffmode == "fwd":
+            dVerts_dParams = jacfwd(verts_fn)(dict(sdf.named_parameters()))
+        else:
+            raise NotImplementedError("diffmode must be either fwd or rev")
 
     if mesh_type == "line":
         return torchLineMesh(verts_local, faces_or_volumes), dVerts_dParams
@@ -793,19 +802,29 @@ def create_2D_mesh(
         return torchSurfMesh(verts_local, faces_or_volumes), dVerts_dParams
     elif mesh_type == "surface_triangle":
         line_mesh = torchLineMesh(verts_local, faces_or_volumes)
+        gus.io.meshio.export("lines.inp", line_mesh.to_gus())
         surf_mesh = line_mesh.triangulate(samples_deformed, sdf_values.reshape(-1))
+        gus.io.meshio.export(
+            "surfs_straight_after_triangulation.inp", surf_mesh.to_gus()
+        )
         surf_mesh.vertices.requires_grad = True
-        dist = torch.cdist(surf_mesh.vertices, line_mesh.vertices)  # (N, M)
+        dist = torch.cdist(
+            surf_mesh.vertices.double(),
+            line_mesh.vertices.double(),
+            compute_mode="use_mm_for_euclid_dist",
+        )  # (N, M)
 
         # find nearest original vertex index
         min_dist, min_idx = dist.min(dim=1)
-
         # mask where surf vertex matches original vertex
-        mask = min_dist < 1e-10  # or some tolerance
+        mask = min_dist < 1e-5  # or some tolerance
+        if mask.sum() != line_mesh.vertices.shape[0]:
+            raise ValueError("Not all boundary vertices were found in the surface mesh")
         orig_idx = min_idx
         surf_mesh.vertices = torch.where(
             mask[:, None], line_mesh.vertices[orig_idx], surf_mesh.vertices
         )
+        gus.io.meshio.export("surfs_straight_after_replacement.inp", surf_mesh.to_gus())
         return surf_mesh, dVerts_dParams
     else:
         raise RuntimeError(
@@ -814,7 +833,8 @@ def create_2D_mesh(
 
 
 def _verts_from_params(
-    p: _torch.Tensor,
+    parameters: _torch.Tensor,
+    buffers: _torch.Tensor,
     sdf: SDFBase,
     samples: _torch.Tensor,
     constructor: FlexiCubes | FlexiSquares,
@@ -823,8 +843,8 @@ def _verts_from_params(
     return_faces=False,
     output_tetmesh=False,
 ):
-    sdf.parametrization.set_param(p)
-    sdf_values = sdf(samples)
+
+    sdf_values = functional_call(sdf, (parameters, buffers), (samples,))
 
     verts_local, faces, _ = constructor(
         voxelgrid_vertices=samples,
@@ -873,7 +893,11 @@ def export_sdf_grid_vtk(
     sdf: SDFBase, filename, N=64, bounds=None, device="cpu", dtype=torch.float32
 ):
     if bounds is None:
+        bounds = sdf._get_domain_bounds()
+    if bounds is None:
         bounds = np.array([[0, 0, 0], [1, 1, 1]])
+    if isinstance(bounds, torch.Tensor):
+        bounds = bounds.detach().cpu().numpy()
     # Generate grid points
     x = np.linspace(bounds[0, 0], bounds[1, 0], N)
     y = np.linspace(bounds[0, 1], bounds[1, 1], N)
@@ -883,7 +907,11 @@ def export_sdf_grid_vtk(
 
     # Evaluate SDF
     with _torch.no_grad():
-        sdf_vals = sdf(_torch.tensor(points, device=device, dtype=dtype))
+        if sdf.geometric_dim == 2:
+            input_points = points[:, :2]
+        elif sdf.geometric_dim == 3:
+            input_points = points
+        sdf_vals = sdf(_torch.tensor(input_points, device=device, dtype=dtype))
     sdf_vals = sdf_vals.detach().cpu().numpy().reshape(-1)
 
     # Create vtkPoints
@@ -912,7 +940,7 @@ def export_sdf_grid_vtk(
     logger.info(f"SDF structured grid saved to {filename}")
 
 
-def _export_surface_mesh_vtk(verts, faces, filename, dSurf=None):
+def _export_surface_mesh_vtk(verts, faces, filename, dSurf: dict = None):
     """
     verts: (N, 3) torch tensor
     faces: (M, 3) torch tensor
@@ -937,30 +965,31 @@ def _export_surface_mesh_vtk(verts, faces, filename, dSurf=None):
     polydata.SetPoints(vtk_points)
     polydata.SetPolys(vtk_cells)
     if dSurf is not None:
-        # Add derivative vectors as a vector field
-        extra_dims = dSurf.shape[2:]
-        N = int(np.prod(extra_dims))
+        for param_name, dSurf_dparam in dSurf.items():
+            # Add derivative vectors as a vector field
+            extra_dims = dSurf_dparam.shape[2:]
+            N = int(np.prod(extra_dims))
 
-        # reshape to [n_nodes, N_derivatives, 3]
-        dSurf_flat = dSurf.flatten(2)
-        indices = [np.unravel_index(i, extra_dims) for i in range(N)]
-        assert dSurf_flat.shape[2] == len(indices)
-        for j, idx in enumerate(indices):
-            idx_str = "".join(str(i + 1) for i in idx)
-            name = f"derivative_[{idx_str}]"
+            # reshape to [n_nodes, N_derivatives, 3]
+            dSurf_flat = dSurf_dparam.flatten(2)
+            indices = [np.unravel_index(i, extra_dims) for i in range(N)]
+            assert dSurf_flat.shape[2] == len(indices)
+            for j, idx in enumerate(indices):
+                idx_str = "".join(str(i + 1) for i in idx)
+                name = f"derivative_{param_name}_[{idx_str}]"
 
-            vectors = vtk.vtkDoubleArray()
-            vectors.SetNumberOfComponents(3)
-            vectors.SetName(name)
+                vectors = vtk.vtkDoubleArray()
+                vectors.SetNumberOfComponents(3)
+                vectors.SetName(name)
 
-            for vec in dSurf_flat[:, :, j]:
-                vecND = vec.tolist()
-                if len(vecND) == 2:
-                    vecND.append(0.0)
-                vectors.InsertNextTuple(vecND)
+                for vec in dSurf_flat[:, :, j]:
+                    vecND = vec.tolist()
+                    if len(vecND) == 2:
+                        vecND.append(0.0)
+                    vectors.InsertNextTuple(vecND)
 
-            polydata.GetPointData().AddArray(vectors)
-            polydata.GetPointData().SetActiveVectors(name)
+                polydata.GetPointData().AddArray(vectors)
+                polydata.GetPointData().SetActiveVectors(name)
     # Write to file
     writer = vtk.vtkPolyDataWriter()
     writer.SetFileName(filename)
