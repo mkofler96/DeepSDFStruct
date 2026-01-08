@@ -32,10 +32,10 @@ Classes
 SampledSDF
     Container for sampled points and their SDF values, with utilities
     for splitting by sign and visualization.
-    
+
 DataSetInfo
     TypedDict for dataset metadata (name, classes, sampling strategy, etc.).
-    
+
 Functions
 ---------
 process_single_geometry

@@ -22,20 +22,20 @@ Key Components
 
 models.py
     DeepSDFModel class wrapping trained decoder networks and latent codes.
-    
+
 training.py
     Complete training pipeline including loss functions, learning rate
     schedules, and training loops.
-    
+
 data.py
     Dataset classes for loading and batching SDF samples.
-    
+
 reconstruction.py
     Methods for fitting latent codes to target geometries.
-    
+
 workspace.py
     Utilities for managing experiments, checkpoints, and results.
-    
+
 networks/
     Neural network architectures (decoders, hierarchical models).
 
@@ -56,10 +56,10 @@ Typical Workflow
 
     from DeepSDFStruct.SDF import SDFfromDeepSDF
     from DeepSDFStruct.deep_sdf.models import DeepSDFModel
-    
+
     model = DeepSDFModel(decoder, latent_vectors, device)
     sdf = SDFfromDeepSDF(model, latent_code=latent_vectors[0])
-    
+
 4. Reconstruct new shapes::
 
     from DeepSDFStruct.deep_sdf import reconstruction

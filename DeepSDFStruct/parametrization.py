@@ -12,7 +12,7 @@ Classes
 Constant
     Spatially-constant parameter that is independent of position.
     Useful as a baseline or for uniform structures.
-    
+
 SplineParametrization
     B-spline-based parametrization providing smooth spatial variation.
     Parameters vary smoothly according to a spline function.
@@ -27,17 +27,17 @@ Create a lattice with varying thickness::
     from DeepSDFStruct.parametrization import SplineParametrization
     from DeepSDFStruct.torch_spline import TorchSpline
     import splinepy
-    
+
     # Create a B-spline for thickness variation
     spline = splinepy.BSpline(
         degrees=[2, 2, 2],
         control_points=...,
         knot_vectors=...
     )
-    
+
     # Wrap in parametrization module
     param_func = SplineParametrization(spline)
-    
+
     # Use in lattice structure
     lattice = LatticeSDFStruct(
         tiling=[3, 3, 3],
