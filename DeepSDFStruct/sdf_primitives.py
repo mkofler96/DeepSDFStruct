@@ -57,7 +57,7 @@ class SphereSDF(SDFBase):
         return (torch.linalg.norm(queries - self.center, dim=1) - self.r).reshape(-1, 1)
 
     def _get_domain_bounds(self) -> torch.Tensor:
-        return torch.tensor([[-1, -1, -1], [1, 1, 1]], dtype=torch.float32)
+        return torch.tensor([[-1.0, -1.0, -1.0], [1.0, 1.0, 1.0]])
 
 
 class CylinderSDF(SDFBase):
@@ -108,7 +108,7 @@ class CylinderSDF(SDFBase):
         return (dist - self.r).reshape(-1, 1)
 
     def _get_domain_bounds(self) -> torch.Tensor:
-        return torch.tensor([[-1, -1, -1], [1, 1, 1]], dtype=torch.float32)
+        return torch.tensor([[-1.0, -1.0, -1.0], [1.0, 1.0, 1.0]])
 
 
 class TorusSDF(SDFBase):
@@ -151,7 +151,7 @@ class TorusSDF(SDFBase):
         return dist.reshape(-1, 1)
 
     def _get_domain_bounds(self) -> torch.Tensor:
-        return torch.tensor([[-1, -1, -1], [1, 1, 1]], dtype=torch.float32)
+        return torch.tensor([[-1.0, -1.0, -1.0], [1.0, 1.0, 1.0]])
 
 
 class PlaneSDF(SDFBase):
@@ -165,7 +165,7 @@ class PlaneSDF(SDFBase):
         return torch.matmul(queries - self.point, self.normal).reshape(-1, 1)
 
     def _get_domain_bounds(self) -> torch.Tensor:
-        return torch.tensor([[-1, -1, -1], [1, 1, 1]], dtype=torch.float32)
+        return torch.tensor([[-1.0, -1.0, -1.0], [1.0, 1.0, 1.0]])
 
 
 class CornerSpheresSDF(SDFBase):
@@ -193,7 +193,7 @@ class CornerSpheresSDF(SDFBase):
         return output.reshape(-1, 1)
 
     def _get_domain_bounds(self) -> torch.Tensor:
-        return torch.tensor([[-1, -1, -1], [1, 1, 1]], dtype=torch.float32)
+        return torch.tensor([[-1.0, -1.0, -1.0], [1.0, 1.0, 1.0]])
 
 
 class CrossMsSDF(SDFBase):
@@ -220,4 +220,4 @@ class CrossMsSDF(SDFBase):
         return output.reshape(-1, 1)
 
     def _get_domain_bounds(self) -> torch.Tensor:
-        return torch.tensor([[-1, -1, -1], [1, 1, 1]], dtype=torch.float32)
+        return torch.tensor([[-1.0, -1.0, -1.0], [1.0, 1.0, 1.0]])

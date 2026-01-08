@@ -619,7 +619,7 @@ class SDFfromDeepSDF(SDFBase):
             )
 
     def _get_domain_bounds(self):
-        return np.array([[-1, 1], [-1, 1], [-1, 1]])
+        return torch.tensor([[-1.0, -1.0, -1.0], [1.0, 1.0, 1.0]])
 
     def _set_param(self, parameters):
         return self.set_latent_vec(parameters)
@@ -824,13 +824,13 @@ class CappedBorderSDF(SDFBase):
 
             # cap == 1 means add material
             if cap == 1:
-                border_sdf = torch.minimum(sdf_values, border_sdf)
-                sdf_values = torch.where(outside, border_sdf, sdf_values)
+                sdf_values = torch.minimum(sdf_values, -border_sdf)
+                # sdf_values = torch.where(outside, border_sdf, sdf_values)
 
             # cap == -1 means remove material
             elif cap == -1:
-                border_sdf = torch.maximum(sdf_values, -border_sdf)
-                sdf_values = torch.where(outside, border_sdf, sdf_values)
+                sdf_values = torch.maximum(sdf_values, -border_sdf)
+                # sdf_values = torch.where(outside, border_sdf, sdf_values)
 
             else:
                 raise ValueError("Cap must be -1 (remove) or 1 (add)")

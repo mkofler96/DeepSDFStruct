@@ -20,9 +20,7 @@ class LocalShapesSDF(_SDFBase):
         tiling: list[int] | int | None = None,
         unit_cell: _SDFBase | None = None,
         parametrization: _torch.nn.Module | None = None,
-        cap_border_dict: CapBorderDict = None,
-        cap_outside_of_unitcube: bool = False,
-        bounds=_np.array([[-1, 1], [-1, 1], [-1, 1]]),
+        bounds=_torch.tensor([[-1.0, -1.0, -1.0], [1.0, 1.0, 1.0]]),
     ):
         """Helper class to facilitatae the construction of microstructures.
 
@@ -42,7 +40,9 @@ class LocalShapesSDF(_SDFBase):
             raise TypeError("Parametrization must be of type _Parametrization")
         check_tiling_input(tiling)
         super().__init__(deformation_spline=None, parametrization=parametrization)
-        self.tiling = [tiling] * 3 if isinstance(tiling, int) else tiling
+        self.tiling = (
+            [tiling] * unit_cell.geometric_dim if isinstance(tiling, int) else tiling
+        )
         self.unit_cell = unit_cell
         self.bounds = bounds
 
@@ -123,7 +123,7 @@ class LocalShapesSDF(_SDFBase):
         self._microtile = microtile
 
     def _get_domain_bounds(self):
-        return _np.array([[-1, 1], [-1, 1], [-1, 1]])
+        return self.bounds
 
     def _compute(self, samples: _torch.Tensor):
         """Function, that - if required - parametrizes the microtiles.
@@ -151,16 +151,25 @@ class LocalShapesSDF(_SDFBase):
             self.unit_cell._set_param(parameters)
 
         queries_transformed = _torch.zeros_like(samples)
-        tx, ty, tz = self._tiling
-        queries_transformed[:, 0] = transform(
-            samples[:, 0], tx, bounds=self.bounds[:, 0]
-        )
-        queries_transformed[:, 1] = transform(
-            samples[:, 1], ty, bounds=self.bounds[:, 1]
-        )
-        queries_transformed[:, 2] = transform(
-            samples[:, 2], tz, bounds=self.bounds[:, 2]
-        )
+        if self.unit_cell.geometric_dim == 2:
+            tx, ty = self._tiling
+            queries_transformed[:, 0] = transform(
+                samples[:, 0], tx, bounds=self.bounds[:, 0]
+            )
+            queries_transformed[:, 1] = transform(
+                samples[:, 1], ty, bounds=self.bounds[:, 1]
+            )
+        elif self.unit_cell.geometric_dim == 3:
+            tx, ty, tz = self._tiling
+            queries_transformed[:, 0] = transform(
+                samples[:, 0], tx, bounds=self.bounds[:, 0]
+            )
+            queries_transformed[:, 1] = transform(
+                samples[:, 1], ty, bounds=self.bounds[:, 1]
+            )
+            queries_transformed[:, 2] = transform(
+                samples[:, 2], tz, bounds=self.bounds[:, 2]
+            )
 
         sdf_values = self.unit_cell(queries_transformed)
 

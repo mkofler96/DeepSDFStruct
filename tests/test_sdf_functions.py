@@ -39,10 +39,10 @@ def test_cap_border_dict():
         print("Evaluating capdict for cap dict")
         print(cap_border_dict)
         capped_sdf_vals = capped_sdf(queries)
-        export_sdf_grid_vtk(capped_sdf, f"sdf_{name}.vtk")
+        export_sdf_grid_vtk(capped_sdf, f"tests/tmp_outputs/sdf_{name}.vtk")
         surf_mesh, _ = create_3D_mesh(capped_sdf, 51, mesh_type="surface")
-        export_surface_mesh(f"sdf_{name}.obj", surf_mesh.to_gus())
-        export_surface_mesh(f"sdf_{name}.stl", surf_mesh.to_gus())
+        export_surface_mesh(f"tests/tmp_outputs/sdf_{name}.obj", surf_mesh.to_gus())
+        export_surface_mesh(f"tests/tmp_outputs/sdf_{name}.stl", surf_mesh.to_gus())
         interior_low = caps[0] + measure
         interior_high = caps[1] - measure
 
@@ -73,5 +73,8 @@ def test_sdf_from_linemesh():
 
 
 if __name__ == "__main__":
+    import warnings
+
+    warnings.filterwarnings("error")
     test_cap_border_dict()
     test_sdf_from_linemesh()

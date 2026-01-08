@@ -29,7 +29,7 @@ def test_structural_optimization(num_iter=1):
 
     cap_border_dict = {
         "x0": {"cap": 1, "measure": 0.05},
-        "z1": {"cap": 1, "measure": 0.025},
+        "z1": {"cap": 1, "measure": 0.1},
     }
 
     param_spline_sp = splinepy.BSpline(
@@ -55,7 +55,10 @@ def test_structural_optimization(num_iter=1):
         microtile=sdf,
         parametrization=param_spline,
     )
-    lattice_struct = CappedBorderSDF(lattice_struct_uncapped, cap_border_dict)
+    lattice_struct = CappedBorderSDF(
+        CappedBorderSDF(lattice_struct_uncapped, cap_border_dict)
+    )
+
     lr = 1e-2
     param = next(lattice_struct_uncapped.parametrization.parameters())
     # optimizer = torch.optim.Adam([param], lr=lr)
@@ -72,13 +75,23 @@ def test_structural_optimization(num_iter=1):
         # )
         # torch.set_default_device("cuda")
         torch.set_default_dtype(torch.float32)
-        mesh, derivative = create_3D_mesh(
+        mesh, _ = create_3D_mesh(
             lattice_struct,
-            20,
+            30,
             mesh_type="volume",
             differentiate=False,
             device=model.device,
         )
+        surf_mesh, _ = create_3D_mesh(
+            lattice_struct,
+            30,
+            mesh_type="surface",
+            differentiate=False,
+            device=model.device,
+        )
+
+        surf_trimesh = surf_mesh.to_trimesh()
+        assert surf_trimesh.is_watertight
         if isinstance(mesh, torchVolumeMesh):
             tets = mesh.volumes
             verts = mesh.vertices
@@ -149,4 +162,7 @@ def test_structural_optimization(num_iter=1):
 
 
 if __name__ == "__main__":
+    import warnings
+
+    warnings.filterwarnings("error")
     test_structural_optimization()

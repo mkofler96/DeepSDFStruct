@@ -43,6 +43,7 @@ import pathlib
 import os
 import skimage
 import triangle
+import trimesh
 import vtk
 from typing import Optional, Tuple, Union
 import scipy
@@ -183,9 +184,9 @@ class torchSurfMesh:
     def to_gus(self):
         return gus.Faces(self.vertices.detach().cpu(), self.faces.detach().cpu())
 
-    def to_trimesh():
-        raise NotImplementedError("To trimesh functionality not implemented yet.")
-        pass
+    def to_trimesh(self):
+        gus_mesh = self.to_gus()
+        return trimesh.Trimesh(gus_mesh.vertices, gus_mesh.faces)
 
     def clean(self, clean_jacobian=True):
         """
@@ -682,14 +683,15 @@ def create_3D_mesh(
 
     if bounds is None:
         bounds = sdf._get_domain_bounds()
-        off = (bounds[1] - bounds[0]) * 0.05
-        bounds[0] -= off
-        bounds[1] += off
+    extended_bounds = bounds.clone()
+    off = (extended_bounds[1] - extended_bounds[0]) * 0.05
+    extended_bounds[0] -= off
+    extended_bounds[1] += off
 
     N = process_N_base_input(N_base, tiling)
 
     constructor, samples, cube_idx = _prepare_flexicubes_querypoints(
-        N, device=device, bounds=bounds
+        N, device=device, bounds=extended_bounds
     )
     dVerts_dParams = None
 
@@ -898,6 +900,8 @@ def export_sdf_grid_vtk(
         bounds = sdf._get_domain_bounds()
     if bounds is None:
         bounds = np.array([[0, 0, 0], [1, 1, 1]])
+    if isinstance(bounds, torch.Tensor):
+        bounds = bounds.detach().cpu().numpy()
     # Generate grid points
     x = np.linspace(bounds[0, 0], bounds[1, 0], N)
     y = np.linspace(bounds[0, 1], bounds[1, 1], N)
