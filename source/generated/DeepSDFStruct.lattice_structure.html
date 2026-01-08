@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>DeepSDFStruct.lattice_structure &#8212; DeepSDFStruct 1.3.5.dev6+g7add967c2 documentation</title>
+    <title>DeepSDFStruct.lattice_structure &#8212; DeepSDFStruct 1.4.1.dev3+g553c7675e documentation</title>
   
   
   
@@ -38,7 +38,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=56d5c979"></script>
+    <script src="../../_static/documentation_options.js?v=42e08e1b"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'source/generated/DeepSDFStruct.lattice_structure';</script>
@@ -110,7 +110,7 @@
   
   
   
-    <p class="title logo__title">DeepSDFStruct 1.3.5.dev6+g7add967c2 documentation</p>
+    <p class="title logo__title">DeepSDFStruct 1.4.1.dev3+g553c7675e documentation</p>
   
 </a></div>
     
@@ -402,7 +402,7 @@ materials with spatially-varying properties, useful for applications in:
 </div>
 <dl class="py class">
 <dt class="sig sig-object py" id="DeepSDFStruct.lattice_structure.LatticeSDFStruct">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.lattice_structure.</span></span><span class="sig-name descname"><span class="pre">LatticeSDFStruct</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tiling</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deformation_spline</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">microtile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parametrization</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cap_border_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cap_outside_of_unitcube</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.lattice_structure.LatticeSDFStruct" title="Link to this definition">#</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.lattice_structure.</span></span><span class="sig-name descname"><span class="pre">LatticeSDFStruct</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tiling</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deformation_spline</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">microtile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parametrization</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.lattice_structure.LatticeSDFStruct" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="DeepSDFStruct.SDF.html#DeepSDFStruct.SDF.SDFBase" title="DeepSDFStruct.SDF.SDFBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">DeepSDFStruct.SDF.SDFBase</span></code></a></p>
 <p>Helper class to facilitate the construction of periodic lattice SDF structures.</p>
 <p>This class creates periodic lattice structures by tiling a unit cell geometry
@@ -501,6 +501,11 @@ the microtile must provide:
 <span class="gp">&gt;&gt;&gt; </span><span class="n">distances</span> <span class="o">=</span> <span class="n">lattice</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
 </pre></div>
 </div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="DeepSDFStruct.lattice_structure.LatticeSDFStruct.deformation_spline">
+<span class="sig-name descname"><span class="pre">deformation_spline</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">SplinepyBase</span></code></em><a class="headerlink" href="#DeepSDFStruct.lattice_structure.LatticeSDFStruct.deformation_spline" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
 <dl class="py property">
 <dt class="sig sig-object py" id="id0">
 <em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">parametric_dimension</span></span><a class="headerlink" href="#id0" title="Link to this definition">#</a></dt>
@@ -604,6 +609,7 @@ the microtile must provide:
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.lattice_structure.LatticeSDFStruct.microtile"><code class="docutils literal notranslate"><span class="pre">LatticeSDFStruct.microtile</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.lattice_structure.LatticeSDFStruct.geometric_dim"><code class="docutils literal notranslate"><span class="pre">LatticeSDFStruct.geometric_dim</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.lattice_structure.LatticeSDFStruct.parametric_dimension"><code class="docutils literal notranslate"><span class="pre">LatticeSDFStruct.parametric_dimension</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.lattice_structure.LatticeSDFStruct.deformation_spline"><code class="docutils literal notranslate"><span class="pre">LatticeSDFStruct.deformation_spline</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id0"><code class="docutils literal notranslate"><span class="pre">LatticeSDFStruct.parametric_dimension</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.lattice_structure.LatticeSDFStruct.plot_intermesh"><code class="docutils literal notranslate"><span class="pre">LatticeSDFStruct.plot_intermesh()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.lattice_structure.LatticeSDFStruct.plot_samples"><code class="docutils literal notranslate"><span class="pre">LatticeSDFStruct.plot_samples()</span></code></a></li>

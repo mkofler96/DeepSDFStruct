@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>DeepSDFStruct.sdf_primitives &#8212; DeepSDFStruct 1.3.5.dev6+g7add967c2 documentation</title>
+    <title>DeepSDFStruct.sdf_primitives &#8212; DeepSDFStruct 1.4.1.dev3+g553c7675e documentation</title>
   
   
   
@@ -38,7 +38,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=56d5c979"></script>
+    <script src="../../_static/documentation_options.js?v=42e08e1b"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'source/generated/DeepSDFStruct.sdf_primitives';</script>
@@ -110,7 +110,7 @@
   
   
   
-    <p class="title logo__title">DeepSDFStruct 1.3.5.dev6+g7add967c2 documentation</p>
+    <p class="title logo__title">DeepSDFStruct 1.4.1.dev3+g553c7675e documentation</p>
   
 </a></div>
     
@@ -383,7 +383,7 @@ in optimization workflows.</p>
 <td><p></p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.sdf_primitives.CylinderSDF" title="DeepSDFStruct.sdf_primitives.CylinderSDF"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CylinderSDF</span></code></a>(point, axis, radius)</p></td>
-<td><p></p></td>
+<td><p>Signed distance function for an infinite cylinder.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.sdf_primitives.PlaneSDF" title="DeepSDFStruct.sdf_primitives.PlaneSDF"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PlaneSDF</span></code></a>(point, normal)</p></td>
 <td><p></p></td>
@@ -413,6 +413,29 @@ in optimization workflows.</p>
 <dt class="sig sig-object py" id="DeepSDFStruct.sdf_primitives.CylinderSDF">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.sdf_primitives.</span></span><span class="sig-name descname"><span class="pre">CylinderSDF</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">point</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.sdf_primitives.CylinderSDF" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="DeepSDFStruct.SDF.html#DeepSDFStruct.SDF.SDFBase" title="DeepSDFStruct.SDF.SDFBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">DeepSDFStruct.SDF.SDFBase</span></code></a></p>
+<p>Signed distance function for an infinite cylinder.</p>
+<p>Creates a cylinder extending infinitely along a specified coordinate axis.
+The cylinder is defined by a point on the axis and a radius.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>point</strong> (<em>array-like</em><em> of </em><em>shape</em><em> (</em><em>3</em><em>,</em><em>)</em>) – A point on the cylinder’s axis.</p></li>
+<li><p><strong>axis</strong> (<em>str</em><em> or </em><em>int</em>) – Axis direction: ‘x’/0, ‘y’/1, or ‘z’/2.</p></li>
+<li><p><strong>radius</strong> (<em>float</em>) – Radius of the cylinder.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">DeepSDFStruct.sdf_primitives</span><span class="w"> </span><span class="kn">import</span> <span class="n">CylinderSDF</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Cylinder along z-axis</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cylinder</span> <span class="o">=</span> <span class="n">CylinderSDF</span><span class="p">(</span><span class="n">point</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="s1">&#39;z&#39;</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">points</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">distances</span> <span class="o">=</span> <span class="n">cylinder</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">distances</span><span class="p">)</span>  <span class="c1"># [-0.5, 0.5] (on axis, outside)</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py class">

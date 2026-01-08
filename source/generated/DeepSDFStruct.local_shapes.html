@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>DeepSDFStruct.local_shapes &#8212; DeepSDFStruct 1.3.5.dev6+g7add967c2 documentation</title>
+    <title>DeepSDFStruct.local_shapes &#8212; DeepSDFStruct 1.4.1.dev3+g553c7675e documentation</title>
   
   
   
@@ -38,7 +38,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=56d5c979"></script>
+    <script src="../../_static/documentation_options.js?v=42e08e1b"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'source/generated/DeepSDFStruct.local_shapes';</script>
@@ -110,7 +110,7 @@
   
   
   
-    <p class="title logo__title">DeepSDFStruct 1.3.5.dev6+g7add967c2 documentation</p>
+    <p class="title logo__title">DeepSDFStruct 1.4.1.dev3+g553c7675e documentation</p>
   
 </a></div>
     
@@ -365,7 +365,7 @@
 </div>
 <dl class="py class">
 <dt class="sig sig-object py" id="DeepSDFStruct.local_shapes.LocalShapesSDF">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.local_shapes.</span></span><span class="sig-name descname"><span class="pre">LocalShapesSDF</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tiling</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unit_cell</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parametrization</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cap_border_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cap_outside_of_unitcube</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bounds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">array([[-1,</span> <span class="pre">1],</span> <span class="pre">[-1,</span> <span class="pre">1],</span> <span class="pre">[-1,</span> <span class="pre">1]])</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.local_shapes.LocalShapesSDF" title="Link to this definition">#</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.local_shapes.</span></span><span class="sig-name descname"><span class="pre">LocalShapesSDF</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tiling</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unit_cell</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parametrization</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bounds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">tensor([[-1.,</span> <span class="pre">-1.,</span> <span class="pre">-1.],</span> <span class="pre">[1.,</span> <span class="pre">1.,</span> <span class="pre">1.]])</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.local_shapes.LocalShapesSDF" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="DeepSDFStruct.SDF.html#DeepSDFStruct.SDF.SDFBase" title="DeepSDFStruct.SDF.SDFBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">DeepSDFStruct.SDF.SDFBase</span></code></a></p>
 <p>Helper class to facilitatae the construction of Lattice SDF Structures.</p>
 <dl class="field-list simple">
@@ -374,8 +374,6 @@
 <li><p><strong>tiling</strong> (<em>list</em><em>[</em><em>int</em><em>] </em><em>| </em><em>int</em><em> | </em><em>None</em>)</p></li>
 <li><p><strong>unit_cell</strong> (<a class="reference internal" href="DeepSDFStruct.SDF.html#DeepSDFStruct.SDF.SDFBase" title="DeepSDFStruct.SDF.SDFBase"><em>DeepSDFStruct.SDF.SDFBase</em></a><em> | </em><em>None</em>)</p></li>
 <li><p><strong>parametrization</strong> (<em>torch.nn.modules.module.Module</em><em> | </em><em>None</em>)</p></li>
-<li><p><strong>cap_border_dict</strong> (<a class="reference internal" href="DeepSDFStruct.SDF.html#DeepSDFStruct.SDF.CapBorderDict" title="DeepSDFStruct.SDF.CapBorderDict"><em>DeepSDFStruct.SDF.CapBorderDict</em></a>)</p></li>
-<li><p><strong>cap_outside_of_unitcube</strong> (<em>bool</em>)</p></li>
 </ul>
 </dd>
 </dl>

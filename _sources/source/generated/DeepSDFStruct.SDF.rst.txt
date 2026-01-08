@@ -21,6 +21,7 @@ DeepSDFStruct.SDF
       BoxSDF
       CapBorderDict
       CapType
+      CappedBorderSDF
       NegatedCallable
       SDF2D
       SDFBase
