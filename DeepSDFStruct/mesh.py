@@ -663,10 +663,11 @@ def create_3D_mesh(
     For lattice structures, the resolution is automatically scaled by the
     tiling factor to maintain consistent resolution per unit cell.
     """
-    if type(sdf) is LatticeSDFStruct:
-        tiling = _torch.tensor(sdf.tiling)
-    else:
+    lattice = find_lattice_sdf(sdf)
+    if lattice is None:
         tiling = _torch.tensor([1, 1, 1])
+    else:
+        tiling = _torch.tensor(lattice.tiling)
 
     if mesh_type == "surface":
         output_tetmesh = False
@@ -728,6 +729,13 @@ def create_3D_mesh(
         return torchSurfMesh(verts, faces_or_volumes), dVerts_dParams
 
 
+def find_lattice_sdf(module) -> LatticeSDFStruct | None:
+    for m in module.modules():
+        if isinstance(m, LatticeSDFStruct):
+            return m
+    return None
+
+
 def create_2D_mesh(
     sdf: SDFBase,
     N_base,
@@ -737,10 +745,12 @@ def create_2D_mesh(
     bounds=None,
     diffmode="rev",
 ) -> Tuple[Union[torchLineMesh, torchSurfMesh], Optional[torch.Tensor]]:
-    if type(sdf) is LatticeSDFStruct:
-        tiling = _torch.tensor(sdf.tiling)
-    else:
+
+    lattice = find_lattice_sdf(sdf)
+    if lattice is None:
         tiling = _torch.tensor([1, 1])
+    else:
+        tiling = _torch.tensor(lattice.tiling)
 
     if mesh_type in ["line", "surface_triangle"]:
         output_tetmesh = False
