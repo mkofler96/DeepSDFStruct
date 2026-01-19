@@ -113,7 +113,7 @@ class LatticeSDFStruct(_SDFBase):
     >>> distances = lattice(points)
     """
 
-    deformation_spline: _SplinepyBase
+    deformation_spline: TorchSpline
 
     def __init__(
         self,
@@ -222,10 +222,10 @@ class LatticeSDFStruct(_SDFBase):
         gus.show(gus_faces, axes=1)
 
     def plot_slice(self, *args, **kwargs):
-        xmin = self._deformation_spline.control_points[:, 0].min().item()
-        xmax = self._deformation_spline.control_points[:, 0].max().item()
-        ymin = self._deformation_spline.control_points[:, 1].min().item()
-        ymax = self._deformation_spline.control_points[:, 1].max().item()
+        xmin = self.deformation_spline.control_points[:, 0].min().item()
+        xmax = self.deformation_spline.control_points[:, 0].max().item()
+        ymin = self.deformation_spline.control_points[:, 1].min().item()
+        ymax = self.deformation_spline.control_points[:, 1].max().item()
 
         kwargs.setdefault("xlim", (xmin, xmax))
         kwargs.setdefault("ylim", (ymin, ymax))

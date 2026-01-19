@@ -253,17 +253,22 @@ class TorchSpline(torch.nn.Module):
     def __init__(self, spline: sp.BSpline, device="cpu", dtype=torch.float32):
         # TODO register control points etc. as parameter
         super().__init__()
-        self.device = device
-        self.dtype = dtype  # dtype and device could be getter and setter
+        # self.device = device
+        # self.dtype = dtype  # dtype and device could be getter and setter
         self.spline = spline
         self.control_points = torch.nn.Parameter(
             torch.tensor(spline.control_points, dtype=dtype, device=device)
         )
-        self.knot_vectors = [
-            torch.tensor(knot, dtype=dtype, device=device)
-            for knot in spline.knot_vectors
-        ]
-        self.degrees = torch.tensor(self.spline.degrees, dtype=int, device=device)
+        self.knot_vectors = []
+        for i, knot in enumerate(spline.knot_vectors):
+            kv = torch.tensor(knot, dtype=dtype, device=device)
+            self.register_buffer(f"knot_vector_{i}", kv)
+            self.knot_vectors.append(kv)
+
+        self.register_buffer(
+            "degrees",
+            torch.tensor(self.spline.degrees, dtype=torch.int64, device=device),
+        )
 
         match len(spline.degrees):
             case 1:
