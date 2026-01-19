@@ -11,7 +11,6 @@ from .networks.analytic_round_cross import RoundCrossDecoder
 from .networks.deep_sdf_decoder import DeepSDFDecoder
 from .networks.hierarchical_deep_sdf_decoder import HierachicalDeepSDFDecoder
 
-
 screenshots_subdir = "Screenshots"
 model_params_subdir = "ModelParameters"
 optimizer_params_subdir = "OptimizerParameters"

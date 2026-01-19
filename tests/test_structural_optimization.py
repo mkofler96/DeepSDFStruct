@@ -14,7 +14,6 @@ import torch
 import logging
 import numpy as np
 
-
 logger = logging.getLogger(DeepSDFStruct.__name__)
 configure_logging()
 
