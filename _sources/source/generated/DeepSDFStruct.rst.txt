@@ -20,7 +20,6 @@ DeepSDFStruct
    mesh
    optimization
    parametrization
-   plotting
    pretrained_models
    sampling
    sdf_primitives
