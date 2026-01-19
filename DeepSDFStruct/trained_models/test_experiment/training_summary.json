@@ -1,9 +1,10 @@
 {
-    "loss": 0.05626068599396128,
+    "loss": 0.0635075570008433,
     "num_epochs": 5,
-    "timestamp": "2025-10-14 16:50:26",
+    "timestamp": "2026-01-19 11:05:17",
     "host_name": "neptune",
     "device": "cpu",
-    "training_duration": "0:00:01",
-    "data_dir": "/usr2/mkofler/.cache/huggingface/hub/datasets--mkofler--lattice_structure_unit_cells/snapshots/b80339abc071df77ff81e8abc19ad4856d96ddbd"
+    "training_duration": "0:00:02",
+    "data_dir": "/usr2/mkofler/.cache/huggingface/hub/datasets--mkofler--lattice_structure_unit_cells/snapshots/b80339abc071df77ff81e8abc19ad4856d96ddbd",
+    "version": "1.4.2.dev7+gce8bfe994.d20260119"
 }

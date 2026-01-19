@@ -6,6 +6,7 @@ from DeepSDFStruct.parametrization import Constant
 from DeepSDFStruct.torch_spline import TorchSpline
 import splinepy
 import torch
+import matplotlib.pyplot as plt
 
 
 def test_deepsdf_evaluation():
@@ -53,6 +54,16 @@ def test_deepsdf_lattice_evaluation():
             dtype=torch.float32,
             device=model.device,
         )
+    )
+    fig, axs = plt.subplots(1, 3)
+    lattice_struct.plot_slice(
+        origin=(0, 0.5, 0),
+        normal=(0, 1, 0),
+        ylim=[0, 2],
+        ax=axs[0],
+        # cmap=cmap,
+        show_zero_level=True,
+        res=(300, 300),
     )
     print(out)
 
