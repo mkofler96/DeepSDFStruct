@@ -50,11 +50,17 @@ class SphereSDF(SDFBase):
 
     def __init__(self, center, radius):
         super().__init__()
-        self.center = torch.tensor(center, dtype=torch.float32)
-        self.r = radius
+        # make center and radius trainable parameters and ensure correct dtype
+        c = torch.as_tensor(center, dtype=torch.float32)
+        r = torch.as_tensor(radius, dtype=torch.float32)
+        self.center = torch.nn.Parameter(c)
+        self.r = torch.nn.Parameter(r.reshape(()))  # scalar parameter
 
     def _compute(self, queries: torch.Tensor) -> torch.Tensor:
-        return (torch.linalg.norm(queries - self.center, dim=1) - self.r).reshape(-1, 1)
+        # ensure computations use same dtype/device as queries
+        center = self.center.to(device=queries.device, dtype=queries.dtype)
+        r = self.r.to(device=queries.device, dtype=queries.dtype)
+        return (torch.linalg.norm(queries - center, dim=1) - r).reshape(-1, 1)
 
     def _get_domain_bounds(self) -> torch.Tensor:
         return torch.tensor([[-1.0, -1.0, -1.0], [1.0, 1.0, 1.0]])
@@ -221,3 +227,71 @@ class CrossMsSDF(SDFBase):
 
     def _get_domain_bounds(self) -> torch.Tensor:
         return torch.tensor([[-1.0, -1.0, -1.0], [1.0, 1.0, 1.0]])
+
+
+# New 2D primitives: CircleSDF and RectangleSDF
+class CircleSDF(SDFBase):
+    """2D circle SDF (geometric_dim=2). Center and radius are torch parameters."""
+
+    def __init__(self, center, radius):
+        super().__init__(geometric_dim=2)
+        c = torch.as_tensor(center, dtype=torch.float32)
+        r = torch.as_tensor(radius, dtype=torch.float32)
+        if c.numel() != 2:
+            raise ValueError("center must be length-2 for CircleSDF")
+        self.center = torch.nn.Parameter(c.reshape(2))
+        self.radius = torch.nn.Parameter(r.reshape(()))
+
+    def _compute(self, queries: torch.Tensor) -> torch.Tensor:
+        # queries expected shape (N,2)
+        if queries.shape[1] == 3:
+            queries = queries[:, :2]
+        center = self.center.to(device=queries.device, dtype=queries.dtype)
+        r = self.radius.to(device=queries.device, dtype=queries.dtype)
+        return (torch.linalg.norm(queries - center, dim=1) - r).reshape(-1, 1)
+
+    def _get_domain_bounds(self) -> torch.Tensor:
+        return torch.tensor([[-1.0, -1.0], [1.0, 1.0]])
+
+
+class RectangleSDF(SDFBase):
+    """2D axis-aligned rectangle SDF. half_extents defines half-widths in x and y.
+    Both center and half_extents are torch parameters.
+    SDF computed using standard box SDF formula in 2D.
+    """
+
+    def __init__(self, center, extents):
+        super().__init__(geometric_dim=2)
+        c = torch.as_tensor(center, dtype=torch.float32)
+        h = torch.as_tensor(extents, dtype=torch.float32)
+        if c.numel() != 2 or h.numel() != 2:
+            raise ValueError(
+                "center and half_extents must be length-2 for RectangleSDF"
+            )
+        self.center = torch.nn.Parameter(c.reshape(2))
+        self.extents = torch.nn.Parameter(h.reshape(2))
+
+    def _compute(self, queries: torch.Tensor) -> torch.Tensor:
+        center = self.center.to(device=queries.device, dtype=queries.dtype)
+        half = self.extents.to(device=queries.device, dtype=queries.dtype) / 2
+        if queries.shape[1] == 3:
+            queries = queries[:, :2]
+        q = queries - center  # (N,2)
+        d = torch.abs(q) - half  # (N,2)
+        # outside distance
+        zero = torch.tensor(0.0, device=queries.device, dtype=queries.dtype)
+        d_clamped = torch.maximum(d, zero)
+        outside_dist = torch.linalg.norm(d_clamped, dim=1)
+        # inside distance (negative when inside)
+        inside_dist = torch.minimum(torch.maximum(d[:, 0], d[:, 1]), zero)
+        sdf = (outside_dist + inside_dist).reshape(-1, 1)
+        return sdf
+
+    def _get_domain_bounds(self) -> torch.Tensor:
+        center = self.center.detach()
+        half = self.extents.detach() / 2.0
+
+        lower = center - half
+        upper = center + half
+
+        return torch.stack([lower, upper], dim=0)

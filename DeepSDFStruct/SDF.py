@@ -266,7 +266,7 @@ class SDFBase(torch.nn.Module, ABC):
         pass
 
     @abstractmethod
-    def _get_domain_bounds(self) -> np.array:
+    def _get_domain_bounds(self) -> torch.Tensor:
         """Return the bounding box of the SDF's domain.
 
         Subclasses must implement this to specify the spatial extent
@@ -284,7 +284,7 @@ class SDFBase(torch.nn.Module, ABC):
         return plot_slice(self, *args, **kwargs)
 
     def __add__(self, other):
-        return SummedSDF(self, other)
+        return UnionSDF(self, other)
 
     def to2D(self, axes: list[int], offset=0.0):
         """
@@ -299,6 +299,8 @@ class SDFBase(torch.nn.Module, ABC):
 
 
 class SDF2D(SDFBase):
+    obj: SDFBase
+
     def __init__(self, obj: SDFBase, axes: list[int], offset=0.0):
         super().__init__()
         self.obj = obj
@@ -330,6 +332,11 @@ class SDF2D(SDFBase):
 
 class SummedSDF(SDFBase):
     def __init__(self, obj1: SDFBase, obj2: SDFBase):
+        raise NotImplementedError("SummedSDF has been replaced by UnionSDF")
+
+
+class UnionSDF(SDFBase):
+    def __init__(self, obj1: SDFBase, obj2: SDFBase):
         super().__init__()
         self.obj1 = obj1
         self.obj2 = obj2
@@ -348,6 +355,30 @@ class SummedSDF(SDFBase):
         upper = torch.maximum(bounds1[1], bounds2[1])
 
         return torch.stack([lower, upper], dim=0)
+
+    def _set_param(self, parameter):
+        return None
+
+
+class DifferenceSDF(SDFBase):
+    """
+    Subtracts objs2 from obj1
+    """
+
+    def __init__(self, obj1: SDFBase, obj2: SDFBase):
+        super().__init__()
+        self.obj1 = obj1
+        self.obj2 = obj2
+        self.deformation_spline = obj1.deformation_spline
+
+    def _compute(self, queries):
+        result1 = self.obj1._compute(queries)
+        result2 = self.obj2._compute(queries)
+        return torch.maximum(result1, -result2)
+
+    def _get_domain_bounds(self):
+        # the domain bounds get smaller when we substract something
+        return self.obj1._get_domain_bounds()
 
     def _set_param(self, parameter):
         return None
@@ -617,6 +648,7 @@ class SDFfromDeepSDF(SDFBase):
         self.latvec = None
         self.parametrization = None
         self.max_batch = max_batch
+        self.set_latent_vec(model._trained_latent_vectors[0])
 
     def set_latent_vec(self, latent_vec: torch.Tensor):
         """

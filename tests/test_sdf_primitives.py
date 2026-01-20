@@ -2,7 +2,6 @@ import torch
 from math import pi, cos, sin
 import pytest
 
-from DeepSDFStruct.mesh import export_sdf_grid_vtk
 
 from DeepSDFStruct.sdf_primitives import (
     SphereSDF,
@@ -11,6 +10,8 @@ from DeepSDFStruct.sdf_primitives import (
     PlaneSDF,
     CornerSpheresSDF,
     CrossMsSDF,
+    CircleSDF,
+    RectangleSDF,
 )
 from DeepSDFStruct.SDF import TransformedSDF
 
@@ -108,6 +109,28 @@ def test_translated_sphere(queries):
     assert torch.allclose(val_trans, val_ref, atol=1e-6)
 
 
+def test_circle_2d():
+    """Basic checks for CircleSDF (2D)."""
+    circle = CircleSDF(center=[0.0, 0.0], radius=0.5)
+    pts = torch.tensor([[0.0, 0.0], [0.5, 0.0], [1.0, 0.0]])
+    vals = circle(pts).reshape(-1)
+    assert torch.allclose(vals[0], torch.tensor(-0.5), atol=1e-6)  # center
+    assert torch.allclose(vals[1], torch.tensor(0.0), atol=1e-6)  # on surface
+    assert torch.allclose(vals[2], torch.tensor(0.5), atol=1e-6)  # outside
+
+
+def test_rectangle_2d():
+    """Basic checks for RectangleSDF (2D)."""
+    rect = RectangleSDF(center=[0.0, 0.0], extents=[0.5, 0.2])
+    pts = torch.tensor([[0.0, 0.0], [0.5, 0.0], [1.0, 0.0]])
+    vals = rect(pts).reshape(-1)
+    assert torch.allclose(
+        vals[0], torch.tensor(-0.2), atol=1e-6
+    )  # center -> -min(half_extents)
+    assert torch.allclose(vals[1], torch.tensor(0.0), atol=1e-6)  # on surface
+    assert torch.allclose(vals[2], torch.tensor(0.5), atol=1e-6)  # outside
+
+
 if __name__ == "__main__":
     queries = torch.rand(10, 3)
     test_rotated_cylinder(queries)
@@ -115,3 +138,5 @@ if __name__ == "__main__":
     test_scaled_sphere(queries)
     test_sdf_primitives(queries)
     test_translated_sphere(queries)
+    test_circle_2d()
+    test_rectangle_2d()
