@@ -121,14 +121,14 @@ def test_circle_2d():
 
 def test_rectangle_2d():
     """Basic checks for RectangleSDF (2D)."""
-    rect = RectangleSDF(center=[0.0, 0.0], extents=[0.5, 0.2])
-    pts = torch.tensor([[0.0, 0.0], [0.5, 0.0], [1.0, 0.0]])
+    width = 0.5
+    height = 0.2
+    rect = RectangleSDF(center=[0.0, 0.0], extents=[width, height])
+    pts = torch.tensor([[0.0, 0.0], [width / 2, 0.0], [1.0, 0.0]])
     vals = rect(pts).reshape(-1)
-    assert torch.allclose(
-        vals[0], torch.tensor(-0.2), atol=1e-6
-    )  # center -> -min(half_extents)
+    assert torch.allclose(vals[0], torch.tensor(-height / 2), atol=1e-6)
     assert torch.allclose(vals[1], torch.tensor(0.0), atol=1e-6)  # on surface
-    assert torch.allclose(vals[2], torch.tensor(0.5), atol=1e-6)  # outside
+    assert torch.allclose(vals[2], torch.tensor(0.75), atol=1e-6)  # outside
 
 
 if __name__ == "__main__":

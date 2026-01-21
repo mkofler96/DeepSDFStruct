@@ -255,12 +255,18 @@ class CircleSDF(SDFBase):
 
 
 class RectangleSDF(SDFBase):
-    """2D axis-aligned rectangle SDF. half_extents defines half-widths in x and y.
-    Both center and half_extents are torch parameters.
-    SDF computed using standard box SDF formula in 2D.
-    """
-
     def __init__(self, center, extents):
+        """2D axis-aligned rectangle SDF. half_extents defines half-widths in x and y.
+        Both center and half_extents are torch parameters.
+        SDF computed using standard box SDF formula in 2D.
+        +---------------+
+        |     center    |
+        |       x       | extents[1]
+        |               |  (height)
+        +---------------+
+            extents[0]
+            (width)
+        """
         super().__init__(geometric_dim=2)
         c = torch.as_tensor(center, dtype=torch.float32)
         h = torch.as_tensor(extents, dtype=torch.float32)
