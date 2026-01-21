@@ -24,6 +24,7 @@ DeepSDFStruct.SDF
       CapBorderDict
       CapType
       CappedBorderSDF
+      DifferenceSDF
       NegatedCallable
       SDF2D
       SDFBase
@@ -32,4 +33,5 @@ DeepSDFStruct.SDF
       SDFfromMesh
       SummedSDF
       TransformedSDF
+      UnionSDF
    

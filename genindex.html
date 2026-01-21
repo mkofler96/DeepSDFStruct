@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Index &#8212; DeepSDFStruct 1.4.2.dev9+g5946a7c85 documentation</title>
+    <title>Index &#8212; DeepSDFStruct 1.5.1.dev1+gd3f21e79a documentation</title>
   
   
   
@@ -37,7 +37,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="_static/documentation_options.js?v=bdcc7fa7"></script>
+    <script src="_static/documentation_options.js?v=3662aa46"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'genindex';</script>
@@ -107,7 +107,7 @@
   
   
   
-    <p class="title logo__title">DeepSDFStruct 1.4.2.dev9+g5946a7c85 documentation</p>
+    <p class="title logo__title">DeepSDFStruct 1.5.1.dev1+gd3f21e79a documentation</p>
   
 </a></div>
     
@@ -271,6 +271,7 @@
  | <a href="#L"><strong>L</strong></a>
  | <a href="#M"><strong>M</strong></a>
  | <a href="#N"><strong>N</strong></a>
+ | <a href="#O"><strong>O</strong></a>
  | <a href="#P"><strong>P</strong></a>
  | <a href="#Q"><strong>Q</strong></a>
  | <a href="#R"><strong>R</strong></a>
@@ -350,6 +351,8 @@
       <li><a href="source/generated/DeepSDFStruct.splinepy_unitcells.chi_3D.html#DeepSDFStruct.splinepy_unitcells.chi_3D.Chi3D">Chi3D (class in DeepSDFStruct.splinepy_unitcells.chi_3D)</a>
 </li>
       <li><a href="source/generated/DeepSDFStruct.pretrained_models.html#DeepSDFStruct.pretrained_models.PretrainedModels.ChiAndCross">ChiAndCross (DeepSDFStruct.pretrained_models.PretrainedModels attribute)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.sdf_primitives.html#DeepSDFStruct.sdf_primitives.CircleSDF">CircleSDF (class in DeepSDFStruct.sdf_primitives)</a>
 </li>
       <li><a href="source/generated/DeepSDFStruct.deep_sdf.training.html#DeepSDFStruct.deep_sdf.training.ClampedL1Loss">ClampedL1Loss (class in DeepSDFStruct.deep_sdf.training)</a>
 </li>
@@ -722,6 +725,8 @@
         <li><a href="source/generated/DeepSDFStruct.flexisquares.flexisquares.html#DeepSDFStruct.flexisquares.flexisquares.FlexiSquares.device">(DeepSDFStruct.flexisquares.flexisquares.FlexiSquares attribute)</a>
 </li>
       </ul></li>
+      <li><a href="source/generated/DeepSDFStruct.SDF.html#DeepSDFStruct.SDF.DifferenceSDF">DifferenceSDF (class in DeepSDFStruct.SDF)</a>
+</li>
       <li><a href="source/generated/DeepSDFStruct.flexicubes.flexicubes.html#DeepSDFStruct.flexicubes.flexicubes.FlexiCubes.dir_faces_table">dir_faces_table (DeepSDFStruct.flexicubes.flexicubes.FlexiCubes attribute)</a>
 </li>
       <li><a href="source/generated/DeepSDFStruct.sampling.html#DeepSDFStruct.sampling.SampledSDF.distances">distances (DeepSDFStruct.sampling.SampledSDF attribute)</a>, <a href="source/generated/DeepSDFStruct.sampling.html#id9">[1]</a>
@@ -1054,6 +1059,14 @@
   </ul></td>
 </tr></table>
 
+<h2 id="O">O</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="source/generated/DeepSDFStruct.SDF.html#DeepSDFStruct.SDF.SDF2D.obj">obj (DeepSDFStruct.SDF.SDF2D attribute)</a>
+</li>
+  </ul></td>
+</tr></table>
+
 <h2 id="P">P</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
@@ -1144,6 +1157,8 @@
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="source/generated/DeepSDFStruct.deep_sdf.training.html#DeepSDFStruct.deep_sdf.training.reconstruct_meshs_from_latent">reconstruct_meshs_from_latent() (in module DeepSDFStruct.deep_sdf.training)</a>
+</li>
+      <li><a href="source/generated/DeepSDFStruct.sdf_primitives.html#DeepSDFStruct.sdf_primitives.RectangleSDF">RectangleSDF (class in DeepSDFStruct.sdf_primitives)</a>
 </li>
       <li><a href="source/generated/DeepSDFStruct.mesh.html#DeepSDFStruct.mesh.torchVolumeMesh.remove_disconnected_regions">remove_disconnected_regions() (DeepSDFStruct.mesh.torchVolumeMesh method)</a>, <a href="source/generated/DeepSDFStruct.mesh.html#id2">[1]</a>
 </li>
@@ -1319,10 +1334,12 @@
 </li>
       <li><a href="source/generated/DeepSDFStruct.SDF.html#DeepSDFStruct.SDF.union_torch">union_torch() (in module DeepSDFStruct.SDF)</a>
 </li>
-      <li><a href="source/generated/DeepSDFStruct.local_shapes.html#DeepSDFStruct.local_shapes.LocalShapesSDF.unit_cell">unit_cell (DeepSDFStruct.local_shapes.LocalShapesSDF property)</a>
+      <li><a href="source/generated/DeepSDFStruct.SDF.html#DeepSDFStruct.SDF.UnionSDF">UnionSDF (class in DeepSDFStruct.SDF)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="source/generated/DeepSDFStruct.local_shapes.html#DeepSDFStruct.local_shapes.LocalShapesSDF.unit_cell">unit_cell (DeepSDFStruct.local_shapes.LocalShapesSDF property)</a>
+</li>
       <li><a href="source/generated/DeepSDFStruct.deep_sdf.data.html#DeepSDFStruct.deep_sdf.data.unpack_sdf_samples">unpack_sdf_samples() (in module DeepSDFStruct.deep_sdf.data)</a>
 </li>
       <li><a href="source/generated/DeepSDFStruct.deep_sdf.data.html#DeepSDFStruct.deep_sdf.data.unpack_sdf_samples_from_ram">unpack_sdf_samples_from_ram() (in module DeepSDFStruct.deep_sdf.data)</a>

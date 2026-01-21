@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>DeepSDFStruct.sdf_primitives &#8212; DeepSDFStruct 1.4.2.dev9+g5946a7c85 documentation</title>
+    <title>DeepSDFStruct.sdf_primitives &#8212; DeepSDFStruct 1.5.1.dev1+gd3f21e79a documentation</title>
   
   
   
@@ -38,7 +38,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=bdcc7fa7"></script>
+    <script src="../../_static/documentation_options.js?v=3662aa46"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'source/generated/DeepSDFStruct.sdf_primitives';</script>
@@ -110,7 +110,7 @@
   
   
   
-    <p class="title logo__title">DeepSDFStruct 1.4.2.dev9+g5946a7c85 documentation</p>
+    <p class="title logo__title">DeepSDFStruct 1.5.1.dev1+gd3f21e79a documentation</p>
   
 </a></div>
     
@@ -375,16 +375,22 @@ in optimization workflows.</p>
 <p class="rubric">Classes</p>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.sdf_primitives.CornerSpheresSDF" title="DeepSDFStruct.sdf_primitives.CornerSpheresSDF"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CornerSpheresSDF</span></code></a>(radius[, limit])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.sdf_primitives.CircleSDF" title="DeepSDFStruct.sdf_primitives.CircleSDF"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CircleSDF</span></code></a>(center, radius)</p></td>
+<td><p>2D circle SDF (geometric_dim=2).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.sdf_primitives.CornerSpheresSDF" title="DeepSDFStruct.sdf_primitives.CornerSpheresSDF"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CornerSpheresSDF</span></code></a>(radius[, limit])</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.sdf_primitives.CrossMsSDF" title="DeepSDFStruct.sdf_primitives.CrossMsSDF"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CrossMsSDF</span></code></a>(radius)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.sdf_primitives.CrossMsSDF" title="DeepSDFStruct.sdf_primitives.CrossMsSDF"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CrossMsSDF</span></code></a>(radius)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.sdf_primitives.CylinderSDF" title="DeepSDFStruct.sdf_primitives.CylinderSDF"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CylinderSDF</span></code></a>(point, axis, radius)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.sdf_primitives.CylinderSDF" title="DeepSDFStruct.sdf_primitives.CylinderSDF"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CylinderSDF</span></code></a>(point, axis, radius)</p></td>
 <td><p>Signed distance function for an infinite cylinder.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.sdf_primitives.PlaneSDF" title="DeepSDFStruct.sdf_primitives.PlaneSDF"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PlaneSDF</span></code></a>(point, normal)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.sdf_primitives.PlaneSDF" title="DeepSDFStruct.sdf_primitives.PlaneSDF"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PlaneSDF</span></code></a>(point, normal)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.sdf_primitives.RectangleSDF" title="DeepSDFStruct.sdf_primitives.RectangleSDF"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RectangleSDF</span></code></a>(center, extents)</p></td>
 <td><p></p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.sdf_primitives.SphereSDF" title="DeepSDFStruct.sdf_primitives.SphereSDF"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SphereSDF</span></code></a>(center, radius)</p></td>
@@ -396,6 +402,13 @@ in optimization workflows.</p>
 </tbody>
 </table>
 </div>
+<dl class="py class">
+<dt class="sig sig-object py" id="DeepSDFStruct.sdf_primitives.CircleSDF">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.sdf_primitives.</span></span><span class="sig-name descname"><span class="pre">CircleSDF</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">center</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.sdf_primitives.CircleSDF" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="DeepSDFStruct.SDF.html#DeepSDFStruct.SDF.SDFBase" title="DeepSDFStruct.SDF.SDFBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">DeepSDFStruct.SDF.SDFBase</span></code></a></p>
+<p>2D circle SDF (geometric_dim=2). Center and radius are torch parameters.</p>
+</dd></dl>
+
 <dl class="py class">
 <dt class="sig sig-object py" id="DeepSDFStruct.sdf_primitives.CornerSpheresSDF">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.sdf_primitives.</span></span><span class="sig-name descname"><span class="pre">CornerSpheresSDF</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">radius</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.sdf_primitives.CornerSpheresSDF" title="Link to this definition">#</a></dt>
@@ -440,6 +453,12 @@ The cylinder is defined by a point on the axis and a radius.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="DeepSDFStruct.sdf_primitives.PlaneSDF">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.sdf_primitives.</span></span><span class="sig-name descname"><span class="pre">PlaneSDF</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">point</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normal</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.sdf_primitives.PlaneSDF" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="DeepSDFStruct.SDF.html#DeepSDFStruct.SDF.SDFBase" title="DeepSDFStruct.SDF.SDFBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">DeepSDFStruct.SDF.SDFBase</span></code></a></p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="DeepSDFStruct.sdf_primitives.RectangleSDF">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.sdf_primitives.</span></span><span class="sig-name descname"><span class="pre">RectangleSDF</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">center</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extents</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.sdf_primitives.RectangleSDF" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="DeepSDFStruct.SDF.html#DeepSDFStruct.SDF.SDFBase" title="DeepSDFStruct.SDF.SDFBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">DeepSDFStruct.SDF.SDFBase</span></code></a></p>
 </dd></dl>
 
@@ -551,10 +570,12 @@ and positive outside.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#available-primitives">Available Primitives</a></li>
 </ul>
 </li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.sdf_primitives.CircleSDF"><code class="docutils literal notranslate"><span class="pre">CircleSDF</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.sdf_primitives.CornerSpheresSDF"><code class="docutils literal notranslate"><span class="pre">CornerSpheresSDF</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.sdf_primitives.CrossMsSDF"><code class="docutils literal notranslate"><span class="pre">CrossMsSDF</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.sdf_primitives.CylinderSDF"><code class="docutils literal notranslate"><span class="pre">CylinderSDF</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.sdf_primitives.PlaneSDF"><code class="docutils literal notranslate"><span class="pre">PlaneSDF</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.sdf_primitives.RectangleSDF"><code class="docutils literal notranslate"><span class="pre">RectangleSDF</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.sdf_primitives.SphereSDF"><code class="docutils literal notranslate"><span class="pre">SphereSDF</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.sdf_primitives.TorusSDF"><code class="docutils literal notranslate"><span class="pre">TorusSDF</span></code></a></li>
 </ul>

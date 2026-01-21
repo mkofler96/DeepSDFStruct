@@ -8,10 +8,12 @@ DeepSDFStruct.sdf\_primitives
 
    .. autosummary::
    
+      CircleSDF
       CornerSpheresSDF
       CrossMsSDF
       CylinderSDF
       PlaneSDF
+      RectangleSDF
       SphereSDF
       TorusSDF
    
