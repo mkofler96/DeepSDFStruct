@@ -44,7 +44,6 @@ import pyvista
 import logging
 import DeepSDFStruct
 
-
 logger = logging.getLogger(DeepSDFStruct.__name__)
 
 
