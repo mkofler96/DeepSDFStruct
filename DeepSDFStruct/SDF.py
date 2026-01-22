@@ -840,7 +840,7 @@ class CappedBorderSDF(SDFBase):
 
     cap_border_dict: CapBorderDict
 
-    def __init__(self, sdf: SDFBase, cap_border_dict=None):
+    def __init__(self, sdf: SDFBase, cap_border_dict=None, scale=[1, 1, 1]):
         super().__init__(geometric_dim=sdf.geometric_dim)
         self.sdf = sdf
         self.deformation_spline = sdf.deformation_spline
@@ -851,6 +851,7 @@ class CappedBorderSDF(SDFBase):
                 case 3:
                     cap_border_dict = UNIT_CUBE_CAPS_3D
         self.cap_border_dict = cap_border_dict
+        self.scale = scale
 
     def _compute(self, queries: torch.Tensor) -> torch.Tensor:
         sdf_values = self.sdf(queries)
@@ -884,12 +885,12 @@ class CappedBorderSDF(SDFBase):
 
             # cap == 1 means add material
             if cap == 1:
-                sdf_values = torch.minimum(sdf_values, -border_sdf)
+                sdf_values = torch.minimum(sdf_values, -border_sdf * self.scale[dim])
                 # sdf_values = torch.where(outside, border_sdf, sdf_values)
 
             # cap == -1 means remove material
             elif cap == -1:
-                sdf_values = torch.maximum(sdf_values, -border_sdf)
+                sdf_values = torch.maximum(sdf_values, -border_sdf * self.scale[dim])
                 # sdf_values = torch.where(outside, border_sdf, sdf_values)
 
             else:
