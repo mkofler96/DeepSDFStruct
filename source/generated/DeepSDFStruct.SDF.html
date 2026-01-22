@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>DeepSDFStruct.SDF &#8212; DeepSDFStruct 1.5.1.dev4+g9b4e51507 documentation</title>
+    <title>DeepSDFStruct.SDF &#8212; DeepSDFStruct 1.5.2.dev8+g5dc29f586 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=6826bc82"></script>
+    <script src="../../_static/documentation_options.js?v=b33349dc"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'source/generated/DeepSDFStruct.SDF';</script>
@@ -110,7 +110,7 @@
   
   
   
-    <p class="title logo__title">DeepSDFStruct 1.5.1.dev4+g9b4e51507 documentation</p>
+    <p class="title logo__title">DeepSDFStruct 1.5.2.dev8+g5dc29f586 documentation</p>
   
 </a></div>
     
@@ -392,7 +392,7 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.SDF.CapType" title="DeepSDFStruct.SDF.CapType"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CapType</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.SDF.CappedBorderSDF" title="DeepSDFStruct.SDF.CappedBorderSDF"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CappedBorderSDF</span></code></a>(sdf[, cap_border_dict])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.SDF.CappedBorderSDF" title="DeepSDFStruct.SDF.CappedBorderSDF"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CappedBorderSDF</span></code></a>(sdf[, cap_border_dict, scale])</p></td>
 <td><p>Applies planar boundary caps to another SDF.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.SDF.DifferenceSDF" title="DeepSDFStruct.SDF.DifferenceSDF"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DifferenceSDF</span></code></a>(obj1, obj2)</p></td>
@@ -517,7 +517,7 @@ with two fields:</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="DeepSDFStruct.SDF.CappedBorderSDF">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.SDF.</span></span><span class="sig-name descname"><span class="pre">CappedBorderSDF</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sdf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cap_border_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.SDF.CappedBorderSDF" title="Link to this definition">#</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.SDF.</span></span><span class="sig-name descname"><span class="pre">CappedBorderSDF</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sdf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cap_border_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(1,</span> <span class="pre">1,</span> <span class="pre">1)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.SDF.CappedBorderSDF" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#DeepSDFStruct.SDF.SDFBase" title="DeepSDFStruct.SDF.SDFBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">DeepSDFStruct.SDF.SDFBase</span></code></a></p>
 <p>Applies planar boundary caps to another SDF.</p>
 <dl class="field-list simple">
@@ -649,6 +649,11 @@ points inside the geometry, positive values outside.</p>
 </dd>
 </dl>
 </dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="DeepSDFStruct.SDF.SDFBase.geometric_dim">
+<span class="sig-name descname"><span class="pre">geometric_dim</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></em><a class="headerlink" href="#DeepSDFStruct.SDF.SDFBase.geometric_dim" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="DeepSDFStruct.SDF.SDFBase.get_device">
@@ -1103,6 +1108,7 @@ k: smoothness parameter</p>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.SDF.SDFBase"><code class="docutils literal notranslate"><span class="pre">SDFBase</span></code></a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.SDF.SDFBase.forward"><code class="docutils literal notranslate"><span class="pre">SDFBase.forward()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.SDF.SDFBase.geometric_dim"><code class="docutils literal notranslate"><span class="pre">SDFBase.geometric_dim</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.SDF.SDFBase.get_device"><code class="docutils literal notranslate"><span class="pre">SDFBase.get_device()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.SDF.SDFBase.plot_slice"><code class="docutils literal notranslate"><span class="pre">SDFBase.plot_slice()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.SDF.SDFBase.to2D"><code class="docutils literal notranslate"><span class="pre">SDFBase.to2D()</span></code></a></li>
