@@ -741,10 +741,13 @@ def create_2D_mesh(
     N_base,
     mesh_type: str,
     differentiate=False,
-    device="cpu",
+    device=None,
     bounds=None,
     diffmode="rev",
 ) -> Tuple[Union[torchLineMesh, torchSurfMesh], Optional[torch.Tensor]]:
+
+    if device is not None:
+        print("Warning: the argument device is no longer used.")
 
     lattice = find_lattice_sdf(sdf)
     if lattice is None:
@@ -764,7 +767,7 @@ def create_2D_mesh(
     N = process_N_base_input(N_base, tiling, dim=2)
 
     constructor, samples, cube_idx = _prepare_flexicubes_querypoints(
-        N, device=device, bounds=bounds, extr_type="flexisquares"
+        N, device=sdf.get_device(), bounds=bounds, extr_type="flexisquares"
     )
     dVerts_dParams = None
 
