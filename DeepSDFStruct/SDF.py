@@ -178,6 +178,8 @@ class SDFBase(torch.nn.Module, ABC):
     >>> print(distances)  # [-1.0, 1.0] (inside, outside)
     """
 
+    geometric_dim: int
+
     def __init__(
         self,
         deformation_spline: TorchSpline | None = None,
@@ -310,6 +312,7 @@ class SDF2D(SDFBase):
         ), "List of axes must be of size 2 and needs to correspond to the 2D plane"
         self.axes = axes
         self.offset = offset
+        self.geometric_dim = 2
 
     def _compute(self, queries):
         queries_3D = (
@@ -324,7 +327,9 @@ class SDF2D(SDFBase):
         return result
 
     def _get_domain_bounds(self):
-        return self.obj._get_domain_bounds()
+        bounds_3d = self.obj._get_domain_bounds()
+        axes = torch.as_tensor(self.axes, device=bounds_3d.device)
+        return torch.index_select(bounds_3d, dim=1, index=axes)
 
     def _set_param(self, parameter):
         return self.obj._set_param(parameter)
@@ -341,6 +346,11 @@ class UnionSDF(SDFBase):
         self.obj1 = obj1
         self.obj2 = obj2
         self.deformation_spline = obj1.deformation_spline
+        if self.obj1.geometric_dim != self.obj2.geometric_dim:
+            raise ValueError(
+                f"geometric dim of object 1 ({self.obj1.geometric_dim}) differs from geometric dim of object 2 ({self.obj2.geometric_dim})"
+            )
+        self.geometric_dim = self.obj1.geometric_dim
 
     def _compute(self, queries):
         result1 = self.obj1._compute(queries)
@@ -830,7 +840,7 @@ class CappedBorderSDF(SDFBase):
 
     cap_border_dict: CapBorderDict
 
-    def __init__(self, sdf: SDFBase, cap_border_dict=None):
+    def __init__(self, sdf: SDFBase, cap_border_dict=None, scale=(1, 1, 1)):
         super().__init__(geometric_dim=sdf.geometric_dim)
         self.sdf = sdf
         self.deformation_spline = sdf.deformation_spline
@@ -841,6 +851,7 @@ class CappedBorderSDF(SDFBase):
                 case 3:
                     cap_border_dict = UNIT_CUBE_CAPS_3D
         self.cap_border_dict = cap_border_dict
+        self.scale = scale
 
     def _compute(self, queries: torch.Tensor) -> torch.Tensor:
         sdf_values = self.sdf(queries)
@@ -874,12 +885,12 @@ class CappedBorderSDF(SDFBase):
 
             # cap == 1 means add material
             if cap == 1:
-                sdf_values = torch.minimum(sdf_values, -border_sdf)
+                sdf_values = torch.minimum(sdf_values, -border_sdf * self.scale[dim])
                 # sdf_values = torch.where(outside, border_sdf, sdf_values)
 
             # cap == -1 means remove material
             elif cap == -1:
-                sdf_values = torch.maximum(sdf_values, -border_sdf)
+                sdf_values = torch.maximum(sdf_values, -border_sdf * self.scale[dim])
                 # sdf_values = torch.where(outside, border_sdf, sdf_values)
 
             else:
