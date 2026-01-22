@@ -259,11 +259,10 @@ class TorchSpline(torch.nn.Module):
         self.control_points = torch.nn.Parameter(
             torch.tensor(spline.control_points, dtype=dtype, device=device)
         )
-        self.knot_vectors = []
+
         for i, knot in enumerate(spline.knot_vectors):
             kv = torch.tensor(knot, dtype=dtype, device=device)
             self.register_buffer(f"knot_vector_{i}", kv)
-            self.knot_vectors.append(kv)
 
         self.register_buffer(
             "degrees",
@@ -277,6 +276,15 @@ class TorchSpline(torch.nn.Module):
                 self.spline_fun = torch_spline_2D
             case 3:
                 self.spline_fun = torch_spline_3D
+
+    @property
+    def knot_vectors(self):
+        i = 0
+        out = []
+        while hasattr(self, f"knot_vector_{i}"):
+            out.append(getattr(self, f"knot_vector_{i}"))
+            i += 1
+        return out
 
     def forward(self, queries: torch.Tensor):
         # spline fun takes the following arguments:
