@@ -116,7 +116,10 @@ class Constant(nn.Module):
             parameter dimension. All rows are identical.
         """
         N = queries.shape[0]
-        return self.param.expand(N, -1)
+        if len(self.param.shape) == 0:
+            return self.param.view(1).expand(N, 1)
+        else:
+            return self.param.view(1, -1)
 
     def set_param(self, new_value: torch.Tensor):
         """Update the constant parameter value.
