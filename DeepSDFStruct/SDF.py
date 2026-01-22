@@ -840,7 +840,7 @@ class CappedBorderSDF(SDFBase):
 
     cap_border_dict: CapBorderDict
 
-    def __init__(self, sdf: SDFBase, cap_border_dict=None, scale=[1, 1, 1]):
+    def __init__(self, sdf: SDFBase, cap_border_dict=None, scale=(1, 1, 1)):
         super().__init__(geometric_dim=sdf.geometric_dim)
         self.sdf = sdf
         self.deformation_spline = sdf.deformation_spline
