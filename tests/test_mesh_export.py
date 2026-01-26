@@ -72,9 +72,7 @@ def test_deepsdf_lattice_export_3D():
     export_surface_mesh(
         "tests/tmp_outputs/mesh_with_derivative.vtk", surf_mesh.to_gus(), derivative
     )
-    export_sdf_grid_vtk(
-        lattice_struct, "tests/tmp_outputs/sdf.vtk", device=model.device
-    )
+    export_sdf_grid_vtk(lattice_struct, "tests/tmp_outputs/sdf.vtk")
     mesh = surf_mesh.to_gus()
     _gus.io.meshio.export("tests/tmp_outputs/faces.inp", mesh)
     _gus.io.meshio.export("tests/tmp_outputs/faces.obj", mesh)
