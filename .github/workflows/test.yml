@@ -36,5 +36,5 @@ jobs:
         run: uv run pytest --cov=DeepSDFStruct --cov-report=term-missing --cov-report=xml tests
 
       - name: Coveralls
-        if: matrix.python-version == '3.13'
+        if: matrix.python-version == '3.13' && matrix.os == 'ubuntu-latest'
         uses: coverallsapp/github-action@v2
