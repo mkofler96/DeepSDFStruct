@@ -743,7 +743,7 @@ def create_2D_mesh(
     differentiate=False,
     device=None,
     bounds=None,
-    diffmode="rev",
+    diffmode="fwd",
 ) -> Tuple[Union[torchLineMesh, torchSurfMesh], Optional[torch.Tensor]]:
 
     if device is not None:
