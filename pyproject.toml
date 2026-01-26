@@ -25,6 +25,8 @@ dependencies = [
     "splinepy",
     "vedo",
     "libigl",
+    "embreex; sys_platform == 'linux'",
+    "pyembree; sys_platform == 'darwin'",
     "tetgenpy",
     "meshio",
     "numba",
