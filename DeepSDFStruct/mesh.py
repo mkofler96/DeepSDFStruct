@@ -902,39 +902,48 @@ def get_verts(
         return verts_local
 
 
-def export_sdf_grid_vtk(
-    sdf: SDFBase, filename, N=64, bounds=None, device="cpu", dtype=torch.float32
-):
+def export_sdf_grid_vtk(sdf: SDFBase, filename, N=64, bounds=None):
     if bounds is None:
         bounds = sdf._get_domain_bounds()
     if bounds is None:
-        bounds = np.array([[0, 0, 0], [1, 1, 1]])
+        if sdf.geometric_dim == 2:
+            bounds = np.array([[0, 0], [1, 1]])
+        elif sdf.geometric_dim == 3:
+            bounds = np.array([[0, 0, 0], [1, 1, 1]])
+        else:
+            raise ValueError("geometric dimension of sdf must be either 2 or 3")
     if isinstance(bounds, torch.Tensor):
         bounds = bounds.detach().cpu().numpy()
     # Generate grid points
     x = np.linspace(bounds[0, 0], bounds[1, 0], N)
     y = np.linspace(bounds[0, 1], bounds[1, 1], N)
-    z = np.linspace(bounds[0, 2], bounds[1, 2], N)
-    xx, yy, zz = np.meshgrid(x, y, z, indexing="ij")
-    points = np.vstack([xx.ravel(), yy.ravel(), zz.ravel()]).T
+    if sdf.geometric_dim == 3:
+        z = np.linspace(bounds[0, 2], bounds[1, 2], N)
+        xx, yy, zz = np.meshgrid(x, y, z, indexing="ij")
+        points = np.vstack([xx.ravel(), yy.ravel(), zz.ravel()]).T
+    else:
+        xx, yy = np.meshgrid(x, y)
+        points = np.vstack([xx.ravel(), yy.ravel()]).T
 
     # Evaluate SDF
     with _torch.no_grad():
-        if sdf.geometric_dim == 2:
-            input_points = points[:, :2]
-        elif sdf.geometric_dim == 3:
-            input_points = points
-        sdf_vals = sdf(_torch.tensor(input_points, device=device, dtype=dtype))
+        sdf_vals = sdf(_torch.tensor(points, device=sdf.get_device()))
     sdf_vals = sdf_vals.detach().cpu().numpy().reshape(-1)
 
     # Create vtkPoints
     vtk_points = vtk.vtkPoints()
     for pt in points:
-        vtk_points.InsertNextPoint(pt.tolist())
+        vtk_point = pt.tolist()
+        if sdf.geometric_dim == 2:
+            vtk_point.append(0)
+        vtk_points.InsertNextPoint(vtk_point)
 
     # Create structured grid
     grid = vtk.vtkStructuredGrid()
-    grid.SetDimensions(N, N, N)
+    if sdf.geometric_dim == 3:
+        grid.SetDimensions(N, N, N)
+    else:
+        grid.SetDimensions(N, N, 1)
     grid.SetPoints(vtk_points)
 
     # Add SDF scalar field
@@ -984,7 +993,9 @@ def _export_surface_mesh_vtk(verts, faces, filename, dSurf: dict = None):
             N = int(np.prod(extra_dims))
 
             # reshape to [n_nodes, N_derivatives, 3]
-            dSurf_flat = dSurf_dparam.flatten(2)
+            dSurf_flat_with_nan = dSurf_dparam.flatten(2)
+            # remove nans
+            dSurf_flat = torch.nan_to_num(dSurf_flat_with_nan)
             indices = [np.unravel_index(i, extra_dims) for i in range(N)]
             assert dSurf_flat.shape[2] == len(indices)
             for j, idx in enumerate(indices):
@@ -999,6 +1010,9 @@ def _export_surface_mesh_vtk(verts, faces, filename, dSurf: dict = None):
                     vecND = vec.tolist()
                     if len(vecND) == 2:
                         vecND.append(0.0)
+                    if len(vecND) != 3:
+                        raise ValueError("Vector to be inserted must have 3 entries.")
+
                     vectors.InsertNextTuple(vecND)
 
                 polydata.GetPointData().AddArray(vectors)
