@@ -738,4 +738,22 @@ class FlexiSquares:
         #     )
         # fig.savefig("sdf.png", dpi=1000, bbox_inches="tight")
 
+        # fix orientation
+        p0 = vertices[tris[:, 0]]
+        p1 = vertices[tris[:, 1]]
+        p2 = vertices[tris[:, 2]]
+
+        cross = (p1[:, 0] - p0[:, 0]) * (p2[:, 1] - p0[:, 1]) - (
+            p1[:, 1] - p0[:, 1]
+        ) * (p2[:, 0] - p0[:, 0])
+
+        flip = cross < 0
+
+        # swap columns 1 and 2 where needed
+        tris_flipped = tris.clone()
+        tris_flipped[flip, 1] = tris[flip, 2]
+        tris_flipped[flip, 2] = tris[flip, 1]
+
+        tris = tris_flipped
+
         return vertices, tris
