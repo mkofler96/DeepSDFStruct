@@ -272,25 +272,84 @@ class FlexiSquares:
         vd, L_dev, vd_idx_map = self._compute_vd(
             x_nx2, surf_edges, s_n, case_ids, beta_fx4, alpha_fx4, idx_map
         )
-        vertices, faces, s_edges, edge_indices = self._extract_zero_contour(
-            s_n, surf_edges, vd, edge_counts, idx_map, vd_idx_map, surf_edges_mask
+        boundary_vertices, boundary_lines, s_edges, edge_indices = (
+            self._extract_zero_contour(
+                s_n, surf_edges, vd, edge_counts, idx_map, vd_idx_map, surf_edges_mask
+            )
         )
         if not output_tetmesh:
-            return vertices, faces, L_dev
+            return boundary_vertices, boundary_lines, L_dev
         else:
-            vertices, tets = self._triangulate(
+            all_vertices, triangles = self._triangulate(
                 x_nx2,
                 s_n,
                 cube_fx4,
-                vertices,
-                faces,
+                boundary_vertices,
+                boundary_lines,
                 surf_edges,
                 s_edges,
                 case_ids,
                 edge_indices,
                 surf_cubes,
             )
-            return vertices, tets, L_dev
+            vertices_smoothed = self._apply_laplacian_smoothing(
+                all_vertices, triangles, boundary_lines
+            )
+            return vertices_smoothed, triangles, L_dev
+
+    def _apply_laplacian_smoothing(
+        self, vertices, triangles, boundary_vertices, iterations=5, lamb=0.5
+    ):
+        """
+        Vectorized Laplacian smoothing using PyTorch sparse matrices.
+        """
+        num_total = vertices.shape[0]
+        device = vertices.device
+
+        unique_boundary = torch.unique(boundary_vertices.long())
+        is_interior = torch.ones(num_total, 1, device=device, dtype=torch.bool)
+        is_interior[unique_boundary] = False
+
+        i, j, k = triangles[:, 0], triangles[:, 1], triangles[:, 2]
+
+        edges = torch.cat(
+            [
+                torch.stack([i, j], dim=1),
+                torch.stack([j, i], dim=1),
+                torch.stack([j, k], dim=1),
+                torch.stack([k, j], dim=1),
+                torch.stack([k, i], dim=1),
+                torch.stack([i, k], dim=1),
+            ],
+            dim=0,
+        )  # shape: (num_edges, 2)
+
+        # Remove duplicate edges
+        edges = torch.unique(edges, dim=0)
+
+        src = edges[:, 0]  # neighbor index
+        dst = edges[:, 1]  # vertex to accumulate into
+
+        degree = torch.zeros(num_total, device=device, dtype=vertices.dtype)
+        one = torch.ones_like(dst, dtype=vertices.dtype)
+        degree.scatter_add_(0, dst, one)
+        degree_inv = 1.0 / torch.clamp(degree, min=1.0)
+
+        v_smoothed = vertices.clone()
+
+        for _ in range(iterations):
+            neighbor_sum = torch.zeros_like(v_smoothed)  # (N, 3)
+
+            neighbor_sum.scatter_add_(
+                0, dst.unsqueeze(1).expand(-1, v_smoothed.shape[1]), v_smoothed[src]
+            )
+
+            neighbor_avg = neighbor_sum * degree_inv.unsqueeze(1)
+
+            v_update = (1 - lamb) * v_smoothed + lamb * neighbor_avg
+            v_smoothed = torch.where(is_interior, v_update, v_smoothed)
+
+        return v_smoothed
 
     def _compute_reg_loss(self, vd, ue, edge_group_to_vd, vd_num_edges):
         """
