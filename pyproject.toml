@@ -19,7 +19,7 @@ requires-python = ">=3.10"
 dependencies = [
     "plyfile",
     "scikit-image",
-    "trimesh[easy]",
+    "trimesh",
     "matplotlib",
     "gustaf @ git+https://github.com/mkofler96/gustaf.git@ft-mfem-3D-export",
     "splinepy",
