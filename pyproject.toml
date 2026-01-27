@@ -61,6 +61,9 @@ where = ["."]
 
 [tool.uv]
 package = true
+constraint-dependencies = [
+    "embreex; sys_platform != 'darwin'",  # Only allow embreex on non-macOS platforms
+]
 
 [tool.coverage.run]
 branch = true
