@@ -10,6 +10,10 @@ from typing import TypedDict
 from .networks.analytic_round_cross import RoundCrossDecoder
 from .networks.deep_sdf_decoder import DeepSDFDecoder
 from .networks.hierarchical_deep_sdf_decoder import HierachicalDeepSDFDecoder
+from .networks.resnet_positional_sdf_decoder import ResNetPositionalDeepSDFDecoder
+from .networks.hierarchical_positional_sdf_decoder import (
+    HierachicalPositionalDeepSDFDecoder,
+)
 
 screenshots_subdir = "Screenshots"
 model_params_subdir = "ModelParameters"
@@ -34,6 +38,8 @@ ARCHITECTURES = {
     "analytic_round_cross": RoundCrossDecoder,
     "deep_sdf_decoder": DeepSDFDecoder,
     "hierarchical_deep_sdf_decoder": HierachicalDeepSDFDecoder,
+    "resnet_positional_deep_sdf_decoder": ResNetPositionalDeepSDFDecoder,
+    "hierarchical_positional_deep_sdf_decoder": HierachicalPositionalDeepSDFDecoder,
 }
 
 
