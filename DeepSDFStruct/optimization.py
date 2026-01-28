@@ -92,13 +92,13 @@ def get_mesh_from_torchfem(Solid: torchfem.Solid) -> pyvista.UnstructuredGrid:
     if not isinstance(Solid, torchfem.Solid):
         raise NotImplementedError("Currently only solid mesh is supported.")
     # VTK cell types
-    if isinstance(Solid.etype, Tetra1):
+    if Solid.etype is Tetra1:
         cell_types = Solid.n_elem * [pyvista.CellType.TETRA]
-    elif isinstance(Solid.etype, Tetra2):
+    elif Solid.etype is Tetra2:
         cell_types = Solid.n_elem * [pyvista.CellType.QUADRATIC_TETRA]
-    elif isinstance(Solid.etype, Hexa1):
+    elif Solid.etype is Hexa1:
         cell_types = Solid.n_elem * [pyvista.CellType.HEXAHEDRON]
-    elif isinstance(Solid.etype, Hexa2):
+    elif Solid.etype is Hexa2:
         cell_types = Solid.n_elem * [pyvista.CellType.QUADRATIC_HEXAHEDRON]
 
     # VTK element list
