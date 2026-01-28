@@ -280,19 +280,24 @@ class FlexiCubes:
         Distance Field without the optimization of parameters, it is
         suggested to provide the "grad_func" which should return the
         surface gradient at any given 3D position. When grad_func is
-        provided, the process
-        to determine the dual vertex position adapts to solve a Quadratic Error Function (QEF), as
-        described in the `Manifold Dual Contouring`_ paper, and employs an smart splitting strategy.
-        Please note, this approach is non-differentiable.
+        provided, the process to determine the dual vertex position
+        adapts to solve a Quadratic Error Function (QEF), as
+        described in the `Manifold Dual Contouring`_ paper, and
+        employs a smart splitting strategy. Please note, this
+        approach is non-differentiable.
 
-        For more details and example usage in optimization, refer to the
-        `Flexible Isosurface Extraction for Gradient-Based Mesh Optimization`_ SIGGRAPH 2023 paper.
+        For more details and example usage in optimization, refer to
+        the `Flexible Isosurface Extraction for Gradient-Based Mesh
+        Optimization`_ SIGGRAPH 2023 paper.
 
         Args:
-            x_nx3 (torch.Tensor): Coordinates of the voxel grid vertices, can be deformed.
-            s_n (torch.Tensor): Scalar field values at each vertex of the voxel grid. Negative values
-                denote that the corresponding vertex resides inside the isosurface. This affects
-                the directions of the extracted triangle faces and volume to be tetrahedralized.
+            x_nx3 (torch.Tensor): Coordinates of the voxel grid
+                vertices, can be deformed.
+            s_n (torch.Tensor): Scalar field values at each vertex
+                of the voxel grid. Negative values denote that the
+                corresponding vertex resides inside the isosurface.
+                This affects the directions of the extracted triangle
+                faces and volume to be tetrahedralized.
             cube_fx8 (torch.Tensor): Indices of 8 vertices for each cube in the voxel grid.
             res (int or list[int]): The resolution of the voxel grid. If an integer is provided, it
                 is used for all three dimensions. If a list or tuple of 3 integers is provided, they
