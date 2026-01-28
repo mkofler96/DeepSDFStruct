@@ -21,12 +21,10 @@ dependencies = [
     "scikit-image",
     "trimesh",
     "matplotlib",
-    "gustaf @ git+https://github.com/mkofler96/gustaf.git@ft-mfem-3D-export",
+    "gustaf",
     "splinepy",
     "vedo",
     "libigl",
-    "embreex; sys_platform == 'linux'",
-    "pyembree; sys_platform == 'darwin'",
     "tetgenpy",
     "meshio",
     "numba",
@@ -42,6 +40,7 @@ dependencies = [
     "vtk>=9.5.1",
     "torch-fem>=0.4.5",
     "mlflow>=3.5.0",
+    "numpy>=2.0.0",
 ]
 
 [tool.setuptools_scm]
@@ -61,9 +60,6 @@ where = ["."]
 
 [tool.uv]
 package = true
-constraint-dependencies = [
-    "embreex; sys_platform != 'darwin'",  # Only allow embreex on non-macOS platforms
-]
 
 [tool.coverage.run]
 branch = true
