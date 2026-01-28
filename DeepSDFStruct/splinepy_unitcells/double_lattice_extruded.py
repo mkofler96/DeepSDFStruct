@@ -1,3 +1,16 @@
+"""
+Double Lattice Extruded Unit Cell
+=================================
+
+This module implements an extruded double lattice unit cell using splinepy.
+The structure consists of a 2D double lattice pattern (rectangle with two
+diagonals) extruded in the z-direction.
+
+This provides a 3D lattice with controllable thickness in both the planar
+and extrusion directions, useful for layered structures and anisotropic
+mechanical properties.
+"""
+
 import numpy as _np
 
 from splinepy.bezier import Bezier as _Bezier

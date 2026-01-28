@@ -1,3 +1,46 @@
+"""
+Experiment Workspace Management
+===============================
+
+This module provides utilities for managing DeepSDF experiment workspaces,
+including directory structures, file naming conventions, and model loading/saving.
+
+Constants
+---------
+The module defines standard subdirectory and file names for organizing
+experiment artifacts:
+- Model parameters and checkpoints
+- Optimizer states
+- Latent code vectors
+- Training logs and plots
+- Reconstructions and evaluations
+- Dataset samples and normalization parameters
+
+Architecture Registry
+--------------------
+ARCHITECTURES: dict
+    Maps architecture names to decoder classes, enabling dynamic model
+    instantiation from configuration files.
+
+Functions
+---------
+
+load_experiment_specifications
+    Load experiment configuration from specs.json file.
+
+load_trained_model
+    Load a trained decoder network from checkpoint.
+
+load_latent_vectors
+    Load learned latent codes from checkpoint.
+
+create_experiment_directory
+    Initialize directory structure for a new experiment.
+
+The workspace utilities ensure consistent organization across experiments
+and simplify model loading for inference and continued training.
+"""
+
 #!/usr/bin/env python3
 # Copyright 2004-present Facebook. All Rights Reserved.
 

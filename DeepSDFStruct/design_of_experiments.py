@@ -1,3 +1,71 @@
+"""
+Design of Experiments (DOE) for DeepSDF Training
+================================================
+
+This module provides tools for conducting systematic design of experiments
+when training DeepSDF neural network models. It integrates with MLflow for
+experiment tracking and supports automated hyperparameter sweeps.
+
+Key Features
+------------
+
+ExperimentSpecifications
+    A flexible dictionary-like class for managing experiment configurations
+    with support for:
+    - Loading specifications from JSON files
+    - Recursive updates for nested parameter structures
+    - Deep copying to prevent unintended modifications
+    - Flattening nested configurations for logging
+    - Saving configurations for reproducibility
+
+MLflow Integration
+    Automatic tracking of:
+    - Training metrics (loss curves, validation scores)
+    - Model checkpoints
+    - Hyperparameters and configurations
+    - Dataset information
+    - Experiment metadata
+
+The module simplifies the process of running large-scale hyperparameter
+searches and ablation studies for DeepSDF model training, with built-in
+versioning and reproducibility features.
+
+Examples
+--------
+Run an experiment with custom specifications::
+
+    from DeepSDFStruct.design_of_experiments import ExperimentSpecifications
+
+    # Load base configuration
+    specs = ExperimentSpecifications('config.json')
+
+    # Update hyperparameters
+    specs.update({
+        'learning_rate': 0.001,
+        'batch_size': 32,
+        'num_epochs': 100
+    })
+
+    # Run training with tracking
+    # train_with_specs(specs)
+
+Create and modify experiment configurations::
+
+    specs = ExperimentSpecifications({
+        'model': {
+            'layers': [512, 512, 512],
+            'activation': 'relu'
+        },
+        'training': {
+            'lr': 0.0005
+        }
+    })
+
+    # Flatten for logging
+    flat_params = specs.flatten()
+    print(flat_params)  # {'model.layers': [...], 'model.activation': 'relu', ...}
+"""
+
 import os
 import pathlib
 import json

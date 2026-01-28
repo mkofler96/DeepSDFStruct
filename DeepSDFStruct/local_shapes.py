@@ -1,3 +1,53 @@
+"""
+Local Shapes for Microstructure Design
+======================================
+
+This module provides tools for creating microstructured geometries with
+localized shape variations. Unlike uniform lattices, local shapes allow
+different regions of a structure to have distinct geometric properties,
+enabling graded and functionally-graded materials.
+
+Key Features
+------------
+
+LocalShapesSDF
+    A specialized SDF class for microstructures with spatially-varying
+    unit cell shapes. Enables:
+    - Region-specific unit cell geometries
+    - Smooth transitions between different shapes
+    - Integration with parametrization functions
+    - Support for 2D and 3D microstructures
+
+The module extends the lattice structure capabilities to support more
+complex, heterogeneous microstructural designs where different regions
+may require different geometric features (e.g., varying strut patterns,
+different connectivity, or distinct topologies).
+
+This is particularly useful for:
+- Multi-material structures
+- Functionally graded materials
+- Transition zones between different lattice types
+- Adaptive microstructures
+
+Examples
+--------
+Create a microstructure with local shape variations::
+
+    from DeepSDFStruct.local_shapes import LocalShapesSDF
+    from DeepSDFStruct.sdf_primitives import SphereSDF
+
+    # Define unit cell
+    unit_cell = SphereSDF([0.5, 0.5, 0.5], radius=0.3)
+
+    # Create local shapes structure
+    local_struct = LocalShapesSDF(
+        tiling=[3, 3, 3],
+        unit_cell=unit_cell,
+        parametrization=param_func,
+        bounds=torch.tensor([[-1, -1, -1], [1, 1, 1]])
+    )
+"""
+
 import logging
 
 

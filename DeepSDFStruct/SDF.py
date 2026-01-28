@@ -1,3 +1,69 @@
+"""
+Signed Distance Function (SDF) Base Classes and Operations
+==========================================================
+
+This module provides the foundational classes and utilities for working with
+Signed Distance Functions (SDFs) in DeepSDFStruct. SDFs are implicit geometric
+representations that encode the distance from any point in space to the nearest
+surface, with the sign indicating whether the point is inside (negative) or
+outside (positive) the geometry.
+
+Key Features
+------------
+
+SDFBase Abstract Class
+    Base class for all SDF representations with support for:
+    - Spline-based geometric deformations
+    - Spatially-varying parametrization
+    - Boundary conditions and capping
+    - Boolean operations (union, intersection)
+    - Differentiable operations for optimization
+
+SDFfromMesh
+    Convert triangular surface meshes to SDF representations using
+    fast winding number algorithms for robust inside/outside testing.
+
+SDFfromDeepSDF
+    Neural network-based SDF using trained DeepSDF models for
+    complex, learned geometric representations.
+
+Union and Intersection
+    Combine multiple SDFs using smooth boolean operations with
+    configurable smoothing for differentiable geometry.
+
+Utility Functions
+    - Grid sampling for SDF evaluation
+    - Gradient computation for normal vectors
+    - Boundary condition application
+
+The module enables flexible construction and manipulation of complex
+3D geometries in a differentiable framework suitable for optimization,
+simulation, and machine learning applications.
+
+Examples
+--------
+Create and evaluate an SDF from a mesh::
+
+    import trimesh
+    from DeepSDFStruct.SDF import SDFfromMesh
+
+    mesh = trimesh.load('model.stl')
+    sdf = SDFfromMesh(mesh)
+
+    # Query SDF values
+    points = torch.rand(1000, 3)
+    distances = sdf(points)
+
+Combine SDFs with boolean operations::
+
+    from DeepSDFStruct.sdf_primitives import SphereSDF
+    from DeepSDFStruct.SDF import Union
+
+    sphere1 = SphereSDF([0, 0, 0], radius=1.0)
+    sphere2 = SphereSDF([1, 0, 0], radius=1.0)
+    combined = Union([sphere1, sphere2], smoothing=0.1)
+"""
+
 from abc import ABC, abstractmethod
 import torch
 import numpy as np
@@ -129,17 +195,17 @@ class SDFBase(torch.nn.Module, ABC):
     """Abstract base class for Signed Distance Functions with optional
     deformation and parametrization.
 
-    This class provides the foundation for all SDF representations in DeepSDFStruct.
-    SDFs represent geometry as an implicit function that returns the signed distance
-    from any query point to the nearest surface. Negative values indicate points
-    inside the geometry, positive values indicate points outside, and zero indicates
-    points on the surface.
+    This class provides the foundation for all SDF representations in
+    DeepSDFStruct. SDFs represent geometry as an implicit function that
+    returns the signed distance from any query point to the nearest
+    surface. Negative values indicate points inside the geometry,
+    positive values indicate points outside, and zero indicates points
+    on the surface.
 
     The class supports:
-    - Optional spline-based deformations for smooth geometric transformations
+    - Optional spline-based deformations for smooth transformations
     - Parametrization functions for spatially-varying properties
-    - Border capping to constrain geometry within specified bounds
-    - Composition operations (union, intersection) via operator overloading
+    - Composition operations (union, intersection) via overloading
 
     Parameters
     ----------
@@ -147,14 +213,8 @@ class SDFBase(torch.nn.Module, ABC):
         A spline function that maps from parametric to physical space,
         enabling smooth deformations of the base geometry.
     parametrization : torch.nn.Module, optional
-        A neural network or function that provides spatially-varying parameters
-        for the SDF (e.g., varying thickness in a lattice).
-    cap_border_dict : CapBorderDict, optional
-        Dictionary specifying boundary conditions for each face of the domain.
-        Keys are 'x0', 'x1', 'y0', 'y1', 'z0', 'z1' for the six faces.
-    cap_outside_of_unitcube : bool, default False
-        If True, caps the SDF values outside the unit cube to create
-        a bounded geometry.
+        A function that provides spatially-varying parameters for the
+        SDF (e.g., varying thickness in a lattice).
     geometric_dim : int, default 3
         Geometric dimension of the SDF (2 or 3).
 
@@ -162,7 +222,7 @@ class SDFBase(torch.nn.Module, ABC):
     -----
     Subclasses must implement:
     - ``_compute(queries)``: Calculate SDF values for query points
-    - ``_get_domain_bounds()``: Return the bounding box of the geometry
+    - ``_get_domain_bounds()``: Return the bounding box of geometry
 
     Examples
     --------
@@ -744,13 +804,16 @@ def point_segment_distance(P1, P2, query_points):
     to one or more line segments defined by endpoints P1 and P2.
 
     Args:
-        P1 (np.ndarray): Array of shape (M, 2) or (2,) representing first endpoints of segments.
-        P2 (np.ndarray): Array of shape (M, 2) or (2,) representing second endpoints of segments.
-        query_points (np.ndarray): Array of shape (N, 2) or (2,) representing query point(s).
+        P1 (np.ndarray): Array of shape (M, 2) or (2,) representing
+            first endpoints of segments.
+        P2 (np.ndarray): Array of shape (M, 2) or (2,) representing
+            second endpoints of segments.
+        query_points (np.ndarray): Array of shape (N, 2) or (2,)
+            representing query point(s).
 
     Returns:
-        np.ndarray: Array of shape (N,) with the minimum distance from each query point
-                    to the closest segment.
+        np.ndarray: Array of shape (N,) with the minimum distance from
+            each query point to the closest segment.
     """
     P1 = np.atleast_2d(P1)  # (M, 2)
     P2 = np.atleast_2d(P2)  # (M, 2)
