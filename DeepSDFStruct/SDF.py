@@ -520,7 +520,13 @@ class SDFfromMesh(SDFBase):
     """
 
     def __init__(
-        self, mesh, dtype=np.float32, flip_sign=False, scale=True, threshold=1e-5
+        self,
+        mesh,
+        dtype=np.float32,
+        flip_sign=False,
+        scale=True,
+        threshold=1e-5,
+        backend="igl",
     ):
         super().__init__()
         if type(mesh) is gustaf.faces.Faces:
@@ -534,6 +540,7 @@ class SDFfromMesh(SDFBase):
         self.dtype = dtype
         self.flip_sign = flip_sign
         self.threshold = threshold
+        self.backend = backend
 
     def _set_param(self, mesh):
         self.mesh = mesh
@@ -552,20 +559,29 @@ class SDFfromMesh(SDFBase):
             queries_np = np.asarray(queries)
             orig_device = None  # No device for numpy input
 
-        # Compute squared distance
-        squared_distance, hit_index, hit_coordinates = igl.point_mesh_squared_distance(
-            queries_np, self.mesh.vertices, np.array(self.mesh.faces, dtype=np.int32)
-        )
+        if self.backend == "trimesh":
+            # Compute squared distance
+            squared_distance, hit_index, hit_coordinates = (
+                igl.point_mesh_squared_distance(
+                    queries_np,
+                    self.mesh.vertices,
+                    np.array(self.mesh.faces, dtype=np.int32),
+                )
+            )
+            distances = np.sqrt(squared_distance, dtype=self.dtype)
 
-        distances = np.sqrt(squared_distance, dtype=self.dtype)
+            # Determine sign (negative if inside)
+            contains = trimesh.ray.ray_pyembree.RayMeshIntersector(
+                self.mesh, scale_to_box=False
+            ).contains_points(queries_np)
 
-        # Determine sign (negative if inside)
-        contains = trimesh.ray.ray_pyembree.RayMeshIntersector(
-            self.mesh, scale_to_box=False
-        ).contains_points(queries_np)
-
-        distances[contains] *= -1.0
-
+            distances[contains] *= -1.0
+        elif self.backend == "igl":
+            distances, _, _, _ = igl.signed_distance(
+                queries_np,
+                self.mesh.vertices,
+                np.array(self.mesh.faces, dtype=np.int32),
+            )
         # Apply threshold
         distances -= self.threshold
 
