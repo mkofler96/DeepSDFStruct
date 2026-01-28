@@ -1,3 +1,56 @@
+"""
+DeepSDF Model Training
+=====================
+
+This module implements the complete training pipeline for DeepSDF neural
+networks. It provides loss functions, learning rate schedules, training
+loops, and checkpoint management.
+
+Key Features
+------------
+
+Loss Functions
+    - ClampedL1Loss: L1 loss with value clamping for stability
+    - Support for custom loss functions
+
+Learning Rate Schedules
+    - ConstantLearningRateSchedule: Fixed learning rate
+    - StepLearningRateSchedule: Step decay schedule
+    - WarmupLearningRateSchedule: Warmup followed by decay
+    
+Training Loop
+    - Multi-epoch training with validation
+    - Automatic checkpointing and model saving
+    - Loss tracking and visualization
+    - Support for distributed training
+    - Resume from checkpoint capability
+
+Experiment Management
+    - MLflow integration for experiment tracking
+    - Automatic logging of hyperparameters
+    - Training curve visualization
+    - Model versioning
+
+The training process follows the DeepSDF paper methodology with extensions
+for lattice structures and microstructured materials.
+
+Examples
+--------
+Train a DeepSDF model::
+
+    from DeepSDFStruct.deep_sdf.training import train_deep_sdf
+    
+    specs = {
+        'NetworkSpecs': {...},
+        'TrainSpecs': {
+            'NumEpochs': 2000,
+            'LearningRateSchedule': {...}
+        }
+    }
+    
+    train_deep_sdf(experiment_dir, specs)
+"""
+
 #!/usr/bin/env python3
 # Copyright 2004-present Facebook. All Rights Reserved.
 

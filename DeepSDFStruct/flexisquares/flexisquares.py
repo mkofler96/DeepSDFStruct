@@ -1,3 +1,18 @@
+"""
+FlexiSquares Implementation
+===========================
+
+This module contains the core implementation of the FlexiSquares algorithm,
+a differentiable 2D mesh extraction method adapted from FlexiCubes.
+
+FlexiSquares improves upon traditional Marching Squares by allowing gradient-
+based optimization of the extracted contours, making it suitable for inverse
+design and shape optimization problems.
+
+Copyright (c) 2025 NVIDIA CORPORATION & AFFILIATES.
+Licensed under the Apache License, Version 2.0.
+"""
+
 # Copyright (c) 2025 NVIDIA CORPORATION & AFFILIATES.
 # All rights reserved.
 #

@@ -1,3 +1,19 @@
+"""
+FlexiCubes Implementation
+=========================
+
+This module contains the core implementation of the FlexiCubes algorithm,
+a differentiable 3D mesh extraction method that improves upon traditional
+Dual Marching Cubes.
+
+FlexiCubes dynamically adjusts surface representations through gradient-based
+optimization, enhancing geometric fidelity and mesh quality. The method is
+particularly useful for neural implicit representations and inverse design.
+
+Copyright (c) 2025 NVIDIA CORPORATION & AFFILIATES.
+Licensed under the Apache License, Version 2.0.
+"""
+
 # Copyright (c) 2025 NVIDIA CORPORATION & AFFILIATES.
 # All rights reserved.
 #

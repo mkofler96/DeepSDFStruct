@@ -1,3 +1,14 @@
+"""
+Cross Lattice Unit Cell
+=======================
+
+This module implements a 2D cross-shaped lattice unit cell using splinepy.
+The lattice consists of a rectangle with two diagonal struts in the center.
+
+The unit cell is parametrized by strut thickness and can be used as a
+building block for larger lattice structures.
+"""
+
 import numpy as _np
 
 from splinepy.bezier import Bezier as _Bezier

@@ -1,3 +1,51 @@
+"""
+Shape Reconstruction and Latent Code Optimization
+=================================================
+
+This module provides methods for reconstructing shapes from SDF samples
+by optimizing latent codes. This is a key capability of DeepSDF models,
+enabling fitting of new geometries not seen during training.
+
+Key Functions
+-------------
+
+reconstruct_from_samples
+    Optimize a latent code to match given SDF samples. Uses gradient
+    descent to find the latent representation that best reproduces
+    the target geometry.
+
+The reconstruction process:
+1. Start with initial latent code (often zeros or random)
+2. Forward pass through decoder to get SDF predictions
+3. Compute loss between predictions and target samples
+4. Backpropagate and update latent code
+5. Repeat until convergence
+
+This enables:
+- Fitting trained models to new geometries
+- Shape interpolation by blending latent codes
+- Shape editing by modifying latent codes
+- Compression by storing only latent codes
+
+Examples
+--------
+Reconstruct a shape from samples::
+
+    from DeepSDFStruct.deep_sdf.reconstruction import reconstruct_from_samples
+    from DeepSDFStruct.sampling import sample_sdf_near_surface
+    
+    # Sample target geometry
+    target_samples = sample_sdf_near_surface(target_sdf, n_samples=100000)
+    
+    # Reconstruct using trained model
+    reconstructed_sdf = reconstruct_from_samples(
+        model,
+        target_samples,
+        num_iterations=1000,
+        lr=5e-4
+    )
+"""
+
 from DeepSDFStruct.SDF import SDFBase
 from DeepSDFStruct.deep_sdf.training import ClampedL1Loss
 from torch.utils.data import TensorDataset, DataLoader

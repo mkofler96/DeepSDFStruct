@@ -1,3 +1,69 @@
+"""
+Signed Distance Function (SDF) Base Classes and Operations
+==========================================================
+
+This module provides the foundational classes and utilities for working with
+Signed Distance Functions (SDFs) in DeepSDFStruct. SDFs are implicit geometric
+representations that encode the distance from any point in space to the nearest
+surface, with the sign indicating whether the point is inside (negative) or
+outside (positive) the geometry.
+
+Key Features
+------------
+
+SDFBase Abstract Class
+    Base class for all SDF representations with support for:
+    - Spline-based geometric deformations
+    - Spatially-varying parametrization
+    - Boundary conditions and capping
+    - Boolean operations (union, intersection)
+    - Differentiable operations for optimization
+
+SDFfromMesh
+    Convert triangular surface meshes to SDF representations using
+    fast winding number algorithms for robust inside/outside testing.
+
+SDFfromDeepSDF
+    Neural network-based SDF using trained DeepSDF models for
+    complex, learned geometric representations.
+
+Union and Intersection
+    Combine multiple SDFs using smooth boolean operations with
+    configurable smoothing for differentiable geometry.
+
+Utility Functions
+    - Grid sampling for SDF evaluation
+    - Gradient computation for normal vectors
+    - Boundary condition application
+
+The module enables flexible construction and manipulation of complex
+3D geometries in a differentiable framework suitable for optimization,
+simulation, and machine learning applications.
+
+Examples
+--------
+Create and evaluate an SDF from a mesh::
+
+    import trimesh
+    from DeepSDFStruct.SDF import SDFfromMesh
+    
+    mesh = trimesh.load('model.stl')
+    sdf = SDFfromMesh(mesh)
+    
+    # Query SDF values
+    points = torch.rand(1000, 3)
+    distances = sdf(points)
+
+Combine SDFs with boolean operations::
+
+    from DeepSDFStruct.sdf_primitives import SphereSDF
+    from DeepSDFStruct.SDF import Union
+    
+    sphere1 = SphereSDF([0, 0, 0], radius=1.0)
+    sphere2 = SphereSDF([1, 0, 0], radius=1.0)
+    combined = Union([sphere1, sphere2], smoothing=0.1)
+"""
+
 from abc import ABC, abstractmethod
 import torch
 import numpy as np
