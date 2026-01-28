@@ -36,53 +36,69 @@ __all__ = ["FlexiCubes"]
 
 class FlexiCubes:
     """
-    This class implements the DeepSDFStruct.flexicubes method for extracting meshes from scalar fields.
-    It maintains a series of lookup tables and indices to support the mesh extraction process.
-    DeepSDFStruct.flexicubes, a differentiable variant of the Dual Marching Cubes (DMC) scheme, enhances
-    the geometric fidelity and mesh quality of reconstructed meshes by dynamically adjusting
-    the surface representation through gradient-based optimization.
+    This class implements the flexicubes method for extracting meshes
+    from scalar fields. It maintains a series of lookup tables and
+    indices to support the mesh extraction process. Flexicubes, a
+    differentiable variant of the Dual Marching Cubes (DMC) scheme,
+    enhances the geometric fidelity and mesh quality of reconstructed
+    meshes by dynamically adjusting the surface representation through
+    gradient-based optimization.
 
-    During instantiation, the class loads DMC tables from a file and transforms them into
-    PyTorch tensors on the specified device.
+    During instantiation, the class loads DMC tables from a file and
+    transforms them into PyTorch tensors on the specified device.
 
     Attributes:
-        device (str): Specifies the computational device (default is "cuda").
-        dmc_table (torch.Tensor): Dual Marching Cubes (DMC) table that encodes the edges
-            associated with each dual vertex in 256 Marching Cubes (MC) configurations.
-        num_vd_table (torch.Tensor): Table holding the number of dual vertices in each of
-            the 256 MC configurations.
-        check_table (torch.Tensor): Table resolving ambiguity in cases C16 and C19
-            of the DMC configurations.
-        tet_table (torch.Tensor): Lookup table used in tetrahedralizing the isosurface.
-        quad_split_1 (torch.Tensor): Indices for splitting a quad into two triangles
-            along one diagonal.
-        quad_split_2 (torch.Tensor): Alternative indices for splitting a quad into
-            two triangles along the other diagonal.
-        quad_split_train (torch.Tensor): Indices for splitting a quad into four triangles
-            during training by connecting all edges to their midpoints.
-        cube_corners (torch.Tensor): Defines the positions of a standard unit cube's
-            eight corners in 3D space, ordered starting from the origin (0,0,0),
-            moving along the x-axis, then y-axis, and finally z-axis.
-            Used as a blueprint for generating a voxel grid.
-        cube_corners_idx (torch.Tensor): Cube corners indexed as powers of 2, used
-            to retrieve the case id.
-        cube_edges (torch.Tensor): Edge connections in a cube, listed in pairs.
-            Used to retrieve edge vertices in DMC.
-        edge_dir_table (torch.Tensor): A mapping tensor that associates edge indices with
-            their corresponding axis. For instance, edge_dir_table[0] = 0 indicates that the
+        device (str): Specifies the computational device (default
+            "cuda").
+        dmc_table (torch.Tensor): Dual Marching Cubes (DMC) table
+            that encodes the edges associated with each dual vertex
+            in 256 Marching Cubes (MC) configurations.
+        num_vd_table (torch.Tensor): Table holding the number of
+            dual vertices in each of the 256 MC configurations.
+        check_table (torch.Tensor): Table resolving ambiguity in
+            cases C16 and C19 of the DMC configurations.
+        tet_table (torch.Tensor): Lookup table used in
+            tetrahedralizing the isosurface.
+        quad_split_1 (torch.Tensor): Indices for splitting a quad
+            into two triangles along one diagonal.
+        quad_split_2 (torch.Tensor): Alternative indices for
+            splitting a quad into two triangles along the other
+            diagonal.
+        quad_split_train (torch.Tensor): Indices for splitting a
+            quad into four triangles during training by connecting
+            all edges to their midpoints.
+        cube_corners (torch.Tensor): Defines the positions of a
+            standard unit cube's eight corners in 3D space, ordered
+            starting from the origin (0,0,0), moving along the
+            x-axis, then y-axis, and finally z-axis. Used as a
+            blueprint for generating a voxel grid.
+        cube_corners_idx (torch.Tensor): Cube corners indexed as
+            powers of 2, used to retrieve the case id.
+        cube_edges (torch.Tensor): Edge connections in a cube,
+            listed in pairs. Used to retrieve edge vertices in DMC.
+        edge_dir_table (torch.Tensor): A mapping tensor that
+            associates edge indices with their corresponding axis.
+            For instance, edge_dir_table[0] = 0 indicates that the
             first edge is oriented along the x-axis.
-        dir_faces_table (torch.Tensor): A tensor that maps the corresponding axis of shared edges
-            across four adjacent cubes to the shared faces of these cubes. For instance,
-            dir_faces_table[0] = [5, 4] implies that for four cubes sharing an edge along
-            the x-axis, the first and second cubes share faces indexed as 5 and 4, respectively.
-            This tensor is only utilized during isosurface tetrahedralization.
+        dir_faces_table (torch.Tensor): A tensor that maps the
+            corresponding axis of shared edges across four adjacent
+            cubes to the shared faces of these cubes. For instance,
+            dir_faces_table[0] = [5, 4] implies that for four cubes
+            sharing an edge along the x-axis, the first and second
+            cubes share faces indexed as 5 and 4, respectively.
+            This tensor is only utilized during isosurface
+            tetrahedralization.
         adj_pairs (torch.Tensor):
-            A tensor containing index pairs that correspond to neighboring cubes that share the same edge.
+            A tensor containing index pairs that correspond to
+            neighboring cubes that share the same edge.
         qef_reg_scale (float):
-            The scaling factor applied to the regularization loss to prevent issues with singularity
-            when solving the QEF. This parameter is only used when a 'grad_func' is specified.
+            The scaling factor applied to the regularization loss to
+            prevent issues with singularity when solving the QEF.
+            This parameter is only used when a 'grad_func' is
+            specified.
         weight_scale (float):
-            The scale of weights in DeepSDFStruct.flexicubes. Should be between 0 and 1.
+            The scale of weights in flexicubes. Should be between
+            0 and 1.
     """
 
     def __init__(self, device="cuda", qef_reg_scale=1e-3, weight_scale=0.99):
@@ -249,17 +265,22 @@ class FlexiCubes:
         grad_func=None,
     ):
         r"""
-        Main function for mesh extraction from scalar field using DeepSDFStruct.flexicubes. This function converts
-        discrete signed distance fields, encoded on voxel grids and additional per-cube parameters,
-        to triangle or tetrahedral meshes using a differentiable operation as described in
-        `Flexible Isosurface Extraction for Gradient-Based Mesh Optimization`_. DeepSDFStruct.flexicubes enhances
-        mesh quality and geometric fidelity by adjusting the surface representation based on gradient
-        optimization. The output surface is differentiable with respect to the input vertex positions,
-        scalar field values, and weight parameters.
+        Main function for mesh extraction from scalar field using
+        flexicubes. This function converts discrete signed distance
+        fields, encoded on voxel grids and additional per-cube
+        parameters, to triangle or tetrahedral meshes using a
+        differentiable operation as described in `Flexible Isosurface
+        Extraction for Gradient-Based Mesh Optimization`_. Flexicubes
+        enhances mesh quality and geometric fidelity by adjusting the
+        surface representation based on gradient optimization. The
+        output surface is differentiable with respect to the input
+        vertex positions, scalar field values, and weight parameters.
 
-        If you intend to extract a surface mesh from a fixed Signed Distance Field without the
-        optimization of parameters, it is suggested to provide the "grad_func" which should
-        return the surface gradient at any given 3D position. When grad_func is provided, the process
+        If you intend to extract a surface mesh from a fixed Signed
+        Distance Field without the optimization of parameters, it is
+        suggested to provide the "grad_func" which should return the
+        surface gradient at any given 3D position. When grad_func is
+        provided, the process
         to determine the dual vertex position adapts to solve a Quadratic Error Function (QEF), as
         described in the `Manifold Dual Contouring`_ paper, and employs an smart splitting strategy.
         Please note, this approach is non-differentiable.

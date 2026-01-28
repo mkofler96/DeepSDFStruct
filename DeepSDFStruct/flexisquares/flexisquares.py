@@ -41,29 +41,34 @@ __all__ = ["FlexiSquares"]
 
 class FlexiSquares:
     """
-    Implements the 2D variant of the DeepSDFStruct.flexicubes method, adapted as
-    **DeepSDFStruct.flexisquares**, for extracting contour meshes from scalar fields.
-    This class uses lookup tables and indexed operations to perform differentiable
-    isocontour extraction from signed distance fields defined on 2D grids.
+    Implements the 2D variant of the flexicubes method, adapted as
+    flexisquares, for extracting contour meshes from scalar fields.
+    This class uses lookup tables and indexed operations to perform
+    differentiable isocontour extraction from signed distance fields
+    defined on 2D grids.
 
-    DeepSDFStruct.flexisquares is a differentiable variant of the Dual Marching Squares (DMS)
-    algorithm. It improves geometric fidelity by optimizing surface representations using
-    gradient-based methods.
+    Flexisquares is a differentiable variant of the Dual Marching
+    Squares (DMS) algorithm. It improves geometric fidelity by
+    optimizing surface representations using gradient-based methods.
 
-    During initialization, the class loads precomputed lookup tables from DeepSDFStruct.flexisquares
+    During initialization, the class loads precomputed lookup tables
     and converts them into PyTorch tensors on the specified device.
 
     Attributes:
         device (str): Computational device, usually "cuda" or "cpu".
-        dmc_table (torch.Tensor): Dual Marching Squares (DMS) table encoding the edges
-            associated with each dual vertex in 16 possible Marching Squares configurations.
-        num_vd_table (torch.Tensor): Table holding the number of dual vertices for each
-            configuration.
-        tet_table (torch.Tensor): Lookup table used during triangle generation inside the contour.
-        cube_corners (torch.Tensor): Positions of the four corners of a unit square in 2D space
-        cube_corners_idx (torch.Tensor): Corner indices encoded as binary powers to compute
-            case IDs for Marching Squares.
-        cube_edges (torch.Tensor): Edge connections in a square, listed in pairs of corner indices.
+        dmc_table (torch.Tensor): Dual Marching Squares (DMS) table
+            encoding the edges associated with each dual vertex in 16
+            possible Marching Squares configurations.
+        num_vd_table (torch.Tensor): Table holding the number of dual
+            vertices for each configuration.
+        tet_table (torch.Tensor): Lookup table used during triangle
+            generation inside the contour.
+        cube_corners (torch.Tensor): Positions of the four corners of
+            a unit square in 2D space.
+        cube_corners_idx (torch.Tensor): Corner indices encoded as
+            binary powers to compute case IDs for Marching Squares.
+        cube_edges (torch.Tensor): Edge connections in a square,
+            listed in pairs of corner indices.
     """
 
     def __init__(self, device="cuda", qef_reg_scale=1e-3, weight_scale=0.99):
@@ -147,19 +152,24 @@ class FlexiSquares:
         self, resolution, bounds=None
     ) -> tuple[torch.tensor, torch.tensor]:
         """
-        Generates a 2D grid of vertices and their square indices given the specified resolution.
+        Generates a 2D grid of vertices and their square indices given
+        the specified resolution.
 
         Args:
-            resolution (int or list[int]): Resolution of the 2D grid. If an integer is provided,
-                it is applied to both x and y dimensions. If a tuple/list of two integers is given,
+            resolution (int or list[int]): Resolution of the 2D grid.
+                If an integer is provided, it is applied to both x and
+                y dimensions. If a tuple/list of two integers is given,
                 they specify (x_res, y_res).
-            bounds (torch.Tensor, optional): 2×2 tensor defining the [min, max] bounds in x and y.
+            bounds (torch.Tensor, optional): 2×2 tensor defining the
+                [min, max] bounds in x and y.
                 Defaults to [[-0.05, -0.05], [1.05, 1.05]].
 
         Returns:
             (torch.Tensor, torch.Tensor): Tuple containing:
-                - Vertices (N×2): Scaled vertex coordinates of the 2D grid.
-                - Squares (F×4): Indices into `vertices` defining each square's corner connectivity.
+                - Vertices (N×2): Scaled vertex coordinates of the
+                  2D grid.
+                - Squares (F×4): Indices into `vertices` defining each
+                  square's corner connectivity.
         """
         res = resolution
         base_cube_f = torch.arange(4).to(self.device)

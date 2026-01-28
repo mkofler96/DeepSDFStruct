@@ -717,16 +717,19 @@ def create_interpolated_meshes_from_latent(
     to disk in the requested format.
 
     Args:
-        experiment_directory (str | PathLike): Path to the experiment directory
-            containing checkpoints and latent vectors.
-        checkpoint (str, optional): Which checkpoint to load. Defaults to "latest".
-        max_batch (int, optional): Maximum batch size for inference. Defaults to 32.
-        filetype (str, optional): File extension for exported meshes (e.g., "ply", "obj").
-            Defaults to "ply".
-        indices (list[int], optional): Sequence of latent vector indices between
-            which interpolation should be performed. Defaults to [1, 2, 3, 4, 5, 6, 7, 8].
-        steps (int, optional): Number of interpolation steps (including endpoints).
-            Defaults to 11.
+        experiment_directory (str | PathLike): Path to the experiment
+            directory containing checkpoints and latent vectors.
+        checkpoint (str, optional): Which checkpoint to load. Defaults to
+            "latest".
+        max_batch (int, optional): Maximum batch size for inference.
+            Defaults to 32.
+        filetype (str, optional): File extension for exported meshes
+            (e.g., "ply", "obj"). Defaults to "ply".
+        indices (list[int], optional): Sequence of latent vector indices
+            between which interpolation should be performed.
+            Defaults to [1, 2, 3, 4, 5, 6, 7, 8].
+        steps (int, optional): Number of interpolation steps (including
+            endpoints). Defaults to 11.
 
     Example:
         >>> create_interpolated_meshes_from_latent(
