@@ -33,10 +33,10 @@ Reconstruct a shape from samples::
 
     from DeepSDFStruct.deep_sdf.reconstruction import reconstruct_from_samples
     from DeepSDFStruct.sampling import sample_sdf_near_surface
-    
+
     # Sample target geometry
     target_samples = sample_sdf_near_surface(target_sdf, n_samples=100000)
-    
+
     # Reconstruct using trained model
     reconstructed_sdf = reconstruct_from_samples(
         model,

@@ -46,10 +46,10 @@ Create and evaluate an SDF from a mesh::
 
     import trimesh
     from DeepSDFStruct.SDF import SDFfromMesh
-    
+
     mesh = trimesh.load('model.stl')
     sdf = SDFfromMesh(mesh)
-    
+
     # Query SDF values
     points = torch.rand(1000, 3)
     distances = sdf(points)
@@ -58,7 +58,7 @@ Combine SDFs with boolean operations::
 
     from DeepSDFStruct.sdf_primitives import SphereSDF
     from DeepSDFStruct.SDF import Union
-    
+
     sphere1 = SphereSDF([0, 0, 0], radius=1.0)
     sphere2 = SphereSDF([1, 0, 0], radius=1.0)
     combined = Union([sphere1, sphere2], smoothing=0.1)

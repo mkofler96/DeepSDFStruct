@@ -35,10 +35,10 @@ Create a microstructure with local shape variations::
 
     from DeepSDFStruct.local_shapes import LocalShapesSDF
     from DeepSDFStruct.sdf_primitives import SphereSDF
-    
+
     # Define unit cell
     unit_cell = SphereSDF([0.5, 0.5, 0.5], radius=0.3)
-    
+
     # Create local shapes structure
     local_struct = LocalShapesSDF(
         tiling=[3, 3, 3],

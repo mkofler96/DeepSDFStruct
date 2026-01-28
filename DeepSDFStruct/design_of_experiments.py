@@ -35,17 +35,17 @@ Examples
 Run an experiment with custom specifications::
 
     from DeepSDFStruct.design_of_experiments import ExperimentSpecifications
-    
+
     # Load base configuration
     specs = ExperimentSpecifications('config.json')
-    
+
     # Update hyperparameters
     specs.update({
         'learning_rate': 0.001,
         'batch_size': 32,
         'num_epochs': 100
     })
-    
+
     # Run training with tracking
     # train_with_specs(specs)
 
@@ -60,7 +60,7 @@ Create and modify experiment configurations::
             'lr': 0.0005
         }
     })
-    
+
     # Flatten for logging
     flat_params = specs.flatten()
     print(flat_params)  # {'model.layers': [...], 'model.activation': 'relu', ...}

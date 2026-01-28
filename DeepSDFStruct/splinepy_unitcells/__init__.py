@@ -11,13 +11,13 @@ Available Unit Cells
 
 CrossLattice (cross_lattice.py)
     2D cross-shaped lattice with configurable strut thickness.
-    
+
 Chi3D (chi_3D.py)
     3D chi-shaped lattice structure, common in mechanical metamaterials.
-    
+
 Snappy3D (snappy_3d.py)
     3D snappy lattice with snap-through behavior.
-    
+
 DoubleLatticeExtruded (double_lattice_extruded.py)
     Extruded double lattice structure.
 

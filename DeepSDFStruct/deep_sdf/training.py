@@ -17,7 +17,7 @@ Learning Rate Schedules
     - ConstantLearningRateSchedule: Fixed learning rate
     - StepLearningRateSchedule: Step decay schedule
     - WarmupLearningRateSchedule: Warmup followed by decay
-    
+
 Training Loop
     - Multi-epoch training with validation
     - Automatic checkpointing and model saving
@@ -39,7 +39,7 @@ Examples
 Train a DeepSDF model::
 
     from DeepSDFStruct.deep_sdf.training import train_deep_sdf
-    
+
     specs = {
         'NetworkSpecs': {...},
         'TrainSpecs': {
@@ -47,7 +47,7 @@ Train a DeepSDF model::
             'LearningRateSchedule': {...}
         }
     }
-    
+
     train_deep_sdf(experiment_dir, specs)
 """
 

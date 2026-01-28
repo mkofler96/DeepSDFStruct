@@ -46,10 +46,10 @@ Load and use a pretrained model::
 
     from DeepSDFStruct.pretrained_models import get_model, PretrainedModels
     import torch
-    
+
     # Load a model
     model = get_model(PretrainedModels.RoundCross)
-    
+
     # Generate geometry with latent code
     latent_code = torch.zeros(256)  # Use learned latent vector
     points = torch.rand(1000, 3)
@@ -58,7 +58,7 @@ Load and use a pretrained model::
 List available models::
 
     from DeepSDFStruct.pretrained_models import list_available_models
-    
+
     models = list_available_models()
     for model in models:
         print(f"Available model: {model.value}")
