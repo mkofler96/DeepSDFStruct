@@ -37,6 +37,8 @@ import torch.autograd.functional
 from torch.func import functional_call, jacrev, jacfwd
 import tetgenpy
 import numpy as np
+import matplotlib.tri as mtri
+import matplotlib.pyplot as plt
 import napf
 import gustaf as gus
 import pathlib
@@ -152,6 +154,37 @@ class torchLineMesh:
             ),
         )
 
+    def plot(self, ax=None, show_vertices=True):
+        """
+        Plot a torchLineMesh using matplotlib.
+
+        Parameters
+        ----------
+        ax : matplotlib axis, optional
+            Existing axis to draw on. If None, creates a new figure.
+        show_vertices : bool
+            Whether to draw vertex points.
+        show_indices : bool
+            Whether to annotate vertex indices.
+        """
+        V = self.vertices.detach().cpu().numpy()
+        L = self.lines.detach().cpu().numpy()
+
+        if ax is None:
+            fig, ax = plt.subplots()
+
+        # Plot each line segment
+        for i, j in L:
+            x = [V[i, 0], V[j, 0]]
+            y = [V[i, 1], V[j, 1]]
+            ax.plot(x, y, linewidth=0.5, color="black", linestyle="-")
+
+        # Plot vertices
+        if show_vertices:
+            ax.scatter(V[:, 0], V[:, 1], s=1, color="black")
+
+        ax.set_aspect("equal")
+
 
 class torchSurfMesh:
     """PyTorch-based surface mesh representation for differentiable operations.
@@ -249,6 +282,31 @@ class torchSurfMesh:
         if info_string != "":
             logger.info(info_string)
         return torchSurfMesh(new_vertices, new_faces)
+
+    def plot(self, ax=None, show_vertices=False, linewidth=0.2):
+        """
+        Plot a torchSurfMesh using matplotlib.
+
+        Parameters
+        ----------
+        ax : matplotlib axis, optional
+            Existing axis to draw on. If None, creates a new figure.
+        show_vertices : bool
+            Whether to draw vertex points.
+        show_indices : bool
+            Whether to annotate vertex indices.
+        """
+        if ax is None:
+            fig, ax = plt.subplots()
+        V = self.vertices.detach().cpu().numpy()
+        T = self.faces.detach().cpu().numpy()
+        x = V[:, 0]
+        y = V[:, 1]
+        triang = mtri.Triangulation(x, y, T)
+        ax.triplot(triang, linewidth=linewidth)
+        if show_vertices:
+            ax.scatter(x, y, s=5)
+        ax.set_aspect("equal")
 
 
 class torchVolumeMesh:
@@ -744,6 +802,7 @@ def create_2D_mesh(
     device=None,
     bounds=None,
     diffmode="fwd",
+    n_smoothing_iterations=5,
 ) -> Tuple[Union[torchLineMesh, torchSurfMesh], Optional[torch.Tensor]]:
 
     if device is not None:
@@ -782,6 +841,7 @@ def create_2D_mesh(
         N=N,
         return_faces=False,
         output_tetmesh=output_tetmesh,
+        n_smoothing_iterations=n_smoothing_iterations,
     )
     # returns faces or volumes depending on the output_tetmesh flag
     # if output_tetmesh -> returns volumes
@@ -794,6 +854,7 @@ def create_2D_mesh(
         cube_idx=cube_idx,
         resolution=tuple(N),
         output_tetmesh=output_tetmesh,
+        n_smoothing_iterations=n_smoothing_iterations,
     )
 
     if sdf.deformation_spline is not None:
@@ -855,6 +916,7 @@ def _verts_from_params(
     N,
     return_faces=False,
     output_tetmesh=False,
+    n_smoothing_iterations=5,
 ):
 
     sdf_values = functional_call(sdf, (parameters, buffers), (samples,))
@@ -865,6 +927,7 @@ def _verts_from_params(
         cube_idx=cube_idx,
         resolution=tuple(N),
         output_tetmesh=output_tetmesh,
+        n_smoothing_iterations=n_smoothing_iterations,
     )
 
     if sdf.deformation_spline is not None:

@@ -231,6 +231,7 @@ class FlexiCubes:
         training=False,
         output_tetmesh=False,
         grad_func=None,
+        n_smoothing_iterations=5,
     ):
         r"""
         Main function for mesh extraction from scalar field using DeepSDFStruct.flexicubes. This function converts

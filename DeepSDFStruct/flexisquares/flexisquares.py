@@ -217,6 +217,7 @@ class FlexiSquares:
         alpha_fx4=None,
         output_tetmesh=False,
         resolution=None,
+        n_smoothing_iterations=5,
     ):
         r"""
         Extracts a differentiable 2D contour mesh from a scalar field using DeepSDFStruct.flexisquares.
@@ -293,7 +294,10 @@ class FlexiSquares:
                 surf_cubes,
             )
             vertices_smoothed = self._apply_laplacian_smoothing(
-                all_vertices, triangles, boundary_lines
+                all_vertices,
+                triangles,
+                boundary_lines,
+                iterations=n_smoothing_iterations,
             )
             return vertices_smoothed, triangles, L_dev
 
@@ -303,6 +307,7 @@ class FlexiSquares:
         """
         Vectorized Laplacian smoothing using PyTorch sparse matrices.
         """
+        logger.info(f"applying {iterations} iterations of laplacian smoothing")
         num_total = vertices.shape[0]
         device = vertices.device
 
