@@ -744,6 +744,7 @@ def create_2D_mesh(
     device=None,
     bounds=None,
     diffmode="fwd",
+    n_smoothing_iterations=5,
 ) -> Tuple[Union[torchLineMesh, torchSurfMesh], Optional[torch.Tensor]]:
 
     if device is not None:
@@ -782,6 +783,7 @@ def create_2D_mesh(
         N=N,
         return_faces=False,
         output_tetmesh=output_tetmesh,
+        n_smoothing_iterations=n_smoothing_iterations,
     )
     # returns faces or volumes depending on the output_tetmesh flag
     # if output_tetmesh -> returns volumes
@@ -794,6 +796,7 @@ def create_2D_mesh(
         cube_idx=cube_idx,
         resolution=tuple(N),
         output_tetmesh=output_tetmesh,
+        n_smoothing_iterations=n_smoothing_iterations,
     )
 
     if sdf.deformation_spline is not None:
@@ -855,6 +858,7 @@ def _verts_from_params(
     N,
     return_faces=False,
     output_tetmesh=False,
+    n_smoothing_iterations=5,
 ):
 
     sdf_values = functional_call(sdf, (parameters, buffers), (samples,))
@@ -865,6 +869,7 @@ def _verts_from_params(
         cube_idx=cube_idx,
         resolution=tuple(N),
         output_tetmesh=output_tetmesh,
+        n_smoothing_iterations=n_smoothing_iterations,
     )
 
     if sdf.deformation_spline is not None:
