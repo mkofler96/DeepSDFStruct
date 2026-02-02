@@ -687,10 +687,10 @@ class SDFfromDeepSDF(SDFBase):
     def _compute(self, queries: torch.Tensor) -> torch.Tensor:
         # DeepSDF queries range from -1 to 1
         orig_device = queries.device
-        queries = queries.to(self.model.device) * 2 - 1
+        queries = queries.to(self.get_device()) * 2 - 1
         n_queries = queries.shape[0]
 
-        sdf_values = torch.zeros(n_queries, device=self.model.device)
+        sdf_values = torch.zeros(n_queries, device=self.get_device())
 
         head = 0
         if self.latvec is None:
