@@ -43,7 +43,6 @@ def test_deepsdf_lattice_evaluation():
     # Create the lattice structure with deformation and microtile
     lattice_struct = LatticeSDFStruct(
         tiling=(1, 1, 1),
-        deformation_spline=deformation_spline,
         microtile=sdf,
         parametrization=Constant([0.5], device=model.device),
     )
@@ -64,6 +63,7 @@ def test_deepsdf_lattice_evaluation():
         # cmap=cmap,
         show_zero_level=True,
         res=(300, 300),
+        deformation_function=deformation_spline,
     )
     print(out)
 
@@ -76,15 +76,9 @@ def test_lattice_local_shapes_comparison():
     # Set the latent vector and visualize a slice of the SDF
     sdf.set_latent_vec(torch.tensor([0.3]))
 
-    # Define a spline-based deformation field
-    deformation_spline = TorchSpline(
-        splinepy.helpme.create.box(2, 1, 1).bspline, device=model.device
-    )
-
     # Create the lattice structure with deformation and microtile
     lattice_struct = LatticeSDFStruct(
         tiling=(2, 1, 1),
-        deformation_spline=deformation_spline,
         microtile=sdf,
         parametrization=Constant([0.5], device=model.device),
     )
@@ -103,9 +97,8 @@ def test_lattice_local_shapes_comparison():
         parametrization=Constant([0.5], device=model.device),
         bounds=torch.tensor([[0, 0, 0], [2, 1, 1]]),
     )
-    test_input_global_domain = deformation_spline(test_input_param_domain)
 
-    out_ls = local_shape_sdf(test_input_global_domain)
+    out_ls = local_shape_sdf(test_input_param_domain)
 
     torch.testing.assert_close(out_latt, out_ls)
 

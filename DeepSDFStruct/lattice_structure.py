@@ -56,9 +56,6 @@ class LatticeSDFStruct(_SDFBase):
     tiling : list of int or int, optional
         Number of repetitions of the microtile in each parametric dimension.
         If an int, uses the same tiling in all dimensions.
-    deformation_spline : TorchSpline, optional
-        Spline function that maps from parametric to physical space,
-        enabling smooth geometric deformations of the lattice.
     microtile : SDFBase, optional
         The unit cell geometry to be tiled. Should be defined in the
         unit cube [0,1]^d.
@@ -113,12 +110,9 @@ class LatticeSDFStruct(_SDFBase):
     >>> distances = lattice(points)
     """
 
-    deformation_spline: TorchSpline
-
     def __init__(
         self,
         tiling: list[int] | int | None = None,
-        deformation_spline: TorchSpline | None = None,
         microtile: _SDFBase | None = None,
         parametrization: _torch.nn.Module | None = None,
         bounds=None,
@@ -139,16 +133,12 @@ class LatticeSDFStruct(_SDFBase):
         """
         if not isinstance(parametrization, _torch.nn.Module):
             raise TypeError("Parametrization must be of type _Parametrization")
-        super().__init__(
-            deformation_spline=deformation_spline, parametrization=parametrization
-        )
+        super().__init__(parametrization=parametrization)
         self.tiling = tiling
         self.microtile = microtile
         self.geometric_dim = len(tiling)
         if bounds is not None:
             self.bounds = bounds
-        elif bounds is None and deformation_spline is not None:
-            self.bounds = deformation_spline.spline.parametric_bounds
         else:
             self.bounds = _np.array([[-1, 1]] * self.geometric_dim)
 
@@ -227,11 +217,17 @@ class LatticeSDFStruct(_SDFBase):
         gus_faces = gus.Faces(vertices=verts.cpu().detach(), faces=faces.cpu().detach())
         gus.show(gus_faces, axes=1)
 
-    def plot_slice(self, *args, **kwargs):
-        xmin = self.deformation_spline.control_points[:, 0].min().item()
-        xmax = self.deformation_spline.control_points[:, 0].max().item()
-        ymin = self.deformation_spline.control_points[:, 1].min().item()
-        ymax = self.deformation_spline.control_points[:, 1].max().item()
+    def plot_slice(self, deformation_function=None, *args, **kwargs):
+        if deformation_function is not None:
+            xmin = deformation_function.control_points[:, 0].min().item()
+            xmax = deformation_function.control_points[:, 0].max().item()
+            ymin = deformation_function.control_points[:, 1].min().item()
+            ymax = deformation_function.control_points[:, 1].max().item()
+        else:
+            xmin = self.bounds[0, 0].item()
+            xmax = self.bounds[1, 0].item()
+            ymin = self.bounds[0, 1].item()
+            ymax = self.bounds[1, 1].item() 
 
         kwargs.setdefault("xlim", (xmin, xmax))
         kwargs.setdefault("ylim", (ymin, ymax))
