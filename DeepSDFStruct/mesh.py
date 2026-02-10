@@ -778,7 +778,7 @@ def create_3D_mesh(
         output_tetmesh=output_tetmesh,
         deformation_function=deformation_function,
     )
-    
+
     if differentiate:
         if diffmode == "rev":
             dVerts_dParams = jacrev(verts_fn)(dict(sdf.named_parameters()))
@@ -808,7 +808,7 @@ def create_2D_mesh(
     bounds=None,
     diffmode="fwd",
     n_smoothing_iterations=5,
-    deformation_function= TorchSpline | TorchScaling | None,
+    deformation_function=TorchSpline | TorchScaling | None,
 ) -> Tuple[Union[torchLineMesh, torchSurfMesh], Optional[torch.Tensor]]:
 
     if device is not None:

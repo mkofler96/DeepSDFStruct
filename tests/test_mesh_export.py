@@ -1,9 +1,5 @@
 from DeepSDFStruct.pretrained_models import get_model, PretrainedModels
-from DeepSDFStruct.SDF import (
-    SDFfromDeepSDF,
-    SDFfromLineMesh,
-    CappedBorderSDF,
-)
+from DeepSDFStruct.SDF import SDFfromDeepSDF, SDFfromLineMesh, CappedBorderSDF
 from DeepSDFStruct.mesh import (
     generate_2D_surf_mesh,
     tetrahedralize_surface,

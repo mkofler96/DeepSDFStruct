@@ -227,7 +227,7 @@ class LatticeSDFStruct(_SDFBase):
             xmin = self.bounds[0, 0].item()
             xmax = self.bounds[1, 0].item()
             ymin = self.bounds[0, 1].item()
-            ymax = self.bounds[1, 1].item() 
+            ymax = self.bounds[1, 1].item()
 
         kwargs.setdefault("xlim", (xmin, xmax))
         kwargs.setdefault("ylim", (ymin, ymax))
