@@ -190,7 +190,7 @@ class SampledSDF:
         vp = gus.Vertices(vertices=self.samples)
         vp.vertex_data["distance"] = self.distances
         return vp
-    
+
     @property
     def stacked(self):
         """Concatenate samples and distances into a single tensor.
