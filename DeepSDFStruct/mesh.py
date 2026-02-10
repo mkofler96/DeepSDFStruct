@@ -977,6 +977,9 @@ def export_sdf_grid_vtk(sdf: SDFBase, filename, N=64, bounds=None):
             raise ValueError("geometric dimension of sdf must be either 2 or 3")
     if isinstance(bounds, torch.Tensor):
         bounds = bounds.detach().cpu().numpy()
+
+    if isinstance(bounds, list):
+        bounds = np.array(bounds)
     # Generate grid points
     x = np.linspace(bounds[0, 0], bounds[1, 0], N)
     y = np.linspace(bounds[0, 1], bounds[1, 1], N)

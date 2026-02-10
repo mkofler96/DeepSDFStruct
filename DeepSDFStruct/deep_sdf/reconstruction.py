@@ -5,6 +5,7 @@ from DeepSDFStruct.sampling import SampledSDF
 from DeepSDFStruct.deep_sdf.plotting import plot_reconstruction_loss
 from tqdm import trange
 import torch
+import torch.nn as nn
 
 
 def reconstruct_from_samples(
@@ -97,10 +98,10 @@ def reconstruct_from_samples(
             loss_history, iters_per_epoch=len(dataloader), filename=loss_plot_path
         )
 
-        params = list(sdf.parameters())
-        print(params)
+    params = list(sdf.parameters())
+    print(params)
 
-        return params
+    return params
 
 
 def reconstruct_deepLS_from_samples(
@@ -113,11 +114,15 @@ def reconstruct_deepLS_from_samples(
     loss_fn="ClampedL1",
     batch_size=512,
     drop_last=True,
+    loss_plot_path=None,
+    use_tanh_on_gt=False,
 ):
 
     optimizer = torch.optim.Adam(sdf.parameters(), lr=lr)
 
     gt_dist = sdfSample.distances
+    if use_tanh_on_gt:
+        gt_dist = nn.Tanh()(gt_dist)
 
     pbar = trange(num_iterations, desc="Reconstructing SDF from mesh", leave=True)
 
@@ -143,6 +148,7 @@ def reconstruct_deepLS_from_samples(
         dataset, batch_size=batch_size, shuffle=True, drop_last=drop_last
     )
 
+    loss_history = []
     for e in pbar:
         for querie_batch, gt_batch in dataloader:
             optimizer.zero_grad()
@@ -152,8 +158,16 @@ def reconstruct_deepLS_from_samples(
             optimizer.step()
             loss_num = loss.detach().item()
             pbar.set_postfix({"loss": f"{loss_num:.5f}"})
+            loss_history.append(loss_num)
 
     print("Reconstructed parameters:")
     params = list(sdf.parameters())
     print(params)
+    if loss_plot_path is not None:
+        plot_reconstruction_loss(
+            loss_history, iters_per_epoch=len(dataloader), filename=loss_plot_path
+        )
+
+    params = list(sdf.parameters())
+
     return params

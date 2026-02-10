@@ -121,6 +121,7 @@ class LatticeSDFStruct(_SDFBase):
         deformation_spline: TorchSpline | None = None,
         microtile: _SDFBase | None = None,
         parametrization: _torch.nn.Module | None = None,
+        bounds=None,
     ):
         """Helper class to facilitate the construction of microstructures.
 
@@ -144,6 +145,12 @@ class LatticeSDFStruct(_SDFBase):
         self.tiling = tiling
         self.microtile = microtile
         self.geometric_dim = len(tiling)
+        if bounds is not None:
+            self.bounds = bounds
+        elif bounds is None and deformation_spline is not None:
+            self.bounds = deformation_spline.spline.parametric_bounds
+        else:
+            self.bounds = _np.array([[-1, 1]] * self.geometric_dim)
 
     @property
     def parametric_dimension(self):
@@ -179,21 +186,20 @@ class LatticeSDFStruct(_SDFBase):
         """
         orig_device = samples.device
         orig_dtype = samples.dtype
-        bounds = _torch.tensor(
-            self.deformation_spline.spline.parametric_bounds,
-            device=orig_device,
-            dtype=orig_dtype,
-        )
+        bounds = _torch.tensor(self.bounds, device=orig_device, dtype=orig_dtype)
         if self.parametrization is not None:
-            spline_domain_samples = _torch.clamp(samples, min=bounds[0], max=bounds[1])
-            parameters = self.parametrization(spline_domain_samples)
+            samples_parameter_space = (samples - bounds[0]) / (bounds[1] - bounds[0])
+            samples_parameter_space = _torch.clamp(samples_parameter_space, 0.0, 1.0)
+            parameters = self.parametrization(samples_parameter_space)
             self.microtile._set_param(parameters)
 
         queries_transformed = _torch.zeros_like(samples)
         for i_dim, t in enumerate(self.tiling):
-            queries_transformed[:, i_dim] = transform(samples[:, i_dim], t)
+            queries_transformed[:, i_dim] = transform(
+                samples[:, i_dim], t, bounds=bounds[:, i_dim]
+            )
         sdf_values = self.microtile(queries_transformed)
-        # self.plot_transformed_untransformed(queries, queries_transformed)
+
         return sdf_values
 
     def _sanity_check(self):
@@ -238,10 +244,10 @@ def constantLatvec(value):
 
 
 def transform(x, t, bounds=[0, 1]):
-    # transform x from [0,1] to [0,1]
+    # transform x from [bounds[0], bounds[1]] to [-1,1]
     x_norm = (x - bounds[0]) / (bounds[1] - bounds[0])
     x_transformed = 2 * _torch.abs(t * x_norm / 2 - _torch.floor((t * x_norm + 1) / 2))
-    return x_transformed
+    return 2 * x_transformed - 1
 
 
 def check_tiling_input(tiling):
