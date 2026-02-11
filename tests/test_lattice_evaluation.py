@@ -15,7 +15,9 @@ def test_deepsdf_evaluation():
     sdf = SDFfromDeepSDF(model)
 
     # Set the latent vector and visualize a slice of the SDF
-    sdf.set_latent_vec(torch.tensor([0.3, 0.3]))
+    sdf.set_latent_vec(
+        torch.tensor([0.3, 0.3], dtype=torch.float32, device=model.device)
+    )
 
     out = sdf(
         torch.tensor(
@@ -31,9 +33,6 @@ def test_deepsdf_lattice_evaluation():
     # Load a pretrained DeepSDF model
     model = get_model(PretrainedModels.AnalyticRoundCross)
     sdf = SDFfromDeepSDF(model)
-
-    # Set the latent vector and visualize a slice of the SDF
-    sdf.set_latent_vec(torch.tensor([0.3]))
 
     # Define a spline-based deformation field
     deformation_spline = TorchSpline(
@@ -72,9 +71,6 @@ def test_lattice_local_shapes_comparison():
     # Load a pretrained DeepSDF model
     model = get_model(PretrainedModels.AnalyticRoundCross)
     sdf = SDFfromDeepSDF(model)
-
-    # Set the latent vector and visualize a slice of the SDF
-    sdf.set_latent_vec(torch.tensor([0.3]))
 
     # Create the lattice structure with deformation and microtile
     lattice_struct = LatticeSDFStruct(

@@ -22,5 +22,19 @@ def test_pretrained_model_evaluation():
         print(out)
 
 
+def test_analytic_round_cross():
+
+    model = get_model(PretrainedModels.AnalyticRoundCross)
+    sdf = SDFfromDeepSDF(model)
+
+    for radius in [0.2, 0.5, 0.7]:
+        radius_tensor = torch.tensor([radius], dtype=torch.float32, device=model.device)
+        sdf.set_latent_vec(radius_tensor)
+
+        out = sdf(torch.tensor([[0, 0, 0]], dtype=torch.float32, device=model.device))
+        torch.testing.assert_close(out[0], -radius_tensor)
+
+
 if __name__ == "__main__":
     test_pretrained_model_evaluation()
+    test_analytic_round_cross()

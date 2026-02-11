@@ -40,9 +40,6 @@ def test_flexisquares_lattice_struct():
     model = get_model(PretrainedModels.AnalyticRoundCross)
     sdf = SDFfromDeepSDF(model)
 
-    # Set the latent vector and visualize a slice of the SDF
-    sdf.set_latent_vec(torch.tensor([0.3]))
-
     # Define a spline-based deformation field
     deformation_spline = TorchSpline(
         splinepy.helpme.create.box(2, 1).bspline, device=model.device
