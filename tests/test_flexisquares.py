@@ -1,4 +1,4 @@
-from DeepSDFStruct.sdf_primitives import CylinderSDF
+from DeepSDFStruct.sdf_primitives import CircleSDF
 from DeepSDFStruct.flexisquares.flexisquares import FlexiSquares
 from DeepSDFStruct.torch_spline import TorchSpline
 from DeepSDFStruct.pretrained_models import get_model, PretrainedModels
@@ -10,9 +10,7 @@ import torch
 
 
 def test_flexisquares_simple():
-    circle_sdf = CylinderSDF(point=(0.0, 0.0, 0.0), axis=2, radius=0.5).to2D(
-        axes=[0, 1]
-    )
+    circle_sdf = CircleSDF(center=(0.0, 0.0), radius=0.5)
     bounds = torch.tensor([[-1, -1], [1, 1]])
     fsq = FlexiSquares(device=bounds.device)
     verts, square_idx = fsq.construct_voxel_grid([10, 10], bounds=bounds)
