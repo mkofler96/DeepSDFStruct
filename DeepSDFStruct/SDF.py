@@ -224,7 +224,7 @@ class SDFBase(torch.nn.Module, ABC):
         """
         Return the device of the first parameter or buffer in this module.
 
-        If the module has no parameters and no buffers, returns None.
+        If the module has no parameters and no buffers, returns cpu.
         """
         # Check parameters first
         for p in self.parameters(recurse=True):
@@ -236,6 +236,23 @@ class SDFBase(torch.nn.Module, ABC):
 
         # No tensors at all
         return "cpu"
+
+    def get_dtype(self):
+        """
+        Return the dtype of the first parameter or buffer in this module.
+
+        If the module has no parameters and no buffers, returns float32.
+        """
+        # Check parameters first
+        for p in self.parameters(recurse=True):
+            return p.dtype
+
+        # If no parameters, check buffers
+        for b in self.buffers(recurse=True):
+            return b.dtype
+
+        # No tensors at all
+        return torch.float32
 
     @abstractmethod
     def _compute(self, queries: torch.Tensor) -> torch.Tensor:
