@@ -28,11 +28,8 @@ import logging
 import numpy as _np
 import torch as _torch
 
-from splinepy._base import SplinepyBase as _SplinepyBase
 from splinepy import BSpline as _BSpline
 from .SDF import SDFBase as _SDFBase
-from .SDF import CapBorderDict
-from DeepSDFStruct.torch_spline import TorchSpline
 import DeepSDFStruct
 import gustaf as gus
 
@@ -134,24 +131,43 @@ class LatticeSDFStruct(_SDFBase):
         if not isinstance(parametrization, _torch.nn.Module):
             raise TypeError("Parametrization must be of type _Parametrization")
         super().__init__(parametrization=parametrization)
+        self.geometric_dim = len(tiling)
+        assert (
+            microtile.geometric_dim == self.geometric_dim
+        ), f"dimension of microtile ({self.microtile.geometric_dim}) does not match the tiling ({tiling})"
         self.tiling = tiling
         self.microtile = microtile
-        self.geometric_dim = len(tiling)
         if bounds is not None:
-            self.bounds = bounds
+            if isinstance(bounds, (list, tuple)):
+                bounds = _torch.tensor(
+                    bounds, device=microtile.get_device(), dtype=microtile.get_dtype()
+                )
         else:
-            self.bounds = _np.array([[-1, 1]] * self.geometric_dim)
+            match self.geometric_dim:
+                case 2:
+                    bounds = _torch.tensor(
+                        [[0.0, 0.0], [1.0, 1.0]],
+                        device=microtile.get_device(),
+                        dtype=microtile.get_dtype(),
+                    )
+                case 3:
+                    bounds = _torch.tensor(
+                        [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
+                        device=microtile.get_device(),
+                        dtype=microtile.get_dtype(),
+                    )
+                case _:
+                    raise ValueError(
+                        f"Geometric dimension must be either 2 or 3. Got {self.geometric_dim}"
+                    )
+        self.register_buffer("bounds", bounds)
 
     @property
     def parametric_dimension(self):
         return len(self.tiling)
 
     def _get_domain_bounds(self):
-        match self.microtile.geometric_dim:
-            case 2:
-                return _torch.tensor([[0.0, 0.0], [1.0, 1.0]])
-            case 3:
-                return _torch.tensor([[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]])
+        return self.get_buffer("bounds")
 
     def _compute(self, samples: _torch.Tensor):
         """Function, that - if required - parametrizes the microtiles.
@@ -174,9 +190,7 @@ class LatticeSDFStruct(_SDFBase):
          : Callable
           Function that describes the local tile parameters
         """
-        orig_device = samples.device
-        orig_dtype = samples.dtype
-        bounds = _torch.tensor(self.bounds, device=orig_device, dtype=orig_dtype)
+        bounds = self._get_domain_bounds()
         if self.parametrization is not None:
             samples_parameter_space = (samples - bounds[0]) / (bounds[1] - bounds[0])
             samples_parameter_space = _torch.clamp(samples_parameter_space, 0.0, 1.0)
