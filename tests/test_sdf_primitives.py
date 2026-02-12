@@ -26,7 +26,9 @@ def test_sdf_primitives(queries):
 
     # instantiate primitives
     sphere = SphereSDF(center=[0.0, 0.0, 0.0], radius=0.5)
-    cylinder_x = CylinderSDF(point=[0.0, 0.0, 0.0], axis="x", radius=0.3)
+    cylinder_x = CylinderSDF(
+        point=[0.0, 0.0, 0.0], axis=[1, 0, 0], radius=0.3, height=1
+    )
     torus = TorusSDF(center=[0.0, 0.0, 0.0], R=0.5, r=0.2)
     plane = PlaneSDF(point=[0.0, 0.0, 0.0], normal=[0.0, 1.0, 0.0])
     corner_spheres = CornerSpheresSDF(radius=0.2, limit=0.8)
@@ -45,15 +47,15 @@ def test_rotated_cylinder(queries):
     Rotate a cylinder along z-axis to align with y-axis.
     It should be equivalent to a cylinder originally along y-axis.
     """
-    cyl_x = CylinderSDF(point=[0, 0, 0], axis="x", radius=0.3)
+    cyl_x = CylinderSDF(point=[0, 0, 0], axis=[1, 0, 0], radius=0.3, height=1)
     theta = pi / 2  # rotate x -> y
     R = torch.tensor(
         [[cos(theta), -sin(theta), 0], [sin(theta), cos(theta), 0], [0, 0, 1]],
         dtype=torch.float32,
     )
 
-    rotated_cyl = TransformedSDF(cyl_x, rotation=R)
-    cyl_y = CylinderSDF(point=[0, 0, 0], axis="y", radius=0.3)
+    rotated_cyl = TransformedSDF(cyl_x, rotationMatrix=R)
+    cyl_y = CylinderSDF(point=[0, 0, 0], axis=[0, 1, 0], radius=0.3, height=1)
     # queries = torch.tensor([[0.0, 0.0, 1.0]])
     val_rot = rotated_cyl._compute(queries)
     val_ref = cyl_y._compute(queries)
@@ -65,7 +67,7 @@ def test_scaled_sphere(queries):
     Scale a sphere and check equivalence with a sphere of different radius.
     """
     sphere_r03 = SphereSDF(center=[0, 0, 0], radius=0.3)
-    sphere_r03_scaled = TransformedSDF(sphere_r03, scale=2.0)
+    sphere_r03_scaled = TransformedSDF(sphere_r03, scaleFactor=2.0)
     sphere_r06 = SphereSDF(center=[0, 0, 0], radius=0.6)
     queries = torch.tensor([[0.0, 0.0, 0.0]])
     val_r1_scaled = sphere_r03_scaled(queries)
@@ -86,7 +88,7 @@ def test_rotated_sphere_equivalence(queries):
         dtype=torch.float32,
     )
 
-    rotated_sphere = TransformedSDF(sphere, rotation=R)
+    rotated_sphere = TransformedSDF(sphere, rotationMatrix=R)
     # export_sdf_grid_vtk(sphere, "tests/tmp_outputs/sphere_orig.vtk")
     # export_sdf_grid_vtk(rotated_sphere, "tests/tmp_outputs/sphere_rotated.vtk")
     val_rot = rotated_sphere._compute(queries)
