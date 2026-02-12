@@ -308,6 +308,9 @@ class torchSurfMesh:
             ax.scatter(x, y, s=5)
         ax.set_aspect("equal")
 
+    def export(self, filename):
+        gus.io.meshio.export(filename, self.to_gus())
+
 
 class torchVolumeMesh:
     """PyTorch-based volume mesh representation for differentiable operations.
@@ -439,6 +442,9 @@ class torchVolumeMesh:
         remapped_volumes = inverse.view(self.volumes.shape)
         self.vertices = self.vertices[used_nodes]
         self.volumes = remapped_volumes
+
+    def export(self, filename):
+        gus.io.meshio.export(filename, self.to_gus())
 
 
 def tetrahedralize_surface(surface_mesh: gus.Faces) -> tuple[gus.Volumes, np.ndarray]:
