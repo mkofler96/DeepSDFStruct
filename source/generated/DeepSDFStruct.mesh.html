@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>DeepSDFStruct.mesh &#8212; DeepSDFStruct 1.5.3.dev1+g0786f4f78 documentation</title>
+    <title>DeepSDFStruct.mesh &#8212; DeepSDFStruct 1.5.3.dev10+gf6bb4a9c2 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=f9a59163"></script>
+    <script src="../../_static/documentation_options.js?v=913ca3ed"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'source/generated/DeepSDFStruct.mesh';</script>
@@ -110,7 +110,7 @@
   
   
   
-    <p class="title logo__title">DeepSDFStruct 1.5.3.dev1+g0786f4f78 documentation</p>
+    <p class="title logo__title">DeepSDFStruct 1.5.3.dev10+gf6bb4a9c2 documentation</p>
   
 </a></div>
     
@@ -772,6 +772,11 @@ contains indices into the vertices array.</p></li>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="DeepSDFStruct.mesh.torchSurfMesh.export">
+<span class="sig-name descname"><span class="pre">export</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.mesh.torchSurfMesh.export" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="DeepSDFStruct.mesh.torchSurfMesh.plot">
 <span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_vertices</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">linewidth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.mesh.torchSurfMesh.plot" title="Link to this definition">#</a></dt>
 <dd><p>Plot a torchSurfMesh using matplotlib.</p>
@@ -836,6 +841,11 @@ the region connected to a specific node.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="DeepSDFStruct.mesh.torchVolumeMesh.clear_unreferenced_nodes">
 <span class="sig-name descname"><span class="pre">clear_unreferenced_nodes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.mesh.torchVolumeMesh.clear_unreferenced_nodes" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="DeepSDFStruct.mesh.torchVolumeMesh.export">
+<span class="sig-name descname"><span class="pre">export</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.mesh.torchVolumeMesh.export" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -954,6 +964,7 @@ For now, unreferenced vertices are kept even when clear_unused=True.</p>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.mesh.torchSurfMesh"><code class="docutils literal notranslate"><span class="pre">torchSurfMesh</span></code></a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.mesh.torchSurfMesh.to_gus"><code class="docutils literal notranslate"><span class="pre">torchSurfMesh.to_gus()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.mesh.torchSurfMesh.clean"><code class="docutils literal notranslate"><span class="pre">torchSurfMesh.clean()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.mesh.torchSurfMesh.export"><code class="docutils literal notranslate"><span class="pre">torchSurfMesh.export()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.mesh.torchSurfMesh.plot"><code class="docutils literal notranslate"><span class="pre">torchSurfMesh.plot()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1"><code class="docutils literal notranslate"><span class="pre">torchSurfMesh.to_gus()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.mesh.torchSurfMesh.to_trimesh"><code class="docutils literal notranslate"><span class="pre">torchSurfMesh.to_trimesh()</span></code></a></li>
@@ -963,6 +974,7 @@ For now, unreferenced vertices are kept even when clear_unused=True.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.mesh.torchVolumeMesh.to_gus"><code class="docutils literal notranslate"><span class="pre">torchVolumeMesh.to_gus()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.mesh.torchVolumeMesh.remove_disconnected_regions"><code class="docutils literal notranslate"><span class="pre">torchVolumeMesh.remove_disconnected_regions()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.mesh.torchVolumeMesh.clear_unreferenced_nodes"><code class="docutils literal notranslate"><span class="pre">torchVolumeMesh.clear_unreferenced_nodes()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.mesh.torchVolumeMesh.export"><code class="docutils literal notranslate"><span class="pre">torchVolumeMesh.export()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2"><code class="docutils literal notranslate"><span class="pre">torchVolumeMesh.remove_disconnected_regions()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3"><code class="docutils literal notranslate"><span class="pre">torchVolumeMesh.to_gus()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.mesh.torchVolumeMesh.to_trimesh"><code class="docutils literal notranslate"><span class="pre">torchVolumeMesh.to_trimesh()</span></code></a></li>

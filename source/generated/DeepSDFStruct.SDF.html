@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>DeepSDFStruct.SDF &#8212; DeepSDFStruct 1.5.3.dev1+g0786f4f78 documentation</title>
+    <title>DeepSDFStruct.SDF &#8212; DeepSDFStruct 1.5.3.dev10+gf6bb4a9c2 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=f9a59163"></script>
+    <script src="../../_static/documentation_options.js?v=913ca3ed"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'source/generated/DeepSDFStruct.SDF';</script>
@@ -110,7 +110,7 @@
   
   
   
-    <p class="title logo__title">DeepSDFStruct 1.5.3.dev1+g0786f4f78 documentation</p>
+    <p class="title logo__title">DeepSDFStruct 1.5.3.dev10+gf6bb4a9c2 documentation</p>
   
 </a></div>
     
@@ -368,13 +368,16 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.SDF.plot_slice" title="DeepSDFStruct.SDF.plot_slice"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_slice</span></code></a>(fun[, origin, normal, res, ax, ...])</p></td>
 <td><p>Plot a 2D slice through an SDF as a contour plot.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.SDF.point_segment_distance" title="DeepSDFStruct.SDF.point_segment_distance"><code class="xref py py-obj docutils literal notranslate"><span class="pre">point_segment_distance</span></code></a>(P1, P2, query_points)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.SDF.plot_slice_2D" title="DeepSDFStruct.SDF.plot_slice_2D"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_slice_2D</span></code></a>(fun[, res, ax, xlim, ylim, ...])</p></td>
+<td><p>Plot a 2D slice through an SDF as a contour plot.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.SDF.point_segment_distance" title="DeepSDFStruct.SDF.point_segment_distance"><code class="xref py py-obj docutils literal notranslate"><span class="pre">point_segment_distance</span></code></a>(P1, P2, query_points)</p></td>
 <td><p>Calculates the minimum distance from one or more query points to one or more line segments defined by endpoints P1 and P2.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.SDF.union_numpy" title="DeepSDFStruct.SDF.union_numpy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">union_numpy</span></code></a>(D[, k])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.SDF.union_numpy" title="DeepSDFStruct.SDF.union_numpy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">union_numpy</span></code></a>(D[, k])</p></td>
 <td><p>D: np.array of shape (num_points, num_geometries) k: smoothness parameter</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.SDF.union_torch" title="DeepSDFStruct.SDF.union_torch"><code class="xref py py-obj docutils literal notranslate"><span class="pre">union_torch</span></code></a>(D[, k])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.SDF.union_torch" title="DeepSDFStruct.SDF.union_torch"><code class="xref py py-obj docutils literal notranslate"><span class="pre">union_torch</span></code></a>(D[, k])</p></td>
 <td><p>D: np.array of shape (num_points, num_geometries) k: smoothness parameter</p></td>
 </tr>
 </tbody>
@@ -419,7 +422,7 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.SDF.SummedSDF" title="DeepSDFStruct.SDF.SummedSDF"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SummedSDF</span></code></a>(obj1, obj2)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.SDF.TransformedSDF" title="DeepSDFStruct.SDF.TransformedSDF"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TransformedSDF</span></code></a>(sdf[, rotation, translation, ...])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.SDF.TransformedSDF" title="DeepSDFStruct.SDF.TransformedSDF"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TransformedSDF</span></code></a>(sdf[, rotationMatrix, ...])</p></td>
 <td><p>Generic SDF wrapper that applies a transformation to the input queries.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.SDF.UnionSDF" title="DeepSDFStruct.SDF.UnionSDF"><code class="xref py py-obj docutils literal notranslate"><span class="pre">UnionSDF</span></code></a>(obj1, obj2)</p></td>
@@ -554,6 +557,11 @@ with two fields:</p>
 <dt class="sig sig-object py" id="DeepSDFStruct.SDF.NegatedCallable">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.SDF.</span></span><span class="sig-name descname"><span class="pre">NegatedCallable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.SDF.NegatedCallable" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#DeepSDFStruct.SDF.SDFBase" title="DeepSDFStruct.SDF.SDFBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">DeepSDFStruct.SDF.SDFBase</span></code></a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>obj</strong> (<a class="reference internal" href="#DeepSDFStruct.SDF.SDFBase" title="DeepSDFStruct.SDF.SDFBase"><em>DeepSDFStruct.SDF.SDFBase</em></a>)</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py class">
@@ -827,7 +835,7 @@ for ray intersection tests to determine inside/outside status.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="DeepSDFStruct.SDF.TransformedSDF">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.SDF.</span></span><span class="sig-name descname"><span class="pre">TransformedSDF</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sdf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rotation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">translation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.SDF.TransformedSDF" title="Link to this definition">#</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.SDF.</span></span><span class="sig-name descname"><span class="pre">TransformedSDF</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sdf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rotationMatrix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">translation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scaleFactor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.SDF.TransformedSDF" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#DeepSDFStruct.SDF.SDFBase" title="DeepSDFStruct.SDF.SDFBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">DeepSDFStruct.SDF.SDFBase</span></code></a></p>
 <p>Generic SDF wrapper that applies a transformation to the input queries.
 Transformation can be rotation, translation, or scaling.</p>
@@ -993,6 +1001,36 @@ negative (inside) and red for positive (outside), with white near zero.</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="DeepSDFStruct.SDF.plot_slice_2D">
+<span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.SDF.</span></span><span class="sig-name descname"><span class="pre">plot_slice_2D</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fun</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">res</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(100,</span> <span class="pre">100)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xlim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(-1,</span> <span class="pre">1)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(-1,</span> <span class="pre">1)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(-1,</span> <span class="pre">1)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'seismic'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_zero_level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.SDF.plot_slice_2D" title="Link to this definition">#</a></dt>
+<dd><p>Plot a 2D slice through an SDF as a contour plot.</p>
+<p>This function evaluates an SDF on a planar grid and visualizes the
+signed distance values using a color map. The zero level set (the
+actual surface) can be highlighted with a contour line.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fun</strong> (<em>callable</em>) – The SDF function to visualize. Should accept a torch.Tensor
+of shape (N, 3) and return distances of shape (N, 1).</p></li>
+<li><p><strong>res</strong> (<em>tuple</em><em> of </em><em>int</em><em>, </em><em>default</em><em> (</em><em>100</em><em>, </em><em>100</em><em>)</em>) – Resolution of the slice grid (num_points_u, num_points_v).</p></li>
+<li><p><strong>ax</strong> (<em>matplotlib.axes.Axes</em><em>, </em><em>optional</em>) – Axes to plot on. If None, creates a new figure.</p></li>
+<li><p><strong>xlim</strong> (<em>tuple</em><em> of </em><em>float</em><em>, </em><em>default</em><em> (</em><em>-1</em><em>, </em><em>1</em><em>)</em>) – Range along the first plane axis.</p></li>
+<li><p><strong>ylim</strong> (<em>tuple</em><em> of </em><em>float</em><em>, </em><em>default</em><em> (</em><em>-1</em><em>, </em><em>1</em><em>)</em>) – Range along the second plane axis.</p></li>
+<li><p><strong>clim</strong> (<em>tuple</em><em> of </em><em>float</em><em>, </em><em>default</em><em> (</em><em>-1</em><em>, </em><em>1</em><em>)</em>) – Color map limits for distance values.</p></li>
+<li><p><strong>cmap</strong> (<em>str</em><em>, </em><em>default 'seismic'</em>) – Matplotlib colormap name.</p></li>
+<li><p><strong>show_zero_level</strong> (<em>bool</em><em>, </em><em>default True</em>) – If True, draws a black contour line at distance=0 (the surface).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>fig, ax</strong> – Only returned if ax was None (i.e., a new figure was created).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>matplotlib.figure.Figure, matplotlib.axes.Axes</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="DeepSDFStruct.SDF.point_segment_distance">
 <span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.SDF.</span></span><span class="sig-name descname"><span class="pre">point_segment_distance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">P1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">P2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">query_points</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.SDF.point_segment_distance" title="Link to this definition">#</a></dt>
 <dd><p>Calculates the minimum distance from one or more query points
@@ -1136,6 +1174,7 @@ k: smoothness parameter</p>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.SDF.get_equidistant_grid_sample"><code class="docutils literal notranslate"><span class="pre">get_equidistant_grid_sample()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.SDF.normalize_mesh_to_unit_cube"><code class="docutils literal notranslate"><span class="pre">normalize_mesh_to_unit_cube()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.SDF.plot_slice"><code class="docutils literal notranslate"><span class="pre">plot_slice()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.SDF.plot_slice_2D"><code class="docutils literal notranslate"><span class="pre">plot_slice_2D()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.SDF.point_segment_distance"><code class="docutils literal notranslate"><span class="pre">point_segment_distance()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.SDF.union_numpy"><code class="docutils literal notranslate"><span class="pre">union_numpy()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.SDF.union_torch"><code class="docutils literal notranslate"><span class="pre">union_torch()</span></code></a></li>

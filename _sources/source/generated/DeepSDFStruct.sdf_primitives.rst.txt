@@ -8,6 +8,7 @@ DeepSDFStruct.sdf\_primitives
 
    .. autosummary::
    
+      BoxSDF
       CircleSDF
       CornerSpheresSDF
       CrossMsSDF

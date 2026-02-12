@@ -12,6 +12,7 @@ DeepSDFStruct.SDF
       get_equidistant_grid_sample
       normalize_mesh_to_unit_cube
       plot_slice
+      plot_slice_2D
       point_segment_distance
       union_numpy
       union_torch
