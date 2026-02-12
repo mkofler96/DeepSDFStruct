@@ -17,6 +17,19 @@ import splinepy
 import torch
 
 
+def test_flexisquares_linemesh_diag_and_straight():
+    linemesh = gus.Edges(
+        vertices=np.array([[-1, -1], [1, 1], [1, -1]]), edges=np.array([[0, 1], [1, 2]])
+    )
+    thickness = 0.4
+    rectangle = RectangleSDF(center=[0, 0], extents=[3.9, 3.9])
+    sdf_linemesh = SDFfromLineMesh(linemesh, thickness=thickness)
+    sdf = DifferenceSDF(rectangle, sdf_linemesh)
+    bounds = torch.tensor([[-2.0, -2.0], [2.0, 2.0]])
+    mesh, _ = create_2D_mesh(sdf, 10, mesh_type="surface", bounds=bounds)
+    mesh.export("linemesh.vtk")
+
+
 def test_flexisquares_linemesh_diag1():
     linemesh = gus.Edges(
         vertices=np.array([[-2, -2], [2, 2]]), edges=np.array([[0, 1]])
@@ -167,6 +180,7 @@ def test_near_zero_epsilon():
 
 
 if __name__ == "__main__":
+    test_flexisquares_linemesh_diag_and_straight()
     test_flexisquares_linemesh_diag1()
     test_flexisquares_linemesh_diag2()
     test_flexisquares_simple()

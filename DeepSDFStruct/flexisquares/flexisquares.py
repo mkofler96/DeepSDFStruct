@@ -775,7 +775,7 @@ class FlexiSquares:
         if mask_occ2_standard.any():
             surf_vert_ids_occ2_standard = v_offsets[mask_occ2_standard]
             case_ids_occ2_standard = case_ids[mask_occ2_standard]
-            quads_occ2_standard = square_fx4[occ_sum == 2]  # (Q,4)
+            quads_occ2_standard = square_fx4[surf_cubes][mask_occ2_standard]  # (Q,4)
             quads_expanded_occ2_standard = quads_occ2_standard.unsqueeze(1).expand(
                 -1, 2, -1
             )
@@ -820,7 +820,7 @@ class FlexiSquares:
             center_2_odd2_edge = center_1_odd2_edge + 1
             case_ids_occ2_edge = case_ids[mask_occ2_edge]
             # occ sum = on the global level, mask_occ2_edge = on surface level
-            quads_occ2_edge = square_fx4[occ_sum == 2]  # (Q,4)
+            quads_occ2_edge = square_fx4[surf_cubes][mask_occ2_edge]  # (Q,4)
             quads_expanded_occ2_edge = quads_occ2_edge.unsqueeze(1).expand(-1, 2, -1)
             index_occ2_edge = self.tet_table[case_ids_occ2_edge]  # (Q, 2, 2)
 
