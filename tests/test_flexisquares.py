@@ -169,7 +169,7 @@ def test_near_zero_epsilon():
     Test edge case where scalar values are exactly 0 or very close to it.
     This often causes division by zero in interpolation if not handled.
     """
-    fsq = FlexiSquares()
+    fsq = FlexiSquares(device="cpu")
     verts = torch.tensor([[0.0, 0.0], [1.0, 0.0], [0.0, 1.0], [1.0, 1.0]])
     square_idx = torch.tensor([[0, 1, 2, 3]])
 
