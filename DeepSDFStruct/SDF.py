@@ -387,6 +387,12 @@ class DifferenceSDF(SDFBase):
         self.obj1 = obj1
         self.obj2 = obj2
         self.deformation_spline = obj1.deformation_spline
+        if obj1.geometric_dim != obj2.geometric_dim:
+            raise ValueError(
+                "Geomeric dimensions of obj1 and obj2 do not correspond"
+                f" ({obj1.geometric_dim}!={obj2.geometric_dim})"
+            )
+        self.geometric_dim = obj1.geometric_dim
 
     def _compute(self, queries):
         result1 = self.obj1._compute(queries)
@@ -438,7 +444,7 @@ def union_torch(D, k=0):
     k: smoothness parameter
     """
     if k == 0:
-        return torch.min(D, axis=1)[0]
+        return torch.min(D, axis=1)[0].view(-1, 1)
     # Start with the first column as d1
     d1 = D[:, 0].copy()
 
@@ -448,7 +454,7 @@ def union_torch(D, k=0):
         h = torch.clip(0.5 + 0.5 * (d2 - d1) / k, 0, 1)
         d1 = d2 + (d1 - d2) * h - k * h * (1 - h)
 
-    return d1
+    return d1.view(-1, 1)
 
 
 def union_numpy(D, k=0):
@@ -636,6 +642,7 @@ class SDFfromLineMesh(SDFBase):
         self.line_mesh = line_mesh
         self.t = thickness
         self.smoothness = smoothness
+        self.geometric_dim = line_mesh.vertices.shape[1]
 
     def _get_domain_bounds(self):
         return self.line_mesh.bounds()
@@ -769,9 +776,9 @@ def point_segment_distance(P1, P2, query_points):
     Q = np.atleast_2d(query_points)  # (N, 2)
 
     # Handle degenerate case: one segment only
-    if P1.shape[0] == 1 and P2.shape[0] == 1:
-        P1 = np.repeat(P1, Q.shape[0], axis=0)
-        P2 = np.repeat(P2, Q.shape[0], axis=0)
+    # if P1.shape[0] == 1 and P2.shape[0] == 1:
+    #     P1 = np.repeat(P1, Q.shape[0], axis=0)
+    #     P2 = np.repeat(P2, Q.shape[0], axis=0)
 
     v = P2 - P1  # (M, 2) segment vectors
     w = Q[:, None, :] - P1[None, :, :]  # (N, M, 2): vector from P1 to each query point
