@@ -814,7 +814,7 @@ def create_2D_mesh(
     bounds=None,
     diffmode="fwd",
     n_smoothing_iterations=5,
-    deformation_function=TorchSpline | TorchScaling | None,
+    deformation_function: TorchSpline | TorchScaling | None = None,
 ) -> Tuple[Union[torchLineMesh, torchSurfMesh], Optional[torch.Tensor]]:
 
     if device is not None:
