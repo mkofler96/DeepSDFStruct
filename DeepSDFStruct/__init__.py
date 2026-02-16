@@ -53,7 +53,6 @@ Create a lattice structure::
 
     lattice = LatticeSDFStruct(
         tiling=[3, 3, 3],
-        deformation_spline=deformation,
         microtile=unit_cell
     )
 

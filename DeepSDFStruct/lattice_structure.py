@@ -28,11 +28,8 @@ import logging
 import numpy as _np
 import torch as _torch
 
-from splinepy._base import SplinepyBase as _SplinepyBase
 from splinepy import BSpline as _BSpline
 from .SDF import SDFBase as _SDFBase
-from .SDF import CapBorderDict
-from DeepSDFStruct.torch_spline import TorchSpline
 import DeepSDFStruct
 import gustaf as gus
 
@@ -56,9 +53,6 @@ class LatticeSDFStruct(_SDFBase):
     tiling : list of int or int, optional
         Number of repetitions of the microtile in each parametric dimension.
         If an int, uses the same tiling in all dimensions.
-    deformation_spline : TorchSpline, optional
-        Spline function that maps from parametric to physical space,
-        enabling smooth geometric deformations of the lattice.
     microtile : SDFBase, optional
         The unit cell geometry to be tiled. Should be defined in the
         unit cube [0,1]^d.
@@ -113,14 +107,12 @@ class LatticeSDFStruct(_SDFBase):
     >>> distances = lattice(points)
     """
 
-    deformation_spline: TorchSpline
-
     def __init__(
         self,
         tiling: list[int] | int | None = None,
-        deformation_spline: TorchSpline | None = None,
         microtile: _SDFBase | None = None,
         parametrization: _torch.nn.Module | None = None,
+        bounds=None,
     ):
         """Helper class to facilitate the construction of microstructures.
 
@@ -138,23 +130,44 @@ class LatticeSDFStruct(_SDFBase):
         """
         if not isinstance(parametrization, _torch.nn.Module):
             raise TypeError("Parametrization must be of type _Parametrization")
-        super().__init__(
-            deformation_spline=deformation_spline, parametrization=parametrization
-        )
+        super().__init__(parametrization=parametrization)
+        self.geometric_dim = len(tiling)
+        assert (
+            microtile.geometric_dim == self.geometric_dim
+        ), f"dimension of microtile ({self.microtile.geometric_dim}) does not match the tiling ({tiling})"
         self.tiling = tiling
         self.microtile = microtile
-        self.geometric_dim = len(tiling)
+        if bounds is not None:
+            if isinstance(bounds, (list, tuple)):
+                bounds = _torch.tensor(
+                    bounds, device=microtile.get_device(), dtype=microtile.get_dtype()
+                )
+        else:
+            match self.geometric_dim:
+                case 2:
+                    bounds = _torch.tensor(
+                        [[0.0, 0.0], [1.0, 1.0]],
+                        device=microtile.get_device(),
+                        dtype=microtile.get_dtype(),
+                    )
+                case 3:
+                    bounds = _torch.tensor(
+                        [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
+                        device=microtile.get_device(),
+                        dtype=microtile.get_dtype(),
+                    )
+                case _:
+                    raise ValueError(
+                        f"Geometric dimension must be either 2 or 3. Got {self.geometric_dim}"
+                    )
+        self.register_buffer("bounds", bounds)
 
     @property
     def parametric_dimension(self):
         return len(self.tiling)
 
     def _get_domain_bounds(self):
-        match self.microtile.geometric_dim:
-            case 2:
-                return _torch.tensor([[0.0, 0.0], [1.0, 1.0]])
-            case 3:
-                return _torch.tensor([[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]])
+        return self.get_buffer("bounds")
 
     def _compute(self, samples: _torch.Tensor):
         """Function, that - if required - parametrizes the microtiles.
@@ -177,23 +190,20 @@ class LatticeSDFStruct(_SDFBase):
          : Callable
           Function that describes the local tile parameters
         """
-        orig_device = samples.device
-        orig_dtype = samples.dtype
-        bounds = _torch.tensor(
-            self.deformation_spline.spline.parametric_bounds,
-            device=orig_device,
-            dtype=orig_dtype,
-        )
+        bounds = self._get_domain_bounds()
         if self.parametrization is not None:
-            spline_domain_samples = _torch.clamp(samples, min=bounds[0], max=bounds[1])
-            parameters = self.parametrization(spline_domain_samples)
+            samples_parameter_space = (samples - bounds[0]) / (bounds[1] - bounds[0])
+            samples_parameter_space = _torch.clamp(samples_parameter_space, 0.0, 1.0)
+            parameters = self.parametrization(samples_parameter_space)
             self.microtile._set_param(parameters)
 
         queries_transformed = _torch.zeros_like(samples)
         for i_dim, t in enumerate(self.tiling):
-            queries_transformed[:, i_dim] = transform(samples[:, i_dim], t)
+            queries_transformed[:, i_dim] = transform(
+                samples[:, i_dim], t, bounds=bounds[:, i_dim]
+            )
         sdf_values = self.microtile(queries_transformed)
-        # self.plot_transformed_untransformed(queries, queries_transformed)
+
         return sdf_values
 
     def _sanity_check(self):
@@ -221,11 +231,17 @@ class LatticeSDFStruct(_SDFBase):
         gus_faces = gus.Faces(vertices=verts.cpu().detach(), faces=faces.cpu().detach())
         gus.show(gus_faces, axes=1)
 
-    def plot_slice(self, *args, **kwargs):
-        xmin = self.deformation_spline.control_points[:, 0].min().item()
-        xmax = self.deformation_spline.control_points[:, 0].max().item()
-        ymin = self.deformation_spline.control_points[:, 1].min().item()
-        ymax = self.deformation_spline.control_points[:, 1].max().item()
+    def plot_slice(self, deformation_function=None, *args, **kwargs):
+        if deformation_function is not None:
+            xmin = deformation_function.control_points[:, 0].min().item()
+            xmax = deformation_function.control_points[:, 0].max().item()
+            ymin = deformation_function.control_points[:, 1].min().item()
+            ymax = deformation_function.control_points[:, 1].max().item()
+        else:
+            xmin = self.bounds[0, 0].item()
+            xmax = self.bounds[1, 0].item()
+            ymin = self.bounds[0, 1].item()
+            ymax = self.bounds[1, 1].item()
 
         kwargs.setdefault("xlim", (xmin, xmax))
         kwargs.setdefault("ylim", (ymin, ymax))
@@ -238,10 +254,10 @@ def constantLatvec(value):
 
 
 def transform(x, t, bounds=[0, 1]):
-    # transform x from [0,1] to [0,1]
+    # transform x from [bounds[0], bounds[1]] to [-1,1]
     x_norm = (x - bounds[0]) / (bounds[1] - bounds[0])
     x_transformed = 2 * _torch.abs(t * x_norm / 2 - _torch.floor((t * x_norm + 1) / 2))
-    return x_transformed
+    return 2 * x_transformed - 1
 
 
 def check_tiling_input(tiling):

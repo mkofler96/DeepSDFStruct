@@ -57,6 +57,7 @@ from DeepSDFStruct.flexicubes.flexicubes import FlexiCubes
 from DeepSDFStruct.flexisquares.flexisquares import FlexiSquares
 from DeepSDFStruct.lattice_structure import LatticeSDFStruct
 from DeepSDFStruct.SDF import SDFBase
+from DeepSDFStruct.torch_spline import TorchSpline, TorchScaling
 import DeepSDFStruct
 
 logger = logging.getLogger(DeepSDFStruct.__name__)
@@ -660,6 +661,7 @@ def create_3D_mesh(
     device="cpu",
     bounds=None,
     diffmode="fwd",
+    deformation_function: None | TorchSpline | TorchScaling = None,
 ) -> Tuple[Union[torchSurfMesh, torchVolumeMesh], Optional[_torch.Tensor]]:
     """Generate a 3D mesh from an SDF using FlexiCubes dual contouring.
 
@@ -767,6 +769,7 @@ def create_3D_mesh(
         N=N,
         return_faces=False,
         output_tetmesh=output_tetmesh,
+        deformation_function=deformation_function,
     )
     # returns faces or volumes depending on the output_tetmesh flag
     # if output_tetmesh -> returns volumes
@@ -779,7 +782,9 @@ def create_3D_mesh(
         N=N,
         return_faces=True,
         output_tetmesh=output_tetmesh,
+        deformation_function=deformation_function,
     )
+
     if differentiate:
         if diffmode == "rev":
             dVerts_dParams = jacrev(verts_fn)(dict(sdf.named_parameters()))
@@ -809,6 +814,7 @@ def create_2D_mesh(
     bounds=None,
     diffmode="fwd",
     n_smoothing_iterations=5,
+    deformation_function: TorchSpline | TorchScaling | None = None,
 ) -> Tuple[Union[torchLineMesh, torchSurfMesh], Optional[torch.Tensor]]:
 
     if device is not None:
@@ -848,6 +854,7 @@ def create_2D_mesh(
         return_faces=False,
         output_tetmesh=output_tetmesh,
         n_smoothing_iterations=n_smoothing_iterations,
+        deformation_function=deformation_function,
     )
     # returns faces or volumes depending on the output_tetmesh flag
     # if output_tetmesh -> returns volumes
@@ -863,10 +870,10 @@ def create_2D_mesh(
         n_smoothing_iterations=n_smoothing_iterations,
     )
 
-    if sdf.deformation_spline is not None:
-        verts_local = sdf.deformation_spline.forward(verts_local)
+    if deformation_function is not None:
+        verts_local = deformation_function.forward(verts_local)
         with torch.no_grad():
-            samples_deformed = sdf.deformation_spline.forward(samples)
+            samples_deformed = deformation_function.forward(samples)
 
     if differentiate:
         if diffmode == "rev":
@@ -923,6 +930,7 @@ def _verts_from_params(
     return_faces=False,
     output_tetmesh=False,
     n_smoothing_iterations=5,
+    deformation_function: TorchSpline | TorchScaling | None = None,
 ):
 
     sdf_values = functional_call(sdf, (parameters, buffers), (samples,))
@@ -936,8 +944,8 @@ def _verts_from_params(
         n_smoothing_iterations=n_smoothing_iterations,
     )
 
-    if sdf.deformation_spline is not None:
-        verts_local = sdf.deformation_spline.forward(verts_local)
+    if deformation_function is not None:
+        verts_local = deformation_function.forward(verts_local)
     if return_faces:
         return verts_local, faces
     else:
@@ -952,6 +960,7 @@ def get_verts(
     N,
     return_faces=False,
     output_tetmesh=False,
+    deformation_function: TorchSpline | TorchScaling | None = None,
 ):
     sdf_values = sdf(samples)
 
@@ -963,8 +972,8 @@ def get_verts(
         output_tetmesh=output_tetmesh,
     )
 
-    if sdf.deformation_spline is not None:
-        verts_local = sdf.deformation_spline.forward(verts_local)
+    if deformation_function is not None:
+        verts_local = deformation_function.forward(verts_local)
     if return_faces:
         return verts_local, faces
     else:
@@ -983,6 +992,9 @@ def export_sdf_grid_vtk(sdf: SDFBase, filename, N=64, bounds=None):
             raise ValueError("geometric dimension of sdf must be either 2 or 3")
     if isinstance(bounds, torch.Tensor):
         bounds = bounds.detach().cpu().numpy()
+
+    if isinstance(bounds, list):
+        bounds = np.array(bounds)
     # Generate grid points
     x = np.linspace(bounds[0, 0], bounds[1, 0], N)
     y = np.linspace(bounds[0, 1], bounds[1, 1], N)
@@ -1120,12 +1132,14 @@ def mergeMeshs(mesh1, mesh2, tol=1e-10):
 
     duplicates = min_dist < tol
 
-    mapping = torch.empty(vertices2.shape[0], dtype=torch.long)
+    mapping = torch.empty(vertices2.shape[0], dtype=torch.long, device=vertices1.device)
     mapping[duplicates] = nearest_idx[duplicates]
 
     unique_vertices_mask = ~duplicates
     mapping[unique_vertices_mask] = torch.arange(
-        vertices1.shape[0], vertices1.shape[0] + unique_vertices_mask.sum()
+        vertices1.shape[0],
+        vertices1.shape[0] + unique_vertices_mask.sum(),
+        device=vertices1.device,
     )
 
     merged_vertices = torch.cat([vertices1, vertices2[unique_vertices_mask]], dim=0)

@@ -139,7 +139,6 @@ def test_flexisquares_lattice_struct():
     lattice_struct = CappedBorderSDF(
         LatticeSDFStruct(
             tiling=(6, 3),
-            deformation_spline=deformation_spline,
             microtile=sdf.to2D(axes=[0, 1], offset=0.5),
             parametrization=Constant([0.5], device=model.device),
         )

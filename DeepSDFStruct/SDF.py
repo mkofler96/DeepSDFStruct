@@ -143,9 +143,6 @@ class SDFBase(torch.nn.Module, ABC):
 
     Parameters
     ----------
-    deformation_spline : TorchSpline, optional
-        A spline function that maps from parametric to physical space,
-        enabling smooth deformations of the base geometry.
     parametrization : torch.nn.Module, optional
         A neural network or function that provides spatially-varying parameters
         for the SDF (e.g., varying thickness in a lattice).
@@ -180,14 +177,8 @@ class SDFBase(torch.nn.Module, ABC):
 
     geometric_dim: int
 
-    def __init__(
-        self,
-        deformation_spline: TorchSpline | None = None,
-        parametrization: torch.nn.Module | None = None,
-        geometric_dim=3,
-    ):
+    def __init__(self, parametrization: torch.nn.Module | None = None, geometric_dim=3):
         super().__init__()
-        self.deformation_spline = deformation_spline
         self.parametrization = parametrization
         self.geometric_dim = geometric_dim
 
@@ -233,7 +224,7 @@ class SDFBase(torch.nn.Module, ABC):
         """
         Return the device of the first parameter or buffer in this module.
 
-        If the module has no parameters and no buffers, returns None.
+        If the module has no parameters and no buffers, returns cpu.
         """
         # Check parameters first
         for p in self.parameters(recurse=True):
@@ -245,6 +236,23 @@ class SDFBase(torch.nn.Module, ABC):
 
         # No tensors at all
         return "cpu"
+
+    def get_dtype(self):
+        """
+        Return the dtype of the first parameter or buffer in this module.
+
+        If the module has no parameters and no buffers, returns float32.
+        """
+        # Check parameters first
+        for p in self.parameters(recurse=True):
+            return p.dtype
+
+        # If no parameters, check buffers
+        for b in self.buffers(recurse=True):
+            return b.dtype
+
+        # No tensors at all
+        return torch.float32
 
     @abstractmethod
     def _compute(self, queries: torch.Tensor) -> torch.Tensor:
@@ -302,7 +310,6 @@ class SDFBase(torch.nn.Module, ABC):
         :param axis: list of axes that will be used for the 2D
         """
         sdf2D = SDF2D(self, axes, offset=offset)
-        sdf2D.deformation_spline = self.deformation_spline
         sdf2D.parametrization = self.parametrization
         return sdf2D
 
@@ -313,7 +320,6 @@ class SDF2D(SDFBase):
     def __init__(self, obj: SDFBase, axes: list[int], offset=0.0):
         super().__init__()
         self.obj = obj
-        self.deformation_spline = obj.deformation_spline
         assert (
             len(axes) == 2
         ), "List of axes must be of size 2 and needs to correspond to the 2D plane"
@@ -352,7 +358,6 @@ class UnionSDF(SDFBase):
         super().__init__()
         self.obj1 = obj1
         self.obj2 = obj2
-        self.deformation_spline = obj1.deformation_spline
         if self.obj1.geometric_dim != self.obj2.geometric_dim:
             raise ValueError(
                 f"geometric dim of object 1 ({self.obj1.geometric_dim}) differs from geometric dim of object 2 ({self.obj2.geometric_dim})"
@@ -386,7 +391,6 @@ class DifferenceSDF(SDFBase):
         super().__init__()
         self.obj1 = obj1
         self.obj2 = obj2
-        self.deformation_spline = obj1.deformation_spline
         if obj1.geometric_dim != obj2.geometric_dim:
             raise ValueError(
                 "Geomeric dimensions of obj1 and obj2 do not correspond"
@@ -411,7 +415,6 @@ class NegatedCallable(SDFBase):
     def __init__(self, obj: SDFBase):
         super().__init__()
         self.obj = obj
-        # self.deformation_spline = obj.deformation_spline
 
     def _compute(self, input_param):
         result = self.obj(input_param)
@@ -869,7 +872,6 @@ class CappedBorderSDF(SDFBase):
     def __init__(self, sdf: SDFBase, cap_border_dict=None, scale=(1, 1, 1)):
         super().__init__(geometric_dim=sdf.geometric_dim)
         self.sdf = sdf
-        self.deformation_spline = sdf.deformation_spline
         if cap_border_dict is None:
             match self.sdf.geometric_dim:
                 case 2:

@@ -243,6 +243,28 @@ def torch_spline_3D(knot_vectors, control_points, degrees, queries):
     return y
 
 
+class TorchScaling(torch.nn.Module):
+    """
+    A simple scaling function to transform the mesh from parametric to physical space.
+    Used as a baseline deformation function when no complex deformation is needed.
+    """
+
+    def __init__(self, scale_factors, bounds, device="cpu", dtype=torch.float32):
+        super().__init__()
+        self.scale_factors = torch.nn.Parameter(
+            torch.tensor(scale_factors, dtype=dtype, device=device)
+        )
+        self.register_buffer(
+            "parametric_bounds", torch.tensor(bounds, dtype=dtype, device=device)
+        )
+
+    def forward(self, queries: torch.Tensor):
+        return queries * self.scale_factors
+
+    def inverse_target_points(self, query_points_phys_space: torch.Tensor):
+        return query_points_phys_space / self.scale_factors
+
+
 class TorchSpline(torch.nn.Module):
     """
     V2: uses custom torch spline as spline backend
@@ -268,6 +290,10 @@ class TorchSpline(torch.nn.Module):
             "degrees",
             torch.tensor(self.spline.degrees, dtype=torch.int64, device=device),
         )
+        self.register_buffer(
+            "parametric_bounds",
+            torch.tensor(self.spline.parametric_bounds, dtype=dtype, device=device),
+        )
 
         match len(spline.degrees):
             case 1:
@@ -292,6 +318,17 @@ class TorchSpline(torch.nn.Module):
         return self.spline_fun(
             self.knot_vectors, self.control_points, self.degrees, queries
         )
+
+    def inverse_target_points(
+        self, query_points_phys_space: torch.Tensor, return_verbose=False
+    ):
+        device = query_points_phys_space.device
+        dtype = query_points_phys_space.dtype
+        queries_param_space = self.spline.proximities(
+            query_points_phys_space.detach().cpu().numpy(),
+            return_verbose=return_verbose,
+        )
+        return torch.tensor(queries_param_space, device=device, dtype=dtype)
 
 
 def generate_bbox_spline(bounds):

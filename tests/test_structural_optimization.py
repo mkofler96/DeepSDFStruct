@@ -49,10 +49,7 @@ def test_structural_optimization(num_iter=1):
 
     # Create the lattice structure with deformation and microtile
     lattice_struct_uncapped = LatticeSDFStruct(
-        tiling=tiling,
-        deformation_spline=deformation_spline,
-        microtile=sdf,
-        parametrization=param_spline,
+        tiling=tiling, microtile=sdf, parametrization=param_spline
     )
     lattice_struct = CappedBorderSDF(
         CappedBorderSDF(lattice_struct_uncapped, cap_border_dict)
@@ -80,6 +77,7 @@ def test_structural_optimization(num_iter=1):
             mesh_type="volume",
             differentiate=False,
             device=model.device,
+            deformation_function=deformation_spline,
         )
         surf_mesh, _ = create_3D_mesh(
             lattice_struct,
@@ -87,6 +85,7 @@ def test_structural_optimization(num_iter=1):
             mesh_type="surface",
             differentiate=False,
             device=model.device,
+            deformation_function=deformation_spline,
         )
 
         surf_trimesh = surf_mesh.to_trimesh()
