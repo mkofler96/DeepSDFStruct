@@ -217,6 +217,7 @@ class FlexiSquares:
         alpha_fx4=None,
         output_tetmesh=False,
         resolution=None,
+        n_smoothing_iterations=5,
     ):
         r"""
         Extracts a differentiable 2D contour mesh from a scalar field using DeepSDFStruct.flexisquares.
@@ -272,25 +273,89 @@ class FlexiSquares:
         vd, L_dev, vd_idx_map = self._compute_vd(
             x_nx2, surf_edges, s_n, case_ids, beta_fx4, alpha_fx4, idx_map
         )
-        vertices, faces, s_edges, edge_indices = self._extract_zero_contour(
-            s_n, surf_edges, vd, edge_counts, idx_map, vd_idx_map, surf_edges_mask
+        boundary_vertices, boundary_lines, s_edges, edge_indices = (
+            self._extract_zero_contour(
+                s_n, surf_edges, vd, edge_counts, idx_map, vd_idx_map, surf_edges_mask
+            )
         )
         if not output_tetmesh:
-            return vertices, faces, L_dev
+            return boundary_vertices, boundary_lines, L_dev
         else:
-            vertices, tets = self._triangulate(
+            self.check_open_mesh(boundary_lines)
+            all_vertices, triangles = self._triangulate(
                 x_nx2,
                 s_n,
                 cube_fx4,
-                vertices,
-                faces,
+                boundary_vertices,
+                boundary_lines,
                 surf_edges,
                 s_edges,
                 case_ids,
                 edge_indices,
                 surf_cubes,
             )
-            return vertices, tets, L_dev
+            vertices_smoothed = self._apply_laplacian_smoothing(
+                all_vertices,
+                triangles,
+                boundary_lines,
+                iterations=n_smoothing_iterations,
+            )
+            return vertices_smoothed, triangles, L_dev
+
+    def _apply_laplacian_smoothing(
+        self, vertices, triangles, boundary_vertices, iterations=5, lamb=0.5
+    ):
+        """
+        Vectorized Laplacian smoothing using PyTorch sparse matrices.
+        """
+        logger.info(f"applying {iterations} iterations of laplacian smoothing")
+        num_total = vertices.shape[0]
+        device = vertices.device
+
+        unique_boundary = torch.unique(boundary_vertices.long())
+        is_interior = torch.ones(num_total, 1, device=device, dtype=torch.bool)
+        is_interior[unique_boundary] = False
+
+        i, j, k = triangles[:, 0], triangles[:, 1], triangles[:, 2]
+
+        edges = torch.cat(
+            [
+                torch.stack([i, j], dim=1),
+                torch.stack([j, i], dim=1),
+                torch.stack([j, k], dim=1),
+                torch.stack([k, j], dim=1),
+                torch.stack([k, i], dim=1),
+                torch.stack([i, k], dim=1),
+            ],
+            dim=0,
+        )  # shape: (num_edges, 2)
+
+        # Remove duplicate edges
+        edges = torch.unique(edges, dim=0)
+
+        src = edges[:, 0]  # neighbor index
+        dst = edges[:, 1]  # vertex to accumulate into
+
+        degree = torch.zeros(num_total, device=device, dtype=vertices.dtype)
+        one = torch.ones_like(dst, dtype=vertices.dtype)
+        degree.scatter_add_(0, dst, one)
+        degree_inv = 1.0 / torch.clamp(degree, min=1.0)
+
+        v_smoothed = vertices.clone()
+
+        for _ in range(iterations):
+            neighbor_sum = torch.zeros_like(v_smoothed)  # (N, 3)
+
+            neighbor_sum.scatter_add_(
+                0, dst.unsqueeze(1).expand(-1, v_smoothed.shape[1]), v_smoothed[src]
+            )
+
+            neighbor_avg = neighbor_sum * degree_inv.unsqueeze(1)
+
+            v_update = (1 - lamb) * v_smoothed + lamb * neighbor_avg
+            v_smoothed = torch.where(is_interior, v_update, v_smoothed)
+
+        return v_smoothed
 
     def _compute_reg_loss(self, vd, ue, edge_group_to_vd, vd_num_edges):
         """
@@ -428,7 +493,7 @@ class FlexiSquares:
         zero_crossing = self._linear_interp(surf_edges_s, surf_edges_x)
 
         idx_map = idx_map.reshape(-1, 4)
-        num_vd = torch.index_select(input=self.num_vd_table, index=case_ids, dim=0)
+
         edge_group, edge_group_to_vd, edge_group_to_cube, vd_num_edges = (
             [],
             [],
@@ -436,50 +501,61 @@ class FlexiSquares:
             [],
         )
 
-        total_num_vd = 0
+        num_vd = self.num_vd_table[case_ids]
+        # This is the "Source of Truth" for ordering
+        v_offsets = torch.cumsum(num_vd, dim=0) - num_vd
+        total_num_vd = num_vd.sum().item()
+
+        # total_num_vd = 0
+        vd = torch.zeros((total_num_vd, 2), device=self.device)
+        beta_sum = torch.zeros((total_num_vd, 1), device=self.device)
+        vd_num_edges = torch.zeros((total_num_vd, 1), device=self.device)
+
         vd_idx_map = torch.zeros(
             (case_ids.shape[0], 4),
             dtype=torch.long,
             device=self.device,
             requires_grad=False,
         )
-
+        all_edge_groups = []
+        all_edge_to_vd = []
+        all_edge_to_cube = []
+        all_vd_num_edges = []
         for num in torch.unique(num_vd):
-            cur_cubes = (
-                num_vd == num
-            )  # consider cubes with the same numbers of vd emitted (for batching)
-            curr_num_vd = cur_cubes.sum() * num
-            curr_edge_group = self.dmc_table[case_ids[cur_cubes], :num].reshape(
-                -1, num * 2
+            cur_cubes_mask = num_vd == num
+            num_selected = cur_cubes_mask.sum()
+            batch_v_starts = v_offsets[cur_cubes_mask]
+            # curr_num_vd = cur_cubes.sum() * num
+            curr_edge_group = self.dmc_table[case_ids[cur_cubes_mask], :num].reshape(
+                num_selected, -1
             )
+            # Create global vertex IDs for this batch
+            # local_ids: [0, 1, 0, 1...] for num=2
+            local_ids = torch.arange(num, device=self.device).repeat(num_selected)
+            # global_ids: [start0, start0, start1, start1...]
+            global_starts = batch_v_starts.repeat_interleave(num)
+
+            # This aligns the dual vertex ID with your triangulation offsets
             curr_edge_group_to_vd = (
-                torch.arange(curr_num_vd, device=self.device).unsqueeze(-1).repeat(1, 2)
-                + total_num_vd
-            )
-            total_num_vd += curr_num_vd
-            curr_edge_group_to_cube = (
-                torch.arange(idx_map.shape[0], device=self.device)[cur_cubes]
-                .unsqueeze(-1)
-                .repeat(1, num * 2)
-                .reshape_as(curr_edge_group)
+                (global_starts + local_ids).reshape(-1, 1).repeat(1, 2).reshape(-1)
             )
 
-            curr_mask = curr_edge_group != -1
-            edge_group.append(torch.masked_select(curr_edge_group, curr_mask))
-            edge_group_to_vd.append(
-                torch.masked_select(
-                    curr_edge_group_to_vd.reshape_as(curr_edge_group), curr_mask
-                )
-            )
-            edge_group_to_cube.append(
-                torch.masked_select(curr_edge_group_to_cube, curr_mask)
-            )
-            vd_num_edges.append(curr_mask.reshape(-1, 2).sum(-1, keepdims=True))
+            # Mapping cubes to their global indices
+            curr_edge_group_to_cube = torch.arange(
+                case_ids.shape[0], device=self.device
+            )[cur_cubes_mask].repeat_interleave(num * 2)
 
-        edge_group = torch.cat(edge_group)
-        edge_group_to_vd = torch.cat(edge_group_to_vd)
-        edge_group_to_cube = torch.cat(edge_group_to_cube)
-        vd_num_edges = torch.cat(vd_num_edges)
+            curr_mask = curr_edge_group.reshape(-1) != -1
+            curr_vd_edge_counts = curr_mask.reshape(-1, 2).sum(-1, keepdims=True)
+            all_vd_num_edges.append(curr_vd_edge_counts)
+            all_edge_groups.append(curr_edge_group.reshape(-1)[curr_mask])
+            all_edge_to_vd.append(curr_edge_group_to_vd[curr_mask])
+            all_edge_to_cube.append(curr_edge_group_to_cube[curr_mask])
+
+        edge_group = torch.cat(all_edge_groups)
+        edge_group_to_vd = torch.cat(all_edge_to_vd)
+        edge_group_to_cube = torch.cat(all_edge_to_cube)
+        vd_num_edges = torch.cat(all_vd_num_edges)
 
         vd = torch.zeros((total_num_vd, 2), device=self.device)
         beta_sum = torch.zeros((total_num_vd, 1), device=self.device)
@@ -519,12 +595,10 @@ class FlexiSquares:
             vd, zero_crossing_group, edge_group_to_vd, vd_num_edges
         )
 
-        v_idx = torch.arange(vd.shape[0], device=self.device)  # + total_num_vd
+        # v_idx = torch.arange(vd.shape[0], device=self.device)  # + total_num_vd
 
-        vd_idx_map = (vd_idx_map.reshape(-1)).scatter(
-            dim=0,
-            index=edge_group_to_cube * 4 + edge_group,
-            src=v_idx[edge_group_to_vd],
+        vd_idx_map = vd_idx_map.reshape(-1).scatter(
+            dim=0, index=edge_group_to_cube * 4 + edge_group, src=edge_group_to_vd
         )
         # for vert in vd:
         #     ax.scatter(vert[0], vert[1], marker="x", color="lightblue")
@@ -571,7 +645,7 @@ class FlexiSquares:
         x_nx2,
         s_n,
         square_fx4,
-        vertices,
+        surf_vertices,
         edges,
         surf_edges_global,
         s_edges,
@@ -582,160 +656,287 @@ class FlexiSquares:
         """
         Triangulates the interior surface to produce a triangular mesh, adopted from 3D as described in Section 4.5.
         """
+        # occupancy field per query point
         occ_n = s_n < 0
+        # occupancy field for each square
         occ_fx4 = occ_n[square_fx4.reshape(-1)].reshape(-1, 4)
+        # sum of occupancy
+        #   == 1: 1 corner inside
+        #   == 2: 2 corners inside
+        #   == 3: 3 corners inside
+        #   == 4: 4 corners inside
         occ_sum = torch.sum(occ_fx4, -1)
+        # get number of vd, most have 1, but the edge cases have 2
+        # the fully filled and completely empty squares have none
+        vd_counts = self.num_vd_table[case_ids]
+        v_offsets = torch.cumsum(vd_counts, dim=0) - vd_counts
+        tris_list = []
+        """
+        The first step is to connect all surface edges to the interior vertices
+        """
 
         inside_verts = x_nx2[occ_n.reshape(-1)]
         mapping_inside_verts = (
             torch.ones((occ_n.shape[0]), dtype=torch.long, device=self.device) * -1
         )
         mapping_inside_verts[occ_n.reshape(-1)] = (
-            torch.arange(occ_n.sum(), device=self.device) + vertices.shape[0]
+            torch.arange(occ_n.sum(), device=self.device) + surf_vertices.shape[0]
         )
 
         s_edges = s_n[surf_edges_global].reshape(-1, 2)  # signed distance at each end
         inside_mask = s_edges < 0
         inside_verts_idx = mapping_inside_verts[surf_edges_global[inside_mask]]
-        inside_verts_idx = mapping_inside_verts[
-            surf_edges_global[edge_indices.reshape(-1, 2)[:, 0]].reshape(-1, 2)[
-                s_edges < 0
-            ]
-        ]
 
-        # inside_verts_idx = inside_verts_idx.unsqueeze(1).expand(-1, 2).reshape(-1)
-        surf_verts = vertices
         tris_surface = torch.cat([edges, inside_verts_idx.unsqueeze(-1)], -1)
+        tris_list.append(tris_surface)
+        vertices = torch.cat([surf_vertices, inside_verts])
+        # plot_triangles(
+        #     "tris_inside_after_surf.png",
+        #     triangles=tris_surface,
+        #     vertices=vertices,
+        #     x_nx2=x_nx2,
+        #     s_n=s_n,
+        # )
 
-        """ 
-        For each grid edge connecting two grid vertices with the
-        same sign, the tetrahedron is formed by the two grid vertices
-        and two vertices in consecutive adjacent cells
-        """
-        inside_cubes = occ_sum == 4
-        inside_cubes_center = (
-            x_nx2[square_fx4[inside_cubes].reshape(-1)].reshape(-1, 4, 2).mean(1)
+        # =====================================================================
+        #
+        # The next step is to find all quads that are fully inside (occsum==4)
+        # and connect the center to the edges
+        #
+        # =====================================================================
+
+        quads_occ4_center = (
+            x_nx2[square_fx4[occ_sum == 4].reshape(-1)].reshape(-1, 4, 2).mean(1)
         )
 
-        inside_quads = occ_sum == 4
-        quad_centers = x_nx2[square_fx4[inside_quads]].mean(1)
+        quad_occ4_center_x = x_nx2[square_fx4[occ_sum == 4]].mean(1)
         center_idx = (
-            torch.arange(quad_centers.shape[0], device=self.device)
-            + vertices.shape[0]
+            torch.arange(quad_occ4_center_x.shape[0], device=self.device)
+            + surf_vertices.shape[0]
             + inside_verts.shape[0]
         )
-        tris_inside = []
-        vertices = torch.cat([vertices, inside_verts, inside_cubes_center])
-        for qi, quad in enumerate(square_fx4[inside_quads]):
-            center_x4 = center_idx[qi].expand(4).reshape(-1, 1)
-            # maps the edge index of the cube (square)
-            index = torch.tensor([[0, 1], [1, 3], [3, 2], [2, 0]])
-            outside_edges = mapping_inside_verts[quad[index]]
-            # and connect it to the center node:
-            # each triangle = [center, corner1, corner2]
-            current_tris = torch.hstack([center_x4, outside_edges])
-            tris_inside.append(current_tris)
+        index_occ4 = torch.tensor([[0, 1], [1, 3], [3, 2], [2, 0]], device=self.device)
+        quads_occ4 = square_fx4[occ_sum == 4]
+        centers_occ4_x4 = center_idx.unsqueeze(1).expand(-1, 4).reshape(-1, 1)
 
-        border_quads = occ_sum == 3
-        surf_vert_ids = torch.arange(surf_verts.shape[0], device=self.device)[
-            occ_sum[surf_cubes] == 3
+        outside_edges_occ4 = mapping_inside_verts[quads_occ4[:, index_occ4]]
+        # and connect it to the center node:
+        # each triangle = [center, corner1, corner2]
+        tris_inside_occ4 = torch.cat(
+            [centers_occ4_x4, outside_edges_occ4.reshape(-1, 2)], dim=1
+        )
+        vertices = torch.cat([surf_vertices, inside_verts, quads_occ4_center])
+        tris_list.append(tris_inside_occ4)
+        # plot_triangles(
+        #     "tris_inside_after_4.png",
+        #     triangles=tris_inside_occ4,
+        #     vertices=vertices,
+        #     x_nx2=x_nx2,
+        #     s_n=s_n,
+        # )
+        # =====================================================================
+        #
+        # The next step is to find all quads where three corners are inside
+        #
+        # =====================================================================
+
+        surf_vert_ids_occ3 = v_offsets[occ_sum[surf_cubes] == 3]
+        case_ids_occ3 = case_ids[occ_sum[surf_cubes] == 3]
+        quads_occ3 = square_fx4[occ_sum == 3]
+        index_occ3 = self.tet_table[case_ids_occ3]
+        K_occ3 = index_occ3.shape[1]  # number of triangles per quad
+
+        # Expand quads so we can gather per-row
+        quads_expanded_occ3 = quads_occ3.unsqueeze(1).expand(-1, K_occ3, -1)
+
+        outside_edges_occ3 = mapping_inside_verts[
+            torch.gather(quads_expanded_occ3, 2, index_occ3)
         ]
-        border_quad_case_ids = case_ids[occ_sum[surf_cubes] == 3]
-        # tris_inside = []
-        vertices = torch.cat([vertices, inside_verts, inside_cubes_center])
-        # now we handle the cubes with 3 corners
-        for qi, quad, b_case_ids in zip(
-            surf_vert_ids, square_fx4[border_quads], border_quad_case_ids
-        ):
-            center_x4 = qi.expand(2).reshape(-1, 1)
-            # maps the edge index of the cube (square)
+        # and connect it to the center node:
+        # each triangle = [center, corner1, corner2]
+        centers = surf_vert_ids_occ3.unsqueeze(1).expand(-1, K_occ3)  # (Q, K)
+        tris_inside_occ3 = torch.cat(
+            [centers.reshape(-1, 1), outside_edges_occ3.reshape(-1, 2)], dim=1
+        )
+        tris_list.append(tris_inside_occ3)
+        # plot_triangles(
+        #     "tris_inside_after_3.png",
+        #     triangles=tris_inside_occ3,
+        #     vertices=vertices,
+        #     x_nx2=x_nx2,
+        #     s_n=s_n,
+        # )
+        # =====================================================================
+        #
+        # The next step is to find all quads where two corners are inside
+        #             non edge cases (i.e. all except 6 and 9)
+        # =====================================================================
+        mask_occ2_standard = torch.logical_and(vd_counts == 1, occ_sum[surf_cubes] == 2)
+        if mask_occ2_standard.any():
+            surf_vert_ids_occ2_standard = v_offsets[mask_occ2_standard]
+            case_ids_occ2_standard = case_ids[mask_occ2_standard]
+            quads_occ2_standard = square_fx4[surf_cubes][mask_occ2_standard]  # (Q,4)
+            quads_expanded_occ2_standard = quads_occ2_standard.unsqueeze(1).expand(
+                -1, 2, -1
+            )
+            index_occ2_standard = self.tet_table[case_ids_occ2_standard]  # (Q, 2, 2)
 
-            index = self.tet_table[b_case_ids]
-            # index = torch.tensor([[0, 1], [1, 3], [3, 2], [2, 0]])
-            outside_edges = mapping_inside_verts[quad[index]]
-            # and connect it to the center node:
-            # each triangle = [center, corner1, corner2]
-            current_tris = torch.hstack([center_x4, outside_edges])
-            tris_inside.append(current_tris)
+            valid_mask_occ2_standard = index_occ2_standard[..., 0] != -1  # (Q, 2)
 
-        border_quads_2 = occ_sum == 2
-        surf_vert_ids = torch.arange(surf_verts.shape[0], device=self.device)[
-            occ_sum[surf_cubes] == 2
-        ]
-        border_quads_2_case_ids = case_ids[occ_sum[surf_cubes] == 2]
+            outside_edges_occ2_standard = torch.gather(
+                quads_expanded_occ2_standard[valid_mask_occ2_standard, :],
+                1,
+                index_occ2_standard[valid_mask_occ2_standard],
+            )
 
-        # import matplotlib.pyplot as plt
+            outside_edges_occ2_standard = mapping_inside_verts[
+                outside_edges_occ2_standard
+            ]
 
-        # fig, ax = plt.subplots()
-        # ax.set_aspect(1)
-        # for current_tris in tris_inside:
-        #     for tri in current_tris:
-        #         v0, v1, c = tri
-        #         p1 = vertices[v0]
-        #         p2 = vertices[v1]
-        #         p3 = vertices[c]
-        #         ax.plot(
-        #             [p1[0].item(), p2[0].item(), p3[0].item(), p1[0].item()],
-        #             [p1[1].item(), p2[1].item(), p3[1].item(), p1[1].item()],
-        #             "-k",
-        #         )
-        # for tri in tris_surface:
-        #     v0, v1, c = tri
-        #     p1 = vertices[v0]
-        #     p2 = vertices[v1]
-        #     p3 = vertices[c]
-        #     ax.plot(
-        #         [p1[0].item(), p2[0].item(), p3[0].item(), p1[0].item()],
-        #         [p1[1].item(), p2[1].item(), p3[1].item(), p1[1].item()],
-        #         "-k",
-        #     )
+            centers_occ2_standard = surf_vert_ids_occ2_standard.unsqueeze(1)  # (Q, K)
+            tris_inside_occ2_standard = torch.cat(
+                [
+                    centers_occ2_standard.reshape(-1, 1),
+                    outside_edges_occ2_standard.reshape(-1, 2),
+                ],
+                dim=1,
+            )
+            tris_list.append(tris_inside_occ2_standard)
+            # plot_triangles(
+            #     "tris_inside_after_2_standard.png",
+            #     triangles=tris_inside_occ2_standard,
+            #     vertices=vertices,
+            #     x_nx2=x_nx2,
+            #     s_n=s_n,
+            # )
+        # =====================================================================
+        #
+        # The next step is to find all quads where two corners are inside
+        #             edge cases (i.e. 6 and 9)
+        # =====================================================================
+        mask_occ2_edge = torch.logical_and(vd_counts == 2, occ_sum[surf_cubes] == 2)
+        if mask_occ2_edge.any():
+            center_1_odd2_edge = (v_offsets[mask_occ2_edge]).unsqueeze(1).repeat(1, 2)
+            center_2_odd2_edge = center_1_odd2_edge + 1
+            case_ids_occ2_edge = case_ids[mask_occ2_edge]
+            # occ sum = on the global level, mask_occ2_edge = on surface level
+            quads_occ2_edge = square_fx4[surf_cubes][mask_occ2_edge]  # (Q,4)
+            quads_expanded_occ2_edge = quads_occ2_edge.unsqueeze(1).expand(-1, 2, -1)
+            index_occ2_edge = self.tet_table[case_ids_occ2_edge]  # (Q, 2, 2)
 
-        # now we handle the cubes with 2 corners
-        for qi, quad, b_case_ids in zip(
-            surf_vert_ids, square_fx4[border_quads_2], border_quads_2_case_ids
-        ):
-            center_x4 = qi.expand(1).reshape(-1, 1)
-            # maps the edge index of the cube (square)
+            valid_mask_occ2_edge = index_occ2_edge[..., 0] != -1  # (Q, 2)
 
-            index = self.tet_table[b_case_ids][:1]
-            # index = torch.tensor([[0, 1], [1, 3], [3, 2], [2, 0]])
-            outside_edges = mapping_inside_verts[quad[index]]
-            # and connect it to the center node:
-            # each triangle = [center, corner1, corner2]
-            current_tris = torch.hstack([center_x4, outside_edges])
-            tris_inside.append(current_tris)
+            outside_edges_occ2_edge = torch.gather(
+                quads_expanded_occ2_edge[valid_mask_occ2_edge, :],
+                1,
+                index_occ2_edge[valid_mask_occ2_edge],
+            )
 
-            # for tri in current_tris:
-            #     v0, v1, c = tri
-            #     p1 = vertices[v0]
-            #     p2 = vertices[v1]
-            #     p3 = vertices[c]
-            #     ax.plot(
-            #         [p1[0].item(), p2[0].item(), p3[0].item(), p1[0].item()],
-            #         [p1[1].item(), p2[1].item(), p3[1].item(), p1[1].item()],
-            #         "-r",
-            #     )
-            #     txt1 = ax.text(p1[0], p1[1], "1", c="black")
-            #     txt2 = ax.text(p2[0], p2[1], "2", c="black")
-            #     txt3 = ax.text(p3[0], p3[1], "3", c="black")
-            #     fig.savefig("sdf.png", dpi=1000, bbox_inches="tight")
-            #     txt1.remove()
-            #     txt2.remove()
-            #     txt3.remove()
-            #     print("done")
+            outside_edges_occ2_edge = mapping_inside_verts[outside_edges_occ2_edge]
 
-        tris_inside = torch.vstack(tris_inside)
-        tris = torch.cat([tris_surface, tris_inside], dim=0)
+            tris_inside_occ2_edge = torch.cat(
+                [
+                    center_1_odd2_edge.reshape(-1, 1),
+                    center_2_odd2_edge.reshape(-1, 1),
+                    outside_edges_occ2_edge.reshape(-1, 1),
+                ],
+                dim=1,
+            )
+            # plot_triangles(
+            #     "tris_inside_after_2_edge.png",
+            #     triangles=tris_inside_occ2_edge,
+            #     vertices=vertices,
+            #     x_nx2=x_nx2,
+            #     s_n=s_n,
+            # )
 
-        # for face in tris:
-        #     p1 = vertices[face[0]]
-        #     p2 = vertices[face[1]]
-        #     p3 = vertices[face[2]]
-        #     ax.plot(
-        #         [p1[0].item(), p2[0].item(), p3[0].item(), p1[0].item()],
-        #         [p1[1].item(), p2[1].item(), p3[1].item(), p1[1].item()],
-        #         "-k",
-        #     )
-        # fig.savefig("sdf.png", dpi=1000, bbox_inches="tight")
+            tris_list.append(tris_inside_occ2_edge)
+        tris = torch.cat(tris_list)
+        # fix orientation
+        p0 = vertices[tris[:, 0]]
+        p1 = vertices[tris[:, 1]]
+        p2 = vertices[tris[:, 2]]
+
+        cross = (p1[:, 0] - p0[:, 0]) * (p2[:, 1] - p0[:, 1]) - (
+            p1[:, 1] - p0[:, 1]
+        ) * (p2[:, 0] - p0[:, 0])
+
+        flip = cross < 0
+
+        # swap columns 1 and 2 where needed
+        tris_flipped = tris.clone()
+        tris_flipped[flip, 1] = tris[flip, 2]
+        tris_flipped[flip, 2] = tris[flip, 1]
+
+        tris = tris_flipped
 
         return vertices, tris
+
+    def check_open_mesh(self, edges, num_vertices=None):
+        # edges shape: (Num_Edges, 2)
+        flattened_edges = edges.reshape(-1)
+
+        # Count occurrences of each vertex ID
+        if num_vertices is None:
+            num_vertices = flattened_edges.max() + 1
+
+        counts = torch.bincount(flattened_edges, minlength=num_vertices)
+
+        # A mesh is open if any vertex is used only once
+        open_points = (counts == 1).sum()
+        if open_points != 0:
+            raise RuntimeError(
+                "Unclosed mesh found. Check your bounds or SDF definition!"
+            )
+
+
+# def plot_triangles(filename, triangles, vertices, x_nx2, s_n):
+#     import matplotlib.pyplot as plt
+
+#     fig, ax = plt.subplots()
+#     ax.set_aspect(1)
+#     for tri in triangles:
+#         v0, v1, c = tri
+#         p1 = vertices[v0]
+#         p2 = vertices[v1]
+#         p3 = vertices[c]
+#         ax.plot(
+#             [p1[0].item(), p2[0].item(), p3[0].item(), p1[0].item()],
+#             [p1[1].item(), p2[1].item(), p3[1].item(), p1[1].item()],
+#             "-k",
+#         )
+#         ax.text(
+#             p1[0].item(),
+#             p1[1].item(),
+#             str(v0),
+#             color="black",
+#             fontsize=8,
+#             ha="center",
+#             va="center",
+#         )
+#         ax.text(
+#             p2[0].item(),
+#             p2[1].item(),
+#             str(v1),
+#             color="black",
+#             fontsize=8,
+#             ha="center",
+#             va="center",
+#         )
+#         ax.text(
+#             p3[0].item(),
+#             p3[1].item(),
+#             str(c),
+#             color="black",
+#             fontsize=8,
+#             ha="center",
+#             va="center",
+#         )
+
+#     ax.scatter(
+#         x_nx2[:, 0].detach().cpu().numpy(),
+#         x_nx2[:, 1].detach().cpu().numpy(),
+#         c=s_n.detach().cpu().numpy(),
+#         cmap="coolwarm",
+#     )
+#     fig.savefig(filename, dpi=1000)
