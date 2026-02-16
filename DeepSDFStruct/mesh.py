@@ -1132,12 +1132,14 @@ def mergeMeshs(mesh1, mesh2, tol=1e-10):
 
     duplicates = min_dist < tol
 
-    mapping = torch.empty(vertices2.shape[0], dtype=torch.long)
+    mapping = torch.empty(vertices2.shape[0], dtype=torch.long, device=vertices1.device)
     mapping[duplicates] = nearest_idx[duplicates]
 
     unique_vertices_mask = ~duplicates
     mapping[unique_vertices_mask] = torch.arange(
-        vertices1.shape[0], vertices1.shape[0] + unique_vertices_mask.sum()
+        vertices1.shape[0],
+        vertices1.shape[0] + unique_vertices_mask.sum(),
+        device=vertices1.device,
     )
 
     merged_vertices = torch.cat([vertices1, vertices2[unique_vertices_mask]], dim=0)
