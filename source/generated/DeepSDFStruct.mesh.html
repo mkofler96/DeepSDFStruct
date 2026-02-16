@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>DeepSDFStruct.mesh &#8212; DeepSDFStruct 1.5.3.dev10+gf6bb4a9c2 documentation</title>
+    <title>DeepSDFStruct.mesh &#8212; DeepSDFStruct 1.5.4.dev13+gd03432e94 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=913ca3ed"></script>
+    <script src="../../_static/documentation_options.js?v=2aa5dbd1"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'source/generated/DeepSDFStruct.mesh';</script>
@@ -110,7 +110,7 @@
   
   
   
-    <p class="title logo__title">DeepSDFStruct 1.5.3.dev10+gf6bb4a9c2 documentation</p>
+    <p class="title logo__title">DeepSDFStruct 1.5.4.dev13+gd03432e94 documentation</p>
   
 </a></div>
     
@@ -242,6 +242,7 @@
 <li class="toctree-l2 has-children"><a class="reference internal" href="DeepSDFStruct.deep_sdf.html">DeepSDFStruct.deep_sdf</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.deep_sdf.data.html">DeepSDFStruct.deep_sdf.data</a></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="DeepSDFStruct.deep_sdf.metrics.html">DeepSDFStruct.deep_sdf.metrics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="DeepSDFStruct.deep_sdf.metrics.chamfer.html">DeepSDFStruct.deep_sdf.metrics.chamfer</a></li>
 <li class="toctree-l4"><a class="reference internal" href="DeepSDFStruct.deep_sdf.metrics.mesh_to_analytical.html">DeepSDFStruct.deep_sdf.metrics.mesh_to_analytical</a></li>
 </ul>
 </details></li>
@@ -452,7 +453,7 @@ to standard formats (gustaf, trimesh) for I/O and visualization.</p>
 </div>
 <dl class="py function">
 <dt class="sig sig-object py" id="DeepSDFStruct.mesh.create_2D_mesh">
-<span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.mesh.</span></span><span class="sig-name descname"><span class="pre">create_2D_mesh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sdf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N_base</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mesh_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">differentiate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bounds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">diffmode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'fwd'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_smoothing_iterations</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.mesh.create_2D_mesh" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.mesh.</span></span><span class="sig-name descname"><span class="pre">create_2D_mesh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sdf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N_base</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mesh_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">differentiate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bounds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">diffmode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'fwd'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_smoothing_iterations</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deformation_function</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.mesh.create_2D_mesh" title="Link to this definition">#</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<a class="reference internal" href="#DeepSDFStruct.mesh.torchLineMesh" title="DeepSDFStruct.mesh.torchLineMesh"><code class="xref py py-class docutils literal notranslate"><span class="pre">torchLineMesh</span></code></a>, <a class="reference internal" href="#DeepSDFStruct.mesh.torchSurfMesh" title="DeepSDFStruct.mesh.torchSurfMesh"><code class="xref py py-class docutils literal notranslate"><span class="pre">torchSurfMesh</span></code></a>], <code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code>]]</span></p>
@@ -461,6 +462,7 @@ to standard formats (gustaf, trimesh) for I/O and visualization.</p>
 <dd class="field-even"><ul class="simple">
 <li><p><strong>sdf</strong> (<a class="reference internal" href="DeepSDFStruct.SDF.html#DeepSDFStruct.SDF.SDFBase" title="DeepSDFStruct.SDF.SDFBase"><em>DeepSDFStruct.SDF.SDFBase</em></a>)</p></li>
 <li><p><strong>mesh_type</strong> (<em>str</em>)</p></li>
+<li><p><strong>deformation_function</strong> (<a class="reference internal" href="DeepSDFStruct.torch_spline.html#DeepSDFStruct.torch_spline.TorchSpline" title="DeepSDFStruct.torch_spline.TorchSpline"><em>DeepSDFStruct.torch_spline.TorchSpline</em></a><em> | </em><a class="reference internal" href="DeepSDFStruct.torch_spline.html#DeepSDFStruct.torch_spline.TorchScaling" title="DeepSDFStruct.torch_spline.TorchScaling"><em>DeepSDFStruct.torch_spline.TorchScaling</em></a><em> | </em><em>None</em>)</p></li>
 </ul>
 </dd>
 </dl>
@@ -468,7 +470,7 @@ to standard formats (gustaf, trimesh) for I/O and visualization.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="DeepSDFStruct.mesh.create_3D_mesh">
-<span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.mesh.</span></span><span class="sig-name descname"><span class="pre">create_3D_mesh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sdf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N_base</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mesh_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">differentiate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cpu'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bounds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">diffmode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'fwd'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.mesh.create_3D_mesh" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.mesh.</span></span><span class="sig-name descname"><span class="pre">create_3D_mesh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sdf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N_base</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mesh_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">differentiate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cpu'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bounds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">diffmode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'fwd'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deformation_function</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.mesh.create_3D_mesh" title="Link to this definition">#</a></dt>
 <dd><p>Generate a 3D mesh from an SDF using FlexiCubes dual contouring.</p>
 <p>This is the main entry point for extracting high-quality meshes from SDF
 representations. It uses the FlexiCubes algorithm, which produces smooth,
@@ -491,6 +493,7 @@ respect to SDF parameters, enabling gradient-based optimization.</p></li>
 <li><p><strong>device</strong> (<em>str</em><em>, </em><em>default 'cpu'</em>) – Device for computation (‘cpu’ or ‘cuda’).</p></li>
 <li><p><strong>bounds</strong> (<em>array-like</em><em> of </em><em>shape</em><em> (</em><em>2</em><em>, </em><em>3</em><em>)</em><em>, </em><em>optional</em>) – Spatial bounds [[xmin, ymin, zmin], [xmax, ymax, zmax]].
 If None, uses the SDF’s domain bounds.</p></li>
+<li><p><strong>deformation_function</strong> (<em>None</em><em> | </em><a class="reference internal" href="DeepSDFStruct.torch_spline.html#DeepSDFStruct.torch_spline.TorchSpline" title="DeepSDFStruct.torch_spline.TorchSpline"><em>DeepSDFStruct.torch_spline.TorchSpline</em></a><em> | </em><a class="reference internal" href="DeepSDFStruct.torch_spline.html#DeepSDFStruct.torch_spline.TorchScaling" title="DeepSDFStruct.torch_spline.TorchScaling"><em>DeepSDFStruct.torch_spline.TorchScaling</em></a>)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -608,7 +611,7 @@ tiling factor to maintain consistent resolution per unit cell.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="DeepSDFStruct.mesh.get_verts">
-<span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.mesh.</span></span><span class="sig-name descname"><span class="pre">get_verts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sdf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">samples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">constructor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cube_idx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_faces</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_tetmesh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.mesh.get_verts" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.mesh.</span></span><span class="sig-name descname"><span class="pre">get_verts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sdf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">samples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">constructor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cube_idx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_faces</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_tetmesh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deformation_function</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.mesh.get_verts" title="Link to this definition">#</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -616,6 +619,7 @@ tiling factor to maintain consistent resolution per unit cell.</p>
 <li><p><strong>samples</strong> (<em>torch.Tensor</em>)</p></li>
 <li><p><strong>constructor</strong> (<a class="reference internal" href="DeepSDFStruct.flexicubes.flexicubes.html#DeepSDFStruct.flexicubes.flexicubes.FlexiCubes" title="DeepSDFStruct.flexicubes.flexicubes.FlexiCubes"><em>DeepSDFStruct.flexicubes.flexicubes.FlexiCubes</em></a>)</p></li>
 <li><p><strong>cube_idx</strong> (<em>torch.Tensor</em>)</p></li>
+<li><p><strong>deformation_function</strong> (<a class="reference internal" href="DeepSDFStruct.torch_spline.html#DeepSDFStruct.torch_spline.TorchSpline" title="DeepSDFStruct.torch_spline.TorchSpline"><em>DeepSDFStruct.torch_spline.TorchSpline</em></a><em> | </em><a class="reference internal" href="DeepSDFStruct.torch_spline.html#DeepSDFStruct.torch_spline.TorchScaling" title="DeepSDFStruct.torch_spline.TorchScaling"><em>DeepSDFStruct.torch_spline.TorchScaling</em></a><em> | </em><em>None</em>)</p></li>
 </ul>
 </dd>
 </dl>

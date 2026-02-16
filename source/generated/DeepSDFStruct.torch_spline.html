@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>DeepSDFStruct.torch_spline &#8212; DeepSDFStruct 1.5.3.dev10+gf6bb4a9c2 documentation</title>
+    <title>DeepSDFStruct.torch_spline &#8212; DeepSDFStruct 1.5.4.dev13+gd03432e94 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=913ca3ed"></script>
+    <script src="../../_static/documentation_options.js?v=2aa5dbd1"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'source/generated/DeepSDFStruct.torch_spline';</script>
@@ -110,7 +110,7 @@
   
   
   
-    <p class="title logo__title">DeepSDFStruct 1.5.3.dev10+gf6bb4a9c2 documentation</p>
+    <p class="title logo__title">DeepSDFStruct 1.5.4.dev13+gd03432e94 documentation</p>
   
 </a></div>
     
@@ -242,6 +242,7 @@
 <li class="toctree-l2 has-children"><a class="reference internal" href="DeepSDFStruct.deep_sdf.html">DeepSDFStruct.deep_sdf</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.deep_sdf.data.html">DeepSDFStruct.deep_sdf.data</a></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="DeepSDFStruct.deep_sdf.metrics.html">DeepSDFStruct.deep_sdf.metrics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="DeepSDFStruct.deep_sdf.metrics.chamfer.html">DeepSDFStruct.deep_sdf.metrics.chamfer</a></li>
 <li class="toctree-l4"><a class="reference internal" href="DeepSDFStruct.deep_sdf.metrics.mesh_to_analytical.html">DeepSDFStruct.deep_sdf.metrics.mesh_to_analytical</a></li>
 </ul>
 </details></li>
@@ -438,12 +439,52 @@ to control points and query coordinates.</p>
 <p class="rubric">Classes</p>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.torch_spline.TorchSpline" title="DeepSDFStruct.torch_spline.TorchSpline"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TorchSpline</span></code></a>(spline[, device, dtype])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.torch_spline.TorchScaling" title="DeepSDFStruct.torch_spline.TorchScaling"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TorchScaling</span></code></a>(scale_factors, bounds[, ...])</p></td>
+<td><p>A simple scaling function to transform the mesh from parametric to physical space.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.torch_spline.TorchSpline" title="DeepSDFStruct.torch_spline.TorchSpline"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TorchSpline</span></code></a>(spline[, device, dtype])</p></td>
 <td><p>V2: uses custom torch spline as spline backend</p></td>
 </tr>
 </tbody>
 </table>
 </div>
+<dl class="py class">
+<dt class="sig sig-object py" id="DeepSDFStruct.torch_spline.TorchScaling">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.torch_spline.</span></span><span class="sig-name descname"><span class="pre">TorchScaling</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scale_factors</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bounds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cpu'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">torch.float32</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.torch_spline.TorchScaling" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
+<p>A simple scaling function to transform the mesh from parametric to physical space.
+Used as a baseline deformation function when no complex deformation is needed.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="DeepSDFStruct.torch_spline.TorchScaling.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">queries</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.torch_spline.TorchScaling.forward" title="Link to this definition">#</a></dt>
+<dd><p>Define the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>queries</strong> (<em>torch.Tensor</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="DeepSDFStruct.torch_spline.TorchScaling.inverse_target_points">
+<span class="sig-name descname"><span class="pre">inverse_target_points</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query_points_phys_space</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.torch_spline.TorchScaling.inverse_target_points" title="Link to this definition">#</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>query_points_phys_space</strong> (<em>torch.Tensor</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 <dl class="py class">
 <dt class="sig sig-object py" id="DeepSDFStruct.torch_spline.TorchSpline">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.torch_spline.</span></span><span class="sig-name descname"><span class="pre">TorchSpline</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spline</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cpu'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">torch.float32</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.torch_spline.TorchSpline" title="Link to this definition">#</a></dt>
@@ -469,6 +510,16 @@ registered hooks while the latter silently ignores them.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>queries</strong> (<em>torch.Tensor</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="DeepSDFStruct.torch_spline.TorchSpline.inverse_target_points">
+<span class="sig-name descname"><span class="pre">inverse_target_points</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query_points_phys_space</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.torch_spline.TorchSpline.inverse_target_points" title="Link to this definition">#</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>query_points_phys_space</strong> (<em>torch.Tensor</em>)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -637,8 +688,14 @@ and 3D [[xmin, ymin, zmin], [xmax, ymax, zmax]].</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#key-features">Key Features</a></li>
 </ul>
 </li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.torch_spline.TorchScaling"><code class="docutils literal notranslate"><span class="pre">TorchScaling</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.torch_spline.TorchScaling.forward"><code class="docutils literal notranslate"><span class="pre">TorchScaling.forward()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.torch_spline.TorchScaling.inverse_target_points"><code class="docutils literal notranslate"><span class="pre">TorchScaling.inverse_target_points()</span></code></a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.torch_spline.TorchSpline"><code class="docutils literal notranslate"><span class="pre">TorchSpline</span></code></a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.torch_spline.TorchSpline.forward"><code class="docutils literal notranslate"><span class="pre">TorchSpline.forward()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.torch_spline.TorchSpline.inverse_target_points"><code class="docutils literal notranslate"><span class="pre">TorchSpline.inverse_target_points()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.torch_spline.TorchSpline.knot_vectors"><code class="docutils literal notranslate"><span class="pre">TorchSpline.knot_vectors</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.torch_spline.TorchSpline.spline"><code class="docutils literal notranslate"><span class="pre">TorchSpline.spline</span></code></a></li>
 </ul>

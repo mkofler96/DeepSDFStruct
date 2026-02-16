@@ -1,0 +1,12 @@
+DeepSDFStruct.deep\_sdf.metrics.chamfer
+=======================================
+
+.. automodule:: DeepSDFStruct.deep_sdf.metrics.chamfer
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      compute_trimesh_chamfer
+   

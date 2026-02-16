@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>DeepSDFStruct.splinepy_unitcells &#8212; DeepSDFStruct 1.5.4.dev13+gd03432e94 documentation</title>
+    <title>DeepSDFStruct.deep_sdf.metrics.chamfer &#8212; DeepSDFStruct 1.5.4.dev13+gd03432e94 documentation</title>
   
   
   
@@ -41,11 +41,11 @@
     <script src="../../_static/documentation_options.js?v=2aa5dbd1"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'source/generated/DeepSDFStruct.splinepy_unitcells';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'source/generated/DeepSDFStruct.deep_sdf.metrics.chamfer';</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="DeepSDFStruct.splinepy_unitcells.chi_3D" href="DeepSDFStruct.splinepy_unitcells.chi_3D.html" />
-    <link rel="prev" title="DeepSDFStruct.sdf_primitives" href="DeepSDFStruct.sdf_primitives.html" />
+    <link rel="next" title="DeepSDFStruct.deep_sdf.metrics.mesh_to_analytical" href="DeepSDFStruct.deep_sdf.metrics.mesh_to_analytical.html" />
+    <link rel="prev" title="DeepSDFStruct.deep_sdf.metrics" href="DeepSDFStruct.deep_sdf.metrics.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
@@ -239,10 +239,10 @@
   <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="DeepSDFStruct.html">DeepSDFStruct</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.SDF.html">DeepSDFStruct.SDF</a></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="DeepSDFStruct.deep_sdf.html">DeepSDFStruct.deep_sdf</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="DeepSDFStruct.deep_sdf.html">DeepSDFStruct.deep_sdf</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.deep_sdf.data.html">DeepSDFStruct.deep_sdf.data</a></li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="DeepSDFStruct.deep_sdf.metrics.html">DeepSDFStruct.deep_sdf.metrics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l4"><a class="reference internal" href="DeepSDFStruct.deep_sdf.metrics.chamfer.html">DeepSDFStruct.deep_sdf.metrics.chamfer</a></li>
+<li class="toctree-l3 current active has-children"><a class="reference internal" href="DeepSDFStruct.deep_sdf.metrics.html">DeepSDFStruct.deep_sdf.metrics</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l4 current active"><a class="current reference internal" href="#">DeepSDFStruct.deep_sdf.metrics.chamfer</a></li>
 <li class="toctree-l4"><a class="reference internal" href="DeepSDFStruct.deep_sdf.metrics.mesh_to_analytical.html">DeepSDFStruct.deep_sdf.metrics.mesh_to_analytical</a></li>
 </ul>
 </details></li>
@@ -278,7 +278,7 @@
 <li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.pretrained_models.html">DeepSDFStruct.pretrained_models</a></li>
 <li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.sampling.html">DeepSDFStruct.sampling</a></li>
 <li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.sdf_primitives.html">DeepSDFStruct.sdf_primitives</a></li>
-<li class="toctree-l2 current active has-children"><a class="current reference internal" href="#">DeepSDFStruct.splinepy_unitcells</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="DeepSDFStruct.splinepy_unitcells.html">DeepSDFStruct.splinepy_unitcells</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.splinepy_unitcells.chi_3D.html">DeepSDFStruct.splinepy_unitcells.chi_3D</a></li>
 <li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.splinepy_unitcells.cross_lattice.html">DeepSDFStruct.splinepy_unitcells.cross_lattice</a></li>
 <li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.splinepy_unitcells.double_lattice_extruded.html">DeepSDFStruct.splinepy_unitcells.double_lattice_extruded</a></li>
@@ -335,7 +335,13 @@
     
     <li class="breadcrumb-item"><a href="DeepSDFStruct.html" class="nav-link">DeepSDFStruct</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">DeepSDFStruct.splinepy_unitcells</span></li>
+    
+    <li class="breadcrumb-item"><a href="DeepSDFStruct.deep_sdf.html" class="nav-link">DeepSDFStruct.deep_sdf</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="DeepSDFStruct.deep_sdf.metrics.html" class="nav-link">DeepSDFStruct.deep_sdf.metrics</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">DeepSDFStruct.deep_sdf.metrics.chamfer</span></li>
   </ul>
 </nav>
 </div>
@@ -352,26 +358,29 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="module-DeepSDFStruct.splinepy_unitcells">
-<span id="deepsdfstruct-splinepy-unitcells"></span><h1>DeepSDFStruct.splinepy_unitcells<a class="headerlink" href="#module-DeepSDFStruct.splinepy_unitcells" title="Link to this heading">#</a></h1>
-<p class="rubric">Modules</p>
+  <section id="module-DeepSDFStruct.deep_sdf.metrics.chamfer">
+<span id="deepsdfstruct-deep-sdf-metrics-chamfer"></span><h1>DeepSDFStruct.deep_sdf.metrics.chamfer<a class="headerlink" href="#module-DeepSDFStruct.deep_sdf.metrics.chamfer" title="Link to this heading">#</a></h1>
+<p class="rubric">Functions</p>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="DeepSDFStruct.splinepy_unitcells.chi_3D.html#module-DeepSDFStruct.splinepy_unitcells.chi_3D" title="DeepSDFStruct.splinepy_unitcells.chi_3D"><code class="xref py py-obj docutils literal notranslate"><span class="pre">chi_3D</span></code></a></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="DeepSDFStruct.splinepy_unitcells.cross_lattice.html#module-DeepSDFStruct.splinepy_unitcells.cross_lattice" title="DeepSDFStruct.splinepy_unitcells.cross_lattice"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cross_lattice</span></code></a></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="DeepSDFStruct.splinepy_unitcells.double_lattice_extruded.html#module-DeepSDFStruct.splinepy_unitcells.double_lattice_extruded" title="DeepSDFStruct.splinepy_unitcells.double_lattice_extruded"><code class="xref py py-obj docutils literal notranslate"><span class="pre">double_lattice_extruded</span></code></a></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="DeepSDFStruct.splinepy_unitcells.snappy_3d.html#module-DeepSDFStruct.splinepy_unitcells.snappy_3d" title="DeepSDFStruct.splinepy_unitcells.snappy_3d"><code class="xref py py-obj docutils literal notranslate"><span class="pre">snappy_3d</span></code></a></p></td>
-<td><p></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.deep_sdf.metrics.chamfer.compute_trimesh_chamfer" title="DeepSDFStruct.deep_sdf.metrics.chamfer.compute_trimesh_chamfer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_trimesh_chamfer</span></code></a>(gt_points, gen_mesh, ...)</p></td>
+<td><p>This function computes a symmetric chamfer distance, i.e. the sum of both chamfers.</p></td>
 </tr>
 </tbody>
 </table>
 </div>
+<dl class="py function">
+<dt class="sig sig-object py" id="DeepSDFStruct.deep_sdf.metrics.chamfer.compute_trimesh_chamfer">
+<span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.deep_sdf.metrics.chamfer.</span></span><span class="sig-name descname"><span class="pre">compute_trimesh_chamfer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gt_points</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gen_mesh</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_mesh_samples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30000</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.deep_sdf.metrics.chamfer.compute_trimesh_chamfer" title="Link to this definition">#</a></dt>
+<dd><p>This function computes a symmetric chamfer distance, i.e. the sum of both chamfers.</p>
+<dl class="simple">
+<dt>gt_points: trimesh.points.PointCloud of just poins, sampled from the surface (see</dt><dd><p>compute_metrics.ply for more documentation)</p>
+</dd>
+<dt>gen_mesh: trimesh.base.Trimesh of output mesh from whichever autoencoding reconstruction</dt><dd><p>method (see compute_metrics.py for more)</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 
 
@@ -385,20 +394,20 @@
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="DeepSDFStruct.sdf_primitives.html"
+       href="DeepSDFStruct.deep_sdf.metrics.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">DeepSDFStruct.sdf_primitives</p>
+        <p class="prev-next-title">DeepSDFStruct.deep_sdf.metrics</p>
       </div>
     </a>
     <a class="right-next"
-       href="DeepSDFStruct.splinepy_unitcells.chi_3D.html"
+       href="DeepSDFStruct.deep_sdf.metrics.mesh_to_analytical.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">DeepSDFStruct.splinepy_unitcells.chi_3D</p>
+        <p class="prev-next-title">DeepSDFStruct.deep_sdf.metrics.mesh_to_analytical</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -414,10 +423,22 @@
 
 
   <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.deep_sdf.metrics.chamfer.compute_trimesh_chamfer"><code class="docutils literal notranslate"><span class="pre">compute_trimesh_chamfer()</span></code></a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="../../_sources/source/generated/DeepSDFStruct.splinepy_unitcells.rst.txt"
+      <li><a href="../../_sources/source/generated/DeepSDFStruct.deep_sdf.metrics.chamfer.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div></div>
