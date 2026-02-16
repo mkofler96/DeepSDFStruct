@@ -291,7 +291,14 @@ class SDFBase(torch.nn.Module, ABC):
         pass
 
     def plot_slice(self, *args, **kwargs):
-        return plot_slice(self, *args, **kwargs)
+        if self.geometric_dim == 2:
+            return plot_slice_2D(self, *args, **kwargs)
+        elif self.geometric_dim == 3:
+            return plot_slice(self, *args, **kwargs)
+        else:
+            raise RuntimeError(
+                f"Cannot plot SDF with geometric dim other than 2 or 3, given {self.geometric_dim}"
+            )
 
     def __add__(self, other):
         return UnionSDF(self, other)
@@ -360,7 +367,7 @@ class UnionSDF(SDFBase):
     def _compute(self, queries):
         result1 = self.obj1._compute(queries)
         result2 = self.obj2._compute(queries)
-        return -torch.maximum(-result1, -result2)
+        return torch.minimum(result1, result2)
 
     def _get_domain_bounds(self):
         bounds1 = self.obj1._get_domain_bounds()
@@ -384,6 +391,13 @@ class DifferenceSDF(SDFBase):
         super().__init__()
         self.obj1 = obj1
         self.obj2 = obj2
+        self.deformation_spline = obj1.deformation_spline
+        if obj1.geometric_dim != obj2.geometric_dim:
+            raise ValueError(
+                "Geomeric dimensions of obj1 and obj2 do not correspond"
+                f" ({obj1.geometric_dim}!={obj2.geometric_dim})"
+            )
+        self.geometric_dim = obj1.geometric_dim
 
     def _compute(self, queries):
         result1 = self.obj1._compute(queries)
@@ -399,13 +413,18 @@ class DifferenceSDF(SDFBase):
 
 
 class NegatedCallable(SDFBase):
-    def __init__(self, obj):
+    def __init__(self, obj: SDFBase):
         super().__init__()
         self.obj = obj
+        # self.deformation_spline = obj.deformation_spline
 
     def _compute(self, input_param):
         result = self.obj(input_param)
         return -result
+
+    def _get_domain_bounds(self):
+        # the domain bounds get smaller when we substract something
+        return self.obj._get_domain_bounds()
 
 
 class BoxSDF(SDFBase):
@@ -430,7 +449,7 @@ def union_torch(D, k=0):
     k: smoothness parameter
     """
     if k == 0:
-        return torch.min(D, axis=1)[0]
+        return torch.min(D, axis=1)[0].view(-1, 1)
     # Start with the first column as d1
     d1 = D[:, 0].copy()
 
@@ -440,7 +459,7 @@ def union_torch(D, k=0):
         h = torch.clip(0.5 + 0.5 * (d2 - d1) / k, 0, 1)
         d1 = d2 + (d1 - d2) * h - k * h * (1 - h)
 
-    return d1
+    return d1.view(-1, 1)
 
 
 def union_numpy(D, k=0):
@@ -628,6 +647,7 @@ class SDFfromLineMesh(SDFBase):
         self.line_mesh = line_mesh
         self.t = thickness
         self.smoothness = smoothness
+        self.geometric_dim = line_mesh.vertices.shape[1]
 
     def _get_domain_bounds(self):
         return self.line_mesh.bounds()
@@ -662,6 +682,7 @@ class SDFfromDeepSDF(SDFBase):
         self.parametrization = None
         self.max_batch = max_batch
         self.set_latent_vec(model._trained_latent_vectors[0])
+        self.geometric_dim = model._decoder.geom_dimension
 
     def set_latent_vec(self, latent_vec: torch.Tensor):
         """
@@ -697,7 +718,7 @@ class SDFfromDeepSDF(SDFBase):
 
         head = 0
         if self.latvec is None:
-            latvec = self.parametrization(queries).to(self.model.device)
+            latvec = self.parametrization(queries).to(self.get_device())
         else:
             latent_dim = self.model._trained_latent_vectors[0].shape[0]
             num_samples = queries.shape[0]
@@ -760,9 +781,9 @@ def point_segment_distance(P1, P2, query_points):
     Q = np.atleast_2d(query_points)  # (N, 2)
 
     # Handle degenerate case: one segment only
-    if P1.shape[0] == 1 and P2.shape[0] == 1:
-        P1 = np.repeat(P1, Q.shape[0], axis=0)
-        P2 = np.repeat(P2, Q.shape[0], axis=0)
+    # if P1.shape[0] == 1 and P2.shape[0] == 1:
+    #     P1 = np.repeat(P1, Q.shape[0], axis=0)
+    #     P2 = np.repeat(P2, Q.shape[0], axis=0)
 
     v = P2 - P1  # (M, 2) segment vectors
     w = Q[:, None, :] - P1[None, :, :]  # (N, M, 2): vector from P1 to each query point
@@ -803,33 +824,40 @@ class TransformedSDF(SDFBase):
     Transformation can be rotation, translation, or scaling.
     """
 
-    def __init__(self, sdf: SDFBase, rotation=None, translation=None, scale=None):
+    def __init__(
+        self, sdf: SDFBase, rotationMatrix=None, translation=None, scaleFactor=None
+    ):
         super().__init__()
         self.sdf = sdf
-        self.rotation = rotation
-        self.translation = translation
-        self.scale = scale
+        if (rotationMatrix is None) or (rotationMatrix == [0, 0, 0]):
+            rotationMatrix = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
+        if translation is None:
+            translation = [0, 0, 0]
+        if scaleFactor is None:
+            scaleFactor = 1
+        r = torch.as_tensor(rotationMatrix, dtype=torch.float32)
+        s = torch.as_tensor([scaleFactor], dtype=torch.float32)
+        t = torch.as_tensor(translation, dtype=torch.float32)
+        self.translation = torch.nn.Parameter(t.reshape(1, 3))
+        self.rotationMatrix = torch.nn.Parameter(r.reshape(3, 3))
+        self.scale = torch.nn.Parameter(s)
 
     def _compute(self, queries: torch.Tensor) -> torch.Tensor:
         xyz = queries
 
-        # apply scale
-        if self.scale is not None:
-            xyz = xyz / self.scale  # inverse scale
+        # apply scale, for now, only uniform scale is allowd
+        xyz = xyz / self.scale  # inverse scale
 
         # apply rotation
-        if self.rotation is not None:
-            xyz = xyz @ self.rotation.T  # rotate points
+        xyz = xyz @ self.rotationMatrix.T  # rotate points
 
         # apply translation
-        if self.translation is not None:
-            xyz = xyz - self.translation
+        xyz = xyz - self.translation
 
         sdf_vals = self.sdf._compute(xyz)
 
         # rescale distances if scaled
-        if self.scale is not None:
-            sdf_vals = sdf_vals * self.scale
+        sdf_vals = sdf_vals * self.scale
         return sdf_vals
 
     def _get_domain_bounds(self) -> torch.Tensor:
@@ -983,6 +1011,79 @@ def plot_slice(
 
     points, u, v = generate_plane_points(origin, normal, res, xlim, ylim)
 
+    sdf_device = fun.get_device()
+    points = torch.from_numpy(points).to(torch.float32).to(sdf_device)
+    sdf = fun(points).reshape((res[0], res[1]))
+    X = u.reshape((res[0], res[1]))
+    Y = v.reshape((res[0], res[1]))
+    sdf = sdf.detach().cpu().numpy()
+
+    # cbar = ax[0].scatter(X, Y, c=sdf, cmap="seismic")c
+    cbar = ax.contourf(X, Y, sdf, cmap=cmap, levels=10)
+    if show_zero_level:
+        ax.contour(X, Y, sdf, levels=[0], colors="black", linewidths=0.5)
+    cbar.set_clim(clim[0], clim[1])
+    ax.set_xticks([])
+    ax.set_yticks([])
+    ax.set_aspect(1)
+    if plt_show:
+        plt.show()
+        return fig, ax
+
+
+def plot_slice_2D(
+    fun: SDFBase,
+    res=(100, 100),
+    ax=None,
+    xlim=(-1, 1),
+    ylim=(-1, 1),
+    clim=(-1, 1),
+    cmap="seismic",
+    show_zero_level=True,
+):
+    """Plot a 2D slice through an SDF as a contour plot.
+
+    This function evaluates an SDF on a planar grid and visualizes the
+    signed distance values using a color map. The zero level set (the
+    actual surface) can be highlighted with a contour line.
+
+    Parameters
+    ----------
+    fun : callable
+        The SDF function to visualize. Should accept a torch.Tensor
+        of shape (N, 3) and return distances of shape (N, 1).
+    res : tuple of int, default (100, 100)
+        Resolution of the slice grid (num_points_u, num_points_v).
+    ax : matplotlib.axes.Axes, optional
+        Axes to plot on. If None, creates a new figure.
+    xlim : tuple of float, default (-1, 1)
+        Range along the first plane axis.
+    ylim : tuple of float, default (-1, 1)
+        Range along the second plane axis.
+    clim : tuple of float, default (-1, 1)
+        Color map limits for distance values.
+    cmap : str, default 'seismic'
+        Matplotlib colormap name.
+    show_zero_level : bool, default True
+        If True, draws a black contour line at distance=0 (the surface).
+
+    Returns
+    -------
+    fig, ax : matplotlib.figure.Figure, matplotlib.axes.Axes
+        Only returned if ax was None (i.e., a new figure was created).
+
+    """
+    plt_show = False
+    if ax is None:
+        fig, ax = plt.subplots()
+        plt_show = True
+
+    u_mesh, v_mesh = np.meshgrid(
+        np.linspace(xlim[0], xlim[1], res[0]), np.linspace(ylim[0], ylim[1], res[1])
+    )
+    u = u_mesh.reshape(-1, 1)
+    v = v_mesh.reshape(-1, 1)
+    points = np.hstack([u, v])
     sdf_device = fun.get_device()
     points = torch.from_numpy(points).to(torch.float32).to(sdf_device)
     sdf = fun(points).reshape((res[0], res[1]))
