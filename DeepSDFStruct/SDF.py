@@ -391,7 +391,6 @@ class DifferenceSDF(SDFBase):
         super().__init__()
         self.obj1 = obj1
         self.obj2 = obj2
-        self.deformation_spline = obj1.deformation_spline
         if obj1.geometric_dim != obj2.geometric_dim:
             raise ValueError(
                 "Geomeric dimensions of obj1 and obj2 do not correspond"
@@ -416,7 +415,6 @@ class NegatedCallable(SDFBase):
     def __init__(self, obj: SDFBase):
         super().__init__()
         self.obj = obj
-        # self.deformation_spline = obj.deformation_spline
 
     def _compute(self, input_param):
         result = self.obj(input_param)
