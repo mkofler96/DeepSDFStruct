@@ -249,20 +249,25 @@ class TorchScaling(torch.nn.Module):
     Used as a baseline deformation function when no complex deformation is needed.
     """
 
-    def __init__(self, scale_factors, bounds, device="cpu", dtype=torch.float32):
+    def __init__(self, scale_factors, translation, bounds, device="cpu", dtype=torch.float32):
         super().__init__()
         self.scale_factors = torch.nn.Parameter(
             torch.tensor(scale_factors, dtype=dtype, device=device)
+        )
+        self.translation = torch.nn.Parameter(
+            torch.tensor(translation, dtype=dtype, device=device)
         )
         self.register_buffer(
             "parametric_bounds", torch.tensor(bounds, dtype=dtype, device=device)
         )
 
     def forward(self, queries: torch.Tensor):
-        return queries * self.scale_factors
+        """param -> phys"""
+        return queries * self.scale_factors + self.translation
 
     def inverse_target_points(self, query_points_phys_space: torch.Tensor):
-        return query_points_phys_space / self.scale_factors
+        """phys -> param"""
+        return (query_points_phys_space - self.translation) / self.scale_factors
 
 
 class TorchSpline(torch.nn.Module):
