@@ -10,7 +10,6 @@ from DeepSDFStruct.sampling import sample_mesh_surface, random_sample_sdf
 import splinepy
 import torch
 import numpy as np
-from DeepSDFStruct.deep_sdf.metrics.chamfer import compute_trimesh_chamfer
 from DeepSDFStruct.deep_sdf.metrics.mesh_to_analytical import mesh_to_analytical
 
 
