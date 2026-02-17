@@ -549,7 +549,7 @@ class SDFfromMesh(SDFBase):
         if scale:
             # scales from [0,1] to [-1,1]
             # https://www.brainvoyager.com/bv/doc/UsersGuide/CoordsAndTransforms/SpatialTransformationMatrices.html
-            mesh = normalize_mesh_to_unit_cube(mesh)
+            mesh, _, _ = normalize_mesh_to_unit_cube(mesh)
         self.mesh = mesh
         self.dtype = dtype
         self.flip_sign = flip_sign
