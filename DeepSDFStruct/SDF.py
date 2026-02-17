@@ -637,7 +637,7 @@ def normalize_mesh_to_unit_cube(mesh: trimesh.Trimesh, shrink_factor: float = 1.
     scale_matrix[:3, :3] *= applied_scale
     mesh.apply_transform(scale_matrix)
     logger.debug(f"to {mesh.bounds.flatten()}")
-    return mesh, 1.0/applied_scale, center
+    return mesh, 1.0 / applied_scale, center
 
 
 class SDFfromLineMesh(SDFBase):

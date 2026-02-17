@@ -249,7 +249,9 @@ class TorchScaling(torch.nn.Module):
     Used as a baseline deformation function when no complex deformation is needed.
     """
 
-    def __init__(self, scale_factors, translation, bounds, device="cpu", dtype=torch.float32):
+    def __init__(
+        self, scale_factors, translation, bounds, device="cpu", dtype=torch.float32
+    ):
         super().__init__()
         self.scale_factors = torch.nn.Parameter(
             torch.tensor(scale_factors, dtype=dtype, device=device)
