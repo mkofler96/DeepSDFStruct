@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>DeepSDFStruct.SDF &#8212; DeepSDFStruct 1.5.4.dev13+gd03432e94 documentation</title>
+    <title>DeepSDFStruct.SDF &#8212; DeepSDFStruct 1.6.1.dev7+g467324b25 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=2aa5dbd1"></script>
+    <script src="../../_static/documentation_options.js?v=137e4be3"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'source/generated/DeepSDFStruct.SDF';</script>
@@ -110,7 +110,7 @@
   
   
   
-    <p class="title logo__title">DeepSDFStruct 1.5.4.dev13+gd03432e94 documentation</p>
+    <p class="title logo__title">DeepSDFStruct 1.6.1.dev7+g467324b25 documentation</p>
   
 </a></div>
     
@@ -242,7 +242,6 @@
 <li class="toctree-l2 has-children"><a class="reference internal" href="DeepSDFStruct.deep_sdf.html">DeepSDFStruct.deep_sdf</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.deep_sdf.data.html">DeepSDFStruct.deep_sdf.data</a></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="DeepSDFStruct.deep_sdf.metrics.html">DeepSDFStruct.deep_sdf.metrics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l4"><a class="reference internal" href="DeepSDFStruct.deep_sdf.metrics.chamfer.html">DeepSDFStruct.deep_sdf.metrics.chamfer</a></li>
 <li class="toctree-l4"><a class="reference internal" href="DeepSDFStruct.deep_sdf.metrics.mesh_to_analytical.html">DeepSDFStruct.deep_sdf.metrics.mesh_to_analytical</a></li>
 </ul>
 </details></li>
@@ -363,7 +362,7 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.SDF.get_equidistant_grid_sample" title="DeepSDFStruct.SDF.get_equidistant_grid_sample"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_equidistant_grid_sample</span></code></a>(bounds, grid_spacing)</p></td>
 <td><p>Generates an equidistant 3D grid of points within the given bounding box.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.SDF.normalize_mesh_to_unit_cube" title="DeepSDFStruct.SDF.normalize_mesh_to_unit_cube"><code class="xref py py-obj docutils literal notranslate"><span class="pre">normalize_mesh_to_unit_cube</span></code></a>(mesh)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.SDF.normalize_mesh_to_unit_cube" title="DeepSDFStruct.SDF.normalize_mesh_to_unit_cube"><code class="xref py py-obj docutils literal notranslate"><span class="pre">normalize_mesh_to_unit_cube</span></code></a>(mesh[, ...])</p></td>
 <td><p>Transform mesh coordinates uniformly to [-1, 1] in all axes.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.SDF.plot_slice" title="DeepSDFStruct.SDF.plot_slice"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_slice</span></code></a>(fun[, origin, normal, res, ax, ...])</p></td>
@@ -941,12 +940,24 @@ based on the normal vector. For axis-aligned planes:
 
 <dl class="py function">
 <dt class="sig sig-object py" id="DeepSDFStruct.SDF.normalize_mesh_to_unit_cube">
-<span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.SDF.</span></span><span class="sig-name descname"><span class="pre">normalize_mesh_to_unit_cube</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mesh</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.SDF.normalize_mesh_to_unit_cube" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.SDF.</span></span><span class="sig-name descname"><span class="pre">normalize_mesh_to_unit_cube</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mesh</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shrink_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.SDF.normalize_mesh_to_unit_cube" title="Link to this definition">#</a></dt>
 <dd><p>Transform mesh coordinates uniformly to [-1, 1] in all axes.
 Keeps aspect ratio of original mesh.</p>
+<dl class="simple">
+<dt>shrink_factor<span class="classifier">float</span></dt><dd><p>Uniform scaling factor applied after normalization.
+1.0  -&gt; exactly fills [-1, 1]
+0.95 -&gt; 5% smaller</p>
+</dd>
+</dl>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>mesh</strong> (<em>trimesh.base.Trimesh</em>)</p>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The fitted mesh, the inverse scaling factor applied (can directly be used as input for the TorchScaling), and the translation vector used.</p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>mesh</strong> (<em>trimesh.base.Trimesh</em>)</p></li>
+<li><p><strong>shrink_factor</strong> (<em>float</em>)</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>

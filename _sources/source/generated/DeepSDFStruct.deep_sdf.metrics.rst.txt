@@ -10,5 +10,4 @@ DeepSDFStruct.deep\_sdf.metrics
    :toctree:
    :recursive:
 
-   chamfer
    mesh_to_analytical

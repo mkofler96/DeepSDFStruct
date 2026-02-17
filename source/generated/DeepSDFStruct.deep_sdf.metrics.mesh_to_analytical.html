@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>DeepSDFStruct.deep_sdf.metrics.mesh_to_analytical &#8212; DeepSDFStruct 1.5.4.dev13+gd03432e94 documentation</title>
+    <title>DeepSDFStruct.deep_sdf.metrics.mesh_to_analytical &#8212; DeepSDFStruct 1.6.1.dev7+g467324b25 documentation</title>
   
   
   
@@ -38,14 +38,14 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=2aa5dbd1"></script>
+    <script src="../../_static/documentation_options.js?v=137e4be3"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'source/generated/DeepSDFStruct.deep_sdf.metrics.mesh_to_analytical';</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="DeepSDFStruct.deep_sdf.models" href="DeepSDFStruct.deep_sdf.models.html" />
-    <link rel="prev" title="DeepSDFStruct.deep_sdf.metrics.chamfer" href="DeepSDFStruct.deep_sdf.metrics.chamfer.html" />
+    <link rel="prev" title="DeepSDFStruct.deep_sdf.metrics" href="DeepSDFStruct.deep_sdf.metrics.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
@@ -110,7 +110,7 @@
   
   
   
-    <p class="title logo__title">DeepSDFStruct 1.5.4.dev13+gd03432e94 documentation</p>
+    <p class="title logo__title">DeepSDFStruct 1.6.1.dev7+g467324b25 documentation</p>
   
 </a></div>
     
@@ -242,7 +242,6 @@
 <li class="toctree-l2 current active has-children"><a class="reference internal" href="DeepSDFStruct.deep_sdf.html">DeepSDFStruct.deep_sdf</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.deep_sdf.data.html">DeepSDFStruct.deep_sdf.data</a></li>
 <li class="toctree-l3 current active has-children"><a class="reference internal" href="DeepSDFStruct.deep_sdf.metrics.html">DeepSDFStruct.deep_sdf.metrics</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
-<li class="toctree-l4"><a class="reference internal" href="DeepSDFStruct.deep_sdf.metrics.chamfer.html">DeepSDFStruct.deep_sdf.metrics.chamfer</a></li>
 <li class="toctree-l4 current active"><a class="current reference internal" href="#">DeepSDFStruct.deep_sdf.metrics.mesh_to_analytical</a></li>
 </ul>
 </details></li>
@@ -373,6 +372,17 @@
 <dt class="sig sig-object py" id="DeepSDFStruct.deep_sdf.metrics.mesh_to_analytical.mesh_to_analytical">
 <span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.deep_sdf.metrics.mesh_to_analytical.</span></span><span class="sig-name descname"><span class="pre">mesh_to_analytical</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gt_sdf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gen_mesh</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.deep_sdf.metrics.mesh_to_analytical.mesh_to_analytical" title="Link to this definition">#</a></dt>
 <dd><p>Calculates the SDF for every vertex on the mesh</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>gt_sdf</strong> (<a class="reference internal" href="DeepSDFStruct.SDF.html#DeepSDFStruct.SDF.SDFBase" title="DeepSDFStruct.SDF.SDFBase"><em>DeepSDFStruct.SDF.SDFBase</em></a>)</p></li>
+<li><p><strong>gen_mesh</strong> (<a class="reference internal" href="DeepSDFStruct.mesh.html#DeepSDFStruct.mesh.torchSurfMesh" title="DeepSDFStruct.mesh.torchSurfMesh"><em>DeepSDFStruct.mesh.torchSurfMesh</em></a>)</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 </section>
@@ -388,12 +398,12 @@
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="DeepSDFStruct.deep_sdf.metrics.chamfer.html"
+       href="DeepSDFStruct.deep_sdf.metrics.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">DeepSDFStruct.deep_sdf.metrics.chamfer</p>
+        <p class="prev-next-title">DeepSDFStruct.deep_sdf.metrics</p>
       </div>
     </a>
     <a class="right-next"
