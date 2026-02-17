@@ -549,7 +549,7 @@ class SDFfromMesh(SDFBase):
         if scale:
             # scales from [0,1] to [-1,1]
             # https://www.brainvoyager.com/bv/doc/UsersGuide/CoordsAndTransforms/SpatialTransformationMatrices.html
-            mesh = normalize_mesh_to_unit_cube(mesh)
+            mesh, _, _ = normalize_mesh_to_unit_cube(mesh)
         self.mesh = mesh
         self.dtype = dtype
         self.flip_sign = flip_sign
@@ -597,10 +597,17 @@ class SDFfromMesh(SDFBase):
             return result
 
 
-def normalize_mesh_to_unit_cube(mesh: trimesh.Trimesh):
+def normalize_mesh_to_unit_cube(mesh: trimesh.Trimesh, shrink_factor: float = 1.0):
     """
     Transform mesh coordinates uniformly to [-1, 1] in all axes.
     Keeps aspect ratio of original mesh.
+
+    shrink_factor : float
+        Uniform scaling factor applied after normalization.
+        1.0  -> exactly fills [-1, 1]
+        0.95 -> 5% smaller
+
+    :return: The fitted mesh, the inverse scaling factor applied (can directly be used as input for the TorchScaling), and the translation vector used.
     """
     logger.debug(f"Scaling mesh from {mesh.bounds.flatten()}")
     # --- Compute bounding box ---
@@ -611,7 +618,7 @@ def normalize_mesh_to_unit_cube(mesh: trimesh.Trimesh):
     center = (bbox_max + bbox_min) / 2.0
 
     # Largest extent
-    scale = (
+    base_scale = (
         np.max(bbox_max - bbox_min) / 2.0
     )  # divide by 2 because [-1,1] spans 2 units
 
@@ -625,11 +632,12 @@ def normalize_mesh_to_unit_cube(mesh: trimesh.Trimesh):
     mesh.apply_transform(matrix)
 
     # --- Apply uniform scaling ---
+    applied_scale = shrink_factor / base_scale
     scale_matrix = np.eye(4)
-    scale_matrix[:3, :3] *= 1.0 / scale
+    scale_matrix[:3, :3] *= applied_scale
     mesh.apply_transform(scale_matrix)
     logger.debug(f"to {mesh.bounds.flatten()}")
-    return mesh
+    return mesh, 1.0 / applied_scale, center
 
 
 class SDFfromLineMesh(SDFBase):

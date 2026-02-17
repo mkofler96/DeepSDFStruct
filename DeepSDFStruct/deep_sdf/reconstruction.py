@@ -17,6 +17,7 @@ def reconstruct_from_samples(
     loss_fn="ClampedL1",
     batch_size=512,
     drop_last=True,
+    use_tanh_on_gt=False,
     loss_plot_path=None,
     optimizer_name="adam",
     deformation_function=None | TorchSpline | TorchScaling,
@@ -41,9 +42,12 @@ def reconstruct_from_samples(
     for name, mn, mx in zip(["x", "y", "z"], verts_min.values, verts_max.values):
         print(f"{name}: min={mn:.6f}, max={mx:.6f}")
 
-    queries_parameter_space = deformation_function.inverse_target_points(
-        sdfSample.samples
-    )
+    if deformation_function is not None:
+        queries_parameter_space = deformation_function.inverse_target_points(
+            sdfSample.samples
+        ).detach()
+    else:
+        queries_parameter_space = sdfSample.samples.detach()
 
     queries_min = queries_parameter_space.min(dim=0).values
     queries_max = queries_parameter_space.max(dim=0).values
@@ -55,6 +59,8 @@ def reconstruct_from_samples(
         print(f"{name}: min={mn:.6f}, max={mx:.6f}")
 
     gt_dist = sdfSample.distances
+    if use_tanh_on_gt:
+        gt_dist = torch.tanh(gt_dist)
 
     pbar = trange(num_iterations, desc="Reconstructing SDF from mesh", leave=True)
 
@@ -91,10 +97,10 @@ def reconstruct_from_samples(
                 loss.backward()
                 return loss
 
-            if optimizer == "adam":
+            if optimizer_name == "adam":
                 loss = closure()
                 optimizer.step()
-            elif optimizer == "lbfgs":
+            elif optimizer_name == "lbfgs":
                 loss = optimizer.step(closure)
             loss_num = loss.detach().item()
             pbar.set_postfix({"loss": f"{loss_num:.5f}"})
