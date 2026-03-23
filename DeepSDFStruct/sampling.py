@@ -331,9 +331,12 @@ class SDFSampler:
                 if os.path.isfile(fname):
                     logger.warning(f"File {fname} already exists")
                     continue
-                sdf = self.get_sdf_from_geometry(
-                    geometry, n_faces, self.unify_multipatches
-                )
+                if not isinstance(geometry, SDFBase):
+                    sdf = self.get_sdf_from_geometry(
+                        geometry, n_faces, self.unify_multipatches
+                    )
+                else:
+                    sdf = geometry
                 sampled_sdf = random_sample_sdf(
                     sdf,
                     bounds=(-1, 1),
