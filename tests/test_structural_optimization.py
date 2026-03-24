@@ -69,7 +69,11 @@ def test_structural_mesh_output_regression():
         lattice_struct, 30, mesh_type="volume", differentiate=False, device=model.device
     )
     surf_mesh, _ = create_3D_mesh(
-        lattice_struct, 30, mesh_type="surface", differentiate=False, device=model.device
+        lattice_struct,
+        30,
+        mesh_type="surface",
+        differentiate=False,
+        device=model.device,
     )
 
     assert isinstance(volume_mesh, torchVolumeMesh)
@@ -86,10 +90,7 @@ def test_structural_mesh_output_regression():
         rtol=0.0,
     )
     torch.testing.assert_close(
-        volume_mesh.vertices.max(dim=0).values,
-        expected_max,
-        atol=1e-6,
-        rtol=0.0,
+        volume_mesh.vertices.max(dim=0).values, expected_max, atol=1e-6, rtol=0.0
     )
     torch.testing.assert_close(
         volume_mesh.vertices.detach().sum(),
@@ -109,7 +110,9 @@ def test_structural_mesh_output_regression():
     vols = tet_signed_vol(volume_mesh.vertices, tets_reordered)
     n_negative = int((vols < 0).sum().item())
     n_zero = int((vols == 0).sum().item())
-    assert n_negative == 7, f"Expected 7 inverted tets before filtering, got {n_negative}"
+    assert (
+        n_negative == 7
+    ), f"Expected 7 inverted tets before filtering, got {n_negative}"
     assert n_zero == 0, f"Expected no zero-volume tets, got {n_zero}"
 
     verts_tf = volume_mesh.vertices.to("cpu").to(torch.float64)
