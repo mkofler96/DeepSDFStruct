@@ -232,7 +232,6 @@ def process_single_geometry(args):
         geometry,
         outdir,
         dataset_name,
-        unify_multipatches,
         n_faces,
         n_samples,
         sampling_strategy,
@@ -254,7 +253,7 @@ def process_single_geometry(args):
         logger.warning(f"File {fname} already exists")
         return
 
-    sdf = get_sdf_from_geometry(geometry, n_faces, unify_multipatches)
+    sdf = get_sdf_from_geometry(geometry, n_faces)
     pos, neg = sample_sdf(
         sdf, show=show, n_samples=n_samples, sampling_strategy=sampling_strategy
     )
@@ -268,14 +267,12 @@ class SDFSampler:
         outdir,
         splitdir,
         dataset_name,
-        unify_multipatches=True,
         stds=[0.05, 0.025],
         overwrite_existing=False,
     ) -> None:
         self.outdir = outdir
         self.splitdir = splitdir
         self.dataset_name = dataset_name
-        self.unify_multipatches = unify_multipatches
         self.geometries = {}
         self.stds = stds
         folder_name = pathlib.Path(outdir) / dataset_name
@@ -302,9 +299,7 @@ class SDFSampler:
             for instance_id, geometry in tqdm(
                 instance_list.items(), desc="Processing instances"
             ):
-                sdf = self.get_sdf_from_geometry(
-                    geometry, n_faces, self.unify_multipatches
-                )
+                sdf = self.get_sdf_from_geometry(geometry, n_faces)
                 sdf_list.append(sdf)
         return sdf_list
 
@@ -313,7 +308,6 @@ class SDFSampler:
         sampling_strategy="uniform",
         n_faces=100,
         n_samples: int = 1e5,
-        unify_multipatches=True,
         add_surface_samples=True,
         also_save_vtk=False,
     ):
@@ -332,9 +326,7 @@ class SDFSampler:
                     logger.warning(f"File {fname} already exists")
                     continue
                 if not isinstance(geometry, SDFBase):
-                    sdf = self.get_sdf_from_geometry(
-                        geometry, n_faces, self.unify_multipatches
-                    )
+                    sdf = self.get_sdf_from_geometry(geometry, n_faces)
                 else:
                     sdf = geometry
                 sampled_sdf = random_sample_sdf(
@@ -382,29 +374,10 @@ class SDFSampler:
             json.dump(summary, f, indent=4)
 
     def get_sdf_from_geometry(
-        self,
-        geometry,
-        n_faces: int,
-        unify_multipatches: bool = True,
-        threshold: float = 1e-5,
+        self, geometry, n_faces: int, threshold: float = 1e-5
     ) -> SDFfromMesh:
         if isinstance(geometry, splinepy.Multipatch):
-            if unify_multipatches:
-                patch_meshs = []
-                for patch in geometry.patches:
-                    patch_faces = patch.extract.faces(n_faces)
-                    patch_mesh = trimesh.Trimesh(
-                        vertices=patch_faces.vertices, faces=patch_faces.faces
-                    )
-                    # add all patches as meshs to one boolean addition
-                    patch_meshs.append(SDFfromMesh(patch_mesh))
-                sdf_geom = patch_meshs[0]
-                for pm in patch_meshs[1:]:
-                    sdf_geom = sdf_geom + pm
-            else:
-                sdf_geom = SDFfromMesh(
-                    geometry.extract.faces(n_faces), threshold=threshold
-                )
+            sdf_geom = SDFfromMesh(geometry.extract.faces(n_faces), threshold=threshold)
         elif isinstance(geometry, trimesh.Trimesh):
             sdf_geom = SDFfromMesh(geometry, threshold=threshold)
 
