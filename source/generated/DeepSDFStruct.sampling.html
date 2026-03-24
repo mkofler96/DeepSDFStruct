@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>DeepSDFStruct.sampling &#8212; DeepSDFStruct 1.6.1.dev13+g2058b7ea7 documentation</title>
+    <title>DeepSDFStruct.sampling &#8212; DeepSDFStruct 1.7.1.dev1+gaf895e611 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=acf3f07d"></script>
+    <script src="../../_static/documentation_options.js?v=d3deaa2c"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'source/generated/DeepSDFStruct.sampling';</script>
@@ -110,7 +110,7 @@
   
   
   
-    <p class="title logo__title">DeepSDFStruct 1.6.1.dev13+g2058b7ea7 documentation</p>
+    <p class="title logo__title">DeepSDFStruct 1.7.1.dev1+gaf895e611 documentation</p>
   
 </a></div>
     
@@ -592,7 +592,7 @@ for splitting by sign and visualization.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="DeepSDFStruct.sampling.SDFSampler">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.sampling.</span></span><span class="sig-name descname"><span class="pre">SDFSampler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outdir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">splitdir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unify_multipatches</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[0.05,</span> <span class="pre">0.025]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite_existing</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.sampling.SDFSampler" title="Link to this definition">#</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.sampling.</span></span><span class="sig-name descname"><span class="pre">SDFSampler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outdir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">splitdir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[0.05,</span> <span class="pre">0.025]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite_existing</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.sampling.SDFSampler" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="field-list simple">
 </dl>
@@ -644,7 +644,7 @@ for splitting by sign and visualization.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="DeepSDFStruct.sampling.SDFSampler.get_sdf_from_geometry">
-<span class="sig-name descname"><span class="pre">get_sdf_from_geometry</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">geometry</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_faces</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unify_multipatches</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-05</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.sampling.SDFSampler.get_sdf_from_geometry" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">get_sdf_from_geometry</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">geometry</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_faces</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-05</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.sampling.SDFSampler.get_sdf_from_geometry" title="Link to this definition">#</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="DeepSDFStruct.SDF.html#DeepSDFStruct.SDF.SDFfromMesh" title="DeepSDFStruct.SDF.SDFfromMesh"><code class="xref py py-class docutils literal notranslate"><span class="pre">SDFfromMesh</span></code></a></span></p>
@@ -652,7 +652,6 @@ for splitting by sign and visualization.</p>
 <dt class="field-even">Parameters<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
 <li><p><strong>n_faces</strong> (<em>int</em>)</p></li>
-<li><p><strong>unify_multipatches</strong> (<em>bool</em>)</p></li>
 <li><p><strong>threshold</strong> (<em>float</em>)</p></li>
 </ul>
 </dd>
@@ -661,7 +660,7 @@ for splitting by sign and visualization.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="DeepSDFStruct.sampling.SDFSampler.process_geometries">
-<span class="sig-name descname"><span class="pre">process_geometries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sampling_strategy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'uniform'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_faces</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_samples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unify_multipatches</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_surface_samples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">also_save_vtk</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.sampling.SDFSampler.process_geometries" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">process_geometries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sampling_strategy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'uniform'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_faces</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_samples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_surface_samples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">also_save_vtk</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.sampling.SDFSampler.process_geometries" title="Link to this definition">#</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>n_samples</strong> (<em>int</em>)</p>
