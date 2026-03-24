@@ -138,7 +138,11 @@ def test_structural_optimization(num_iter=1):
 
         # log("Starting Simulation")
         u, f, _, _, _ = cantilever.solve(
-            rtol=1e-2, atol=1e-2, device="cpu", method="spsolve"
+            rtol=1e-2,
+            atol=1e-2,
+            device="cpu",
+            method="spsolve",
+            differentiable_parameters=cantilever.forces,
         )
 
         # Compute sensitivity of compliance w.r.t. element thicknesses
