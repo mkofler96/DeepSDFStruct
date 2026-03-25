@@ -333,7 +333,9 @@ class SDFSampler:
         tasks = []
 
         for class_name, instance_list in self.geometries.items():
-            logger.info(f"processing geometry list {class_name}")
+            logger.info(
+                f"processing geometry list {class_name} with {len(instance_list)} items."
+            )
 
             folder_name = pathlib.Path(self.outdir) / self.dataset_name / class_name
 
@@ -355,6 +357,8 @@ class SDFSampler:
 
             with multiprocessing.Pool(processes=n_workers) as pool:
                 pool.starmap(func, tasks)
+
+            logger.info(f"done processing geometry list {class_name}")
 
         summary = DataSetInfo(
             dataset_name=self.dataset_name,
