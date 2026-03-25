@@ -3,9 +3,11 @@ from DeepSDFStruct.sampling import SDFSampler, augment_by_FFD
 from DeepSDFStruct.splinepy_unitcells.chi_3D import Chi3D
 from DeepSDFStruct.splinepy_unitcells.cross_lattice import CrossLattice
 import splinepy
+import multiprocessing as mp
 
 
 def test_generate_dataset_from_obj_files():
+    mp.set_start_method("spawn", force=True)
     outdir = "./training_data"
     splitdir = "./training_data/splits"
     dataset_name = "furniture"
@@ -25,6 +27,7 @@ def test_generate_dataset_from_obj_files():
 
 
 def test_generate_dataset():
+    mp.set_start_method("spawn", force=True)
     outdir = "./training_data"
     splitdir = "./training_data/splits"
     dataset_name = "microstructure"
