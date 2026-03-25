@@ -229,15 +229,15 @@ class SampledSDF:
 
 def _process_single_geometry_instance(
     geometry,
-    file_name,
-    folder_name,
+    file_name: str,
+    folder_name: pathlib.Path,
     scale,
-    n_faces,
     n_samples,
     sampling_strategy,
     add_surface_samples,
     stds,
     also_save_vtk,
+    also_save_mesh,
 ):
     fname = folder_name / file_name
     if not os.path.exists(folder_name):
@@ -250,6 +250,8 @@ def _process_single_geometry_instance(
         sdf = geometry
     elif isinstance(geometry, trimesh.Trimesh):
         mesh = geometry
+        if also_save_mesh:
+            mesh.export(fname.with_suffix(".stl"))
         sdf = SDFfromMesh(mesh, scale=scale)
     else:
         raise NotImplementedError(
@@ -327,6 +329,7 @@ class SDFSampler:
         n_samples: int = 100000,
         add_surface_samples=True,
         also_save_vtk=False,
+        also_save_mesh=True,
         scale=True,
         n_workers=1,
     ):
@@ -342,12 +345,12 @@ class SDFSampler:
             func = partial(
                 _process_single_geometry_instance,
                 scale=scale,
-                n_faces=n_faces,
                 n_samples=n_samples,
                 sampling_strategy=sampling_strategy,
                 add_surface_samples=add_surface_samples,
                 stds=self.stds,
                 also_save_vtk=also_save_vtk,
+                also_save_mesh=also_save_mesh,
             )
 
             tasks = [
