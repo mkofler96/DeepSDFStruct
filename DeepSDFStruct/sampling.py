@@ -328,7 +328,7 @@ class SDFSampler:
         add_surface_samples=True,
         also_save_vtk=False,
         scale=True,
-        n_workers=os.cpu_count(),
+        n_workers=1,
     ):
         tasks = []
 
