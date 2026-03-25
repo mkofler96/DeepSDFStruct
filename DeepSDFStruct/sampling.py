@@ -241,7 +241,7 @@ def _process_single_geometry_instance(
 ):
     fname = folder_name / file_name
     if not os.path.exists(folder_name):
-        os.makedirs(folder_name)
+        os.makedirs(folder_name, exist_ok=True)
     if os.path.isfile(fname):
         logger.warning(f"File {fname} already exists")
         return
@@ -251,15 +251,9 @@ def _process_single_geometry_instance(
     elif isinstance(geometry, trimesh.Trimesh):
         mesh = geometry
         sdf = SDFfromMesh(mesh, scale=scale)
-    elif isinstance(geometry, splinepy.Multipatch | splinepy.spline.Spline):
-        mesh = geometry.extract.faces(n_faces)
-        sdf = SDFfromMesh(mesh, scale=scale)
-    elif isinstance(geometry, torchSurfMesh):
-        mesh = geometry.to_trimesh()
-        sdf = SDFfromMesh(mesh, scale=scale)
     else:
         raise NotImplementedError(
-            f"Geometry of type {type(geometry)} is not implemented yet."
+            f"Geometry must be either trimesh or SDFBase, but not {type(geometry)}."
         )
     sampled_sdf = random_sample_sdf(
         sdf, bounds=(-1, 1), n_samples=int(n_samples), type=sampling_strategy
@@ -306,10 +300,23 @@ class SDFSampler:
         else:
             os.makedirs(folder_name)
 
-    def add_class(self, geom_list: list, class_name: str) -> None:
+    def add_class(self, geom_list: list, class_name: str, n_faces=100) -> None:
+        """
+        Adds a geometry to the sampler object. Tries to transform inputs to
+        trimesh data. In case the geometry is a spline object, the n_faces
+        parameter determines the accuracy of the extracted mesh
+        """
         instances = {}
         for i, geom in enumerate(geom_list):
             instance_name = f"{class_name}_{i:05}"
+            if isinstance(geom, splinepy.Multipatch | splinepy.spline.Spline):
+                geom_gus: gus.Faces = geom.extract.faces(n_faces)
+                tris = gus.create.faces.to_simplex(geom_gus)
+                geom = trimesh.Trimesh(vertices=tris.vertices, faces=tris.faces)
+
+            elif isinstance(geom, torchSurfMesh):
+                geom = geom.to_trimesh()
+
             instances[instance_name] = geom
         self.geometries[class_name] = instances
 
@@ -321,7 +328,7 @@ class SDFSampler:
         add_surface_samples=True,
         also_save_vtk=False,
         scale=True,
-        n_workers=8,
+        n_workers=os.cpu_count(),
     ):
         tasks = []
 
@@ -489,7 +496,7 @@ def sample_mesh_surface(
 
     Args:
         sdf (SDFBase): A callable SDF object that takes 3D points and returns signed distances.
-        mesh (gus.Faces): A mesh object containing the vertices.
+        mesh (trimesh.Trimesh): A mesh object containing the vertices and faces.
         n_samples (int): Number of mesh vertices to sample
         stds (list[float]): Standard deviations for Gaussian noise added to sampled vertices.
             - Typical values: [0.05, 0.0015].
