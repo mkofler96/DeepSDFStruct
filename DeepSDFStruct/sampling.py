@@ -38,8 +38,6 @@ DataSetInfo
 
 Functions
 ---------
-process_single_geometry
-    Process a single geometry to generate training samples.
 generate_dataset
     Batch process multiple geometries to create a complete dataset.
 sample_sdf_*
@@ -47,6 +45,10 @@ sample_sdf_*
 """
 
 import os
+from functools import partial
+from itertools import starmap
+import multiprocessing
+
 import vtk
 import numpy as np
 import json
@@ -55,6 +57,7 @@ import typing
 import gustaf as gus
 import trimesh
 from DeepSDFStruct.SDF import SDFfromMesh, SDFBase
+from DeepSDFStruct.mesh import torchSurfMesh
 import DeepSDFStruct
 
 # from analysis.problems.homogenization import computeHomogenizedMaterialProperties
@@ -225,40 +228,55 @@ class SampledSDF:
         )
 
 
-def process_single_geometry(args):
-    (
-        class_name,
-        instance_id,
-        geometry,
-        outdir,
-        dataset_name,
-        n_faces,
-        n_samples,
-        sampling_strategy,
-        show,
-        get_sdf_from_geometry,
-        sample_sdf,
-    ) = args
-
-    logger.info(f"processing {instance_id} in geometry list {class_name}")
-    file_name = f"{instance_id}.npz"
-
-    folder_name = pathlib.Path(outdir) / dataset_name / class_name
+def _process_single_geometry_instance(
+    geometry,
+    file_name: str,
+    folder_name: pathlib.Path,
+    scale,
+    n_samples,
+    sampling_strategy,
+    add_surface_samples,
+    stds,
+    also_save_vtk,
+    also_save_mesh,
+):
     fname = folder_name / file_name
-
     if not os.path.exists(folder_name):
         os.makedirs(folder_name, exist_ok=True)
-
-    if os.path.isfile(fname) and not show:
+    if os.path.isfile(fname):
         logger.warning(f"File {fname} already exists")
         return
-
-    sdf = get_sdf_from_geometry(geometry, n_faces)
-    pos, neg = sample_sdf(
-        sdf, show=show, n_samples=n_samples, sampling_strategy=sampling_strategy
+    mesh = None
+    if isinstance(geometry, SDFBase):
+        sdf = geometry
+    elif isinstance(geometry, trimesh.Trimesh):
+        mesh = geometry
+        if also_save_mesh:
+            mesh.export(fname.with_suffix(".stl"))
+        sdf = SDFfromMesh(mesh, scale=scale)
+    else:
+        raise NotImplementedError(
+            f"Geometry must be either trimesh or SDFBase, but not {type(geometry)}."
+        )
+    sampled_sdf = random_sample_sdf(
+        sdf, bounds=(-1, 1), n_samples=int(n_samples), type=sampling_strategy
     )
+    if add_surface_samples:
+        if not isinstance(mesh, trimesh.Trimesh):
+            logger.warning(
+                "Add surface samples was specified, but geometry"
+                f"is not given as a mesh but as {type(geometry)}"
+            )
+        else:
+            surf_samples = sample_mesh_surface(
+                sdf, mesh, int(n_samples // 2), stds, device="cpu", dtype=torch.float32
+            )
+            sampled_sdf += surf_samples
+    pos, neg = sampled_sdf.split_pos_neg()
 
     np.savez(fname, neg=neg.stacked, pos=pos.stacked)
+    if also_save_vtk:
+        save_points_to_vtp(fname.with_suffix(".vtp"), neg=neg.stacked, pos=pos.stacked)
 
 
 class SDFSampler:
@@ -285,79 +303,71 @@ class SDFSampler:
         else:
             os.makedirs(folder_name)
 
-    def add_class(self, geom_list: list, class_name: str) -> None:
+    def add_class(self, geom_list: list, class_name: str, n_faces=100) -> None:
+        """
+        Adds a geometry to the sampler object. Tries to transform inputs to
+        trimesh data. In case the geometry is a spline object, the n_faces
+        parameter determines the accuracy of the extracted mesh
+        """
         instances = {}
         for i, geom in enumerate(geom_list):
             instance_name = f"{class_name}_{i:05}"
+            if isinstance(geom, splinepy.Multipatch | splinepy.spline.Spline):
+                geom_gus: gus.Faces = geom.extract.faces(n_faces)
+                tris = gus.create.faces.to_simplex(geom_gus)
+                geom = trimesh.Trimesh(vertices=tris.vertices, faces=tris.faces)
+
+            elif isinstance(geom, torchSurfMesh):
+                geom = geom.to_trimesh()
+
             instances[instance_name] = geom
         self.geometries[class_name] = instances
-
-    def get_SDF_list(self, n_faces=100) -> list[SDFBase]:
-        sdf_list = []
-        for class_name, instance_list in self.geometries.items():
-            logger.info(f"processing geometry list {class_name}")
-            for instance_id, geometry in tqdm(
-                instance_list.items(), desc="Processing instances"
-            ):
-                sdf = self.get_sdf_from_geometry(geometry, n_faces)
-                sdf_list.append(sdf)
-        return sdf_list
 
     def process_geometries(
         self,
         sampling_strategy="uniform",
         n_faces=100,
-        n_samples: int = 1e5,
+        n_samples: int = 100000,
         add_surface_samples=True,
         also_save_vtk=False,
+        also_save_mesh=True,
+        scale=True,
+        n_workers=0,
     ):
+        tasks = []
+
         for class_name, instance_list in self.geometries.items():
-            logger.info(f"processing geometry list {class_name}")
-            for instance_id, geometry in tqdm(
-                instance_list.items(), desc="Processing instances"
-            ):
-                file_name = f"{instance_id}.npz"
+            logger.info(
+                f"processing geometry list {class_name} with {len(instance_list)} items."
+            )
 
-                folder_name = pathlib.Path(self.outdir) / self.dataset_name / class_name
-                fname = folder_name / file_name
-                if not os.path.exists(folder_name):
-                    os.makedirs(folder_name)
-                if os.path.isfile(fname):
-                    logger.warning(f"File {fname} already exists")
-                    continue
-                if not isinstance(geometry, SDFBase):
-                    sdf = self.get_sdf_from_geometry(geometry, n_faces)
-                else:
-                    sdf = geometry
-                sampled_sdf = random_sample_sdf(
-                    sdf,
-                    bounds=(-1, 1),
-                    n_samples=int(n_samples),
-                    type=sampling_strategy,
-                )
-                if add_surface_samples:
-                    if not isinstance(geometry, trimesh.Trimesh):
-                        logger.warning(
-                            "Add surface samples was specified, but geometry"
-                            f"is not given as a trimesh.Trimesh but as {type(geometry)}"
-                        )
-                    else:
-                        surf_samples = sample_mesh_surface(
-                            sdf,
-                            sdf.mesh,
-                            int(n_samples // 2),
-                            self.stds,
-                            device="cpu",
-                            dtype=torch.float32,
-                        )
-                        sampled_sdf += surf_samples
-                pos, neg = sampled_sdf.split_pos_neg()
+            folder_name = pathlib.Path(self.outdir) / self.dataset_name / class_name
 
-                np.savez(fname, neg=neg.stacked, pos=pos.stacked)
-                if also_save_vtk:
-                    save_points_to_vtp(
-                        fname.with_suffix(".vtp"), neg=neg.stacked, pos=pos.stacked
-                    )
+            func = partial(
+                _process_single_geometry_instance,
+                scale=scale,
+                n_samples=n_samples,
+                sampling_strategy=sampling_strategy,
+                add_surface_samples=add_surface_samples,
+                stds=self.stds,
+                also_save_vtk=also_save_vtk,
+                also_save_mesh=also_save_mesh,
+            )
+
+            tasks = [
+                (geometry, f"{instance_id}.npz", folder_name)
+                for instance_id, geometry in instance_list.items()
+            ]
+            if n_workers > 0:
+                logger.info(f"starting multiprocessing with {n_workers} workers")
+                with multiprocessing.Pool(processes=n_workers) as pool:
+                    pool.starmap(func, tasks)
+            else:
+                logger.info("starting serial processing of geometries")
+                starmap(func, tasks)
+
+            logger.info(f"done processing geometry list {class_name}")
+
         summary = DataSetInfo(
             dataset_name=self.dataset_name,
             class_names=list(self.geometries.keys()),
@@ -372,21 +382,6 @@ class SDFSampler:
             str(pathlib.Path(self.outdir) / self.dataset_name / "summary.json"), "w"
         ) as f:
             json.dump(summary, f, indent=4)
-
-    def get_sdf_from_geometry(
-        self, geometry, n_faces: int, threshold: float = 1e-5
-    ) -> SDFfromMesh:
-        if isinstance(geometry, splinepy.Multipatch):
-            sdf_geom = SDFfromMesh(geometry.extract.faces(n_faces), threshold=threshold)
-        elif isinstance(geometry, trimesh.Trimesh):
-            sdf_geom = SDFfromMesh(geometry, threshold=threshold)
-
-        else:
-            raise NotImplementedError(
-                f"Geometry of type {type(geometry)} not supported yet."
-            )
-
-        return sdf_geom
 
     def get_meshs_from_folder(self, foldername, mesh_type) -> list:
         """
@@ -498,7 +493,7 @@ def random_sample_sdf(
 
 def sample_mesh_surface(
     sdf: SDFBase,
-    mesh: gus.Faces,
+    mesh: trimesh.Trimesh,
     n_samples: int,
     stds: list[float],
     device="cpu",
@@ -513,7 +508,7 @@ def sample_mesh_surface(
 
     Args:
         sdf (SDFBase): A callable SDF object that takes 3D points and returns signed distances.
-        mesh (gus.Faces): A mesh object containing the vertices.
+        mesh (trimesh.Trimesh): A mesh object containing the vertices and faces.
         n_samples (int): Number of mesh vertices to sample
         stds (list[float]): Standard deviations for Gaussian noise added to sampled vertices.
             - Typical values: [0.05, 0.0015].
@@ -528,9 +523,7 @@ def sample_mesh_surface(
     """
     samples = []
 
-    trim = trimesh.Trimesh(mesh.vertices, mesh.faces)
-
-    random_samples = torch.tensor(trim.sample(n_samples), dtype=dtype, device=device)
+    random_samples = torch.tensor(mesh.sample(n_samples), dtype=dtype, device=device)
 
     for std in stds:
         noise = torch.randn((n_samples, 3), device=device, dtype=dtype) * std
