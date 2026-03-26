@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>DeepSDFStruct.sampling &#8212; DeepSDFStruct 1.7.1.dev1+gaf895e611 documentation</title>
+    <title>DeepSDFStruct.sampling &#8212; DeepSDFStruct 1.7.1.dev9+gdb3b8da9b documentation</title>
   
   
   
@@ -38,7 +38,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=d3deaa2c"></script>
+    <script src="../../_static/documentation_options.js?v=afc7f344"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'source/generated/DeepSDFStruct.sampling';</script>
@@ -110,7 +110,7 @@
   
   
   
-    <p class="title logo__title">DeepSDFStruct 1.7.1.dev1+gaf895e611 documentation</p>
+    <p class="title logo__title">DeepSDFStruct 1.7.1.dev9+gdb3b8da9b documentation</p>
   
 </a></div>
     
@@ -395,8 +395,6 @@ for splitting by sign and visualization.</p>
 <section id="functions">
 <h3>Functions<a class="headerlink" href="#functions" title="Link to this heading">#</a></h3>
 <dl class="simple">
-<dt>process_single_geometry</dt><dd><p>Process a single geometry to generate training samples.</p>
-</dd>
 <dt>generate_dataset</dt><dd><p>Batch process multiple geometries to create a complete dataset.</p>
 </dd>
 <dt>sample_sdf_*</dt><dd><p>Various sampling strategies for different use cases.</p>
@@ -416,22 +414,19 @@ for splitting by sign and visualization.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.sampling.noisy_sample" title="DeepSDFStruct.sampling.noisy_sample"><code class="xref py py-obj docutils literal notranslate"><span class="pre">noisy_sample</span></code></a>(t_mesh, std, count)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.sampling.process_single_geometry" title="DeepSDFStruct.sampling.process_single_geometry"><code class="xref py py-obj docutils literal notranslate"><span class="pre">process_single_geometry</span></code></a>(args)</p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.sampling.random_points" title="DeepSDFStruct.sampling.random_points"><code class="xref py py-obj docutils literal notranslate"><span class="pre">random_points</span></code></a>(count)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.sampling.random_points" title="DeepSDFStruct.sampling.random_points"><code class="xref py py-obj docutils literal notranslate"><span class="pre">random_points</span></code></a>(count)</p></td>
 <td><p>random points in a unit sphere centered at (0, 0, 0)</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.sampling.random_points_cube" title="DeepSDFStruct.sampling.random_points_cube"><code class="xref py py-obj docutils literal notranslate"><span class="pre">random_points_cube</span></code></a>(count, box_size)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.sampling.random_points_cube" title="DeepSDFStruct.sampling.random_points_cube"><code class="xref py py-obj docutils literal notranslate"><span class="pre">random_points_cube</span></code></a>(count, box_size)</p></td>
 <td><p>random points in a cube with size box_size centered at (0, 0, 0)</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.sampling.random_sample_sdf" title="DeepSDFStruct.sampling.random_sample_sdf"><code class="xref py py-obj docutils literal notranslate"><span class="pre">random_sample_sdf</span></code></a>(sdf, bounds, n_samples[, ...])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.sampling.random_sample_sdf" title="DeepSDFStruct.sampling.random_sample_sdf"><code class="xref py py-obj docutils literal notranslate"><span class="pre">random_sample_sdf</span></code></a>(sdf, bounds, n_samples[, ...])</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.sampling.sample_mesh_surface" title="DeepSDFStruct.sampling.sample_mesh_surface"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sample_mesh_surface</span></code></a>(sdf, mesh, n_samples, stds)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.sampling.sample_mesh_surface" title="DeepSDFStruct.sampling.sample_mesh_surface"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sample_mesh_surface</span></code></a>(sdf, mesh, n_samples, stds)</p></td>
 <td><p>Sample noisy points around a mesh surface and evaluate them with a signed distance function (SDF).</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.sampling.save_points_to_vtp" title="DeepSDFStruct.sampling.save_points_to_vtp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_points_to_vtp</span></code></a>(filename, neg, pos)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.sampling.save_points_to_vtp" title="DeepSDFStruct.sampling.save_points_to_vtp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_points_to_vtp</span></code></a>(filename, neg, pos)</p></td>
 <td><p>Save pos/neg SDF sample points as a VTU point cloud using vtkPolyData.</p></td>
 </tr>
 </tbody>
@@ -598,8 +593,11 @@ for splitting by sign and visualization.</p>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="DeepSDFStruct.sampling.SDFSampler.add_class">
-<span class="sig-name descname"><span class="pre">add_class</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">geom_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">class_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.sampling.SDFSampler.add_class" title="Link to this definition">#</a></dt>
-<dd><dl class="field-list simple">
+<span class="sig-name descname"><span class="pre">add_class</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">geom_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">class_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_faces</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.sampling.SDFSampler.add_class" title="Link to this definition">#</a></dt>
+<dd><p>Adds a geometry to the sampler object. Tries to transform inputs to
+trimesh data. In case the geometry is a spline object, the n_faces
+parameter determines the accuracy of the extracted mesh</p>
+<dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
 </dd>
@@ -608,16 +606,6 @@ for splitting by sign and visualization.</p>
 <li><p><strong>geom_list</strong> (<em>list</em>)</p></li>
 <li><p><strong>class_name</strong> (<em>str</em>)</p></li>
 </ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="DeepSDFStruct.sampling.SDFSampler.get_SDF_list">
-<span class="sig-name descname"><span class="pre">get_SDF_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_faces</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.sampling.SDFSampler.get_SDF_list" title="Link to this definition">#</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<a class="reference internal" href="DeepSDFStruct.SDF.html#DeepSDFStruct.SDF.SDFBase" title="DeepSDFStruct.SDF.SDFBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">SDFBase</span></code></a>]</span></p>
 </dd>
 </dl>
 </dd></dl>
@@ -643,24 +631,8 @@ for splitting by sign and visualization.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="DeepSDFStruct.sampling.SDFSampler.get_sdf_from_geometry">
-<span class="sig-name descname"><span class="pre">get_sdf_from_geometry</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">geometry</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_faces</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-05</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.sampling.SDFSampler.get_sdf_from_geometry" title="Link to this definition">#</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="DeepSDFStruct.SDF.html#DeepSDFStruct.SDF.SDFfromMesh" title="DeepSDFStruct.SDF.SDFfromMesh"><code class="xref py py-class docutils literal notranslate"><span class="pre">SDFfromMesh</span></code></a></span></p>
-</dd>
-<dt class="field-even">Parameters<span class="colon">:</span></dt>
-<dd class="field-even"><ul class="simple">
-<li><p><strong>n_faces</strong> (<em>int</em>)</p></li>
-<li><p><strong>threshold</strong> (<em>float</em>)</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
 <dt class="sig sig-object py" id="DeepSDFStruct.sampling.SDFSampler.process_geometries">
-<span class="sig-name descname"><span class="pre">process_geometries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sampling_strategy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'uniform'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_faces</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_samples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_surface_samples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">also_save_vtk</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.sampling.SDFSampler.process_geometries" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">process_geometries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sampling_strategy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'uniform'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_faces</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_samples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_surface_samples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">also_save_vtk</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">also_save_mesh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_workers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.sampling.SDFSampler.process_geometries" title="Link to this definition">#</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>n_samples</strong> (<em>int</em>)</p>
@@ -857,11 +829,6 @@ providing utilities for data manipulation, splitting, and visualization.</p>
 <dd></dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="DeepSDFStruct.sampling.process_single_geometry">
-<span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.sampling.</span></span><span class="sig-name descname"><span class="pre">process_single_geometry</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.sampling.process_single_geometry" title="Link to this definition">#</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
 <dt class="sig sig-object py" id="DeepSDFStruct.sampling.random_points">
 <span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.sampling.</span></span><span class="sig-name descname"><span class="pre">random_points</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">count</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.sampling.random_points" title="Link to this definition">#</a></dt>
 <dd><p>random points in a unit sphere centered at (0, 0, 0)</p>
@@ -889,7 +856,7 @@ and queries the SDF at those points.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>sdf</strong> (<a class="reference internal" href="DeepSDFStruct.SDF.html#DeepSDFStruct.SDF.SDFBase" title="DeepSDFStruct.SDF.SDFBase"><em>SDFBase</em></a>) – A callable SDF object that takes 3D points and returns signed distances.</p></li>
-<li><p><strong>mesh</strong> (<em>gus.Faces</em>) – A mesh object containing the vertices.</p></li>
+<li><p><strong>mesh</strong> (<em>trimesh.Trimesh</em>) – A mesh object containing the vertices and faces.</p></li>
 <li><p><strong>n_samples</strong> (<em>int</em>) – Number of mesh vertices to sample</p></li>
 <li><p><strong>stds</strong> (<em>list</em><em>[</em><em>float</em><em>]</em>) – Standard deviations for Gaussian noise added to sampled vertices.
 - Typical values: [0.05, 0.0015].
@@ -997,9 +964,7 @@ Each point has an SDF scalar value.</p>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.sampling.SDFSampler"><code class="docutils literal notranslate"><span class="pre">SDFSampler</span></code></a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.sampling.SDFSampler.add_class"><code class="docutils literal notranslate"><span class="pre">SDFSampler.add_class()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.sampling.SDFSampler.get_SDF_list"><code class="docutils literal notranslate"><span class="pre">SDFSampler.get_SDF_list()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.sampling.SDFSampler.get_meshs_from_folder"><code class="docutils literal notranslate"><span class="pre">SDFSampler.get_meshs_from_folder()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.sampling.SDFSampler.get_sdf_from_geometry"><code class="docutils literal notranslate"><span class="pre">SDFSampler.get_sdf_from_geometry()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.sampling.SDFSampler.process_geometries"><code class="docutils literal notranslate"><span class="pre">SDFSampler.process_geometries()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.sampling.SDFSampler.write_json"><code class="docutils literal notranslate"><span class="pre">SDFSampler.write_json()</span></code></a></li>
 </ul>
@@ -1027,7 +992,6 @@ Each point has an SDF scalar value.</p>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.sampling.augment_by_FFD"><code class="docutils literal notranslate"><span class="pre">augment_by_FFD()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.sampling.move"><code class="docutils literal notranslate"><span class="pre">move()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.sampling.noisy_sample"><code class="docutils literal notranslate"><span class="pre">noisy_sample()</span></code></a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.sampling.process_single_geometry"><code class="docutils literal notranslate"><span class="pre">process_single_geometry()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.sampling.random_points"><code class="docutils literal notranslate"><span class="pre">random_points()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.sampling.random_points_cube"><code class="docutils literal notranslate"><span class="pre">random_points_cube()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.sampling.random_sample_sdf"><code class="docutils literal notranslate"><span class="pre">random_sample_sdf()</span></code></a></li>
