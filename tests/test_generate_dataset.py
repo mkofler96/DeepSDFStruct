@@ -4,10 +4,16 @@ from DeepSDFStruct.splinepy_unitcells.chi_3D import Chi3D
 from DeepSDFStruct.splinepy_unitcells.cross_lattice import CrossLattice
 import splinepy
 import multiprocessing as mp
+import pytest
+import pathlib
+
+
+@pytest.fixture(scope="session", autouse=True)
+def set_mp_start_method():
+    mp.set_start_method("spawn", force=True)
 
 
 def test_generate_dataset_from_obj_files():
-    mp.set_start_method("spawn", force=True)
     outdir = "./training_data"
     splitdir = "./training_data/splits"
     dataset_name = "furniture"
@@ -26,10 +32,10 @@ def test_generate_dataset_from_obj_files():
     sdf_sampler.write_json("chairs_train.json")
 
 
-def test_generate_dataset():
-    mp.set_start_method("spawn", force=True)
-    outdir = "./training_data"
-    splitdir = "./training_data/splits"
+@pytest.mark.parametrize("n_workers", [0, 1])
+def test_generate_dataset(n_workers, tmp_path):
+    outdir = tmp_path / "training_data"
+    splitdir = tmp_path / "training_data/splits"
     dataset_name = "microstructure"
 
     sdf_sampler = SDFSampler(outdir, splitdir, dataset_name, overwrite_existing=True)
@@ -55,11 +61,11 @@ def test_generate_dataset():
     sdf_sampler.add_class(chi_tiles, class_name="Chi3D_center", n_faces=100)
     sdf_sampler.add_class(crosslattice_tiles, class_name="CrossLattice", n_faces=100)
 
-    sdf_sampler.process_geometries(sampling_strategy="uniform")
+    sdf_sampler.process_geometries(sampling_strategy="uniform", n_workers=n_workers)
 
     sdf_sampler.write_json("chi_and_cross.json")
 
 
 if __name__ == "__main__":
     test_generate_dataset_from_obj_files()
-    test_generate_dataset()
+    test_generate_dataset(n_workers=1, tmp_path=pathlib.Path("."))

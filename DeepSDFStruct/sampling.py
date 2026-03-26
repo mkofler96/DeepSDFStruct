@@ -46,6 +46,7 @@ sample_sdf_*
 
 import os
 from functools import partial
+from itertools import starmap
 import multiprocessing
 
 import vtk
@@ -331,7 +332,7 @@ class SDFSampler:
         also_save_vtk=False,
         also_save_mesh=True,
         scale=True,
-        n_workers=1,
+        n_workers=0,
     ):
         tasks = []
 
@@ -357,9 +358,13 @@ class SDFSampler:
                 (geometry, f"{instance_id}.npz", folder_name)
                 for instance_id, geometry in instance_list.items()
             ]
-
-            with multiprocessing.Pool(processes=n_workers) as pool:
-                pool.starmap(func, tasks)
+            if n_workers > 0:
+                logger.info(f"starting multiprocessing with {n_workers} workers")
+                with multiprocessing.Pool(processes=n_workers) as pool:
+                    pool.starmap(func, tasks)
+            else:
+                logger.info("starting serial processing of geometries")
+                starmap(func, tasks)
 
             logger.info(f"done processing geometry list {class_name}")
 
