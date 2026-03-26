@@ -1,3 +1,11 @@
+"""
+FlexiSquares Lookup Tables
+==========================
+
+This module contains precomputed lookup tables for the FlexiSquares algorithm.
+These tables encode the topology of all possible Marching Squares configurations.
+"""
+
 # (0,1) ─ 2 ─ (1,1)
 # |         |
 # 0         1

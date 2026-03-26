@@ -1,3 +1,18 @@
+"""
+Chi-3D Lattice Unit Cell
+========================
+
+This module implements a 3D chi-shaped lattice unit cell using splinepy.
+The chi structure is characterized by intersecting diagonal struts forming
+an X or chi (χ) pattern, commonly used in mechanical metamaterials.
+
+The unit cell provides parametric control over:
+- Strut thickness
+- Arm position
+- Rounding radius
+- Angular configuration
+"""
+
 import splinepy
 import numpy as _np
 from splinepy.microstructure.tiles.tile_base import TileBase as _TileBase

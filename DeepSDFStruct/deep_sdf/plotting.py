@@ -1,3 +1,31 @@
+"""
+Training Visualization and Logging
+==================================
+
+This module provides utilities for visualizing DeepSDF training progress
+and generating plots of training metrics.
+
+Functions
+---------
+
+plot_logs
+    Plot training loss curves with smoothing and optional learning rate overlay.
+    Useful for monitoring training progress and diagnosing convergence issues.
+
+plot_reconstruction_loss
+    Visualize loss during shape reconstruction, showing how well the model
+    fits to target geometries.
+
+extract_paths
+    Helper for extracting file paths from nested data structures.
+
+running_mean
+    Compute running average for smoothing noisy loss curves.
+
+The module integrates with the workspace utilities to load training logs
+and generate publication-quality plots for analysis and presentation.
+"""
+
 import numpy as np
 import os
 import logging

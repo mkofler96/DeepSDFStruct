@@ -1,3 +1,25 @@
+"""
+Standard DeepSDF Decoder Network
+================================
+
+This module implements the standard DeepSDF decoder architecture from
+Park et al. (2019). The network takes a latent code and 3D coordinates
+as input and outputs a signed distance value.
+
+Architecture
+------------
+The decoder is a multi-layer perceptron (MLP) with:
+- Concatenation of latent code and spatial coordinates at input
+- Optional skip connections for latent code injection
+- Optional coordinate injection at multiple layers
+- Batch normalization or weight normalization
+- ReLU activations (or tanh for final layer)
+- Dropout for regularization
+
+The network learns to map from a latent space to implicit SDF representations,
+enabling compact encoding of complex 3D geometries.
+"""
+
 #!/usr/bin/env python3
 # Copyright 2004-present Facebook. All Rights Reserved.
 

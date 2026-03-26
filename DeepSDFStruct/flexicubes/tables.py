@@ -1,3 +1,15 @@
+"""
+FlexiCubes Lookup Tables
+========================
+
+This module contains precomputed lookup tables for the FlexiCubes algorithm.
+These tables encode the topology of all 256 possible Marching Cubes
+configurations, enabling efficient and accurate mesh extraction.
+
+Copyright (c) 2025 NVIDIA CORPORATION & AFFILIATES.
+Licensed under the Apache License, Version 2.0.
+"""
+
 # Copyright (c) 2025 NVIDIA CORPORATION & AFFILIATES.
 # All rights reserved.
 #
