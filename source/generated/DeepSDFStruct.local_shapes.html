@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>DeepSDFStruct.local_shapes &#8212; DeepSDFStruct 1.7.1.dev9+gdb3b8da9b documentation</title>
+    <title>DeepSDFStruct.local_shapes &#8212; DeepSDFStruct 1.7.1.dev15+g7dc08c201 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=afc7f344"></script>
+    <script src="../../_static/documentation_options.js?v=a0ced563"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'source/generated/DeepSDFStruct.local_shapes';</script>
@@ -110,7 +110,7 @@
   
   
   
-    <p class="title logo__title">DeepSDFStruct 1.7.1.dev9+gdb3b8da9b documentation</p>
+    <p class="title logo__title">DeepSDFStruct 1.7.1.dev15+g7dc08c201 documentation</p>
   
 </a></div>
     
@@ -353,6 +353,51 @@
                   
   <section id="module-DeepSDFStruct.local_shapes">
 <span id="deepsdfstruct-local-shapes"></span><h1>DeepSDFStruct.local_shapes<a class="headerlink" href="#module-DeepSDFStruct.local_shapes" title="Link to this heading">#</a></h1>
+<section id="local-shapes-for-microstructure-design">
+<h2>Local Shapes for Microstructure Design<a class="headerlink" href="#local-shapes-for-microstructure-design" title="Link to this heading">#</a></h2>
+<p>This module provides tools for creating microstructured geometries with
+localized shape variations. Unlike uniform lattices, local shapes allow
+different regions of a structure to have distinct geometric properties,
+enabling graded and functionally-graded materials.</p>
+<section id="key-features">
+<h3>Key Features<a class="headerlink" href="#key-features" title="Link to this heading">#</a></h3>
+<dl class="simple">
+<dt>LocalShapesSDF</dt><dd><p>A specialized SDF class for microstructures with spatially-varying
+unit cell shapes. Enables:
+- Region-specific unit cell geometries
+- Smooth transitions between different shapes
+- Integration with parametrization functions
+- Support for 2D and 3D microstructures</p>
+</dd>
+</dl>
+<p>The module extends the lattice structure capabilities to support more
+complex, heterogeneous microstructural designs where different regions
+may require different geometric features (e.g., varying strut patterns,
+different connectivity, or distinct topologies).</p>
+<p>This is particularly useful for:
+- Multi-material structures
+- Functionally graded materials
+- Transition zones between different lattice types
+- Adaptive microstructures</p>
+<p class="rubric">Examples</p>
+<p>Create a microstructure with local shape variations:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">DeepSDFStruct.local_shapes</span><span class="w"> </span><span class="kn">import</span> <span class="n">LocalShapesSDF</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">DeepSDFStruct.sdf_primitives</span><span class="w"> </span><span class="kn">import</span> <span class="n">SphereSDF</span>
+
+<span class="c1"># Define unit cell</span>
+<span class="n">unit_cell</span> <span class="o">=</span> <span class="n">SphereSDF</span><span class="p">([</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span> <span class="n">radius</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+
+<span class="c1"># Create local shapes structure</span>
+<span class="n">local_struct</span> <span class="o">=</span> <span class="n">LocalShapesSDF</span><span class="p">(</span>
+    <span class="n">tiling</span><span class="o">=</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span>
+    <span class="n">unit_cell</span><span class="o">=</span><span class="n">unit_cell</span><span class="p">,</span>
+    <span class="n">parametrization</span><span class="o">=</span><span class="n">param_func</span><span class="p">,</span>
+    <span class="n">bounds</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]])</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
 <p class="rubric">Classes</p>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
@@ -451,6 +496,10 @@ that provides a <cite>create_tile</cite> function.</p>
   </div>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#local-shapes-for-microstructure-design">Local Shapes for Microstructure Design</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#key-features">Key Features</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.local_shapes.LocalShapesSDF"><code class="docutils literal notranslate"><span class="pre">LocalShapesSDF</span></code></a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.local_shapes.LocalShapesSDF.tiling"><code class="docutils literal notranslate"><span class="pre">LocalShapesSDF.tiling</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.local_shapes.LocalShapesSDF.unit_cell"><code class="docutils literal notranslate"><span class="pre">LocalShapesSDF.unit_cell</span></code></a></li>

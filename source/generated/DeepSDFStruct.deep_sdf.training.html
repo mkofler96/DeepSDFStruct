@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>DeepSDFStruct.deep_sdf.training &#8212; DeepSDFStruct 1.7.1.dev9+gdb3b8da9b documentation</title>
+    <title>DeepSDFStruct.deep_sdf.training &#8212; DeepSDFStruct 1.7.1.dev15+g7dc08c201 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=afc7f344"></script>
+    <script src="../../_static/documentation_options.js?v=a0ced563"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'source/generated/DeepSDFStruct.deep_sdf.training';</script>
@@ -110,7 +110,7 @@
   
   
   
-    <p class="title logo__title">DeepSDFStruct 1.7.1.dev9+gdb3b8da9b documentation</p>
+    <p class="title logo__title">DeepSDFStruct 1.7.1.dev15+g7dc08c201 documentation</p>
   
 </a></div>
     
@@ -356,6 +356,60 @@
                   
   <section id="module-DeepSDFStruct.deep_sdf.training">
 <span id="deepsdfstruct-deep-sdf-training"></span><h1>DeepSDFStruct.deep_sdf.training<a class="headerlink" href="#module-DeepSDFStruct.deep_sdf.training" title="Link to this heading">#</a></h1>
+<section id="deepsdf-model-training">
+<h2>DeepSDF Model Training<a class="headerlink" href="#deepsdf-model-training" title="Link to this heading">#</a></h2>
+<p>This module implements the complete training pipeline for DeepSDF neural
+networks. It provides loss functions, learning rate schedules, training
+loops, and checkpoint management.</p>
+<section id="key-features">
+<h3>Key Features<a class="headerlink" href="#key-features" title="Link to this heading">#</a></h3>
+<dl class="simple">
+<dt>Loss Functions</dt><dd><ul class="simple">
+<li><p>ClampedL1Loss: L1 loss with value clamping for stability</p></li>
+<li><p>Support for custom loss functions</p></li>
+</ul>
+</dd>
+<dt>Learning Rate Schedules</dt><dd><ul class="simple">
+<li><p>ConstantLearningRateSchedule: Fixed learning rate</p></li>
+<li><p>StepLearningRateSchedule: Step decay schedule</p></li>
+<li><p>WarmupLearningRateSchedule: Warmup followed by decay</p></li>
+</ul>
+</dd>
+<dt>Training Loop</dt><dd><ul class="simple">
+<li><p>Multi-epoch training with validation</p></li>
+<li><p>Automatic checkpointing and model saving</p></li>
+<li><p>Loss tracking and visualization</p></li>
+<li><p>Support for distributed training</p></li>
+<li><p>Resume from checkpoint capability</p></li>
+</ul>
+</dd>
+<dt>Experiment Management</dt><dd><ul class="simple">
+<li><p>MLflow integration for experiment tracking</p></li>
+<li><p>Automatic logging of hyperparameters</p></li>
+<li><p>Training curve visualization</p></li>
+<li><p>Model versioning</p></li>
+</ul>
+</dd>
+</dl>
+<p>The training process follows the DeepSDF paper methodology with extensions
+for lattice structures and microstructured materials.</p>
+<p class="rubric">Examples</p>
+<p>Train a DeepSDF model:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">DeepSDFStruct.deep_sdf.training</span><span class="w"> </span><span class="kn">import</span> <span class="n">train_deep_sdf</span>
+
+<span class="n">specs</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;NetworkSpecs&#39;</span><span class="p">:</span> <span class="p">{</span><span class="o">...</span><span class="p">},</span>
+    <span class="s1">&#39;TrainSpecs&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;NumEpochs&#39;</span><span class="p">:</span> <span class="mi">2000</span><span class="p">,</span>
+        <span class="s1">&#39;LearningRateSchedule&#39;</span><span class="p">:</span> <span class="p">{</span><span class="o">...</span><span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="n">train_deep_sdf</span><span class="p">(</span><span class="n">experiment_dir</span><span class="p">,</span> <span class="n">specs</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
 <p class="rubric">Functions</p>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
@@ -507,16 +561,19 @@ to disk in the requested format.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>experiment_directory</strong> (<em>str</em><em> | </em><em>PathLike</em>) – Path to the experiment directory
-containing checkpoints and latent vectors.</p></li>
-<li><p><strong>checkpoint</strong> (<em>str</em><em>, </em><em>optional</em>) – Which checkpoint to load. Defaults to “latest”.</p></li>
-<li><p><strong>max_batch</strong> (<em>int</em><em>, </em><em>optional</em>) – Maximum batch size for inference. Defaults to 32.</p></li>
-<li><p><strong>filetype</strong> (<em>str</em><em>, </em><em>optional</em>) – File extension for exported meshes (e.g., “ply”, “obj”).
-Defaults to “ply”.</p></li>
-<li><p><strong>indices</strong> (<em>list</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – Sequence of latent vector indices between
-which interpolation should be performed. Defaults to [1, 2, 3, 4, 5, 6, 7, 8].</p></li>
-<li><p><strong>steps</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of interpolation steps (including endpoints).
-Defaults to 11.</p></li>
+<li><p><strong>experiment_directory</strong> (<em>str</em><em> | </em><em>PathLike</em>) – Path to the experiment
+directory containing checkpoints and latent vectors.</p></li>
+<li><p><strong>checkpoint</strong> (<em>str</em><em>, </em><em>optional</em>) – Which checkpoint to load. Defaults to
+“latest”.</p></li>
+<li><p><strong>max_batch</strong> (<em>int</em><em>, </em><em>optional</em>) – Maximum batch size for inference.
+Defaults to 32.</p></li>
+<li><p><strong>filetype</strong> (<em>str</em><em>, </em><em>optional</em>) – File extension for exported meshes
+(e.g., “ply”, “obj”). Defaults to “ply”.</p></li>
+<li><p><strong>indices</strong> (<em>list</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – Sequence of latent vector indices
+between which interpolation should be performed.
+Defaults to [1, 2, 3, 4, 5, 6, 7, 8].</p></li>
+<li><p><strong>steps</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of interpolation steps (including
+endpoints). Defaults to 11.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -635,6 +692,10 @@ Defaults to 11.</p></li>
   </div>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#deepsdf-model-training">DeepSDF Model Training</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#key-features">Key Features</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.deep_sdf.training.ClampedL1Loss"><code class="docutils literal notranslate"><span class="pre">ClampedL1Loss</span></code></a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.deep_sdf.training.ClampedL1Loss.forward"><code class="docutils literal notranslate"><span class="pre">ClampedL1Loss.forward()</span></code></a></li>
 </ul>

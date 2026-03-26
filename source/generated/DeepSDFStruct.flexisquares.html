@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>DeepSDFStruct.flexisquares &#8212; DeepSDFStruct 1.7.1.dev9+gdb3b8da9b documentation</title>
+    <title>DeepSDFStruct.flexisquares &#8212; DeepSDFStruct 1.7.1.dev15+g7dc08c201 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=afc7f344"></script>
+    <script src="../../_static/documentation_options.js?v=a0ced563"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'source/generated/DeepSDFStruct.flexisquares';</script>
@@ -110,7 +110,7 @@
   
   
   
-    <p class="title logo__title">DeepSDFStruct 1.7.1.dev9+gdb3b8da9b documentation</p>
+    <p class="title logo__title">DeepSDFStruct 1.7.1.dev15+g7dc08c201 documentation</p>
   
 </a></div>
     
@@ -353,14 +353,25 @@
                   
   <section id="module-DeepSDFStruct.flexisquares">
 <span id="deepsdfstruct-flexisquares"></span><h1>DeepSDFStruct.flexisquares<a class="headerlink" href="#module-DeepSDFStruct.flexisquares" title="Link to this heading">#</a></h1>
+<section id="flexisquares-differentiable-2d-isocontour-extraction">
+<h2>FlexiSquares - Differentiable 2D Isocontour Extraction<a class="headerlink" href="#flexisquares-differentiable-2d-isocontour-extraction" title="Link to this heading">#</a></h2>
+<p>This module implements FlexiSquares, a differentiable 2D variant of the
+Dual Marching Squares algorithm for extracting isocontours from scalar fields.</p>
+<p>FlexiSquares enables gradient-based optimization of surface representations
+by making the mesh extraction process differentiable. This is particularly
+useful for inverse problems where the geometry must be optimized to meet
+certain criteria.</p>
+<p>The module uses precomputed lookup tables to handle all possible Marching
+Squares configurations efficiently.</p>
+</section>
 <p class="rubric">Modules</p>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="DeepSDFStruct.flexisquares.flexisquares.html#module-DeepSDFStruct.flexisquares.flexisquares" title="DeepSDFStruct.flexisquares.flexisquares"><code class="xref py py-obj docutils literal notranslate"><span class="pre">flexisquares</span></code></a></p></td>
-<td><p></p></td>
+<td><p>FlexiSquares Implementation</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="DeepSDFStruct.flexisquares.tables.html#module-DeepSDFStruct.flexisquares.tables" title="DeepSDFStruct.flexisquares.tables"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tables</span></code></a></p></td>
-<td><p></p></td>
+<td><p>FlexiSquares Lookup Tables</p></td>
 </tr>
 </tbody>
 </table>
@@ -405,6 +416,18 @@
                 <dialog id="pst-secondary-sidebar-modal"></dialog>
                 <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#flexisquares-differentiable-2d-isocontour-extraction">FlexiSquares - Differentiable 2D Isocontour Extraction</a></li>
+</ul>
+  </nav></div>
 
   <div class="sidebar-secondary-item">
   <div role="note" aria-label="source link">

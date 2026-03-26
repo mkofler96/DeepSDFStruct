@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>DeepSDFStruct.deep_sdf.data &#8212; DeepSDFStruct 1.7.1.dev9+gdb3b8da9b documentation</title>
+    <title>DeepSDFStruct.deep_sdf.data &#8212; DeepSDFStruct 1.7.1.dev15+g7dc08c201 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=afc7f344"></script>
+    <script src="../../_static/documentation_options.js?v=a0ced563"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'source/generated/DeepSDFStruct.deep_sdf.data';</script>
@@ -110,7 +110,7 @@
   
   
   
-    <p class="title logo__title">DeepSDFStruct 1.7.1.dev9+gdb3b8da9b documentation</p>
+    <p class="title logo__title">DeepSDFStruct 1.7.1.dev15+g7dc08c201 documentation</p>
   
 </a></div>
     
@@ -356,6 +356,43 @@
                   
   <section id="module-DeepSDFStruct.deep_sdf.data">
 <span id="deepsdfstruct-deep-sdf-data"></span><h1>DeepSDFStruct.deep_sdf.data<a class="headerlink" href="#module-DeepSDFStruct.deep_sdf.data" title="Link to this heading">#</a></h1>
+<section id="deepsdf-data-loading-and-preprocessing">
+<h2>DeepSDF Data Loading and Preprocessing<a class="headerlink" href="#deepsdf-data-loading-and-preprocessing" title="Link to this heading">#</a></h2>
+<p>This module provides PyTorch Dataset classes and utilities for loading
+and preprocessing SDF training data. It handles:</p>
+<ul class="simple">
+<li><p>Loading sampled SDF values from .npz files</p></li>
+<li><p>Splitting samples into positive and negative regions</p></li>
+<li><p>Batching and shuffling for training</p></li>
+<li><p>Data normalization and clamping</p></li>
+<li><p>Multi-class and multi-dataset support</p></li>
+</ul>
+<p>The module is designed to work with the dataset format produced by the
+sampling module, where each geometry is stored as a .npz file containing
+positive and negative SDF samples.</p>
+<section id="classes">
+<h3>Classes<a class="headerlink" href="#classes" title="Link to this heading">#</a></h3>
+<dl class="simple">
+<dt>SDFSamples</dt><dd><p>PyTorch Dataset for loading SDF samples with lazy loading and caching.</p>
+</dd>
+<dt>NoMeshFileError</dt><dd><p>Exception raised when a mesh file cannot be found.</p>
+</dd>
+<dt>MultipleMeshFileError</dt><dd><p>Exception raised when multiple mesh files exist in a directory.</p>
+</dd>
+</dl>
+</section>
+<section id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Link to this heading">#</a></h3>
+<dl class="simple">
+<dt>get_instance_filenames</dt><dd><p>Retrieve file paths for all instances in a dataset split.</p>
+</dd>
+<dt>unpack_sdf_samples</dt><dd><p>Load and preprocess SDF samples from a .npz file.</p>
+</dd>
+<dt>read_sdf_samples_into_ram</dt><dd><p>Load entire dataset into RAM for faster training.</p>
+</dd>
+</dl>
+</section>
+</section>
 <p class="rubric">Functions</p>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
@@ -500,6 +537,11 @@
   </div>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#deepsdf-data-loading-and-preprocessing">DeepSDF Data Loading and Preprocessing</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#classes">Classes</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#functions">Functions</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.deep_sdf.data.MultipleMeshFileError"><code class="docutils literal notranslate"><span class="pre">MultipleMeshFileError</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.deep_sdf.data.NoMeshFileError"><code class="docutils literal notranslate"><span class="pre">NoMeshFileError</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.deep_sdf.data.SDFSamples"><code class="docutils literal notranslate"><span class="pre">SDFSamples</span></code></a></li>

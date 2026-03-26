@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>DeepSDFStruct.splinepy_unitcells &#8212; DeepSDFStruct 1.7.1.dev9+gdb3b8da9b documentation</title>
+    <title>DeepSDFStruct.splinepy_unitcells &#8212; DeepSDFStruct 1.7.1.dev15+g7dc08c201 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=afc7f344"></script>
+    <script src="../../_static/documentation_options.js?v=a0ced563"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'source/generated/DeepSDFStruct.splinepy_unitcells';</script>
@@ -110,7 +110,7 @@
   
   
   
-    <p class="title logo__title">DeepSDFStruct 1.7.1.dev9+gdb3b8da9b documentation</p>
+    <p class="title logo__title">DeepSDFStruct 1.7.1.dev15+g7dc08c201 documentation</p>
   
 </a></div>
     
@@ -353,20 +353,49 @@
                   
   <section id="module-DeepSDFStruct.splinepy_unitcells">
 <span id="deepsdfstruct-splinepy-unitcells"></span><h1>DeepSDFStruct.splinepy_unitcells<a class="headerlink" href="#module-DeepSDFStruct.splinepy_unitcells" title="Link to this heading">#</a></h1>
+<section id="splinepy-unit-cell-library">
+<h2>Splinepy Unit Cell Library<a class="headerlink" href="#splinepy-unit-cell-library" title="Link to this heading">#</a></h2>
+<p>This module provides a collection of spline-based unit cell geometries
+for lattice structures. These are built using the splinepy library and
+can be used with the LatticeSDFStruct class.</p>
+<section id="available-unit-cells">
+<h3>Available Unit Cells<a class="headerlink" href="#available-unit-cells" title="Link to this heading">#</a></h3>
+<dl class="simple">
+<dt>CrossLattice (cross_lattice.py)</dt><dd><p>2D cross-shaped lattice with configurable strut thickness.</p>
+</dd>
+<dt>Chi3D (chi_3D.py)</dt><dd><p>3D chi-shaped lattice structure, common in mechanical metamaterials.</p>
+</dd>
+<dt>Snappy3D (snappy_3d.py)</dt><dd><p>3D snappy lattice with snap-through behavior.</p>
+</dd>
+<dt>DoubleLatticeExtruded (double_lattice_extruded.py)</dt><dd><p>Extruded double lattice structure.</p>
+</dd>
+</dl>
+<p>All unit cells inherit from splinepy’s TileBase class and provide:
+- Parametric thickness control
+- Sensitivity computation for optimization
+- 2D and 3D variants
+- Integration with the DeepSDFStruct framework</p>
+<p>These geometries are particularly useful for:
+- Mechanical metamaterial design
+- Additive manufacturing
+- Topology optimization
+- Multi-scale structural analysis</p>
+</section>
+</section>
 <p class="rubric">Modules</p>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="DeepSDFStruct.splinepy_unitcells.chi_3D.html#module-DeepSDFStruct.splinepy_unitcells.chi_3D" title="DeepSDFStruct.splinepy_unitcells.chi_3D"><code class="xref py py-obj docutils literal notranslate"><span class="pre">chi_3D</span></code></a></p></td>
-<td><p></p></td>
+<td><p>Chi-3D Lattice Unit Cell</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="DeepSDFStruct.splinepy_unitcells.cross_lattice.html#module-DeepSDFStruct.splinepy_unitcells.cross_lattice" title="DeepSDFStruct.splinepy_unitcells.cross_lattice"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cross_lattice</span></code></a></p></td>
-<td><p></p></td>
+<td><p>Cross Lattice Unit Cell</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="DeepSDFStruct.splinepy_unitcells.double_lattice_extruded.html#module-DeepSDFStruct.splinepy_unitcells.double_lattice_extruded" title="DeepSDFStruct.splinepy_unitcells.double_lattice_extruded"><code class="xref py py-obj docutils literal notranslate"><span class="pre">double_lattice_extruded</span></code></a></p></td>
-<td><p></p></td>
+<td><p>Double Lattice Extruded Unit Cell</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="DeepSDFStruct.splinepy_unitcells.snappy_3d.html#module-DeepSDFStruct.splinepy_unitcells.snappy_3d" title="DeepSDFStruct.splinepy_unitcells.snappy_3d"><code class="xref py py-obj docutils literal notranslate"><span class="pre">snappy_3d</span></code></a></p></td>
-<td><p></p></td>
+<td><p>Snappy-3D Lattice Unit Cell</p></td>
 </tr>
 </tbody>
 </table>
@@ -411,6 +440,21 @@
                 <dialog id="pst-secondary-sidebar-modal"></dialog>
                 <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#splinepy-unit-cell-library">Splinepy Unit Cell Library</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#available-unit-cells">Available Unit Cells</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
 
   <div class="sidebar-secondary-item">
   <div role="note" aria-label="source link">

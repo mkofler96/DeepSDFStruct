@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>DeepSDFStruct.deep_sdf.workspace &#8212; DeepSDFStruct 1.7.1.dev9+gdb3b8da9b documentation</title>
+    <title>DeepSDFStruct.deep_sdf.workspace &#8212; DeepSDFStruct 1.7.1.dev15+g7dc08c201 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=afc7f344"></script>
+    <script src="../../_static/documentation_options.js?v=a0ced563"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'source/generated/DeepSDFStruct.deep_sdf.workspace';</script>
@@ -110,7 +110,7 @@
   
   
   
-    <p class="title logo__title">DeepSDFStruct 1.7.1.dev9+gdb3b8da9b documentation</p>
+    <p class="title logo__title">DeepSDFStruct 1.7.1.dev15+g7dc08c201 documentation</p>
   
 </a></div>
     
@@ -356,6 +356,45 @@
                   
   <section id="module-DeepSDFStruct.deep_sdf.workspace">
 <span id="deepsdfstruct-deep-sdf-workspace"></span><h1>DeepSDFStruct.deep_sdf.workspace<a class="headerlink" href="#module-DeepSDFStruct.deep_sdf.workspace" title="Link to this heading">#</a></h1>
+<section id="experiment-workspace-management">
+<h2>Experiment Workspace Management<a class="headerlink" href="#experiment-workspace-management" title="Link to this heading">#</a></h2>
+<p>This module provides utilities for managing DeepSDF experiment workspaces,
+including directory structures, file naming conventions, and model loading/saving.</p>
+<section id="constants">
+<h3>Constants<a class="headerlink" href="#constants" title="Link to this heading">#</a></h3>
+<p>The module defines standard subdirectory and file names for organizing
+experiment artifacts:
+- Model parameters and checkpoints
+- Optimizer states
+- Latent code vectors
+- Training logs and plots
+- Reconstructions and evaluations
+- Dataset samples and normalization parameters</p>
+</section>
+<section id="architecture-registry">
+<h3>Architecture Registry<a class="headerlink" href="#architecture-registry" title="Link to this heading">#</a></h3>
+<dl class="simple">
+<dt>ARCHITECTURES: dict</dt><dd><p>Maps architecture names to decoder classes, enabling dynamic model
+instantiation from configuration files.</p>
+</dd>
+</dl>
+</section>
+<section id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Link to this heading">#</a></h3>
+<dl class="simple">
+<dt>load_experiment_specifications</dt><dd><p>Load experiment configuration from specs.json file.</p>
+</dd>
+<dt>load_trained_model</dt><dd><p>Load a trained decoder network from checkpoint.</p>
+</dd>
+<dt>load_latent_vectors</dt><dd><p>Load learned latent codes from checkpoint.</p>
+</dd>
+<dt>create_experiment_directory</dt><dd><p>Initialize directory structure for a new experiment.</p>
+</dd>
+</dl>
+<p>The workspace utilities ensure consistent organization across experiments
+and simplify model loading for inference and continued training.</p>
+</section>
+</section>
 <p class="rubric">Functions</p>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
@@ -641,6 +680,12 @@
   </div>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#experiment-workspace-management">Experiment Workspace Management</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#constants">Constants</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#architecture-registry">Architecture Registry</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#functions">Functions</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.deep_sdf.workspace.ExperimentSummary"><code class="docutils literal notranslate"><span class="pre">ExperimentSummary</span></code></a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.deep_sdf.workspace.ExperimentSummary.data_dir"><code class="docutils literal notranslate"><span class="pre">ExperimentSummary.data_dir</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.deep_sdf.workspace.ExperimentSummary.device"><code class="docutils literal notranslate"><span class="pre">ExperimentSummary.device</span></code></a></li>

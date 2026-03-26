@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>DeepSDFStruct.deep_sdf.plotting &#8212; DeepSDFStruct 1.7.1.dev9+gdb3b8da9b documentation</title>
+    <title>DeepSDFStruct.deep_sdf.plotting &#8212; DeepSDFStruct 1.7.1.dev15+g7dc08c201 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=afc7f344"></script>
+    <script src="../../_static/documentation_options.js?v=a0ced563"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'source/generated/DeepSDFStruct.deep_sdf.plotting';</script>
@@ -110,7 +110,7 @@
   
   
   
-    <p class="title logo__title">DeepSDFStruct 1.7.1.dev9+gdb3b8da9b documentation</p>
+    <p class="title logo__title">DeepSDFStruct 1.7.1.dev15+g7dc08c201 documentation</p>
   
 </a></div>
     
@@ -356,6 +356,28 @@
                   
   <section id="module-DeepSDFStruct.deep_sdf.plotting">
 <span id="deepsdfstruct-deep-sdf-plotting"></span><h1>DeepSDFStruct.deep_sdf.plotting<a class="headerlink" href="#module-DeepSDFStruct.deep_sdf.plotting" title="Link to this heading">#</a></h1>
+<section id="training-visualization-and-logging">
+<h2>Training Visualization and Logging<a class="headerlink" href="#training-visualization-and-logging" title="Link to this heading">#</a></h2>
+<p>This module provides utilities for visualizing DeepSDF training progress
+and generating plots of training metrics.</p>
+<section id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Link to this heading">#</a></h3>
+<dl class="simple">
+<dt>plot_logs</dt><dd><p>Plot training loss curves with smoothing and optional learning rate overlay.
+Useful for monitoring training progress and diagnosing convergence issues.</p>
+</dd>
+<dt>plot_reconstruction_loss</dt><dd><p>Visualize loss during shape reconstruction, showing how well the model
+fits to target geometries.</p>
+</dd>
+<dt>extract_paths</dt><dd><p>Helper for extracting file paths from nested data structures.</p>
+</dd>
+<dt>running_mean</dt><dd><p>Compute running average for smoothing noisy loss curves.</p>
+</dd>
+</dl>
+<p>The module integrates with the workspace utilities to load training logs
+and generate publication-quality plots for analysis and presentation.</p>
+</section>
+</section>
 <p class="rubric">Functions</p>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
@@ -443,6 +465,10 @@
   </div>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#training-visualization-and-logging">Training Visualization and Logging</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#functions">Functions</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.deep_sdf.plotting.extract_paths"><code class="docutils literal notranslate"><span class="pre">extract_paths()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.deep_sdf.plotting.plot_logs"><code class="docutils literal notranslate"><span class="pre">plot_logs()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.deep_sdf.plotting.plot_reconstruction_loss"><code class="docutils literal notranslate"><span class="pre">plot_reconstruction_loss()</span></code></a></li>

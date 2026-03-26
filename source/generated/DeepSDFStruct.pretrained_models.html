@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>DeepSDFStruct.pretrained_models &#8212; DeepSDFStruct 1.7.1.dev9+gdb3b8da9b documentation</title>
+    <title>DeepSDFStruct.pretrained_models &#8212; DeepSDFStruct 1.7.1.dev15+g7dc08c201 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=afc7f344"></script>
+    <script src="../../_static/documentation_options.js?v=a0ced563"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'source/generated/DeepSDFStruct.pretrained_models';</script>
@@ -110,7 +110,7 @@
   
   
   
-    <p class="title logo__title">DeepSDFStruct 1.7.1.dev9+gdb3b8da9b documentation</p>
+    <p class="title logo__title">DeepSDFStruct 1.7.1.dev15+g7dc08c201 documentation</p>
   
 </a></div>
     
@@ -353,6 +353,64 @@
                   
   <section id="module-DeepSDFStruct.pretrained_models">
 <span id="deepsdfstruct-pretrained-models"></span><h1>DeepSDFStruct.pretrained_models<a class="headerlink" href="#module-DeepSDFStruct.pretrained_models" title="Link to this heading">#</a></h1>
+<section id="pretrained-deepsdf-models">
+<h2>Pretrained DeepSDF Models<a class="headerlink" href="#pretrained-deepsdf-models" title="Link to this heading">#</a></h2>
+<p>This module provides access to pretrained DeepSDF neural network models for
+common microstructure geometries. These models can be used directly for
+geometry generation or as starting points for transfer learning.</p>
+<section id="available-models">
+<h3>Available Models<a class="headerlink" href="#available-models" title="Link to this heading">#</a></h3>
+<dl class="simple">
+<dt>ChiAndCross</dt><dd><p>Chi-shaped and cross-shaped lattice structures, commonly used in
+mechanical metamaterials.</p>
+</dd>
+<dt>AnalyticRoundCross</dt><dd><p>Round cross-section variations with analytical parameterization,
+useful for smooth stress distribution.</p>
+</dd>
+<dt>RoundCross</dt><dd><p>Standard round cross structures with various connectivity patterns.</p>
+</dd>
+<dt>Primitives</dt><dd><p>Basic 3D geometric primitives (spheres, cylinders, cubes, etc.)
+for building more complex structures.</p>
+</dd>
+<dt>Primitives2D</dt><dd><p>2D geometric primitives for planar structures and cross-sections.</p>
+</dd>
+</dl>
+</section>
+<section id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Link to this heading">#</a></h3>
+<dl class="simple">
+<dt>get_model(model, checkpoint=’latest’, device=None)</dt><dd><p>Load a pretrained model by name or enum value. Returns a DeepSDFModel
+ready for inference.</p>
+</dd>
+<dt>list_available_models()</dt><dd><p>Get a list of all available pretrained models.</p>
+</dd>
+</dl>
+<p>The pretrained models are stored within the package and loaded on demand,
+enabling quick prototyping and exploration without requiring training.</p>
+<p class="rubric">Examples</p>
+<p>Load and use a pretrained model:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">DeepSDFStruct.pretrained_models</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_model</span><span class="p">,</span> <span class="n">PretrainedModels</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+
+<span class="c1"># Load a model</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">get_model</span><span class="p">(</span><span class="n">PretrainedModels</span><span class="o">.</span><span class="n">RoundCross</span><span class="p">)</span>
+
+<span class="c1"># Generate geometry with latent code</span>
+<span class="n">latent_code</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">256</span><span class="p">)</span>  <span class="c1"># Use learned latent vector</span>
+<span class="n">points</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="n">sdf_values</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">latent_code</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>List available models:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">DeepSDFStruct.pretrained_models</span><span class="w"> </span><span class="kn">import</span> <span class="n">list_available_models</span>
+
+<span class="n">models</span> <span class="o">=</span> <span class="n">list_available_models</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">model</span> <span class="ow">in</span> <span class="n">models</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Available model: </span><span class="si">{</span><span class="n">model</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
 <p class="rubric">Functions</p>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
@@ -479,6 +537,11 @@
   </div>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pretrained-deepsdf-models">Pretrained DeepSDF Models</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#available-models">Available Models</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#functions">Functions</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.pretrained_models.PretrainedModels"><code class="docutils literal notranslate"><span class="pre">PretrainedModels</span></code></a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.pretrained_models.PretrainedModels.AnalyticRoundCross"><code class="docutils literal notranslate"><span class="pre">PretrainedModels.AnalyticRoundCross</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.pretrained_models.PretrainedModels.ChiAndCross"><code class="docutils literal notranslate"><span class="pre">PretrainedModels.ChiAndCross</span></code></a></li>

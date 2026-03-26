@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>DeepSDFStruct.flexicubes.flexicubes &#8212; DeepSDFStruct 1.7.1.dev9+gdb3b8da9b documentation</title>
+    <title>DeepSDFStruct.flexicubes.flexicubes &#8212; DeepSDFStruct 1.7.1.dev15+g7dc08c201 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=afc7f344"></script>
+    <script src="../../_static/documentation_options.js?v=a0ced563"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'source/generated/DeepSDFStruct.flexicubes.flexicubes';</script>
@@ -110,7 +110,7 @@
   
   
   
-    <p class="title logo__title">DeepSDFStruct 1.7.1.dev9+gdb3b8da9b documentation</p>
+    <p class="title logo__title">DeepSDFStruct 1.7.1.dev15+g7dc08c201 documentation</p>
   
 </a></div>
     
@@ -356,11 +356,22 @@
                   
   <section id="module-DeepSDFStruct.flexicubes.flexicubes">
 <span id="deepsdfstruct-flexicubes-flexicubes"></span><h1>DeepSDFStruct.flexicubes.flexicubes<a class="headerlink" href="#module-DeepSDFStruct.flexicubes.flexicubes" title="Link to this heading">#</a></h1>
+<section id="flexicubes-implementation">
+<h2>FlexiCubes Implementation<a class="headerlink" href="#flexicubes-implementation" title="Link to this heading">#</a></h2>
+<p>This module contains the core implementation of the FlexiCubes algorithm,
+a differentiable 3D mesh extraction method that improves upon traditional
+Dual Marching Cubes.</p>
+<p>FlexiCubes dynamically adjusts surface representations through gradient-based
+optimization, enhancing geometric fidelity and mesh quality. The method is
+particularly useful for neural implicit representations and inverse design.</p>
+<p>Copyright (c) 2025 NVIDIA CORPORATION &amp; AFFILIATES.
+Licensed under the Apache License, Version 2.0.</p>
+</section>
 <p class="rubric">Classes</p>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.flexicubes.flexicubes.FlexiCubes" title="DeepSDFStruct.flexicubes.flexicubes.FlexiCubes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FlexiCubes</span></code></a>([device, qef_reg_scale, weight_scale])</p></td>
-<td><p>This class implements the DeepSDFStruct.flexicubes method for extracting meshes from scalar fields.</p></td>
+<td><p>This class implements the flexicubes method for extracting meshes from scalar fields.</p></td>
 </tr>
 </tbody>
 </table>
@@ -369,17 +380,20 @@
 <dt class="sig sig-object py" id="DeepSDFStruct.flexicubes.flexicubes.FlexiCubes">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.flexicubes.flexicubes.</span></span><span class="sig-name descname"><span class="pre">FlexiCubes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cuda'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qef_reg_scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weight_scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.99</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.flexicubes.flexicubes.FlexiCubes" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>This class implements the DeepSDFStruct.flexicubes method for extracting meshes from scalar fields.
-It maintains a series of lookup tables and indices to support the mesh extraction process.
-DeepSDFStruct.flexicubes, a differentiable variant of the Dual Marching Cubes (DMC) scheme, enhances
-the geometric fidelity and mesh quality of reconstructed meshes by dynamically adjusting
-the surface representation through gradient-based optimization.</p>
-<p>During instantiation, the class loads DMC tables from a file and transforms them into
-PyTorch tensors on the specified device.</p>
+<p>This class implements the flexicubes method for extracting meshes
+from scalar fields. It maintains a series of lookup tables and
+indices to support the mesh extraction process. Flexicubes, a
+differentiable variant of the Dual Marching Cubes (DMC) scheme,
+enhances the geometric fidelity and mesh quality of reconstructed
+meshes by dynamically adjusting the surface representation through
+gradient-based optimization.</p>
+<p>During instantiation, the class loads DMC tables from a file and
+transforms them into PyTorch tensors on the specified device.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="DeepSDFStruct.flexicubes.flexicubes.FlexiCubes.device">
 <span class="sig-name descname"><span class="pre">device</span></span><a class="headerlink" href="#DeepSDFStruct.flexicubes.flexicubes.FlexiCubes.device" title="Link to this definition">#</a></dt>
-<dd><p>Specifies the computational device (default is “cuda”).</p>
+<dd><p>Specifies the computational device (default
+“cuda”).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>str</p>
@@ -390,8 +404,9 @@ PyTorch tensors on the specified device.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="DeepSDFStruct.flexicubes.flexicubes.FlexiCubes.dmc_table">
 <span class="sig-name descname"><span class="pre">dmc_table</span></span><a class="headerlink" href="#DeepSDFStruct.flexicubes.flexicubes.FlexiCubes.dmc_table" title="Link to this definition">#</a></dt>
-<dd><p>Dual Marching Cubes (DMC) table that encodes the edges
-associated with each dual vertex in 256 Marching Cubes (MC) configurations.</p>
+<dd><p>Dual Marching Cubes (DMC) table
+that encodes the edges associated with each dual vertex
+in 256 Marching Cubes (MC) configurations.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>torch.Tensor</p>
@@ -402,8 +417,8 @@ associated with each dual vertex in 256 Marching Cubes (MC) configurations.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="DeepSDFStruct.flexicubes.flexicubes.FlexiCubes.num_vd_table">
 <span class="sig-name descname"><span class="pre">num_vd_table</span></span><a class="headerlink" href="#DeepSDFStruct.flexicubes.flexicubes.FlexiCubes.num_vd_table" title="Link to this definition">#</a></dt>
-<dd><p>Table holding the number of dual vertices in each of
-the 256 MC configurations.</p>
+<dd><p>Table holding the number of
+dual vertices in each of the 256 MC configurations.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>torch.Tensor</p>
@@ -414,8 +429,8 @@ the 256 MC configurations.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="DeepSDFStruct.flexicubes.flexicubes.FlexiCubes.check_table">
 <span class="sig-name descname"><span class="pre">check_table</span></span><a class="headerlink" href="#DeepSDFStruct.flexicubes.flexicubes.FlexiCubes.check_table" title="Link to this definition">#</a></dt>
-<dd><p>Table resolving ambiguity in cases C16 and C19
-of the DMC configurations.</p>
+<dd><p>Table resolving ambiguity in
+cases C16 and C19 of the DMC configurations.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>torch.Tensor</p>
@@ -426,7 +441,8 @@ of the DMC configurations.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="DeepSDFStruct.flexicubes.flexicubes.FlexiCubes.tet_table">
 <span class="sig-name descname"><span class="pre">tet_table</span></span><a class="headerlink" href="#DeepSDFStruct.flexicubes.flexicubes.FlexiCubes.tet_table" title="Link to this definition">#</a></dt>
-<dd><p>Lookup table used in tetrahedralizing the isosurface.</p>
+<dd><p>Lookup table used in
+tetrahedralizing the isosurface.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>torch.Tensor</p>
@@ -437,8 +453,8 @@ of the DMC configurations.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="DeepSDFStruct.flexicubes.flexicubes.FlexiCubes.quad_split_1">
 <span class="sig-name descname"><span class="pre">quad_split_1</span></span><a class="headerlink" href="#DeepSDFStruct.flexicubes.flexicubes.FlexiCubes.quad_split_1" title="Link to this definition">#</a></dt>
-<dd><p>Indices for splitting a quad into two triangles
-along one diagonal.</p>
+<dd><p>Indices for splitting a quad
+into two triangles along one diagonal.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>torch.Tensor</p>
@@ -449,8 +465,9 @@ along one diagonal.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="DeepSDFStruct.flexicubes.flexicubes.FlexiCubes.quad_split_2">
 <span class="sig-name descname"><span class="pre">quad_split_2</span></span><a class="headerlink" href="#DeepSDFStruct.flexicubes.flexicubes.FlexiCubes.quad_split_2" title="Link to this definition">#</a></dt>
-<dd><p>Alternative indices for splitting a quad into
-two triangles along the other diagonal.</p>
+<dd><p>Alternative indices for
+splitting a quad into two triangles along the other
+diagonal.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>torch.Tensor</p>
@@ -461,8 +478,9 @@ two triangles along the other diagonal.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="DeepSDFStruct.flexicubes.flexicubes.FlexiCubes.quad_split_train">
 <span class="sig-name descname"><span class="pre">quad_split_train</span></span><a class="headerlink" href="#DeepSDFStruct.flexicubes.flexicubes.FlexiCubes.quad_split_train" title="Link to this definition">#</a></dt>
-<dd><p>Indices for splitting a quad into four triangles
-during training by connecting all edges to their midpoints.</p>
+<dd><p>Indices for splitting a
+quad into four triangles during training by connecting
+all edges to their midpoints.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>torch.Tensor</p>
@@ -473,10 +491,11 @@ during training by connecting all edges to their midpoints.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="DeepSDFStruct.flexicubes.flexicubes.FlexiCubes.cube_corners">
 <span class="sig-name descname"><span class="pre">cube_corners</span></span><a class="headerlink" href="#DeepSDFStruct.flexicubes.flexicubes.FlexiCubes.cube_corners" title="Link to this definition">#</a></dt>
-<dd><p>Defines the positions of a standard unit cube’s
-eight corners in 3D space, ordered starting from the origin (0,0,0),
-moving along the x-axis, then y-axis, and finally z-axis.
-Used as a blueprint for generating a voxel grid.</p>
+<dd><p>Defines the positions of a
+standard unit cube’s eight corners in 3D space, ordered
+starting from the origin (0,0,0), moving along the
+x-axis, then y-axis, and finally z-axis. Used as a
+blueprint for generating a voxel grid.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>torch.Tensor</p>
@@ -487,8 +506,8 @@ Used as a blueprint for generating a voxel grid.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="DeepSDFStruct.flexicubes.flexicubes.FlexiCubes.cube_corners_idx">
 <span class="sig-name descname"><span class="pre">cube_corners_idx</span></span><a class="headerlink" href="#DeepSDFStruct.flexicubes.flexicubes.FlexiCubes.cube_corners_idx" title="Link to this definition">#</a></dt>
-<dd><p>Cube corners indexed as powers of 2, used
-to retrieve the case id.</p>
+<dd><p>Cube corners indexed as
+powers of 2, used to retrieve the case id.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>torch.Tensor</p>
@@ -499,8 +518,8 @@ to retrieve the case id.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="DeepSDFStruct.flexicubes.flexicubes.FlexiCubes.cube_edges">
 <span class="sig-name descname"><span class="pre">cube_edges</span></span><a class="headerlink" href="#DeepSDFStruct.flexicubes.flexicubes.FlexiCubes.cube_edges" title="Link to this definition">#</a></dt>
-<dd><p>Edge connections in a cube, listed in pairs.
-Used to retrieve edge vertices in DMC.</p>
+<dd><p>Edge connections in a cube,
+listed in pairs. Used to retrieve edge vertices in DMC.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>torch.Tensor</p>
@@ -511,8 +530,9 @@ Used to retrieve edge vertices in DMC.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="DeepSDFStruct.flexicubes.flexicubes.FlexiCubes.edge_dir_table">
 <span class="sig-name descname"><span class="pre">edge_dir_table</span></span><a class="headerlink" href="#DeepSDFStruct.flexicubes.flexicubes.FlexiCubes.edge_dir_table" title="Link to this definition">#</a></dt>
-<dd><p>A mapping tensor that associates edge indices with
-their corresponding axis. For instance, edge_dir_table[0] = 0 indicates that the
+<dd><p>A mapping tensor that
+associates edge indices with their corresponding axis.
+For instance, edge_dir_table[0] = 0 indicates that the
 first edge is oriented along the x-axis.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
@@ -524,11 +544,14 @@ first edge is oriented along the x-axis.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="DeepSDFStruct.flexicubes.flexicubes.FlexiCubes.dir_faces_table">
 <span class="sig-name descname"><span class="pre">dir_faces_table</span></span><a class="headerlink" href="#DeepSDFStruct.flexicubes.flexicubes.FlexiCubes.dir_faces_table" title="Link to this definition">#</a></dt>
-<dd><p>A tensor that maps the corresponding axis of shared edges
-across four adjacent cubes to the shared faces of these cubes. For instance,
-dir_faces_table[0] = [5, 4] implies that for four cubes sharing an edge along
-the x-axis, the first and second cubes share faces indexed as 5 and 4, respectively.
-This tensor is only utilized during isosurface tetrahedralization.</p>
+<dd><p>A tensor that maps the
+corresponding axis of shared edges across four adjacent
+cubes to the shared faces of these cubes. For instance,
+dir_faces_table[0] = [5, 4] implies that for four cubes
+sharing an edge along the x-axis, the first and second
+cubes share faces indexed as 5 and 4, respectively.
+This tensor is only utilized during isosurface
+tetrahedralization.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>torch.Tensor</p>
@@ -539,7 +562,8 @@ This tensor is only utilized during isosurface tetrahedralization.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="DeepSDFStruct.flexicubes.flexicubes.FlexiCubes.adj_pairs">
 <span class="sig-name descname"><span class="pre">adj_pairs</span></span><a class="headerlink" href="#DeepSDFStruct.flexicubes.flexicubes.FlexiCubes.adj_pairs" title="Link to this definition">#</a></dt>
-<dd><p>A tensor containing index pairs that correspond to neighboring cubes that share the same edge.</p>
+<dd><p>A tensor containing index pairs that correspond to
+neighboring cubes that share the same edge.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>torch.Tensor</p>
@@ -550,8 +574,10 @@ This tensor is only utilized during isosurface tetrahedralization.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="DeepSDFStruct.flexicubes.flexicubes.FlexiCubes.qef_reg_scale">
 <span class="sig-name descname"><span class="pre">qef_reg_scale</span></span><a class="headerlink" href="#DeepSDFStruct.flexicubes.flexicubes.FlexiCubes.qef_reg_scale" title="Link to this definition">#</a></dt>
-<dd><p>The scaling factor applied to the regularization loss to prevent issues with singularity
-when solving the QEF. This parameter is only used when a ‘grad_func’ is specified.</p>
+<dd><p>The scaling factor applied to the regularization loss to
+prevent issues with singularity when solving the QEF.
+This parameter is only used when a ‘grad_func’ is
+specified.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>float</p>
@@ -562,7 +588,8 @@ when solving the QEF. This parameter is only used when a ‘grad_func’ is spec
 <dl class="py attribute">
 <dt class="sig sig-object py" id="DeepSDFStruct.flexicubes.flexicubes.FlexiCubes.weight_scale">
 <span class="sig-name descname"><span class="pre">weight_scale</span></span><a class="headerlink" href="#DeepSDFStruct.flexicubes.flexicubes.FlexiCubes.weight_scale" title="Link to this definition">#</a></dt>
-<dd><p>The scale of weights in DeepSDFStruct.flexicubes. Should be between 0 and 1.</p>
+<dd><p>The scale of weights in flexicubes. Should be between
+0 and 1.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>float</p>
@@ -647,6 +674,7 @@ dimension in the grid being one.</p>
   </div>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#flexicubes-implementation">FlexiCubes Implementation</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.flexicubes.flexicubes.FlexiCubes"><code class="docutils literal notranslate"><span class="pre">FlexiCubes</span></code></a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.flexicubes.flexicubes.FlexiCubes.device"><code class="docutils literal notranslate"><span class="pre">FlexiCubes.device</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.flexicubes.flexicubes.FlexiCubes.dmc_table"><code class="docutils literal notranslate"><span class="pre">FlexiCubes.dmc_table</span></code></a></li>

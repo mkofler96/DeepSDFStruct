@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>DeepSDFStruct.SDF &#8212; DeepSDFStruct 1.7.1.dev9+gdb3b8da9b documentation</title>
+    <title>DeepSDFStruct.SDF &#8212; DeepSDFStruct 1.7.1.dev15+g7dc08c201 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=afc7f344"></script>
+    <script src="../../_static/documentation_options.js?v=a0ced563"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'source/generated/DeepSDFStruct.SDF';</script>
@@ -110,7 +110,7 @@
   
   
   
-    <p class="title logo__title">DeepSDFStruct 1.7.1.dev9+gdb3b8da9b documentation</p>
+    <p class="title logo__title">DeepSDFStruct 1.7.1.dev15+g7dc08c201 documentation</p>
   
 </a></div>
     
@@ -353,6 +353,66 @@
                   
   <section id="module-DeepSDFStruct.SDF">
 <span id="deepsdfstruct-sdf"></span><h1>DeepSDFStruct.SDF<a class="headerlink" href="#module-DeepSDFStruct.SDF" title="Link to this heading">#</a></h1>
+<section id="signed-distance-function-sdf-base-classes-and-operations">
+<h2>Signed Distance Function (SDF) Base Classes and Operations<a class="headerlink" href="#signed-distance-function-sdf-base-classes-and-operations" title="Link to this heading">#</a></h2>
+<p>This module provides the foundational classes and utilities for working with
+Signed Distance Functions (SDFs) in DeepSDFStruct. SDFs are implicit geometric
+representations that encode the distance from any point in space to the nearest
+surface, with the sign indicating whether the point is inside (negative) or
+outside (positive) the geometry.</p>
+<section id="key-features">
+<h3>Key Features<a class="headerlink" href="#key-features" title="Link to this heading">#</a></h3>
+<dl class="simple">
+<dt>SDFBase Abstract Class</dt><dd><p>Base class for all SDF representations with support for:
+- Spline-based geometric deformations
+- Spatially-varying parametrization
+- Boundary conditions and capping
+- Boolean operations (union, intersection)
+- Differentiable operations for optimization</p>
+</dd>
+<dt>SDFfromMesh</dt><dd><p>Convert triangular surface meshes to SDF representations using
+fast winding number algorithms for robust inside/outside testing.</p>
+</dd>
+<dt>SDFfromDeepSDF</dt><dd><p>Neural network-based SDF using trained DeepSDF models for
+complex, learned geometric representations.</p>
+</dd>
+<dt>Union and Intersection</dt><dd><p>Combine multiple SDFs using smooth boolean operations with
+configurable smoothing for differentiable geometry.</p>
+</dd>
+<dt>Utility Functions</dt><dd><ul class="simple">
+<li><p>Grid sampling for SDF evaluation</p></li>
+<li><p>Gradient computation for normal vectors</p></li>
+<li><p>Boundary condition application</p></li>
+</ul>
+</dd>
+</dl>
+<p>The module enables flexible construction and manipulation of complex
+3D geometries in a differentiable framework suitable for optimization,
+simulation, and machine learning applications.</p>
+<p class="rubric">Examples</p>
+<p>Create and evaluate an SDF from a mesh:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">trimesh</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">DeepSDFStruct.SDF</span><span class="w"> </span><span class="kn">import</span> <span class="n">SDFfromMesh</span>
+
+<span class="n">mesh</span> <span class="o">=</span> <span class="n">trimesh</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;model.stl&#39;</span><span class="p">)</span>
+<span class="n">sdf</span> <span class="o">=</span> <span class="n">SDFfromMesh</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
+
+<span class="c1"># Query SDF values</span>
+<span class="n">points</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="n">distances</span> <span class="o">=</span> <span class="n">sdf</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Combine SDFs with boolean operations:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">DeepSDFStruct.sdf_primitives</span><span class="w"> </span><span class="kn">import</span> <span class="n">SphereSDF</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">DeepSDFStruct.SDF</span><span class="w"> </span><span class="kn">import</span> <span class="n">Union</span>
+
+<span class="n">sphere1</span> <span class="o">=</span> <span class="n">SphereSDF</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">radius</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+<span class="n">sphere2</span> <span class="o">=</span> <span class="n">SphereSDF</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">radius</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+<span class="n">combined</span> <span class="o">=</span> <span class="n">Union</span><span class="p">([</span><span class="n">sphere1</span><span class="p">,</span> <span class="n">sphere2</span><span class="p">],</span> <span class="n">smoothing</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
 <p class="rubric">Functions</p>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
@@ -589,25 +649,21 @@ with two fields:</p>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
 <p>Abstract base class for Signed Distance Functions with optional
 deformation and parametrization.</p>
-<p>This class provides the foundation for all SDF representations in DeepSDFStruct.
-SDFs represent geometry as an implicit function that returns the signed distance
-from any query point to the nearest surface. Negative values indicate points
-inside the geometry, positive values indicate points outside, and zero indicates
-points on the surface.</p>
+<p>This class provides the foundation for all SDF representations in
+DeepSDFStruct. SDFs represent geometry as an implicit function that
+returns the signed distance from any query point to the nearest
+surface. Negative values indicate points inside the geometry,
+positive values indicate points outside, and zero indicates points
+on the surface.</p>
 <p>The class supports:
-- Optional spline-based deformations for smooth geometric transformations
+- Optional spline-based deformations for smooth transformations
 - Parametrization functions for spatially-varying properties
-- Border capping to constrain geometry within specified bounds
-- Composition operations (union, intersection) via operator overloading</p>
+- Composition operations (union, intersection) via overloading</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>parametrization</strong> (<em>torch.nn.Module</em><em>, </em><em>optional</em>) – A neural network or function that provides spatially-varying parameters
-for the SDF (e.g., varying thickness in a lattice).</p></li>
-<li><p><strong>cap_border_dict</strong> (<a class="reference internal" href="#DeepSDFStruct.SDF.CapBorderDict" title="DeepSDFStruct.SDF.CapBorderDict"><em>CapBorderDict</em></a><em>, </em><em>optional</em>) – Dictionary specifying boundary conditions for each face of the domain.
-Keys are ‘x0’, ‘x1’, ‘y0’, ‘y1’, ‘z0’, ‘z1’ for the six faces.</p></li>
-<li><p><strong>cap_outside_of_unitcube</strong> (<em>bool</em><em>, </em><em>default False</em>) – If True, caps the SDF values outside the unit cube to create
-a bounded geometry.</p></li>
+<li><p><strong>parametrization</strong> (<em>torch.nn.Module</em><em>, </em><em>optional</em>) – A function that provides spatially-varying parameters for the
+SDF (e.g., varying thickness in a lattice).</p></li>
 <li><p><strong>geometric_dim</strong> (<em>int</em><em>, </em><em>default 3</em>) – Geometric dimension of the SDF (2 or 3).</p></li>
 </ul>
 </dd>
@@ -615,7 +671,7 @@ a bounded geometry.</p></li>
 <p class="rubric">Notes</p>
 <p>Subclasses must implement:
 - <code class="docutils literal notranslate"><span class="pre">_compute(queries)</span></code>: Calculate SDF values for query points
-- <code class="docutils literal notranslate"><span class="pre">_get_domain_bounds()</span></code>: Return the bounding box of the geometry</p>
+- <code class="docutils literal notranslate"><span class="pre">_get_domain_bounds()</span></code>: Return the bounding box of geometry</p>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">DeepSDFStruct.sdf_primitives</span><span class="w"> </span><span class="kn">import</span> <span class="n">SphereSDF</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
@@ -1055,14 +1111,17 @@ to one or more line segments defined by endpoints P1 and P2.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>P1</strong> (<em>np.ndarray</em>) – Array of shape (M, 2) or (2,) representing first endpoints of segments.</p></li>
-<li><p><strong>P2</strong> (<em>np.ndarray</em>) – Array of shape (M, 2) or (2,) representing second endpoints of segments.</p></li>
-<li><p><strong>query_points</strong> (<em>np.ndarray</em>) – Array of shape (N, 2) or (2,) representing query point(s).</p></li>
+<li><p><strong>P1</strong> (<em>np.ndarray</em>) – Array of shape (M, 2) or (2,) representing
+first endpoints of segments.</p></li>
+<li><p><strong>P2</strong> (<em>np.ndarray</em>) – Array of shape (M, 2) or (2,) representing
+second endpoints of segments.</p></li>
+<li><p><strong>query_points</strong> (<em>np.ndarray</em>) – Array of shape (N, 2) or (2,)
+representing query point(s).</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><dl class="simple">
-<dt>Array of shape (N,) with the minimum distance from each query point</dt><dd><p>to the closest segment.</p>
+<dt>Array of shape (N,) with the minimum distance from</dt><dd><p>each query point to the closest segment.</p>
 </dd>
 </dl>
 </p>
@@ -1136,6 +1195,10 @@ k: smoothness parameter</p>
   </div>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#signed-distance-function-sdf-base-classes-and-operations">Signed Distance Function (SDF) Base Classes and Operations</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#key-features">Key Features</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.SDF.BoxSDF"><code class="docutils literal notranslate"><span class="pre">BoxSDF</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.SDF.CapBorderDict"><code class="docutils literal notranslate"><span class="pre">CapBorderDict</span></code></a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.SDF.CapBorderDict.x0"><code class="docutils literal notranslate"><span class="pre">CapBorderDict.x0</span></code></a></li>

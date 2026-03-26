@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>DeepSDFStruct.deep_sdf.reconstruction &#8212; DeepSDFStruct 1.7.1.dev9+gdb3b8da9b documentation</title>
+    <title>DeepSDFStruct.deep_sdf.reconstruction &#8212; DeepSDFStruct 1.7.1.dev15+g7dc08c201 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=afc7f344"></script>
+    <script src="../../_static/documentation_options.js?v=a0ced563"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'source/generated/DeepSDFStruct.deep_sdf.reconstruction';</script>
@@ -110,7 +110,7 @@
   
   
   
-    <p class="title logo__title">DeepSDFStruct 1.7.1.dev9+gdb3b8da9b documentation</p>
+    <p class="title logo__title">DeepSDFStruct 1.7.1.dev15+g7dc08c201 documentation</p>
   
 </a></div>
     
@@ -356,6 +356,49 @@
                   
   <section id="module-DeepSDFStruct.deep_sdf.reconstruction">
 <span id="deepsdfstruct-deep-sdf-reconstruction"></span><h1>DeepSDFStruct.deep_sdf.reconstruction<a class="headerlink" href="#module-DeepSDFStruct.deep_sdf.reconstruction" title="Link to this heading">#</a></h1>
+<section id="shape-reconstruction-and-latent-code-optimization">
+<h2>Shape Reconstruction and Latent Code Optimization<a class="headerlink" href="#shape-reconstruction-and-latent-code-optimization" title="Link to this heading">#</a></h2>
+<p>This module provides methods for reconstructing shapes from SDF samples
+by optimizing latent codes. This is a key capability of DeepSDF models,
+enabling fitting of new geometries not seen during training.</p>
+<section id="key-functions">
+<h3>Key Functions<a class="headerlink" href="#key-functions" title="Link to this heading">#</a></h3>
+<dl class="simple">
+<dt>reconstruct_from_samples</dt><dd><p>Optimize a latent code to match given SDF samples. Uses gradient
+descent to find the latent representation that best reproduces
+the target geometry.</p>
+</dd>
+</dl>
+<p>The reconstruction process:
+1. Start with initial latent code (often zeros or random)
+2. Forward pass through decoder to get SDF predictions
+3. Compute loss between predictions and target samples
+4. Backpropagate and update latent code
+5. Repeat until convergence</p>
+<p>This enables:
+- Fitting trained models to new geometries
+- Shape interpolation by blending latent codes
+- Shape editing by modifying latent codes
+- Compression by storing only latent codes</p>
+<p class="rubric">Examples</p>
+<p>Reconstruct a shape from samples:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">DeepSDFStruct.deep_sdf.reconstruction</span><span class="w"> </span><span class="kn">import</span> <span class="n">reconstruct_from_samples</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">DeepSDFStruct.sampling</span><span class="w"> </span><span class="kn">import</span> <span class="n">sample_sdf_near_surface</span>
+
+<span class="c1"># Sample target geometry</span>
+<span class="n">target_samples</span> <span class="o">=</span> <span class="n">sample_sdf_near_surface</span><span class="p">(</span><span class="n">target_sdf</span><span class="p">,</span> <span class="n">n_samples</span><span class="o">=</span><span class="mi">100000</span><span class="p">)</span>
+
+<span class="c1"># Reconstruct using trained model</span>
+<span class="n">reconstructed_sdf</span> <span class="o">=</span> <span class="n">reconstruct_from_samples</span><span class="p">(</span>
+    <span class="n">model</span><span class="p">,</span>
+    <span class="n">target_samples</span><span class="p">,</span>
+    <span class="n">num_iterations</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+    <span class="n">lr</span><span class="o">=</span><span class="mf">5e-4</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
 <p class="rubric">Functions</p>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
@@ -427,6 +470,10 @@
   </div>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#shape-reconstruction-and-latent-code-optimization">Shape Reconstruction and Latent Code Optimization</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#key-functions">Key Functions</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.deep_sdf.reconstruction.reconstruct_from_samples"><code class="docutils literal notranslate"><span class="pre">reconstruct_from_samples()</span></code></a></li>
 </ul>
   </nav></div>

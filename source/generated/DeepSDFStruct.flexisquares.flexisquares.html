@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>DeepSDFStruct.flexisquares.flexisquares &#8212; DeepSDFStruct 1.7.1.dev9+gdb3b8da9b documentation</title>
+    <title>DeepSDFStruct.flexisquares.flexisquares &#8212; DeepSDFStruct 1.7.1.dev15+g7dc08c201 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=afc7f344"></script>
+    <script src="../../_static/documentation_options.js?v=a0ced563"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'source/generated/DeepSDFStruct.flexisquares.flexisquares';</script>
@@ -110,7 +110,7 @@
   
   
   
-    <p class="title logo__title">DeepSDFStruct 1.7.1.dev9+gdb3b8da9b documentation</p>
+    <p class="title logo__title">DeepSDFStruct 1.7.1.dev15+g7dc08c201 documentation</p>
   
 </a></div>
     
@@ -356,11 +356,21 @@
                   
   <section id="module-DeepSDFStruct.flexisquares.flexisquares">
 <span id="deepsdfstruct-flexisquares-flexisquares"></span><h1>DeepSDFStruct.flexisquares.flexisquares<a class="headerlink" href="#module-DeepSDFStruct.flexisquares.flexisquares" title="Link to this heading">#</a></h1>
+<section id="flexisquares-implementation">
+<h2>FlexiSquares Implementation<a class="headerlink" href="#flexisquares-implementation" title="Link to this heading">#</a></h2>
+<p>This module contains the core implementation of the FlexiSquares algorithm,
+a differentiable 2D mesh extraction method adapted from FlexiCubes.</p>
+<p>FlexiSquares improves upon traditional Marching Squares by allowing gradient-
+based optimization of the extracted contours, making it suitable for inverse
+design and shape optimization problems.</p>
+<p>Copyright (c) 2025 NVIDIA CORPORATION &amp; AFFILIATES.
+Licensed under the Apache License, Version 2.0.</p>
+</section>
 <p class="rubric">Classes</p>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.flexisquares.flexisquares.FlexiSquares" title="DeepSDFStruct.flexisquares.flexisquares.FlexiSquares"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FlexiSquares</span></code></a>([device, qef_reg_scale, ...])</p></td>
-<td><p>Implements the 2D variant of the DeepSDFStruct.flexicubes method, adapted as <strong>DeepSDFStruct.flexisquares</strong>, for extracting contour meshes from scalar fields.</p></td>
+<td><p>Implements the 2D variant of the flexicubes method, adapted as flexisquares, for extracting contour meshes from scalar fields.</p></td>
 </tr>
 </tbody>
 </table>
@@ -369,14 +379,15 @@
 <dt class="sig sig-object py" id="DeepSDFStruct.flexisquares.flexisquares.FlexiSquares">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.flexisquares.flexisquares.</span></span><span class="sig-name descname"><span class="pre">FlexiSquares</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cuda'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qef_reg_scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weight_scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.99</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.flexisquares.flexisquares.FlexiSquares" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Implements the 2D variant of the DeepSDFStruct.flexicubes method, adapted as
-<strong>DeepSDFStruct.flexisquares</strong>, for extracting contour meshes from scalar fields.
-This class uses lookup tables and indexed operations to perform differentiable
-isocontour extraction from signed distance fields defined on 2D grids.</p>
-<p>DeepSDFStruct.flexisquares is a differentiable variant of the Dual Marching Squares (DMS)
-algorithm. It improves geometric fidelity by optimizing surface representations using
-gradient-based methods.</p>
-<p>During initialization, the class loads precomputed lookup tables from DeepSDFStruct.flexisquares
+<p>Implements the 2D variant of the flexicubes method, adapted as
+flexisquares, for extracting contour meshes from scalar fields.
+This class uses lookup tables and indexed operations to perform
+differentiable isocontour extraction from signed distance fields
+defined on 2D grids.</p>
+<p>Flexisquares is a differentiable variant of the Dual Marching
+Squares (DMS) algorithm. It improves geometric fidelity by
+optimizing surface representations using gradient-based methods.</p>
+<p>During initialization, the class loads precomputed lookup tables
 and converts them into PyTorch tensors on the specified device.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="DeepSDFStruct.flexisquares.flexisquares.FlexiSquares.device">
@@ -392,8 +403,9 @@ and converts them into PyTorch tensors on the specified device.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="DeepSDFStruct.flexisquares.flexisquares.FlexiSquares.dmc_table">
 <span class="sig-name descname"><span class="pre">dmc_table</span></span><a class="headerlink" href="#DeepSDFStruct.flexisquares.flexisquares.FlexiSquares.dmc_table" title="Link to this definition">#</a></dt>
-<dd><p>Dual Marching Squares (DMS) table encoding the edges
-associated with each dual vertex in 16 possible Marching Squares configurations.</p>
+<dd><p>Dual Marching Squares (DMS) table
+encoding the edges associated with each dual vertex in 16
+possible Marching Squares configurations.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>torch.Tensor</p>
@@ -404,8 +416,8 @@ associated with each dual vertex in 16 possible Marching Squares configurations.
 <dl class="py attribute">
 <dt class="sig sig-object py" id="DeepSDFStruct.flexisquares.flexisquares.FlexiSquares.num_vd_table">
 <span class="sig-name descname"><span class="pre">num_vd_table</span></span><a class="headerlink" href="#DeepSDFStruct.flexisquares.flexisquares.FlexiSquares.num_vd_table" title="Link to this definition">#</a></dt>
-<dd><p>Table holding the number of dual vertices for each
-configuration.</p>
+<dd><p>Table holding the number of dual
+vertices for each configuration.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>torch.Tensor</p>
@@ -416,7 +428,8 @@ configuration.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="DeepSDFStruct.flexisquares.flexisquares.FlexiSquares.tet_table">
 <span class="sig-name descname"><span class="pre">tet_table</span></span><a class="headerlink" href="#DeepSDFStruct.flexisquares.flexisquares.FlexiSquares.tet_table" title="Link to this definition">#</a></dt>
-<dd><p>Lookup table used during triangle generation inside the contour.</p>
+<dd><p>Lookup table used during triangle
+generation inside the contour.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>torch.Tensor</p>
@@ -427,7 +440,8 @@ configuration.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="DeepSDFStruct.flexisquares.flexisquares.FlexiSquares.cube_corners">
 <span class="sig-name descname"><span class="pre">cube_corners</span></span><a class="headerlink" href="#DeepSDFStruct.flexisquares.flexisquares.FlexiSquares.cube_corners" title="Link to this definition">#</a></dt>
-<dd><p>Positions of the four corners of a unit square in 2D space</p>
+<dd><p>Positions of the four corners of
+a unit square in 2D space.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>torch.Tensor</p>
@@ -438,8 +452,8 @@ configuration.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="DeepSDFStruct.flexisquares.flexisquares.FlexiSquares.cube_corners_idx">
 <span class="sig-name descname"><span class="pre">cube_corners_idx</span></span><a class="headerlink" href="#DeepSDFStruct.flexisquares.flexisquares.FlexiSquares.cube_corners_idx" title="Link to this definition">#</a></dt>
-<dd><p>Corner indices encoded as binary powers to compute
-case IDs for Marching Squares.</p>
+<dd><p>Corner indices encoded as
+binary powers to compute case IDs for Marching Squares.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>torch.Tensor</p>
@@ -450,7 +464,8 @@ case IDs for Marching Squares.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="DeepSDFStruct.flexisquares.flexisquares.FlexiSquares.cube_edges">
 <span class="sig-name descname"><span class="pre">cube_edges</span></span><a class="headerlink" href="#DeepSDFStruct.flexisquares.flexisquares.FlexiSquares.cube_edges" title="Link to this definition">#</a></dt>
-<dd><p>Edge connections in a square, listed in pairs of corner indices.</p>
+<dd><p>Edge connections in a square,
+listed in pairs of corner indices.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>torch.Tensor</p>
@@ -466,22 +481,27 @@ case IDs for Marching Squares.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="DeepSDFStruct.flexisquares.flexisquares.FlexiSquares.construct_voxel_grid">
 <span class="sig-name descname"><span class="pre">construct_voxel_grid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">resolution</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bounds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.flexisquares.flexisquares.FlexiSquares.construct_voxel_grid" title="Link to this definition">#</a></dt>
-<dd><p>Generates a 2D grid of vertices and their square indices given the specified resolution.</p>
+<dd><p>Generates a 2D grid of vertices and their square indices given
+the specified resolution.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>resolution</strong> (<em>int</em><em> or </em><em>list</em><em>[</em><em>int</em><em>]</em>) – Resolution of the 2D grid. If an integer is provided,
-it is applied to both x and y dimensions. If a tuple/list of two integers is given,
+<li><p><strong>resolution</strong> (<em>int</em><em> or </em><em>list</em><em>[</em><em>int</em><em>]</em>) – Resolution of the 2D grid.
+If an integer is provided, it is applied to both x and
+y dimensions. If a tuple/list of two integers is given,
 they specify (x_res, y_res).</p></li>
-<li><p><strong>bounds</strong> (<em>torch.Tensor</em><em>, </em><em>optional</em>) – 2×2 tensor defining the [min, max] bounds in x and y.
+<li><p><strong>bounds</strong> (<em>torch.Tensor</em><em>, </em><em>optional</em>) – 2×2 tensor defining the
+[min, max] bounds in x and y.
 Defaults to [[-0.05, -0.05], [1.05, 1.05]].</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><dl class="simple">
 <dt>Tuple containing:</dt><dd><ul class="simple">
-<li><p>Vertices (N×2): Scaled vertex coordinates of the 2D grid.</p></li>
-<li><p>Squares (F×4): Indices into <cite>vertices</cite> defining each square’s corner connectivity.</p></li>
+<li><p>Vertices (N×2): Scaled vertex coordinates of the
+2D grid.</p></li>
+<li><p>Squares (F×4): Indices into <cite>vertices</cite> defining each
+square’s corner connectivity.</p></li>
 </ul>
 </dd>
 </dl>
@@ -544,6 +564,7 @@ Defaults to [[-0.05, -0.05], [1.05, 1.05]].</p></li>
   </div>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#flexisquares-implementation">FlexiSquares Implementation</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.flexisquares.flexisquares.FlexiSquares"><code class="docutils literal notranslate"><span class="pre">FlexiSquares</span></code></a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.flexisquares.flexisquares.FlexiSquares.device"><code class="docutils literal notranslate"><span class="pre">FlexiSquares.device</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.flexisquares.flexisquares.FlexiSquares.dmc_table"><code class="docutils literal notranslate"><span class="pre">FlexiSquares.dmc_table</span></code></a></li>

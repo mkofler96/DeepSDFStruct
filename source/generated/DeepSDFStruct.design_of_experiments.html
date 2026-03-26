@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>DeepSDFStruct.design_of_experiments &#8212; DeepSDFStruct 1.7.1.dev9+gdb3b8da9b documentation</title>
+    <title>DeepSDFStruct.design_of_experiments &#8212; DeepSDFStruct 1.7.1.dev15+g7dc08c201 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=afc7f344"></script>
+    <script src="../../_static/documentation_options.js?v=a0ced563"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'source/generated/DeepSDFStruct.design_of_experiments';</script>
@@ -110,7 +110,7 @@
   
   
   
-    <p class="title logo__title">DeepSDFStruct 1.7.1.dev9+gdb3b8da9b documentation</p>
+    <p class="title logo__title">DeepSDFStruct 1.7.1.dev15+g7dc08c201 documentation</p>
   
 </a></div>
     
@@ -353,6 +353,69 @@
                   
   <section id="module-DeepSDFStruct.design_of_experiments">
 <span id="deepsdfstruct-design-of-experiments"></span><h1>DeepSDFStruct.design_of_experiments<a class="headerlink" href="#module-DeepSDFStruct.design_of_experiments" title="Link to this heading">#</a></h1>
+<section id="design-of-experiments-doe-for-deepsdf-training">
+<h2>Design of Experiments (DOE) for DeepSDF Training<a class="headerlink" href="#design-of-experiments-doe-for-deepsdf-training" title="Link to this heading">#</a></h2>
+<p>This module provides tools for conducting systematic design of experiments
+when training DeepSDF neural network models. It integrates with MLflow for
+experiment tracking and supports automated hyperparameter sweeps.</p>
+<section id="key-features">
+<h3>Key Features<a class="headerlink" href="#key-features" title="Link to this heading">#</a></h3>
+<dl class="simple">
+<dt>ExperimentSpecifications</dt><dd><p>A flexible dictionary-like class for managing experiment configurations
+with support for:
+- Loading specifications from JSON files
+- Recursive updates for nested parameter structures
+- Deep copying to prevent unintended modifications
+- Flattening nested configurations for logging
+- Saving configurations for reproducibility</p>
+</dd>
+<dt>MLflow Integration</dt><dd><p>Automatic tracking of:
+- Training metrics (loss curves, validation scores)
+- Model checkpoints
+- Hyperparameters and configurations
+- Dataset information
+- Experiment metadata</p>
+</dd>
+</dl>
+<p>The module simplifies the process of running large-scale hyperparameter
+searches and ablation studies for DeepSDF model training, with built-in
+versioning and reproducibility features.</p>
+<p class="rubric">Examples</p>
+<p>Run an experiment with custom specifications:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">DeepSDFStruct.design_of_experiments</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExperimentSpecifications</span>
+
+<span class="c1"># Load base configuration</span>
+<span class="n">specs</span> <span class="o">=</span> <span class="n">ExperimentSpecifications</span><span class="p">(</span><span class="s1">&#39;config.json&#39;</span><span class="p">)</span>
+
+<span class="c1"># Update hyperparameters</span>
+<span class="n">specs</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
+    <span class="s1">&#39;learning_rate&#39;</span><span class="p">:</span> <span class="mf">0.001</span><span class="p">,</span>
+    <span class="s1">&#39;batch_size&#39;</span><span class="p">:</span> <span class="mi">32</span><span class="p">,</span>
+    <span class="s1">&#39;num_epochs&#39;</span><span class="p">:</span> <span class="mi">100</span>
+<span class="p">})</span>
+
+<span class="c1"># Run training with tracking</span>
+<span class="c1"># train_with_specs(specs)</span>
+</pre></div>
+</div>
+<p>Create and modify experiment configurations:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">specs</span> <span class="o">=</span> <span class="n">ExperimentSpecifications</span><span class="p">({</span>
+    <span class="s1">&#39;model&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;layers&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">512</span><span class="p">,</span> <span class="mi">512</span><span class="p">,</span> <span class="mi">512</span><span class="p">],</span>
+        <span class="s1">&#39;activation&#39;</span><span class="p">:</span> <span class="s1">&#39;relu&#39;</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;training&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;lr&#39;</span><span class="p">:</span> <span class="mf">0.0005</span>
+    <span class="p">}</span>
+<span class="p">})</span>
+
+<span class="c1"># Flatten for logging</span>
+<span class="n">flat_params</span> <span class="o">=</span> <span class="n">specs</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">flat_params</span><span class="p">)</span>  <span class="c1"># {&#39;model.layers&#39;: [...], &#39;model.activation&#39;: &#39;relu&#39;, ...}</span>
+</pre></div>
+</div>
+</section>
+</section>
 <p class="rubric">Functions</p>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
@@ -521,6 +584,10 @@ with dot-separated keys.</p>
   </div>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#design-of-experiments-doe-for-deepsdf-training">Design of Experiments (DOE) for DeepSDF Training</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#key-features">Key Features</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.design_of_experiments.ExperimentSpecifications"><code class="docutils literal notranslate"><span class="pre">ExperimentSpecifications</span></code></a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.design_of_experiments.ExperimentSpecifications.copy"><code class="docutils literal notranslate"><span class="pre">ExperimentSpecifications.copy()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.design_of_experiments.ExperimentSpecifications.flatten"><code class="docutils literal notranslate"><span class="pre">ExperimentSpecifications.flatten()</span></code></a></li>
