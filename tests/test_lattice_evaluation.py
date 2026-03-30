@@ -57,9 +57,7 @@ def test_deepsdf_lattice_evaluation():
     lattice_struct.plot_slice(
         origin=(0, 0.5, 0),
         normal=(0, 1, 0),
-        ylim=[0, 2],
         ax=axs[0],
-        # cmap=cmap,
         show_zero_level=True,
         res=(300, 300),
         deformation_function=deformation_spline,

@@ -23,7 +23,7 @@ If you encounter issues during installation, contact Michael Kofler.
 ---
 
 ## 🚀 Quick Start
-This section mirrors the structure and content of [example.ipynb](example.ipynb) as closely as possible.
+This section shows how to use the main features of this library. Further details can be found in [example.ipynb](example.ipynb).
 
 Here's a simple example using a pretrained DeepSDF model, lattice structure generation, and deformation:
 
