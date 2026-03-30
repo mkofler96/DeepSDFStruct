@@ -231,23 +231,6 @@ class LatticeSDFStruct(_SDFBase):
         gus_faces = gus.Faces(vertices=verts.cpu().detach(), faces=faces.cpu().detach())
         gus.show(gus_faces, axes=1)
 
-    def plot_slice(self, deformation_function=None, *args, **kwargs):
-        if deformation_function is not None:
-            xmin = deformation_function.control_points[:, 0].min().item()
-            xmax = deformation_function.control_points[:, 0].max().item()
-            ymin = deformation_function.control_points[:, 1].min().item()
-            ymax = deformation_function.control_points[:, 1].max().item()
-        else:
-            xmin = self.bounds[0, 0].item()
-            xmax = self.bounds[1, 0].item()
-            ymin = self.bounds[0, 1].item()
-            ymax = self.bounds[1, 1].item()
-
-        kwargs.setdefault("xlim", (xmin, xmax))
-        kwargs.setdefault("ylim", (ymin, ymax))
-
-        return super().plot_slice(*args, **kwargs)
-
 
 def constantLatvec(value):
     return _BSpline([0, 0, 0], [[-1, 1], [-1, 1], [-1, 1]], [value])

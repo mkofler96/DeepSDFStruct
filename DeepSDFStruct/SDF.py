@@ -81,6 +81,7 @@ import DeepSDFStruct
 import logging
 
 import matplotlib.pyplot as plt
+import matplotlib.tri as mtri
 
 logger = logging.getLogger(DeepSDFStruct.__name__)
 
@@ -350,15 +351,116 @@ class SDFBase(torch.nn.Module, ABC):
         """
         pass
 
-    def plot_slice(self, *args, **kwargs):
-        if self.geometric_dim == 2:
-            return plot_slice_2D(self, *args, **kwargs)
-        elif self.geometric_dim == 3:
-            return plot_slice(self, *args, **kwargs)
+    def plot_slice(
+        self,
+        origin=(0, 0, 0),
+        normal=(0, 0, 1),
+        res=(100, 100),
+        ax=None,
+        clim=(-1, 1),
+        cmap="seismic",
+        show_zero_level=True,
+        deformation_function=None,
+    ):
+        """Plot a 2D slice through an SDF as a contour plot.
+
+        This function evaluates an SDF on a planar grid and visualizes the
+        signed distance values using a color map. The zero level set (the
+        actual surface) can be highlighted with a contour line.
+
+        Parameters
+        ----------
+        fun : callable
+            The SDF function to visualize. Should accept a torch.Tensor
+            of shape (N, 3) and return distances of shape (N, 1).
+        origin : tuple of float, default (0, 0, 0)
+            A point on the slice plane.
+        normal : tuple of float, default (0, 0, 1)
+            Normal vector of the slice plane. Currently supports only
+            axis-aligned planes: (1,0,0), (0,1,0), or (0,0,1).
+        res : tuple of int, default (100, 100)
+            Resolution of the slice grid (num_points_u, num_points_v).
+        ax : matplotlib.axes.Axes, optional
+            Axes to plot on. If None, creates a new figure.
+        xlim : tuple of float, default (-1, 1)
+            Range along the first plane axis.
+        ylim : tuple of float, default (-1, 1)
+            Range along the second plane axis.
+        clim : tuple of float, default (-1, 1)
+            Color map limits for distance values.
+        cmap : str, default 'seismic'
+            Matplotlib colormap name.
+        show_zero_level : bool, default True
+            If True, draws a black contour line at distance=0 (the surface).
+        deformation_function : callable, optional
+            Deformation mapping from parametric to physical space. If given,
+            sample points are deformed before SDF evaluation and plotting.
+
+        Returns
+        -------
+        fig, ax : matplotlib.figure.Figure, matplotlib.axes.Axes
+            Only returned if ax was None (i.e., a new figure was created).
+
+        Examples
+        --------
+        >>> from DeepSDFStruct.sdf_primitives import SphereSDF
+        >>> from DeepSDFStruct.plotting import plot_slice
+        >>> import matplotlib.pyplot as plt
+        >>>
+        >>> # Create a sphere
+        >>> sphere = SphereSDF(center=[0, 0, 0], radius=0.5)
+        >>>
+        >>> # Plot XY slice at z=0
+        >>> fig, ax = plot_slice(
+        ...     sphere,
+        ...     origin=(0, 0, 0),
+        ...     normal=(0, 0, 1),
+        ...     res=(200, 200)
+        ... )
+        >>> plt.title("XY Slice of Sphere")
+        >>> plt.show()
+
+        Notes
+        -----
+        The 'seismic' colormap is well-suited for SDFs as it uses blue for
+        negative (inside) and red for positive (outside), with white near zero.
+        """
+        plt_show = False
+        if ax is None:
+            fig, ax = plt.subplots()
+            plt_show = True
+        bounds = self._get_domain_bounds()
+        xlim, ylim = project_bounds(origin, normal, bounds=bounds)
+        points = generate_plane_points(origin, normal, res, xlim, ylim)
+
+        sdf_device = self.get_device()
+        points = torch.from_numpy(points).to(torch.float32).to(sdf_device)
+
+        if deformation_function is not None:
+            points_deformed = deformation_function.forward(points)
         else:
-            raise RuntimeError(
-                f"Cannot plot SDF with geometric dim other than 2 or 3, given {self.geometric_dim}"
+            points_deformed = points
+
+        sdf_values = self._compute(points).reshape(-1).detach().cpu().numpy()
+        points_np = points_deformed.detach().cpu().numpy()
+        axis0, axis1 = _get_plane_plot_axes(normal)
+        x_plot = points_np[:, axis0]
+        y_plot = points_np[:, axis1]
+        triangles = _build_structured_grid_triangles(res[0], res[1])
+        triangulation = mtri.Triangulation(x_plot, y_plot, triangles=triangles)
+
+        cbar = ax.tricontourf(triangulation, sdf_values, cmap=cmap, levels=10)
+        if show_zero_level:
+            ax.tricontour(
+                triangulation, sdf_values, levels=[0], colors="black", linewidths=0.5
             )
+        cbar.set_clim(clim[0], clim[1])
+        ax.set_xticks([])
+        ax.set_yticks([])
+        ax.set_aspect(1)
+        if plt_show:
+            plt.show()
+            return fig, ax
 
     def __add__(self, other):
         return UnionSDF(self, other)
@@ -1017,178 +1119,6 @@ class CappedBorderSDF(SDFBase):
         return self.sdf._get_domain_bounds()
 
 
-def plot_slice(
-    fun: SDFBase,
-    origin=(0, 0, 0),
-    normal=(0, 0, 1),
-    res=(100, 100),
-    ax=None,
-    xlim=(-1, 1),
-    ylim=(-1, 1),
-    clim=(-1, 1),
-    cmap="seismic",
-    show_zero_level=True,
-):
-    """Plot a 2D slice through an SDF as a contour plot.
-
-    This function evaluates an SDF on a planar grid and visualizes the
-    signed distance values using a color map. The zero level set (the
-    actual surface) can be highlighted with a contour line.
-
-    Parameters
-    ----------
-    fun : callable
-        The SDF function to visualize. Should accept a torch.Tensor
-        of shape (N, 3) and return distances of shape (N, 1).
-    origin : tuple of float, default (0, 0, 0)
-        A point on the slice plane.
-    normal : tuple of float, default (0, 0, 1)
-        Normal vector of the slice plane. Currently supports only
-        axis-aligned planes: (1,0,0), (0,1,0), or (0,0,1).
-    res : tuple of int, default (100, 100)
-        Resolution of the slice grid (num_points_u, num_points_v).
-    ax : matplotlib.axes.Axes, optional
-        Axes to plot on. If None, creates a new figure.
-    xlim : tuple of float, default (-1, 1)
-        Range along the first plane axis.
-    ylim : tuple of float, default (-1, 1)
-        Range along the second plane axis.
-    clim : tuple of float, default (-1, 1)
-        Color map limits for distance values.
-    cmap : str, default 'seismic'
-        Matplotlib colormap name.
-    show_zero_level : bool, default True
-        If True, draws a black contour line at distance=0 (the surface).
-
-    Returns
-    -------
-    fig, ax : matplotlib.figure.Figure, matplotlib.axes.Axes
-        Only returned if ax was None (i.e., a new figure was created).
-
-    Examples
-    --------
-    >>> from DeepSDFStruct.sdf_primitives import SphereSDF
-    >>> from DeepSDFStruct.plotting import plot_slice
-    >>> import matplotlib.pyplot as plt
-    >>>
-    >>> # Create a sphere
-    >>> sphere = SphereSDF(center=[0, 0, 0], radius=0.5)
-    >>>
-    >>> # Plot XY slice at z=0
-    >>> fig, ax = plot_slice(
-    ...     sphere,
-    ...     origin=(0, 0, 0),
-    ...     normal=(0, 0, 1),
-    ...     res=(200, 200)
-    ... )
-    >>> plt.title("XY Slice of Sphere")
-    >>> plt.show()
-
-    Notes
-    -----
-    The 'seismic' colormap is well-suited for SDFs as it uses blue for
-    negative (inside) and red for positive (outside), with white near zero.
-    """
-    plt_show = False
-    if ax is None:
-        fig, ax = plt.subplots()
-        plt_show = True
-
-    points, u, v = generate_plane_points(origin, normal, res, xlim, ylim)
-
-    sdf_device = fun.get_device()
-    points = torch.from_numpy(points).to(torch.float32).to(sdf_device)
-    sdf = fun(points).reshape((res[0], res[1]))
-    X = u.reshape((res[0], res[1]))
-    Y = v.reshape((res[0], res[1]))
-    sdf = sdf.detach().cpu().numpy()
-
-    # cbar = ax[0].scatter(X, Y, c=sdf, cmap="seismic")c
-    cbar = ax.contourf(X, Y, sdf, cmap=cmap, levels=10)
-    if show_zero_level:
-        ax.contour(X, Y, sdf, levels=[0], colors="black", linewidths=0.5)
-    cbar.set_clim(clim[0], clim[1])
-    ax.set_xticks([])
-    ax.set_yticks([])
-    ax.set_aspect(1)
-    if plt_show:
-        plt.show()
-        return fig, ax
-
-
-def plot_slice_2D(
-    fun: SDFBase,
-    res=(100, 100),
-    ax=None,
-    xlim=(-1, 1),
-    ylim=(-1, 1),
-    clim=(-1, 1),
-    cmap="seismic",
-    show_zero_level=True,
-):
-    """Plot a 2D slice through an SDF as a contour plot.
-
-    This function evaluates an SDF on a planar grid and visualizes the
-    signed distance values using a color map. The zero level set (the
-    actual surface) can be highlighted with a contour line.
-
-    Parameters
-    ----------
-    fun : callable
-        The SDF function to visualize. Should accept a torch.Tensor
-        of shape (N, 3) and return distances of shape (N, 1).
-    res : tuple of int, default (100, 100)
-        Resolution of the slice grid (num_points_u, num_points_v).
-    ax : matplotlib.axes.Axes, optional
-        Axes to plot on. If None, creates a new figure.
-    xlim : tuple of float, default (-1, 1)
-        Range along the first plane axis.
-    ylim : tuple of float, default (-1, 1)
-        Range along the second plane axis.
-    clim : tuple of float, default (-1, 1)
-        Color map limits for distance values.
-    cmap : str, default 'seismic'
-        Matplotlib colormap name.
-    show_zero_level : bool, default True
-        If True, draws a black contour line at distance=0 (the surface).
-
-    Returns
-    -------
-    fig, ax : matplotlib.figure.Figure, matplotlib.axes.Axes
-        Only returned if ax was None (i.e., a new figure was created).
-
-    """
-    plt_show = False
-    if ax is None:
-        fig, ax = plt.subplots()
-        plt_show = True
-
-    u_mesh, v_mesh = np.meshgrid(
-        np.linspace(xlim[0], xlim[1], res[0]), np.linspace(ylim[0], ylim[1], res[1])
-    )
-    u = u_mesh.reshape(-1, 1)
-    v = v_mesh.reshape(-1, 1)
-    points = np.hstack([u, v])
-    sdf_device = fun.get_device()
-    points = torch.from_numpy(points).to(torch.float32).to(sdf_device)
-    sdf = fun(points).reshape((res[0], res[1]))
-    X = u.reshape((res[0], res[1]))
-    Y = v.reshape((res[0], res[1]))
-    sdf = sdf.detach().cpu().numpy()
-
-    # cbar = ax[0].scatter(X, Y, c=sdf, cmap="seismic")c
-    cbar = ax.contourf(X, Y, sdf, cmap=cmap, levels=10)
-    if show_zero_level:
-        ax.contour(X, Y, sdf, levels=[0], colors="black", linewidths=0.5)
-    cbar.set_clim(clim[0], clim[1])
-    ax.set_xticks([])
-    ax.set_yticks([])
-    ax.set_aspect(1)
-    if plt_show:
-        plt.show()
-        return fig, ax
-
-
 def generate_plane_points(origin, normal, res, xlim, ylim):
     """Generate evenly spaced points on a plane in 3D space.
 
@@ -1265,18 +1195,108 @@ def generate_plane_points(origin, normal, res, xlim, ylim):
             "Normal vector other than [1,0,0], [0,1,0] and [0,0,1] not supported yet."
         )
 
-    # Create grid points in 2D space (u-v plane)
     u_coords = np.linspace(xlim[0], xlim[1], res[0])
     v_coords = np.linspace(ylim[0], ylim[1], res[1])
+    u_mesh, v_mesh = np.meshgrid(u_coords, v_coords)
+    u_flat = u_mesh.reshape(-1)
+    v_flat = v_mesh.reshape(-1)
+    points = origin + u_flat[:, None] * u + v_flat[:, None] * v
 
-    points = []
-    u_exp = []
-    v_exp = []
-    for u_val in u_coords:
-        for v_val in v_coords:
-            point = origin + u_val * u + v_val * v
-            u_exp.append(u_val)
-            v_exp.append(v_val)
-            points.append(point)
+    return points
 
-    return np.array(points), np.array(u_exp), np.array(v_exp)
+
+def _get_plane_plot_axes(normal):
+    normal = np.array(normal)
+    normal = normal / np.linalg.norm(normal)
+    if np.allclose(normal, [0, 0, 1]):
+        return 0, 1
+    if np.allclose(normal, [0, 1, 0]):
+        return 0, 2
+    if np.allclose(normal, [1, 0, 0]):
+        return 1, 2
+    raise NotImplementedError(
+        "Normal vector other than [1,0,0], [0,1,0] and [0,0,1] not supported yet."
+    )
+
+
+def _build_structured_grid_triangles(nx, ny):
+    triangles = []
+    for j in range(ny - 1):
+        row_start = j * nx
+        next_row_start = (j + 1) * nx
+        for i in range(nx - 1):
+            p0 = row_start + i
+            p1 = row_start + i + 1
+            p2 = next_row_start + i
+            p3 = next_row_start + i + 1
+            triangles.append([p0, p1, p2])
+            triangles.append([p1, p3, p2])
+    return np.asarray(triangles, dtype=np.int32)
+
+
+def project_bounds(origin, normal, bounds=None):
+    """
+    Project 3D AABB bounds onto a slice plane and return 2D limits.
+
+    Parameters
+    ----------
+    origin : (3,)
+        Point on plane
+    normal : (3,)
+        Plane normal
+    bounds : (2, 3)
+        AABB bounds [[xmin,ymin,zmin],[xmax,ymax,zmax]]
+        If None, defaults to unit cube [0,1]^3
+
+    Returns
+    -------
+    xlim, ylim : tuple
+        Limits in plane coordinates
+    """
+    import numpy as np
+
+    if bounds is None:
+        bounds = np.array([[0, 0, 0], [1, 1, 1]])
+
+    bmin, bmax = bounds
+
+    normal = np.asarray(normal, dtype=float)
+    normal = normal / np.linalg.norm(normal)
+
+    origin = np.asarray(origin, dtype=float)
+
+    # --- build orthonormal basis (u, v) ---
+    if np.allclose(normal, [0, 0, 1]):
+        u = np.array([1, 0, 0])
+        v = np.array([0, 1, 0])
+    elif np.allclose(normal, [0, 1, 0]):
+        u = np.array([1, 0, 0])
+        v = np.array([0, 0, 1])
+    elif np.allclose(normal, [1, 0, 0]):
+        u = np.array([0, 1, 0])
+        v = np.array([0, 0, 1])
+    else:
+        raise NotImplementedError(
+            "normals different to the main axis are not implemented yet."
+        )
+
+    # --- generate 8 corners of AABB ---
+    corners = np.array(
+        [
+            [x, y, z]
+            for x in [bmin[0], bmax[0]]
+            for y in [bmin[1], bmax[1]]
+            for z in [bmin[2], bmax[2]]
+        ]
+    )
+
+    # --- project corners into plane coordinates ---
+    rel = corners - origin  # important: relative to plane origin
+
+    u_coords = rel @ u
+    v_coords = rel @ v
+
+    xlim = (u_coords.min(), u_coords.max())
+    ylim = (v_coords.min(), v_coords.max())
+
+    return xlim, ylim
