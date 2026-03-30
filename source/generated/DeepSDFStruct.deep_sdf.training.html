@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>DeepSDFStruct.deep_sdf.training &#8212; DeepSDFStruct 1.7.1.dev15+g7dc08c201 documentation</title>
+    <title>DeepSDFStruct.deep_sdf.training &#8212; DeepSDFStruct 1.7.1.dev32+gc0f3335ae.d20260330 documentation</title>
   
   
   
@@ -38,9 +38,9 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=a0ced563"></script>
-    <script src="../../_static/doctools.js?v=9bcbadda"></script>
-    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/documentation_options.js?v=02fdbe3e"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'source/generated/DeepSDFStruct.deep_sdf.training';</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -110,7 +110,7 @@
   
   
   
-    <p class="title logo__title">DeepSDFStruct 1.7.1.dev15+g7dc08c201 documentation</p>
+    <p class="title logo__title">DeepSDFStruct 1.7.1.dev32+gc0f3335ae.d20260330 documentation</p>
   
 </a></div>
     
@@ -408,8 +408,6 @@ for lattice structures and microstructured materials.</p>
 <span class="n">train_deep_sdf</span><span class="p">(</span><span class="n">experiment_dir</span><span class="p">,</span> <span class="n">specs</span><span class="p">)</span>
 </pre></div>
 </div>
-</section>
-</section>
 <p class="rubric">Functions</p>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
@@ -476,9 +474,11 @@ for lattice structures and microstructured materials.</p>
 </tbody>
 </table>
 </div>
+</section>
+</section>
 <dl class="py class">
 <dt class="sig sig-object py" id="DeepSDFStruct.deep_sdf.training.ClampedL1Loss">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.deep_sdf.training.</span></span><span class="sig-name descname"><span class="pre">ClampedL1Loss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">clamp_val</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.deep_sdf.training.ClampedL1Loss" title="Link to this definition">#</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.deep_sdf.training.</span></span><span class="sig-name descname"><span class="pre">ClampedL1Loss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">clamp_val</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.deep_sdf.training.ClampedL1Loss" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="DeepSDFStruct.deep_sdf.training.ClampedL1Loss.forward">
@@ -498,7 +498,7 @@ registered hooks while the latter silently ignores them.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="DeepSDFStruct.deep_sdf.training.ConstantLearningRateSchedule">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.deep_sdf.training.</span></span><span class="sig-name descname"><span class="pre">ConstantLearningRateSchedule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.deep_sdf.training.ConstantLearningRateSchedule" title="Link to this definition">#</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.deep_sdf.training.</span></span><span class="sig-name descname"><span class="pre">ConstantLearningRateSchedule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.deep_sdf.training.ConstantLearningRateSchedule" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#DeepSDFStruct.deep_sdf.training.LearningRateSchedule" title="DeepSDFStruct.deep_sdf.training.LearningRateSchedule"><code class="xref py py-class docutils literal notranslate"><span class="pre">DeepSDFStruct.deep_sdf.training.LearningRateSchedule</span></code></a></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="DeepSDFStruct.deep_sdf.training.ConstantLearningRateSchedule.get_learning_rate">
@@ -509,7 +509,7 @@ registered hooks while the latter silently ignores them.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="DeepSDFStruct.deep_sdf.training.LearningRateSchedule">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.deep_sdf.training.</span></span><span class="sig-name descname"><span class="pre">LearningRateSchedule</span></span><a class="headerlink" href="#DeepSDFStruct.deep_sdf.training.LearningRateSchedule" title="Link to this definition">#</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.deep_sdf.training.</span></span><span class="sig-name descname"><span class="pre">LearningRateSchedule</span></span><a class="headerlink" href="#DeepSDFStruct.deep_sdf.training.LearningRateSchedule" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="DeepSDFStruct.deep_sdf.training.LearningRateSchedule.get_learning_rate">
@@ -520,7 +520,7 @@ registered hooks while the latter silently ignores them.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="DeepSDFStruct.deep_sdf.training.StepLearningRateSchedule">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.deep_sdf.training.</span></span><span class="sig-name descname"><span class="pre">StepLearningRateSchedule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">initial</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interval</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">factor</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.deep_sdf.training.StepLearningRateSchedule" title="Link to this definition">#</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.deep_sdf.training.</span></span><span class="sig-name descname"><span class="pre">StepLearningRateSchedule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">initial</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interval</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">factor</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.deep_sdf.training.StepLearningRateSchedule" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#DeepSDFStruct.deep_sdf.training.LearningRateSchedule" title="DeepSDFStruct.deep_sdf.training.LearningRateSchedule"><code class="xref py py-class docutils literal notranslate"><span class="pre">DeepSDFStruct.deep_sdf.training.LearningRateSchedule</span></code></a></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="DeepSDFStruct.deep_sdf.training.StepLearningRateSchedule.get_learning_rate">
@@ -531,7 +531,7 @@ registered hooks while the latter silently ignores them.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="DeepSDFStruct.deep_sdf.training.WarmupLearningRateSchedule">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.deep_sdf.training.</span></span><span class="sig-name descname"><span class="pre">WarmupLearningRateSchedule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">initial</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">warmed_up</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">length</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.deep_sdf.training.WarmupLearningRateSchedule" title="Link to this definition">#</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.deep_sdf.training.</span></span><span class="sig-name descname"><span class="pre">WarmupLearningRateSchedule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">initial</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">warmed_up</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">length</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.deep_sdf.training.WarmupLearningRateSchedule" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#DeepSDFStruct.deep_sdf.training.LearningRateSchedule" title="DeepSDFStruct.deep_sdf.training.LearningRateSchedule"><code class="xref py py-class docutils literal notranslate"><span class="pre">DeepSDFStruct.deep_sdf.training.LearningRateSchedule</span></code></a></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="DeepSDFStruct.deep_sdf.training.WarmupLearningRateSchedule.get_learning_rate">
@@ -775,7 +775,7 @@ endpoints). Defaults to 11.</p></li>
         <div class="footer-item">
 
   <p class="sphinx-version">
-    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.0.
     <br/>
   </p>
 </div>
