@@ -47,10 +47,10 @@ from DeepSDFStruct.mesh import create_3D_mesh, torchVolumeMesh
 from DeepSDFStruct.optimization import tet_signed_vol
 from DeepSDFStruct.torch_spline import TorchSpline
 
-
 # ---------------------------------------------------------------------------
 # Helper
 # ---------------------------------------------------------------------------
+
 
 def _print_stats(label: str, verts: torch.Tensor, tets: torch.Tensor) -> None:
     """Print signed-volume statistics for a tetrahedral mesh."""
@@ -82,6 +82,7 @@ def _orient_tets(verts: torch.Tensor, tets: torch.Tensor) -> torch.Tensor:
 # Shared geometry: a sphere SDF centred in the unit cube
 # ---------------------------------------------------------------------------
 
+
 def _sphere_sdf() -> SphereSDF:
     return SphereSDF(center=[0.5, 0.5, 0.5], radius=0.35)
 
@@ -89,6 +90,7 @@ def _sphere_sdf() -> SphereSDF:
 # ---------------------------------------------------------------------------
 # Step 1 – No deformation
 # ---------------------------------------------------------------------------
+
 
 def step1_no_deformation() -> None:
     """
@@ -112,15 +114,22 @@ def step1_no_deformation() -> None:
     assert isinstance(mesh, torchVolumeMesh)
     verts, tets = mesh.vertices, mesh.volumes
 
-    _print_stats("Step 1 – Sphere, no deformation (raw FlexiCubes output, surface tets 100% fixed)", verts, tets)
+    _print_stats(
+        "Step 1 – Sphere, no deformation (raw FlexiCubes output, surface tets 100% fixed)",
+        verts,
+        tets,
+    )
 
     tets_fixed = _orient_tets(verts, tets)
-    _print_stats("Step 1 – After additional post-hoc orientation fix", verts, tets_fixed)
+    _print_stats(
+        "Step 1 – After additional post-hoc orientation fix", verts, tets_fixed
+    )
 
 
 # ---------------------------------------------------------------------------
 # Step 2 – Linear deformation  (box(2, 1, 1) scaling)
 # ---------------------------------------------------------------------------
+
 
 def step2_linear_deformation() -> None:
     """
@@ -131,25 +140,33 @@ def step2_linear_deformation() -> None:
     systematic source as in Step 1.
     """
     sdf = _sphere_sdf()
-    deformation = TorchSpline(
-        splinepy.helpme.create.box(2, 1, 1).bspline, device="cpu"
-    )
+    deformation = TorchSpline(splinepy.helpme.create.box(2, 1, 1).bspline, device="cpu")
     mesh, _ = create_3D_mesh(
-        sdf, N_base=20, mesh_type="volume", differentiate=False,
+        sdf,
+        N_base=20,
+        mesh_type="volume",
+        differentiate=False,
         deformation_function=deformation,
     )
     assert isinstance(mesh, torchVolumeMesh)
     verts, tets = mesh.vertices, mesh.volumes
 
-    _print_stats("Step 2 – Sphere, linear deformation (box 2×1×1), raw (surface tets 100% fixed)", verts, tets)
+    _print_stats(
+        "Step 2 – Sphere, linear deformation (box 2×1×1), raw (surface tets 100% fixed)",
+        verts,
+        tets,
+    )
 
     tets_fixed = _orient_tets(verts, tets)
-    _print_stats("Step 2 – After additional post-hoc orientation fix", verts, tets_fixed)
+    _print_stats(
+        "Step 2 – After additional post-hoc orientation fix", verts, tets_fixed
+    )
 
 
 # ---------------------------------------------------------------------------
 # Step 3 – Non-linear deformation with a local fold
 # ---------------------------------------------------------------------------
+
 
 def step3_nonlinear_deformation() -> None:
     """
@@ -187,15 +204,17 @@ def step3_nonlinear_deformation() -> None:
     deformation = TorchSpline(box_spline, device="cpu")
 
     mesh, _ = create_3D_mesh(
-        sdf, N_base=20, mesh_type="volume", differentiate=False,
+        sdf,
+        N_base=20,
+        mesh_type="volume",
+        differentiate=False,
         deformation_function=deformation,
     )
     assert isinstance(mesh, torchVolumeMesh)
     verts, tets = mesh.vertices, mesh.volumes
 
     _print_stats(
-        "Step 3 – Sphere, non-linear deformation (folded spline), raw",
-        verts, tets,
+        "Step 3 – Sphere, non-linear deformation (folded spline), raw", verts, tets
     )
 
     # Count negative tets that survive after the surface-tet flip – these are
@@ -210,9 +229,7 @@ def step3_nonlinear_deformation() -> None:
             "some region (Source 3)."
         )
     else:
-        print(
-            "  -> No deformation-induced inversions detected at this resolution."
-        )
+        print("  -> No deformation-induced inversions detected at this resolution.")
 
 
 # ---------------------------------------------------------------------------
