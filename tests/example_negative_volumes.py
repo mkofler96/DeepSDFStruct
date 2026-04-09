@@ -176,7 +176,13 @@ def step3_nonlinear_deformation() -> None:
     # The mid-layer of control points (x ≈ 0.5) can be identified by x == 0.5.
     # Shift them strongly in y to create a fold (Jacobian sign flip).
     mid_mask = np.isclose(cp[:, 0], 0.5, atol=0.1)
-    cp[mid_mask, 1] += 0.7   # large y-shift to force Jacobian sign flip
+    # The mid-layer control points need to be shifted far enough in y to cause
+    # the spline's Jacobian to go negative in the folded region.  A shift of
+    # 0.7 units (into the domain width of 1.0) reliably produces a local fold
+    # at this degree and knot configuration; smaller values leave the Jacobian
+    # positive throughout.
+    _Y_FOLD_SHIFT = 0.7
+    cp[mid_mask, 1] += _Y_FOLD_SHIFT
     box_spline.control_points = cp
 
     deformation = TorchSpline(box_spline, device="cpu")
@@ -215,7 +221,6 @@ def step3_nonlinear_deformation() -> None:
 # ---------------------------------------------------------------------------
 
 if __name__ == "__main__":
-    torch.set_default_dtype(torch.float32)
     print("\nDemonstrating sources of negative-volume tetrahedra in FlexiCubes meshes.")
     print("(Run with a patched flexicubes.py to see the fix in action)\n")
 
