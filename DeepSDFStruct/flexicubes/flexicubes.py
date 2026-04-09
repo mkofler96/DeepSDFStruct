@@ -905,13 +905,29 @@ class FlexiCubes:
         else:
             inside_verts_idx = inside_verts_idx.unsqueeze(1).expand(-1, 4).reshape(-1)
 
-        # Surface triangles in `faces` have outward-pointing normals (toward
-        # positive SDF), so the apex vertex (inside_verts_idx, where SDF < 0)
-        # lies behind the face.  This makes the signed volume negative when
-        # computed with the standard right-hand-rule formula.  Swap the first
-        # two triangle vertices to flip the orientation and produce positive
-        # signed volumes, which is required for downstream FEA solvers.
-        tets_surface = torch.cat([faces[:, [1, 0, 2]], inside_verts_idx.unsqueeze(-1)], -1)
+        tets_surface = torch.cat([faces, inside_verts_idx.unsqueeze(-1)], -1)
+        # Orient all surface tets so they have positive signed volume (as required
+        # by FEA solvers using the right-hand-rule convention).
+        #
+        # A uniform v0/v1 swap is insufficient: although surface triangles
+        # nominally have outward-pointing normals, FlexiCubes sometimes places
+        # dual vertices deeper inside the solid than a nearby interior grid
+        # vertex.  When this happens the interior vertex (apex) ends up
+        # geometrically on the outward side of the face plane, meaning the tet
+        # already has a positive signed volume and swapping it would make things
+        # worse.  We therefore compute the signed volume per tet and flip only
+        # those that are negative.
+        with torch.no_grad():
+            _all_v = torch.cat([vertices, inside_verts])
+            _v0 = _all_v[tets_surface[:, 0]]
+            _v1 = _all_v[tets_surface[:, 1]]
+            _v2 = _all_v[tets_surface[:, 2]]
+            _v3 = _all_v[tets_surface[:, 3]]
+            _vols = torch.einsum(
+                "ij,ij->i", torch.cross(_v1 - _v0, _v2 - _v0, dim=1), _v3 - _v0
+            )
+            _neg = _vols < 0
+        tets_surface[_neg] = tets_surface[_neg][:, [0, 2, 1, 3]]
         """ 
         For each grid edge connecting two grid vertices with the
         same sign, the tetrahedron is formed by the two grid vertices

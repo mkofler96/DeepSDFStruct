@@ -9,21 +9,22 @@ three scenarios of increasing complexity:
 Source 1 – By construction in ``_tetrahedralize`` (surface tets)
     Surface tets are formed by appending an interior grid vertex to each
     isosurface triangle.  Because the triangle normals point *outward* (toward
-    positive SDF) but the interior apex lies *inward*, most of the resulting
-    surface tets have a negative signed volume under the standard right-hand-rule
-    formula.  The fix applied in ``flexicubes.py`` (swapping columns 0 and 1 of
-    every face triangle) corrects the orientation of the majority of these tets.
-    A small number of surface tets near boundaries may already be positively
-    oriented due to winding edge-cases, so the uniform swap flip those; in
-    practice the swap reduces surface-tet negatives by ~93 % (396→24 in a
-    typical N=20 sphere run).
+    positive SDF), most of the resulting surface tets have a negative signed
+    volume under the standard right-hand-rule formula.  However, a uniform
+    swap of every face's first two vertices is insufficient: FlexiCubes
+    sometimes places dual vertices deeper inside the solid than a nearby
+    interior grid vertex, so the grid vertex ends up geometrically on the
+    *outward* side of the face plane and the tet already has a positive signed
+    volume.  Swapping it would make things worse.  The correct fix, applied in
+    ``flexicubes.py``, computes the signed volume of every surface tet and
+    flips only those that are negative, achieving 100 % correct orientation.
 
 Source 2 – Interior tets with inconsistent orientation
     Interior tets (``tets_inside``) connect pairs of surface dual vertices to
     pairs of interior grid-edge vertices.  Their orientation is not explicitly
     controlled during assembly and can be positive or negative depending on the
     local voxel geometry.  Approximately 50 % of interior tets are negatively
-    oriented.  These are not affected by the surface-tet swap.  A lightweight
+    oriented.  These are not affected by the surface-tet fix.  A lightweight
     post-processing step (detect negative volumes, flip vertex order) correctly
     re-orients all of them.
 
@@ -95,25 +96,23 @@ def step1_no_deformation() -> None:
 
     This step shows two stages of the orientation fix:
 
-    Stage A – Raw FlexiCubes output with the ``_tetrahedralize`` fix applied:
-        The swap of ``faces[:, [1, 0, 2]]`` in ``_tetrahedralize`` corrects
-        most surface tets (Source 1), but interior tets (Source 2) remain
-        inconsistently oriented.  Typical result: ~40 % negative.
+    Stage A – Raw FlexiCubes output with the conditional ``_tetrahedralize`` fix:
+        The per-tet signed-volume check in ``_tetrahedralize`` flips every
+        surface tet that has negative volume, achieving 100 % positive surface
+        tets.  Interior tets (Source 2) remain inconsistently oriented.
+        Typical result: ~40 % negative (all from ``tets_inside``).
 
     Stage B – After the additional post-hoc orientation pass:
         ``_orient_tets`` detects and flips every remaining negative tet.
         Virtually all tets become positive; the tiny residual (<1 %) are
         near-zero-volume degenerate elements at the domain boundary.
-
-    Without the ``_tetrahedralize`` fix, Stage A would show ~60 % negative
-    (both surface tets and interior tets contributing).
     """
     sdf = _sphere_sdf()
     mesh, _ = create_3D_mesh(sdf, N_base=20, mesh_type="volume", differentiate=False)
     assert isinstance(mesh, torchVolumeMesh)
     verts, tets = mesh.vertices, mesh.volumes
 
-    _print_stats("Step 1 – Sphere, no deformation (raw FlexiCubes output, _tetrahedralize fix applied)", verts, tets)
+    _print_stats("Step 1 – Sphere, no deformation (raw FlexiCubes output, surface tets 100% fixed)", verts, tets)
 
     tets_fixed = _orient_tets(verts, tets)
     _print_stats("Step 1 – After additional post-hoc orientation fix", verts, tets_fixed)
@@ -142,7 +141,7 @@ def step2_linear_deformation() -> None:
     assert isinstance(mesh, torchVolumeMesh)
     verts, tets = mesh.vertices, mesh.volumes
 
-    _print_stats("Step 2 – Sphere, linear deformation (box 2×1×1), raw (_tetrahedralize fix applied)", verts, tets)
+    _print_stats("Step 2 – Sphere, linear deformation (box 2×1×1), raw (surface tets 100% fixed)", verts, tets)
 
     tets_fixed = _orient_tets(verts, tets)
     _print_stats("Step 2 – After additional post-hoc orientation fix", verts, tets_fixed)
