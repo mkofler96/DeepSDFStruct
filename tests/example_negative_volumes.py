@@ -180,8 +180,8 @@ def step3_nonlinear_deformation() -> None:
     # 0.7 units (into the domain width of 1.0) reliably produces a local fold
     # at this degree and knot configuration; smaller values leave the Jacobian
     # positive throughout.
-    _Y_FOLD_SHIFT = 0.7
-    cp[mid_mask, 1] += _Y_FOLD_SHIFT
+    Y_FOLD_SHIFT = 0.7
+    cp[mid_mask, 1] += Y_FOLD_SHIFT
     box_spline.control_points = cp
 
     deformation = TorchSpline(box_spline, device="cpu")

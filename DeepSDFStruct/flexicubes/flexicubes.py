@@ -918,16 +918,16 @@ class FlexiCubes:
         # worse.  We therefore compute the signed volume per tet and flip only
         # those that are negative.
         with torch.no_grad():
-            _all_v = torch.cat([vertices, inside_verts])
-            _v0 = _all_v[tets_surface[:, 0]]
-            _v1 = _all_v[tets_surface[:, 1]]
-            _v2 = _all_v[tets_surface[:, 2]]
-            _v3 = _all_v[tets_surface[:, 3]]
-            _vols = torch.einsum(
-                "ij,ij->i", torch.cross(_v1 - _v0, _v2 - _v0, dim=1), _v3 - _v0
+            all_v = torch.cat([vertices, inside_verts])
+            v0 = all_v[tets_surface[:, 0]]
+            v1 = all_v[tets_surface[:, 1]]
+            v2 = all_v[tets_surface[:, 2]]
+            v3 = all_v[tets_surface[:, 3]]
+            vols = torch.einsum(
+                "ij,ij->i", torch.cross(v1 - v0, v2 - v0, dim=1), v3 - v0
             )
-            _neg = _vols < 0
-        tets_surface[_neg] = tets_surface[_neg][:, [0, 2, 1, 3]]
+            neg = vols < 0
+        tets_surface[neg] = tets_surface[neg][:, [0, 2, 1, 3]]
         """ 
         For each grid edge connecting two grid vertices with the
         same sign, the tetrahedron is formed by the two grid vertices
