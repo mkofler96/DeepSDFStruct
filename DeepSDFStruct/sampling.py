@@ -364,7 +364,7 @@ class SDFSampler:
                     pool.starmap(func, tasks)
             else:
                 logger.info("starting serial processing of geometries")
-                starmap(func, tasks)
+                list(starmap(func, tasks))
 
             logger.info(f"done processing geometry list {class_name}")
 
