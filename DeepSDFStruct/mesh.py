@@ -1126,8 +1126,7 @@ def mergeMeshs(mesh1, mesh2, tol=1e-10):
     vertices1 = mesh1.vertices
     vertices2 = mesh2.vertices
 
-    diff = vertices2.unsqueeze(1) - vertices1.unsqueeze(0)
-    dist2 = (diff**2).sum(dim=-1)
+    dist2 = torch.cdist(vertices2, vertices1) ** 2
     min_dist, nearest_idx = dist2.min(dim=1)
 
     duplicates = min_dist < tol
