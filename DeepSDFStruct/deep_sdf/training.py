@@ -200,6 +200,18 @@ def save_latent_vectors(experiment_directory, filename, latent_vec, epoch):
 
 
 def save_latent_code_data_map(experiment_directory, data_source, npz_filenames):
+    """Save mapping between latent indices and source training `.npz` files.
+
+    Parameters
+    ----------
+    experiment_directory : str
+        Path to the experiment directory where training artifacts are stored.
+    data_source : str
+        Root directory of the dataset used for training.
+    npz_filenames : list[str]
+        Relative `.npz` paths in dataset split order. The order corresponds
+        directly to latent embedding indices.
+    """
     latent_code_data_map = {
         "data_source": data_source,
         "sdf_samples_subdir": ws.sdf_samples_subdir,

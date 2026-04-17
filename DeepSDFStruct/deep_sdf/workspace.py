@@ -259,6 +259,7 @@ def get_latent_codes_dir(experiment_dir, create_if_nonexistent=False):
 
 
 def get_latent_code_data_map_filename(experiment_dir):
+    """Return absolute path for the latent-to-data mapping JSON file."""
     return os.path.join(
         get_latent_codes_dir(experiment_dir, create_if_nonexistent=True),
         latent_code_data_map_filename,
