@@ -53,7 +53,11 @@ def test_shape_reconstruction():
     gt_sdf = SDFfromMesh(mesh, scale=False)
 
     uniform_samples = random_sample_sdf(
-        gt_sdf, bounds, n_samples=5000, type="uniform", device=struct.get_device()
+        gt_sdf,
+        bounds,
+        n_samples=5000,
+        sampling_strategy="uniform",
+        device=struct.get_device(),
     )
     surface_samples = sample_mesh_surface(
         gt_sdf, mesh, n_samples=5000, stds=[0.25, 0.0001], device=struct.get_device()

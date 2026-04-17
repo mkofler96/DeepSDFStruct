@@ -449,12 +449,19 @@ def train_deep_sdf(
     num_data_loader_threads = get_spec_with_default(specs, "DataLoaderThreads", 1)
     logging.debug("loading data with {} threads".format(num_data_loader_threads))
 
+    # if the batch size is larger than the dataset, we cannot use drop last,
+    # otherwise the dataloader does not load any data
+    if scene_per_batch > len(sdf_dataset):
+        drop_last = False
+    else:
+        drop_last = True
+
     sdf_loader = data_utils.DataLoader(
         sdf_dataset,
         batch_size=scene_per_batch,
         shuffle=True,
         num_workers=num_data_loader_threads,
-        drop_last=True,
+        drop_last=drop_last,
     )
 
     logging.debug("torch num_threads: {}".format(torch.get_num_threads()))
