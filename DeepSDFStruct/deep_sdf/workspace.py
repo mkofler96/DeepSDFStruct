@@ -58,6 +58,7 @@ screenshots_subdir = "Screenshots"
 model_params_subdir = "ModelParameters"
 optimizer_params_subdir = "OptimizerParameters"
 latent_codes_subdir = "LatentCodes"
+latent_code_data_map_filename = "latent_code_data_map.json"
 logs_filename = "Logs.pth"
 logplot_filename = "Logs.png"
 reconstructions_subdir = "Reconstructions"
@@ -255,6 +256,14 @@ def get_latent_codes_dir(experiment_dir, create_if_nonexistent=False):
         os.makedirs(dir)
 
     return dir
+
+
+def get_latent_code_data_map_filename(experiment_dir):
+    """Return absolute path for the latent-to-data mapping JSON file."""
+    return os.path.join(
+        get_latent_codes_dir(experiment_dir, create_if_nonexistent=True),
+        latent_code_data_map_filename,
+    )
 
 
 def get_normalization_params_filename(

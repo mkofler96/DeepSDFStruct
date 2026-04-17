@@ -199,6 +199,38 @@ def save_latent_vectors(experiment_directory, filename, latent_vec, epoch):
     )
 
 
+def save_latent_code_data_map(experiment_directory, data_source, npz_filenames):
+    """Save mapping between latent indices and source training `.npz` files.
+
+    Parameters
+    ----------
+    experiment_directory : str
+        Path to the experiment directory where training artifacts are stored.
+    data_source : str
+        Root directory of the dataset used for training.
+    npz_filenames : list[str]
+        Relative `.npz` paths in dataset split order. The order corresponds
+        directly to latent embedding indices.
+    """
+    latent_code_data_map = {
+        "data_source": data_source,
+        "sdf_samples_subdir": ws.sdf_samples_subdir,
+        "latent_codes": [
+            {
+                "latent_index": latent_idx,
+                "relative_npz_filename": npz_filename,
+                "npz_filename": os.path.join(
+                    data_source, ws.sdf_samples_subdir, npz_filename
+                ),
+            }
+            for latent_idx, npz_filename in enumerate(npz_filenames)
+        ],
+    }
+    filename = ws.get_latent_code_data_map_filename(experiment_directory)
+    with open(filename, "w", encoding="utf-8") as f:
+        json.dump(latent_code_data_map, f, indent=4)
+
+
 def save_logs(
     experiment_directory,
     loss_log,
@@ -412,6 +444,7 @@ def train_deep_sdf(
         load_ram=True,
         geom_dimension=geom_dimension,
     )
+    save_latent_code_data_map(experiment_directory, data_source, sdf_dataset.npyfiles)
 
     num_data_loader_threads = get_spec_with_default(specs, "DataLoaderThreads", 1)
     logging.debug("loading data with {} threads".format(num_data_loader_threads))
