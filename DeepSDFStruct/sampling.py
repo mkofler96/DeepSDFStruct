@@ -251,9 +251,9 @@ def _process_single_geometry_instance(
         sdf = geometry
     elif isinstance(geometry, trimesh.Trimesh):
         mesh = geometry
+        sdf = SDFfromMesh(mesh, scale=scale)
         if also_save_mesh:
             mesh.export(fname.with_suffix(".stl"))
-        sdf = SDFfromMesh(mesh, scale=scale)
     else:
         raise NotImplementedError(
             f"Geometry must be either trimesh or SDFBase, but not {type(geometry)}."
@@ -487,6 +487,8 @@ def random_sample_sdf(
             * (bounds[1] - bounds[0])
             + bounds[0]
         )
+    else:
+        raise ValueError(f"Unsupported sampling strategy {type}")
     distances = sdf(samples)
     return SampledSDF(samples=samples, distances=distances)
 
@@ -523,14 +525,20 @@ def sample_mesh_surface(
     """
     samples = []
 
-    random_samples = torch.tensor(mesh.sample(n_samples), dtype=dtype, device=device)
+    points, face_idx = trimesh.sample.sample_surface(mesh, n_samples)
+
+    surface_points = torch.tensor(points, dtype=dtype, device=device)
+
+    face_normals = torch.tensor(mesh.face_normals[face_idx], dtype=dtype, device=device)
 
     for std in stds:
-        noise = torch.randn((n_samples, 3), device=device, dtype=dtype) * std
-        samples.append(random_samples + noise)
+
+        t = torch.randn(n_samples, 1, device=device, dtype=dtype) * std
+
+        noisy = surface_points + t * face_normals
+        samples.append(noisy)
 
     queries = torch.vstack(samples)
-
     distances = sdf(queries)
 
     return SampledSDF(samples=queries, distances=distances)
