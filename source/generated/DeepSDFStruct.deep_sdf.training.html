@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>DeepSDFStruct.deep_sdf.training &#8212; DeepSDFStruct 1.7.1.dev46+g62696ed2d.d20260415 documentation</title>
+    <title>DeepSDFStruct.deep_sdf.training &#8212; DeepSDFStruct 1.7.1.dev52+gd50cf35c2.d20260417 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=8a6e9c82"></script>
+    <script src="../../_static/documentation_options.js?v=d40d3e5d"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'source/generated/DeepSDFStruct.deep_sdf.training';</script>
@@ -110,7 +110,7 @@
   
   
   
-    <p class="title logo__title">DeepSDFStruct 1.7.1.dev46+g62696ed2d.d20260415 documentation</p>
+    <p class="title logo__title">DeepSDFStruct 1.7.1.dev52+gd50cf35c2.d20260417 documentation</p>
   
 </a></div>
     
@@ -435,19 +435,22 @@ for lattice structures and microstructured materials.</p>
 <tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.deep_sdf.training.reconstruct_meshs_from_latent" title="DeepSDFStruct.deep_sdf.training.reconstruct_meshs_from_latent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reconstruct_meshs_from_latent</span></code></a>(...[, ...])</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.deep_sdf.training.save_latent_vectors" title="DeepSDFStruct.deep_sdf.training.save_latent_vectors"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_latent_vectors</span></code></a>(experiment_directory, ...)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.deep_sdf.training.save_latent_code_data_map" title="DeepSDFStruct.deep_sdf.training.save_latent_code_data_map"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_latent_code_data_map</span></code></a>(...)</p></td>
+<td><p>Save mapping between latent indices and source training <cite>.npz</cite> files.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.deep_sdf.training.save_latent_vectors" title="DeepSDFStruct.deep_sdf.training.save_latent_vectors"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_latent_vectors</span></code></a>(experiment_directory, ...)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.deep_sdf.training.save_logs" title="DeepSDFStruct.deep_sdf.training.save_logs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_logs</span></code></a>(experiment_directory, loss_log, ...)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.deep_sdf.training.save_logs" title="DeepSDFStruct.deep_sdf.training.save_logs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_logs</span></code></a>(experiment_directory, loss_log, ...)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.deep_sdf.training.save_model" title="DeepSDFStruct.deep_sdf.training.save_model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_model</span></code></a>(experiment_directory, filename, ...)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.deep_sdf.training.save_model" title="DeepSDFStruct.deep_sdf.training.save_model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_model</span></code></a>(experiment_directory, filename, ...)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.deep_sdf.training.save_optimizer" title="DeepSDFStruct.deep_sdf.training.save_optimizer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_optimizer</span></code></a>(experiment_directory, ...)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.deep_sdf.training.save_optimizer" title="DeepSDFStruct.deep_sdf.training.save_optimizer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_optimizer</span></code></a>(experiment_directory, ...)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.deep_sdf.training.train_deep_sdf" title="DeepSDFStruct.deep_sdf.training.train_deep_sdf"><code class="xref py py-obj docutils literal notranslate"><span class="pre">train_deep_sdf</span></code></a>(experiment_directory, data_source)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.deep_sdf.training.train_deep_sdf" title="DeepSDFStruct.deep_sdf.training.train_deep_sdf"><code class="xref py py-obj docutils literal notranslate"><span class="pre">train_deep_sdf</span></code></a>(experiment_directory, data_source)</p></td>
 <td><p></p></td>
 </tr>
 </tbody>
@@ -619,6 +622,22 @@ endpoints). Defaults to 11.</p></li>
 <dd></dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="DeepSDFStruct.deep_sdf.training.save_latent_code_data_map">
+<span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.deep_sdf.training.</span></span><span class="sig-name descname"><span class="pre">save_latent_code_data_map</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">experiment_directory</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_source</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">npz_filenames</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.deep_sdf.training.save_latent_code_data_map" title="Link to this definition">#</a></dt>
+<dd><p>Save mapping between latent indices and source training <cite>.npz</cite> files.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>experiment_directory</strong> (<em>str</em>) – Path to the experiment directory where training artifacts are stored.</p></li>
+<li><p><strong>data_source</strong> (<em>str</em>) – Root directory of the dataset used for training.</p></li>
+<li><p><strong>npz_filenames</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – Relative <cite>.npz</cite> paths in dataset split order. The order corresponds
+directly to latent embedding indices.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="DeepSDFStruct.deep_sdf.training.save_latent_vectors">
 <span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.deep_sdf.training.</span></span><span class="sig-name descname"><span class="pre">save_latent_vectors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">experiment_directory</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">latent_vec</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epoch</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.deep_sdf.training.save_latent_vectors" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
@@ -724,6 +743,7 @@ endpoints). Defaults to 11.</p></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.deep_sdf.training.get_spec_with_default"><code class="docutils literal notranslate"><span class="pre">get_spec_with_default()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.deep_sdf.training.load_logs"><code class="docutils literal notranslate"><span class="pre">load_logs()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.deep_sdf.training.reconstruct_meshs_from_latent"><code class="docutils literal notranslate"><span class="pre">reconstruct_meshs_from_latent()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.deep_sdf.training.save_latent_code_data_map"><code class="docutils literal notranslate"><span class="pre">save_latent_code_data_map()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.deep_sdf.training.save_latent_vectors"><code class="docutils literal notranslate"><span class="pre">save_latent_vectors()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.deep_sdf.training.save_logs"><code class="docutils literal notranslate"><span class="pre">save_logs()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.deep_sdf.training.save_model"><code class="docutils literal notranslate"><span class="pre">save_model()</span></code></a></li>

@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>DeepSDFStruct.deep_sdf.workspace &#8212; DeepSDFStruct 1.7.1.dev46+g62696ed2d.d20260415 documentation</title>
+    <title>DeepSDFStruct.deep_sdf.workspace &#8212; DeepSDFStruct 1.7.1.dev52+gd50cf35c2.d20260417 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=8a6e9c82"></script>
+    <script src="../../_static/documentation_options.js?v=d40d3e5d"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'source/generated/DeepSDFStruct.deep_sdf.workspace';</script>
@@ -110,7 +110,7 @@
   
   
   
-    <p class="title logo__title">DeepSDFStruct 1.7.1.dev46+g62696ed2d.d20260415 documentation</p>
+    <p class="title logo__title">DeepSDFStruct 1.7.1.dev52+gd50cf35c2.d20260417 documentation</p>
   
 </a></div>
     
@@ -405,49 +405,52 @@ and simplify model loading for inference and continued training.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.deep_sdf.workspace.get_evaluation_dir" title="DeepSDFStruct.deep_sdf.workspace.get_evaluation_dir"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_evaluation_dir</span></code></a>(experiment_dir, checkpoint)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.deep_sdf.workspace.get_latent_codes_dir" title="DeepSDFStruct.deep_sdf.workspace.get_latent_codes_dir"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_latent_codes_dir</span></code></a>(experiment_dir[, ...])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.deep_sdf.workspace.get_latent_code_data_map_filename" title="DeepSDFStruct.deep_sdf.workspace.get_latent_code_data_map_filename"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_latent_code_data_map_filename</span></code></a>(experiment_dir)</p></td>
+<td><p>Return absolute path for the latent-to-data mapping JSON file.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.deep_sdf.workspace.get_latent_codes_dir" title="DeepSDFStruct.deep_sdf.workspace.get_latent_codes_dir"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_latent_codes_dir</span></code></a>(experiment_dir[, ...])</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.deep_sdf.workspace.get_model_params_dir" title="DeepSDFStruct.deep_sdf.workspace.get_model_params_dir"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_model_params_dir</span></code></a>(experiment_dir[, ...])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.deep_sdf.workspace.get_model_params_dir" title="DeepSDFStruct.deep_sdf.workspace.get_model_params_dir"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_model_params_dir</span></code></a>(experiment_dir[, ...])</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.deep_sdf.workspace.get_normalization_params_filename" title="DeepSDFStruct.deep_sdf.workspace.get_normalization_params_filename"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_normalization_params_filename</span></code></a>(data_dir, ...)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.deep_sdf.workspace.get_normalization_params_filename" title="DeepSDFStruct.deep_sdf.workspace.get_normalization_params_filename"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_normalization_params_filename</span></code></a>(data_dir, ...)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.deep_sdf.workspace.get_optimizer_params_dir" title="DeepSDFStruct.deep_sdf.workspace.get_optimizer_params_dir"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_optimizer_params_dir</span></code></a>(experiment_dir[, ...])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.deep_sdf.workspace.get_optimizer_params_dir" title="DeepSDFStruct.deep_sdf.workspace.get_optimizer_params_dir"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_optimizer_params_dir</span></code></a>(experiment_dir[, ...])</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.deep_sdf.workspace.get_reconstructed_code_filename" title="DeepSDFStruct.deep_sdf.workspace.get_reconstructed_code_filename"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_reconstructed_code_filename</span></code></a>(...)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.deep_sdf.workspace.get_reconstructed_code_filename" title="DeepSDFStruct.deep_sdf.workspace.get_reconstructed_code_filename"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_reconstructed_code_filename</span></code></a>(...)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.deep_sdf.workspace.get_reconstructed_mesh_filename" title="DeepSDFStruct.deep_sdf.workspace.get_reconstructed_mesh_filename"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_reconstructed_mesh_filename</span></code></a>(...[, ...])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.deep_sdf.workspace.get_reconstructed_mesh_filename" title="DeepSDFStruct.deep_sdf.workspace.get_reconstructed_mesh_filename"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_reconstructed_mesh_filename</span></code></a>(...[, ...])</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.deep_sdf.workspace.get_screenshots_dir" title="DeepSDFStruct.deep_sdf.workspace.get_screenshots_dir"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_screenshots_dir</span></code></a>(experiment_dir[, ...])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.deep_sdf.workspace.get_screenshots_dir" title="DeepSDFStruct.deep_sdf.workspace.get_screenshots_dir"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_screenshots_dir</span></code></a>(experiment_dir[, ...])</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.deep_sdf.workspace.init_decoder" title="DeepSDFStruct.deep_sdf.workspace.init_decoder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">init_decoder</span></code></a>(experiment_specs, device, ...)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.deep_sdf.workspace.init_decoder" title="DeepSDFStruct.deep_sdf.workspace.init_decoder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">init_decoder</span></code></a>(experiment_specs, device, ...)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.deep_sdf.workspace.load_experiment_specifications" title="DeepSDFStruct.deep_sdf.workspace.load_experiment_specifications"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_experiment_specifications</span></code></a>(...)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.deep_sdf.workspace.load_experiment_specifications" title="DeepSDFStruct.deep_sdf.workspace.load_experiment_specifications"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_experiment_specifications</span></code></a>(...)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.deep_sdf.workspace.load_latent_vectors" title="DeepSDFStruct.deep_sdf.workspace.load_latent_vectors"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_latent_vectors</span></code></a>(experiment_directory, ...)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.deep_sdf.workspace.load_latent_vectors" title="DeepSDFStruct.deep_sdf.workspace.load_latent_vectors"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_latent_vectors</span></code></a>(experiment_directory, ...)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.deep_sdf.workspace.load_model_parameters" title="DeepSDFStruct.deep_sdf.workspace.load_model_parameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_model_parameters</span></code></a>(experiment_directory, ...)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.deep_sdf.workspace.load_model_parameters" title="DeepSDFStruct.deep_sdf.workspace.load_model_parameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_model_parameters</span></code></a>(experiment_directory, ...)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.deep_sdf.workspace.load_optimizer" title="DeepSDFStruct.deep_sdf.workspace.load_optimizer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_optimizer</span></code></a>(experiment_directory, ...)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.deep_sdf.workspace.load_optimizer" title="DeepSDFStruct.deep_sdf.workspace.load_optimizer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_optimizer</span></code></a>(experiment_directory, ...)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.deep_sdf.workspace.load_trained_model" title="DeepSDFStruct.deep_sdf.workspace.load_trained_model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_trained_model</span></code></a>(experiment_directory, ...)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.deep_sdf.workspace.load_trained_model" title="DeepSDFStruct.deep_sdf.workspace.load_trained_model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_trained_model</span></code></a>(experiment_directory, ...)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.deep_sdf.workspace.print_model_specifications" title="DeepSDFStruct.deep_sdf.workspace.print_model_specifications"><code class="xref py py-obj docutils literal notranslate"><span class="pre">print_model_specifications</span></code></a>(experiment_directory)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.deep_sdf.workspace.print_model_specifications" title="DeepSDFStruct.deep_sdf.workspace.print_model_specifications"><code class="xref py py-obj docutils literal notranslate"><span class="pre">print_model_specifications</span></code></a>(experiment_directory)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.deep_sdf.workspace.save_experiment_summary" title="DeepSDFStruct.deep_sdf.workspace.save_experiment_summary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_experiment_summary</span></code></a>(...)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.deep_sdf.workspace.save_experiment_summary" title="DeepSDFStruct.deep_sdf.workspace.save_experiment_summary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_experiment_summary</span></code></a>(...)</p></td>
 <td><p></p></td>
 </tr>
 </tbody>
@@ -524,6 +527,12 @@ and simplify model loading for inference and continued training.</p>
 <dt class="sig sig-object py" id="DeepSDFStruct.deep_sdf.workspace.get_evaluation_dir">
 <span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.deep_sdf.workspace.</span></span><span class="sig-name descname"><span class="pre">get_evaluation_dir</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">experiment_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">checkpoint</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">create_if_nonexistent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.deep_sdf.workspace.get_evaluation_dir" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="DeepSDFStruct.deep_sdf.workspace.get_latent_code_data_map_filename">
+<span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.deep_sdf.workspace.</span></span><span class="sig-name descname"><span class="pre">get_latent_code_data_map_filename</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">experiment_dir</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.deep_sdf.workspace.get_latent_code_data_map_filename" title="Link to this definition">#</a></dt>
+<dd><p>Return absolute path for the latent-to-data mapping JSON file.</p>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="DeepSDFStruct.deep_sdf.workspace.get_latent_codes_dir">
@@ -700,6 +709,7 @@ and simplify model loading for inference and continued training.</p>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.deep_sdf.workspace.get_data_source_map_filename"><code class="docutils literal notranslate"><span class="pre">get_data_source_map_filename()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.deep_sdf.workspace.get_default_device"><code class="docutils literal notranslate"><span class="pre">get_default_device()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.deep_sdf.workspace.get_evaluation_dir"><code class="docutils literal notranslate"><span class="pre">get_evaluation_dir()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.deep_sdf.workspace.get_latent_code_data_map_filename"><code class="docutils literal notranslate"><span class="pre">get_latent_code_data_map_filename()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.deep_sdf.workspace.get_latent_codes_dir"><code class="docutils literal notranslate"><span class="pre">get_latent_codes_dir()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.deep_sdf.workspace.get_model_params_dir"><code class="docutils literal notranslate"><span class="pre">get_model_params_dir()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.deep_sdf.workspace.get_normalization_params_filename"><code class="docutils literal notranslate"><span class="pre">get_normalization_params_filename()</span></code></a></li>

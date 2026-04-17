@@ -11,6 +11,7 @@ DeepSDFStruct.deep\_sdf.workspace
       get_data_source_map_filename
       get_default_device
       get_evaluation_dir
+      get_latent_code_data_map_filename
       get_latent_codes_dir
       get_model_params_dir
       get_normalization_params_filename

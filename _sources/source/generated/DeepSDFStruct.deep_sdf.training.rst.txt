@@ -16,6 +16,7 @@ DeepSDFStruct.deep\_sdf.training
       get_spec_with_default
       load_logs
       reconstruct_meshs_from_latent
+      save_latent_code_data_map
       save_latent_vectors
       save_logs
       save_model
