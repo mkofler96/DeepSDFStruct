@@ -251,15 +251,18 @@ def _process_single_geometry_instance(
         sdf = geometry
     elif isinstance(geometry, trimesh.Trimesh):
         mesh = geometry
+        sdf = SDFfromMesh(mesh, scale=scale)
         if also_save_mesh:
             mesh.export(fname.with_suffix(".stl"))
-        sdf = SDFfromMesh(mesh, scale=scale)
     else:
         raise NotImplementedError(
             f"Geometry must be either trimesh or SDFBase, but not {type(geometry)}."
         )
     sampled_sdf = random_sample_sdf(
-        sdf, bounds=(-1, 1), n_samples=int(n_samples), type=sampling_strategy
+        sdf,
+        bounds=(-1, 1),
+        n_samples=int(n_samples),
+        sampling_strategy=sampling_strategy,
     )
     if add_surface_samples:
         if not isinstance(mesh, trimesh.Trimesh):
@@ -468,24 +471,35 @@ def random_points_cube(count, box_size):
 
 
 def random_sample_sdf(
-    sdf, bounds, n_samples, type="uniform", device="cpu", dtype=torch.float32
+    sdf,
+    bounds,
+    n_samples,
+    sampling_strategy="uniform",
+    device="cpu",
+    dtype=torch.float32,
 ):
+    supported_strategies = ("plane", "spherical_gaussian", "uniform")
     bounds = torch.tensor(bounds, dtype=dtype, device=device)
-    if type == "plane":
+    if sampling_strategy == "plane":
         samples = torch.random.uniform(
             bounds[0], bounds[1], (n_samples, 2), device=device, dtype=dtype
         )
         samples = torch.hstack((samples, torch.zeros((n_samples, 1))))
-    elif type == "spherical_gaussian":
+    elif sampling_strategy == "spherical_gaussian":
         samples = torch.random.randn(n_samples, 3, device=device, dtype=dtype)
         samples /= torch.linalg.norm(samples, axis=1).reshape(-1, 1)
         # samples += torch.random.uniform(bounds[0], bounds[1], (n_samples, 3))
         samples = samples + torch.random.normal(0, 0.01, (n_samples, 3))
-    elif type == "uniform":
+    elif sampling_strategy == "uniform":
         samples = (
             torch.rand((n_samples, 3), device=device, dtype=dtype)
             * (bounds[1] - bounds[0])
             + bounds[0]
+        )
+    else:
+        raise ValueError(
+            f"Unsupported sampling strategy '{sampling_strategy}'. "
+            f"Supported options are: {supported_strategies}."
         )
     distances = sdf(samples)
     return SampledSDF(samples=samples, distances=distances)
@@ -523,14 +537,20 @@ def sample_mesh_surface(
     """
     samples = []
 
-    random_samples = torch.tensor(mesh.sample(n_samples), dtype=dtype, device=device)
+    points, face_idx = trimesh.sample.sample_surface(mesh, n_samples)
+
+    surface_points = torch.tensor(points, dtype=dtype, device=device)
+
+    face_normals = torch.tensor(mesh.face_normals[face_idx], dtype=dtype, device=device)
 
     for std in stds:
-        noise = torch.randn((n_samples, 3), device=device, dtype=dtype) * std
-        samples.append(random_samples + noise)
+
+        t = torch.randn(n_samples, 1, device=device, dtype=dtype) * std
+
+        noisy = surface_points + t * face_normals
+        samples.append(noisy)
 
     queries = torch.vstack(samples)
-
     distances = sdf(queries)
 
     return SampledSDF(samples=queries, distances=distances)
