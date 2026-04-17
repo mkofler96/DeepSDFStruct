@@ -259,7 +259,10 @@ def _process_single_geometry_instance(
             f"Geometry must be either trimesh or SDFBase, but not {type(geometry)}."
         )
     sampled_sdf = random_sample_sdf(
-        sdf, bounds=(-1, 1), n_samples=int(n_samples), type=sampling_strategy
+        sdf,
+        bounds=(-1, 1),
+        n_samples=int(n_samples),
+        sampling_strategy=sampling_strategy,
     )
     if add_surface_samples:
         if not isinstance(mesh, trimesh.Trimesh):
@@ -468,27 +471,48 @@ def random_points_cube(count, box_size):
 
 
 def random_sample_sdf(
-    sdf, bounds, n_samples, type="uniform", device="cpu", dtype=torch.float32
+    sdf,
+    bounds,
+    n_samples,
+    sampling_strategy="uniform",
+    device="cpu",
+    dtype=torch.float32,
+    **kwargs,
 ):
+    legacy_type = kwargs.pop("type", None)
+    if kwargs:
+        raise TypeError(f"Unexpected keyword arguments: {', '.join(kwargs.keys())}")
+    if legacy_type is not None:
+        if sampling_strategy != "uniform" and sampling_strategy != legacy_type:
+            raise ValueError(
+                "Conflicting sampling strategy arguments were provided:"
+                f" sampling_strategy={sampling_strategy}, type={legacy_type}"
+            )
+        sampling_strategy = legacy_type
+
+    supported_strategies = ("plane", "spherical_gaussian", "uniform")
     bounds = torch.tensor(bounds, dtype=dtype, device=device)
-    if type == "plane":
+    if sampling_strategy == "plane":
         samples = torch.random.uniform(
             bounds[0], bounds[1], (n_samples, 2), device=device, dtype=dtype
         )
         samples = torch.hstack((samples, torch.zeros((n_samples, 1))))
-    elif type == "spherical_gaussian":
+    elif sampling_strategy == "spherical_gaussian":
         samples = torch.random.randn(n_samples, 3, device=device, dtype=dtype)
         samples /= torch.linalg.norm(samples, axis=1).reshape(-1, 1)
         # samples += torch.random.uniform(bounds[0], bounds[1], (n_samples, 3))
         samples = samples + torch.random.normal(0, 0.01, (n_samples, 3))
-    elif type == "uniform":
+    elif sampling_strategy == "uniform":
         samples = (
             torch.rand((n_samples, 3), device=device, dtype=dtype)
             * (bounds[1] - bounds[0])
             + bounds[0]
         )
     else:
-        raise ValueError(f"Unsupported sampling strategy {type}")
+        raise ValueError(
+            f"Unsupported sampling strategy '{sampling_strategy}'. "
+            f"Supported options are: {supported_strategies}."
+        )
     distances = sdf(samples)
     return SampledSDF(samples=samples, distances=distances)
 
