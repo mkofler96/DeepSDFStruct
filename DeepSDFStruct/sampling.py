@@ -529,9 +529,7 @@ def sample_mesh_surface(
 
     surface_points = torch.tensor(points, dtype=dtype, device=device)
 
-    face_normals = torch.tensor(
-        mesh.face_normals[face_idx], dtype=dtype, device=device
-    )
+    face_normals = torch.tensor(mesh.face_normals[face_idx], dtype=dtype, device=device)
 
     for std in stds:
 
