@@ -477,19 +477,7 @@ def random_sample_sdf(
     sampling_strategy="uniform",
     device="cpu",
     dtype=torch.float32,
-    **kwargs,
 ):
-    legacy_type = kwargs.pop("type", None)
-    if kwargs:
-        raise TypeError(f"Unexpected keyword arguments: {', '.join(kwargs.keys())}")
-    if legacy_type is not None:
-        if sampling_strategy != "uniform" and sampling_strategy != legacy_type:
-            raise ValueError(
-                "Conflicting sampling strategy arguments were provided:"
-                f" sampling_strategy={sampling_strategy}, type={legacy_type}"
-            )
-        sampling_strategy = legacy_type
-
     supported_strategies = ("plane", "spherical_gaussian", "uniform")
     bounds = torch.tensor(bounds, dtype=dtype, device=device)
     if sampling_strategy == "plane":
