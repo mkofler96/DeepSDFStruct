@@ -1335,3 +1335,39 @@ def project_bounds(origin, normal, bounds=None):
     ylim = (v_coords.min(), v_coords.max())
 
     return xlim, ylim
+
+
+class ExtrudeSDF(SDFBase):
+    """
+    Extrudes a 2D SDF into a 3D shape.
+    """
+
+    def __init__(self, sdf_2d: SDFBase, height: float):
+        super().__init__(geometric_dim=3)
+        if sdf_2d.geometric_dim != 2:
+            raise ValueError("Input SDF for ExtrudeSDF must be 2D.")
+        self.sdf_2d = sdf_2d
+        self.height = height
+
+    def _compute(self, queries: torch.Tensor) -> torch.Tensor:
+        # queries are (N, 3)
+        d = self.sdf_2d(queries[:, :2])  # (N, 1)
+
+        h = self.height
+
+        # w is a 2D vector for each query point
+        w = torch.cat(
+            [d, torch.abs(queries[:, 2].unsqueeze(1)) - h / 2.0], dim=1
+        )  # (N, 2)
+
+        # sdf of a 2d box
+        outside_dist = torch.linalg.norm(torch.clamp(w, min=0.0), dim=1)
+        inside_dist = torch.minimum(torch.max(w[:, 0], w[:, 1]), torch.tensor(0.0))
+
+        return (outside_dist + inside_dist).reshape(-1, 1)
+
+    def _get_domain_bounds(self) -> torch.Tensor:
+        bounds_2d = self.sdf_2d._get_domain_bounds()
+        lower = torch.cat([bounds_2d[0], torch.tensor([-self.height / 2.0])])
+        upper = torch.cat([bounds_2d[1], torch.tensor([self.height / 2.0])])
+        return torch.stack([lower, upper])
