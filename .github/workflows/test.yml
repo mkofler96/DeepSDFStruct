@@ -43,6 +43,10 @@ jobs:
         run: |
           mkdir -p "$HF_HUB_CACHE"
 
+      - name: Ensure Hugging Face cache directories exist
+        run: |
+          mkdir -p "$HF_HUB_CACHE"
+
       - name: Show Hugging Face cache status
         run: |
           echo "hf-cache-hit=${{ steps.hf-cache.outputs.cache-hit }}"
