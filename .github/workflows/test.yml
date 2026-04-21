@@ -9,6 +9,7 @@ on:
 jobs:
   test:
     runs-on: ${{ matrix.os }}
+
     env:
       HF_HOME: ${{ github.workspace }}/.cache/huggingface
       HF_HUB_CACHE: ${{ github.workspace }}/.cache/huggingface/hub
@@ -32,14 +33,15 @@ jobs:
         with:
           enable-cache: true
 
-      - name: Cache Hugging Face hub
-        id: hf-cache
+      - name: Cache huggingface
         uses: actions/cache@v4
         with:
-          path: ${{ env.HF_HOME }}
-          key: ${{ runner.os }}-hf-${{ hashFiles('pyproject.toml', 'uv.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-hf-
+          path: ~/.cache/huggingface
+          key: ${{ runner.os }}-huggingface
+
+      - name: Ensure Hugging Face cache directories exist
+        run: |
+          mkdir -p "$HF_HUB_CACHE"
 
       - name: Ensure Hugging Face cache directories exist
         run: |
