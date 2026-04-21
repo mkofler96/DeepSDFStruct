@@ -1,3 +1,11 @@
+"""
+FlexiSquares Lookup Tables
+==========================
+
+This module contains precomputed lookup tables for the FlexiSquares algorithm.
+These tables encode the topology of all possible Marching Squares configurations.
+"""
+
 # (0,1) ─ 2 ─ (1,1)
 # |         |
 # 0         1
@@ -41,10 +49,10 @@ tet_table = [
     [[0, 1], [-1, -1]],  # 3: 0011
     [[-1, -1], [-1, -1]],  # 4: 0100
     [[2, 0], [-1, -1]],  # 5: 0101
-    [[1, 3], [-1, -1]],  # 6: 0110 # ambigous (two lines)
+    [[1, 2], [-1, -1]],  # 6: 0110 # ambigous (two lines)
     [[2, 0], [0, 1]],  # 7: 0111
     [[-1, -1], [-1, -1]],  # 8: 1000
-    [[-1, -1], [-1, -1]],  # 9: 1001 # ambiguous (two lines)
+    [[0, 3], [-1, -1]],  # 9: 1001 # ambiguous (two lines)
     [[1, 3], [-1, -1]],  # 10: 1010
     [[1, 3], [0, 1]],  # 11: 1011
     [[3, 2], [-1, -1]],  # 12: 1100

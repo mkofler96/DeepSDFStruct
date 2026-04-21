@@ -1,3 +1,56 @@
+"""
+DeepSDF Model Training
+=====================
+
+This module implements the complete training pipeline for DeepSDF neural
+networks. It provides loss functions, learning rate schedules, training
+loops, and checkpoint management.
+
+Key Features
+------------
+
+Loss Functions
+    - ClampedL1Loss: L1 loss with value clamping for stability
+    - Support for custom loss functions
+
+Learning Rate Schedules
+    - ConstantLearningRateSchedule: Fixed learning rate
+    - StepLearningRateSchedule: Step decay schedule
+    - WarmupLearningRateSchedule: Warmup followed by decay
+
+Training Loop
+    - Multi-epoch training with validation
+    - Automatic checkpointing and model saving
+    - Loss tracking and visualization
+    - Support for distributed training
+    - Resume from checkpoint capability
+
+Experiment Management
+    - MLflow integration for experiment tracking
+    - Automatic logging of hyperparameters
+    - Training curve visualization
+    - Model versioning
+
+The training process follows the DeepSDF paper methodology with extensions
+for lattice structures and microstructured materials.
+
+Examples
+--------
+Train a DeepSDF model::
+
+    from DeepSDFStruct.deep_sdf.training import train_deep_sdf
+
+    specs = {
+        'NetworkSpecs': {...},
+        'TrainSpecs': {
+            'NumEpochs': 2000,
+            'LearningRateSchedule': {...}
+        }
+    }
+
+    train_deep_sdf(experiment_dir, specs)
+"""
+
 #!/usr/bin/env python3
 # Copyright 2004-present Facebook. All Rights Reserved.
 
@@ -132,6 +185,38 @@ def save_latent_vectors(experiment_directory, filename, latent_vec, epoch):
         {"epoch": epoch, "latent_codes": all_latents},
         os.path.join(latent_codes_dir, filename),
     )
+
+
+def save_latent_code_data_map(experiment_directory, data_source, npz_filenames):
+    """Save mapping between latent indices and source training `.npz` files.
+
+    Parameters
+    ----------
+    experiment_directory : str
+        Path to the experiment directory where training artifacts are stored.
+    data_source : str
+        Root directory of the dataset used for training.
+    npz_filenames : list[str]
+        Relative `.npz` paths in dataset split order. The order corresponds
+        directly to latent embedding indices.
+    """
+    latent_code_data_map = {
+        "data_source": data_source,
+        "sdf_samples_subdir": ws.sdf_samples_subdir,
+        "latent_codes": [
+            {
+                "latent_index": latent_idx,
+                "relative_npz_filename": npz_filename,
+                "npz_filename": os.path.join(
+                    data_source, ws.sdf_samples_subdir, npz_filename
+                ),
+            }
+            for latent_idx, npz_filename in enumerate(npz_filenames)
+        ],
+    }
+    filename = ws.get_latent_code_data_map_filename(experiment_directory)
+    with open(filename, "w", encoding="utf-8") as f:
+        json.dump(latent_code_data_map, f, indent=4)
 
 
 def save_logs(
@@ -346,16 +431,24 @@ def train_deep_sdf(
         load_ram=True,
         geom_dimension=geom_dimension,
     )
+    save_latent_code_data_map(experiment_directory, data_source, sdf_dataset.npyfiles)
 
     num_data_loader_threads = get_spec_with_default(specs, "DataLoaderThreads", 1)
     logging.debug("loading data with {} threads".format(num_data_loader_threads))
+
+    # if the batch size is larger than the dataset, we cannot use drop last,
+    # otherwise the dataloader does not load any data
+    if scene_per_batch > len(sdf_dataset):
+        drop_last = False
+    else:
+        drop_last = True
 
     sdf_loader = data_utils.DataLoader(
         sdf_dataset,
         batch_size=scene_per_batch,
         shuffle=True,
         num_workers=num_data_loader_threads,
-        drop_last=True,
+        drop_last=drop_last,
     )
 
     logging.debug("torch num_threads: {}".format(torch.get_num_threads()))
@@ -637,16 +730,19 @@ def create_interpolated_meshes_from_latent(
     to disk in the requested format.
 
     Args:
-        experiment_directory (str | PathLike): Path to the experiment directory
-            containing checkpoints and latent vectors.
-        checkpoint (str, optional): Which checkpoint to load. Defaults to "latest".
-        max_batch (int, optional): Maximum batch size for inference. Defaults to 32.
-        filetype (str, optional): File extension for exported meshes (e.g., "ply", "obj").
-            Defaults to "ply".
-        indices (list[int], optional): Sequence of latent vector indices between
-            which interpolation should be performed. Defaults to [1, 2, 3, 4, 5, 6, 7, 8].
-        steps (int, optional): Number of interpolation steps (including endpoints).
-            Defaults to 11.
+        experiment_directory (str | PathLike): Path to the experiment
+            directory containing checkpoints and latent vectors.
+        checkpoint (str, optional): Which checkpoint to load. Defaults to
+            "latest".
+        max_batch (int, optional): Maximum batch size for inference.
+            Defaults to 32.
+        filetype (str, optional): File extension for exported meshes
+            (e.g., "ply", "obj"). Defaults to "ply".
+        indices (list[int], optional): Sequence of latent vector indices
+            between which interpolation should be performed.
+            Defaults to [1, 2, 3, 4, 5, 6, 7, 8].
+        steps (int, optional): Number of interpolation steps (including
+            endpoints). Defaults to 11.
 
     Example:
         >>> create_interpolated_meshes_from_latent(

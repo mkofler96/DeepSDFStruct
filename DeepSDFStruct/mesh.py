@@ -37,6 +37,8 @@ import torch.autograd.functional
 from torch.func import functional_call, jacrev, jacfwd
 import tetgenpy
 import numpy as np
+import matplotlib.tri as mtri
+import matplotlib.pyplot as plt
 import napf
 import gustaf as gus
 import pathlib
@@ -55,6 +57,7 @@ from DeepSDFStruct.flexicubes.flexicubes import FlexiCubes
 from DeepSDFStruct.flexisquares.flexisquares import FlexiSquares
 from DeepSDFStruct.lattice_structure import LatticeSDFStruct
 from DeepSDFStruct.SDF import SDFBase
+from DeepSDFStruct.torch_spline import TorchSpline, TorchScaling
 import DeepSDFStruct
 
 logger = logging.getLogger(DeepSDFStruct.__name__)
@@ -151,6 +154,37 @@ class torchLineMesh:
                 B["triangles"], device=self.vertices.device, dtype=self.lines.dtype
             ),
         )
+
+    def plot(self, ax=None, show_vertices=True):
+        """
+        Plot a torchLineMesh using matplotlib.
+
+        Parameters
+        ----------
+        ax : matplotlib axis, optional
+            Existing axis to draw on. If None, creates a new figure.
+        show_vertices : bool
+            Whether to draw vertex points.
+        show_indices : bool
+            Whether to annotate vertex indices.
+        """
+        V = self.vertices.detach().cpu().numpy()
+        L = self.lines.detach().cpu().numpy()
+
+        if ax is None:
+            fig, ax = plt.subplots()
+
+        # Plot each line segment
+        for i, j in L:
+            x = [V[i, 0], V[j, 0]]
+            y = [V[i, 1], V[j, 1]]
+            ax.plot(x, y, linewidth=0.5, color="black", linestyle="-")
+
+        # Plot vertices
+        if show_vertices:
+            ax.scatter(V[:, 0], V[:, 1], s=1, color="black")
+
+        ax.set_aspect("equal")
 
 
 class torchSurfMesh:
@@ -249,6 +283,34 @@ class torchSurfMesh:
         if info_string != "":
             logger.info(info_string)
         return torchSurfMesh(new_vertices, new_faces)
+
+    def plot(self, ax=None, show_vertices=False, linewidth=0.2):
+        """
+        Plot a torchSurfMesh using matplotlib.
+
+        Parameters
+        ----------
+        ax : matplotlib axis, optional
+            Existing axis to draw on. If None, creates a new figure.
+        show_vertices : bool
+            Whether to draw vertex points.
+        show_indices : bool
+            Whether to annotate vertex indices.
+        """
+        if ax is None:
+            fig, ax = plt.subplots()
+        V = self.vertices.detach().cpu().numpy()
+        T = self.faces.detach().cpu().numpy()
+        x = V[:, 0]
+        y = V[:, 1]
+        triang = mtri.Triangulation(x, y, T)
+        ax.triplot(triang, linewidth=linewidth)
+        if show_vertices:
+            ax.scatter(x, y, s=5)
+        ax.set_aspect("equal")
+
+    def export(self, filename):
+        gus.io.meshio.export(filename, self.to_gus())
 
 
 class torchVolumeMesh:
@@ -381,6 +443,9 @@ class torchVolumeMesh:
         remapped_volumes = inverse.view(self.volumes.shape)
         self.vertices = self.vertices[used_nodes]
         self.volumes = remapped_volumes
+
+    def export(self, filename):
+        gus.io.meshio.export(filename, self.to_gus())
 
 
 def tetrahedralize_surface(surface_mesh: gus.Faces) -> tuple[gus.Volumes, np.ndarray]:
@@ -596,6 +661,7 @@ def create_3D_mesh(
     device="cpu",
     bounds=None,
     diffmode="fwd",
+    deformation_function: None | TorchSpline | TorchScaling = None,
 ) -> Tuple[Union[torchSurfMesh, torchVolumeMesh], Optional[_torch.Tensor]]:
     """Generate a 3D mesh from an SDF using FlexiCubes dual contouring.
 
@@ -703,6 +769,7 @@ def create_3D_mesh(
         N=N,
         return_faces=False,
         output_tetmesh=output_tetmesh,
+        deformation_function=deformation_function,
     )
     # returns faces or volumes depending on the output_tetmesh flag
     # if output_tetmesh -> returns volumes
@@ -715,7 +782,9 @@ def create_3D_mesh(
         N=N,
         return_faces=True,
         output_tetmesh=output_tetmesh,
+        deformation_function=deformation_function,
     )
+
     if differentiate:
         if diffmode == "rev":
             dVerts_dParams = jacrev(verts_fn)(dict(sdf.named_parameters()))
@@ -741,10 +810,15 @@ def create_2D_mesh(
     N_base,
     mesh_type: str,
     differentiate=False,
-    device="cpu",
+    device=None,
     bounds=None,
-    diffmode="rev",
+    diffmode="fwd",
+    n_smoothing_iterations=5,
+    deformation_function: TorchSpline | TorchScaling | None = None,
 ) -> Tuple[Union[torchLineMesh, torchSurfMesh], Optional[torch.Tensor]]:
+
+    if device is not None:
+        print("Warning: the argument device is no longer used.")
 
     lattice = find_lattice_sdf(sdf)
     if lattice is None:
@@ -764,7 +838,7 @@ def create_2D_mesh(
     N = process_N_base_input(N_base, tiling, dim=2)
 
     constructor, samples, cube_idx = _prepare_flexicubes_querypoints(
-        N, device=device, bounds=bounds, extr_type="flexisquares"
+        N, device=sdf.get_device(), bounds=bounds, extr_type="flexisquares"
     )
     dVerts_dParams = None
 
@@ -779,6 +853,8 @@ def create_2D_mesh(
         N=N,
         return_faces=False,
         output_tetmesh=output_tetmesh,
+        n_smoothing_iterations=n_smoothing_iterations,
+        deformation_function=deformation_function,
     )
     # returns faces or volumes depending on the output_tetmesh flag
     # if output_tetmesh -> returns volumes
@@ -791,12 +867,13 @@ def create_2D_mesh(
         cube_idx=cube_idx,
         resolution=tuple(N),
         output_tetmesh=output_tetmesh,
+        n_smoothing_iterations=n_smoothing_iterations,
     )
 
-    if sdf.deformation_spline is not None:
-        verts_local = sdf.deformation_spline.forward(verts_local)
+    if deformation_function is not None:
+        verts_local = deformation_function.forward(verts_local)
         with torch.no_grad():
-            samples_deformed = sdf.deformation_spline.forward(samples)
+            samples_deformed = deformation_function.forward(samples)
 
     if differentiate:
         if diffmode == "rev":
@@ -852,6 +929,8 @@ def _verts_from_params(
     N,
     return_faces=False,
     output_tetmesh=False,
+    n_smoothing_iterations=5,
+    deformation_function: TorchSpline | TorchScaling | None = None,
 ):
 
     sdf_values = functional_call(sdf, (parameters, buffers), (samples,))
@@ -862,10 +941,11 @@ def _verts_from_params(
         cube_idx=cube_idx,
         resolution=tuple(N),
         output_tetmesh=output_tetmesh,
+        n_smoothing_iterations=n_smoothing_iterations,
     )
 
-    if sdf.deformation_spline is not None:
-        verts_local = sdf.deformation_spline.forward(verts_local)
+    if deformation_function is not None:
+        verts_local = deformation_function.forward(verts_local)
     if return_faces:
         return verts_local, faces
     else:
@@ -880,6 +960,7 @@ def get_verts(
     N,
     return_faces=False,
     output_tetmesh=False,
+    deformation_function: TorchSpline | TorchScaling | None = None,
 ):
     sdf_values = sdf(samples)
 
@@ -891,47 +972,59 @@ def get_verts(
         output_tetmesh=output_tetmesh,
     )
 
-    if sdf.deformation_spline is not None:
-        verts_local = sdf.deformation_spline.forward(verts_local)
+    if deformation_function is not None:
+        verts_local = deformation_function.forward(verts_local)
     if return_faces:
         return verts_local, faces
     else:
         return verts_local
 
 
-def export_sdf_grid_vtk(
-    sdf: SDFBase, filename, N=64, bounds=None, device="cpu", dtype=torch.float32
-):
+def export_sdf_grid_vtk(sdf: SDFBase, filename, N=64, bounds=None):
     if bounds is None:
         bounds = sdf._get_domain_bounds()
     if bounds is None:
-        bounds = np.array([[0, 0, 0], [1, 1, 1]])
+        if sdf.geometric_dim == 2:
+            bounds = np.array([[0, 0], [1, 1]])
+        elif sdf.geometric_dim == 3:
+            bounds = np.array([[0, 0, 0], [1, 1, 1]])
+        else:
+            raise ValueError("geometric dimension of sdf must be either 2 or 3")
     if isinstance(bounds, torch.Tensor):
         bounds = bounds.detach().cpu().numpy()
+
+    if isinstance(bounds, list):
+        bounds = np.array(bounds)
     # Generate grid points
     x = np.linspace(bounds[0, 0], bounds[1, 0], N)
     y = np.linspace(bounds[0, 1], bounds[1, 1], N)
-    z = np.linspace(bounds[0, 2], bounds[1, 2], N)
-    xx, yy, zz = np.meshgrid(x, y, z, indexing="ij")
-    points = np.vstack([xx.ravel(), yy.ravel(), zz.ravel()]).T
+    if sdf.geometric_dim == 3:
+        z = np.linspace(bounds[0, 2], bounds[1, 2], N)
+        xx, yy, zz = np.meshgrid(x, y, z, indexing="ij")
+        points = np.vstack([xx.ravel(), yy.ravel(), zz.ravel()]).T
+    else:
+        xx, yy = np.meshgrid(x, y)
+        points = np.vstack([xx.ravel(), yy.ravel()]).T
 
     # Evaluate SDF
     with _torch.no_grad():
-        if sdf.geometric_dim == 2:
-            input_points = points[:, :2]
-        elif sdf.geometric_dim == 3:
-            input_points = points
-        sdf_vals = sdf(_torch.tensor(input_points, device=device, dtype=dtype))
+        sdf_vals = sdf(_torch.tensor(points, device=sdf.get_device()))
     sdf_vals = sdf_vals.detach().cpu().numpy().reshape(-1)
 
     # Create vtkPoints
     vtk_points = vtk.vtkPoints()
     for pt in points:
-        vtk_points.InsertNextPoint(pt.tolist())
+        vtk_point = pt.tolist()
+        if sdf.geometric_dim == 2:
+            vtk_point.append(0)
+        vtk_points.InsertNextPoint(vtk_point)
 
     # Create structured grid
     grid = vtk.vtkStructuredGrid()
-    grid.SetDimensions(N, N, N)
+    if sdf.geometric_dim == 3:
+        grid.SetDimensions(N, N, N)
+    else:
+        grid.SetDimensions(N, N, 1)
     grid.SetPoints(vtk_points)
 
     # Add SDF scalar field
@@ -981,7 +1074,9 @@ def _export_surface_mesh_vtk(verts, faces, filename, dSurf: dict = None):
             N = int(np.prod(extra_dims))
 
             # reshape to [n_nodes, N_derivatives, 3]
-            dSurf_flat = dSurf_dparam.flatten(2)
+            dSurf_flat_with_nan = dSurf_dparam.flatten(2)
+            # remove nans
+            dSurf_flat = torch.nan_to_num(dSurf_flat_with_nan)
             indices = [np.unravel_index(i, extra_dims) for i in range(N)]
             assert dSurf_flat.shape[2] == len(indices)
             for j, idx in enumerate(indices):
@@ -996,6 +1091,9 @@ def _export_surface_mesh_vtk(verts, faces, filename, dSurf: dict = None):
                     vecND = vec.tolist()
                     if len(vecND) == 2:
                         vecND.append(0.0)
+                    if len(vecND) != 3:
+                        raise ValueError("Vector to be inserted must have 3 entries.")
+
                     vectors.InsertNextTuple(vecND)
 
                 polydata.GetPointData().AddArray(vectors)
@@ -1034,12 +1132,14 @@ def mergeMeshs(mesh1, mesh2, tol=1e-10):
 
     duplicates = min_dist < tol
 
-    mapping = torch.empty(vertices2.shape[0], dtype=torch.long)
+    mapping = torch.empty(vertices2.shape[0], dtype=torch.long, device=vertices1.device)
     mapping[duplicates] = nearest_idx[duplicates]
 
     unique_vertices_mask = ~duplicates
     mapping[unique_vertices_mask] = torch.arange(
-        vertices1.shape[0], vertices1.shape[0] + unique_vertices_mask.sum()
+        vertices1.shape[0],
+        vertices1.shape[0] + unique_vertices_mask.sum(),
+        device=vertices1.device,
     )
 
     merged_vertices = torch.cat([vertices1, vertices2[unique_vertices_mask]], dim=0)

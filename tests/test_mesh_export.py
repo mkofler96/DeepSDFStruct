@@ -1,10 +1,5 @@
 from DeepSDFStruct.pretrained_models import get_model, PretrainedModels
-from DeepSDFStruct.SDF import (
-    SDFfromDeepSDF,
-    SDFfromLineMesh,
-    SDFfromMesh,
-    CappedBorderSDF,
-)
+from DeepSDFStruct.SDF import SDFfromDeepSDF, SDFfromLineMesh, CappedBorderSDF
 from DeepSDFStruct.mesh import (
     generate_2D_surf_mesh,
     tetrahedralize_surface,
@@ -13,14 +8,9 @@ from DeepSDFStruct.mesh import (
     export_surface_mesh,
     export_sdf_grid_vtk,
 )
-from DeepSDFStruct.deep_sdf.reconstruction import (
-    reconstruct_from_samples,
-    reconstruct_deepLS_from_samples,
-)
 from DeepSDFStruct.lattice_structure import LatticeSDFStruct
 from DeepSDFStruct.parametrization import SplineParametrization
 from DeepSDFStruct.torch_spline import TorchSpline
-from DeepSDFStruct.sampling import sample_mesh_surface, random_sample_sdf
 import splinepy
 import gustaf as _gus
 import torch
@@ -59,22 +49,20 @@ def test_deepsdf_lattice_export_3D():
 
     # Create the lattice structure with deformation and microtile
     lattice_struct = CappedBorderSDF(
-        LatticeSDFStruct(
-            tiling=[3, 2, 2],
-            deformation_spline=deformation_spline,
-            microtile=sdf,
-            parametrization=param_spline,
-        )
+        LatticeSDFStruct(tiling=[3, 2, 2], microtile=sdf, parametrization=param_spline)
     )
     surf_mesh, derivative = create_3D_mesh(
-        lattice_struct, 30, differentiate=True, mesh_type="surface", device=model.device
+        lattice_struct,
+        30,
+        differentiate=True,
+        mesh_type="surface",
+        device=model.device,
+        deformation_function=deformation_spline,
     )
     export_surface_mesh(
         "tests/tmp_outputs/mesh_with_derivative.vtk", surf_mesh.to_gus(), derivative
     )
-    export_sdf_grid_vtk(
-        lattice_struct, "tests/tmp_outputs/sdf.vtk", device=model.device
-    )
+    export_sdf_grid_vtk(lattice_struct, "tests/tmp_outputs/sdf.vtk")
     mesh = surf_mesh.to_gus()
     _gus.io.meshio.export("tests/tmp_outputs/faces.inp", mesh)
     _gus.io.meshio.export("tests/tmp_outputs/faces.obj", mesh)
@@ -89,51 +77,6 @@ def test_deepsdf_lattice_export_3D():
     _gus.io.meshio.export(
         fname="tests/tmp_outputs/volumes.inp", mesh=volume_mesh.to_gus()
     )
-
-    # test reconstruction
-    device = model.device
-    gt_sdf = SDFfromMesh(mesh, scale=False)
-    uniform_samples = random_sample_sdf(
-        gt_sdf, mesh.bounds(), n_samples=int(1e3), type="uniform", device=device
-    )
-    surface_samples = sample_mesh_surface(
-        gt_sdf, mesh, n_samples=int(1e3), stds=[0.0, 0.025], device=device
-    )
-
-    SDF_samples = uniform_samples + surface_samples
-    lattice_struct.parametrization
-    # set latent vector to 0.2
-    for p in lattice_struct.sdf.parametrization.parameters():
-        p.data *= 0
-        p.data += 0.2
-    recon_param_lattice = reconstruct_from_samples(
-        lattice_struct,
-        SDF_samples,
-        device=model.device,
-        lr=1e-3,
-        loss_fn="ClampedL1",
-        num_iterations=5,
-        batch_size=len(SDF_samples.samples),
-    )
-    # set latent vector to 0.2
-    for p in lattice_struct.sdf.parametrization.parameters():
-        p.data *= 0
-        p.data += 0.25
-    recon_param_DeepLS = reconstruct_deepLS_from_samples(
-        lattice_struct,
-        SDF_samples,
-        device=model.device,
-        lr=1e-2,
-        loss_fn="ClampedL1",
-        num_iterations=5,
-        batch_size=len(SDF_samples.samples),
-    )
-    print("Original parameters:")
-    print(control_points)
-    print("Reconstructed parameters from Lattice:")
-    print(recon_param_lattice)
-    print("Reconstructed parameters from DeepLS:")
-    print(recon_param_DeepLS)
 
 
 def test_deepsdf_lattice_export_2D():
@@ -156,14 +99,18 @@ def test_deepsdf_lattice_export_2D():
     lattice_struct = CappedBorderSDF(
         LatticeSDFStruct(
             tiling=[3, 2],
-            deformation_spline=deformation_spline,
             microtile=sdf.to2D(axes=[0, 1], offset=0.5),
             parametrization=param_spline,
         )
     )
 
     surf_mesh, derivative = create_2D_mesh(
-        lattice_struct, 30, differentiate=True, mesh_type="surface", device=model.device
+        lattice_struct,
+        30,
+        differentiate=True,
+        mesh_type="surface",
+        device=model.device,
+        deformation_function=deformation_spline,
     )
     export_surface_mesh(
         "tests/tmp_outputs/mesh2D_with_derivative.vtk", surf_mesh.to_gus(), derivative

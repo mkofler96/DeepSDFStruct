@@ -1,3 +1,43 @@
+"""
+DeepSDF Data Loading and Preprocessing
+======================================
+
+This module provides PyTorch Dataset classes and utilities for loading
+and preprocessing SDF training data. It handles:
+
+- Loading sampled SDF values from .npz files
+- Splitting samples into positive and negative regions
+- Batching and shuffling for training
+- Data normalization and clamping
+- Multi-class and multi-dataset support
+
+The module is designed to work with the dataset format produced by the
+sampling module, where each geometry is stored as a .npz file containing
+positive and negative SDF samples.
+
+Classes
+-------
+SDFSamples
+    PyTorch Dataset for loading SDF samples with lazy loading and caching.
+
+NoMeshFileError
+    Exception raised when a mesh file cannot be found.
+
+MultipleMeshFileError
+    Exception raised when multiple mesh files exist in a directory.
+
+Functions
+---------
+get_instance_filenames
+    Retrieve file paths for all instances in a dataset split.
+
+unpack_sdf_samples
+    Load and preprocess SDF samples from a .npz file.
+
+read_sdf_samples_into_ram
+    Load entire dataset into RAM for faster training.
+"""
+
 #!/usr/bin/env python3
 # Copyright 2004-present Facebook. All Rights Reserved.
 

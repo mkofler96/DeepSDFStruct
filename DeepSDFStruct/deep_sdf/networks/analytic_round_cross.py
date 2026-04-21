@@ -1,3 +1,16 @@
+"""
+Analytic Round Cross Decoder Network
+====================================
+
+This module implements a specialized decoder architecture for round cross
+lattice structures with analytical parametrization. The network incorporates
+geometric priors specific to cross-shaped lattice unit cells.
+
+The architecture is similar to the standard DeepSDF decoder but may include
+specialized layers or constraints to better represent the round cross geometry
+family, which is common in mechanical metamaterials.
+"""
+
 #!/usr/bin/env python3
 # Copyright 2004-present Facebook. All Rights Reserved.
 

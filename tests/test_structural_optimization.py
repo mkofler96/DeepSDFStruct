@@ -14,7 +14,6 @@ import torch
 import logging
 import numpy as np
 
-
 logger = logging.getLogger(DeepSDFStruct.__name__)
 configure_logging()
 
@@ -50,10 +49,7 @@ def test_structural_optimization(num_iter=1):
 
     # Create the lattice structure with deformation and microtile
     lattice_struct_uncapped = LatticeSDFStruct(
-        tiling=tiling,
-        deformation_spline=deformation_spline,
-        microtile=sdf,
-        parametrization=param_spline,
+        tiling=tiling, microtile=sdf, parametrization=param_spline
     )
     lattice_struct = CappedBorderSDF(
         CappedBorderSDF(lattice_struct_uncapped, cap_border_dict)
@@ -81,6 +77,7 @@ def test_structural_optimization(num_iter=1):
             mesh_type="volume",
             differentiate=False,
             device=model.device,
+            deformation_function=deformation_spline,
         )
         surf_mesh, _ = create_3D_mesh(
             lattice_struct,
@@ -88,6 +85,7 @@ def test_structural_optimization(num_iter=1):
             mesh_type="surface",
             differentiate=False,
             device=model.device,
+            deformation_function=deformation_spline,
         )
 
         surf_trimesh = surf_mesh.to_trimesh()
@@ -98,19 +96,25 @@ def test_structural_optimization(num_iter=1):
         else:
             raise RuntimeError("Resulting mesh should be volume mesh.")
 
-        # change ordering to fix negative jacobian
-        perm = torch.tensor([0, 2, 1, 3])
-        tets_reoredered = tets[:, perm]
+        # Ensure consistent positive orientation for each tetrahedron.
+        tets_oriented = tets.clone()
+        vols = tet_signed_vol(verts, tets_oriented)
+        neg_mask = vols < 0
+        if neg_mask.any():
+            tets_oriented_neg = tets_oriented[neg_mask]
+            tets_oriented_neg = tets_oriented_neg[:, [0, 2, 1, 3]]
+            tets_oriented[neg_mask] = tets_oriented_neg
 
-        vols = tet_signed_vol(verts, tets_reoredered)
+        vols = tet_signed_vol(verts, tets_oriented)
         if init_vol is None:
             init_vol = vols.sum().item()
             logger.info(f"Initial volume: {init_vol} on {len(vols)} elements.")
-        vol = vols.sum()
-        mask = vols >= 0
+        eps = 1e-12
+        mask = vols > eps
+        vol = vols[mask].sum()
 
         # keep only the good tets
-        tets_clean = tets_reoredered[mask]
+        tets_clean = tets_oriented[mask]
 
         # check how many were removed
         removed = (~mask).sum()
@@ -139,7 +143,7 @@ def test_structural_optimization(num_iter=1):
 
         # log("Starting Simulation")
         u, f, _, _, _ = cantilever.solve(
-            rtol=1e-2, atol=1e-2, device="cpu", method="pardiso"
+            rtol=1e-2, atol=1e-2, device="cpu", method="spsolve"
         )
 
         # Compute sensitivity of compliance w.r.t. element thicknesses

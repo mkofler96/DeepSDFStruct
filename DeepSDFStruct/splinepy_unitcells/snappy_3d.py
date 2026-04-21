@@ -1,3 +1,18 @@
+"""
+Snappy-3D Lattice Unit Cell
+===========================
+
+This module implements a 3D snap-through lattice unit cell using splinepy.
+The snappy structure features thin and thick trusses that can collide,
+enabling snap-through mechanical behavior.
+
+The thickness can vary along the z-direction, allowing for graded properties
+and tunable mechanical response.
+
+Author: Michael Kofler, 2024-06-27
+Version: 0.1
+"""
+
 import numpy as _np
 
 from splinepy.bezier import Bezier as _Bezier

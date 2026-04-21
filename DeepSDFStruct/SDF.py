@@ -1,3 +1,69 @@
+"""
+Signed Distance Function (SDF) Base Classes and Operations
+==========================================================
+
+This module provides the foundational classes and utilities for working with
+Signed Distance Functions (SDFs) in DeepSDFStruct. SDFs are implicit geometric
+representations that encode the distance from any point in space to the nearest
+surface, with the sign indicating whether the point is inside (negative) or
+outside (positive) the geometry.
+
+Key Features
+------------
+
+SDFBase Abstract Class
+    Base class for all SDF representations with support for:
+    - Spline-based geometric deformations
+    - Spatially-varying parametrization
+    - Boundary conditions and capping
+    - Boolean operations (union, intersection)
+    - Differentiable operations for optimization
+
+SDFfromMesh
+    Convert triangular surface meshes to SDF representations using
+    fast winding number algorithms for robust inside/outside testing.
+
+SDFfromDeepSDF
+    Neural network-based SDF using trained DeepSDF models for
+    complex, learned geometric representations.
+
+Union and Intersection
+    Combine multiple SDFs using smooth boolean operations with
+    configurable smoothing for differentiable geometry.
+
+Utility Functions
+    - Grid sampling for SDF evaluation
+    - Gradient computation for normal vectors
+    - Boundary condition application
+
+The module enables flexible construction and manipulation of complex
+3D geometries in a differentiable framework suitable for optimization,
+simulation, and machine learning applications.
+
+Examples
+--------
+Create and evaluate an SDF from a mesh::
+
+    import trimesh
+    from DeepSDFStruct.SDF import SDFfromMesh
+
+    mesh = trimesh.load('model.stl')
+    sdf = SDFfromMesh(mesh)
+
+    # Query SDF values
+    points = torch.rand(1000, 3)
+    distances = sdf(points)
+
+Combine SDFs with boolean operations::
+
+    from DeepSDFStruct.sdf_primitives import SphereSDF
+    from DeepSDFStruct.SDF import Union
+
+    sphere1 = SphereSDF([0, 0, 0], radius=1.0)
+    sphere2 = SphereSDF([1, 0, 0], radius=1.0)
+    combined = Union([sphere1, sphere2], smoothing=0.1)
+"""
+
 from abc import ABC, abstractmethod
 import torch
 import numpy as np
@@ -15,6 +81,7 @@ import DeepSDFStruct
 import logging
 
 import matplotlib.pyplot as plt
+import matplotlib.tri as mtri
 
 logger = logging.getLogger(DeepSDFStruct.__name__)
 
@@ -129,32 +196,23 @@ class SDFBase(torch.nn.Module, ABC):
     """Abstract base class for Signed Distance Functions with optional
     deformation and parametrization.
 
-    This class provides the foundation for all SDF representations in DeepSDFStruct.
-    SDFs represent geometry as an implicit function that returns the signed distance
-    from any query point to the nearest surface. Negative values indicate points
-    inside the geometry, positive values indicate points outside, and zero indicates
-    points on the surface.
+    This class provides the foundation for all SDF representations in
+    DeepSDFStruct. SDFs represent geometry as an implicit function that
+    returns the signed distance from any query point to the nearest
+    surface. Negative values indicate points inside the geometry,
+    positive values indicate points outside, and zero indicates points
+    on the surface.
 
     The class supports:
-    - Optional spline-based deformations for smooth geometric transformations
+    - Optional spline-based deformations for smooth transformations
     - Parametrization functions for spatially-varying properties
-    - Border capping to constrain geometry within specified bounds
-    - Composition operations (union, intersection) via operator overloading
+    - Composition operations (union, intersection) via overloading
 
     Parameters
     ----------
-    deformation_spline : TorchSpline, optional
-        A spline function that maps from parametric to physical space,
-        enabling smooth deformations of the base geometry.
     parametrization : torch.nn.Module, optional
-        A neural network or function that provides spatially-varying parameters
-        for the SDF (e.g., varying thickness in a lattice).
-    cap_border_dict : CapBorderDict, optional
-        Dictionary specifying boundary conditions for each face of the domain.
-        Keys are 'x0', 'x1', 'y0', 'y1', 'z0', 'z1' for the six faces.
-    cap_outside_of_unitcube : bool, default False
-        If True, caps the SDF values outside the unit cube to create
-        a bounded geometry.
+        A function that provides spatially-varying parameters for the
+        SDF (e.g., varying thickness in a lattice).
     geometric_dim : int, default 3
         Geometric dimension of the SDF (2 or 3).
 
@@ -162,7 +220,7 @@ class SDFBase(torch.nn.Module, ABC):
     -----
     Subclasses must implement:
     - ``_compute(queries)``: Calculate SDF values for query points
-    - ``_get_domain_bounds()``: Return the bounding box of the geometry
+    - ``_get_domain_bounds()``: Return the bounding box of geometry
 
     Examples
     --------
@@ -178,14 +236,10 @@ class SDFBase(torch.nn.Module, ABC):
     >>> print(distances)  # [-1.0, 1.0] (inside, outside)
     """
 
-    def __init__(
-        self,
-        deformation_spline: TorchSpline | None = None,
-        parametrization: torch.nn.Module | None = None,
-        geometric_dim=3,
-    ):
+    geometric_dim: int
+
+    def __init__(self, parametrization: torch.nn.Module | None = None, geometric_dim=3):
         super().__init__()
-        self.deformation_spline = deformation_spline
         self.parametrization = parametrization
         self.geometric_dim = geometric_dim
 
@@ -231,7 +285,7 @@ class SDFBase(torch.nn.Module, ABC):
         """
         Return the device of the first parameter or buffer in this module.
 
-        If the module has no parameters and no buffers, returns None.
+        If the module has no parameters and no buffers, returns cpu.
         """
         # Check parameters first
         for p in self.parameters(recurse=True):
@@ -243,6 +297,23 @@ class SDFBase(torch.nn.Module, ABC):
 
         # No tensors at all
         return "cpu"
+
+    def get_dtype(self):
+        """
+        Return the dtype of the first parameter or buffer in this module.
+
+        If the module has no parameters and no buffers, returns float32.
+        """
+        # Check parameters first
+        for p in self.parameters(recurse=True):
+            return p.dtype
+
+        # If no parameters, check buffers
+        for b in self.buffers(recurse=True):
+            return b.dtype
+
+        # No tensors at all
+        return torch.float32
 
     @abstractmethod
     def _compute(self, queries: torch.Tensor) -> torch.Tensor:
@@ -266,7 +337,7 @@ class SDFBase(torch.nn.Module, ABC):
         pass
 
     @abstractmethod
-    def _get_domain_bounds(self) -> np.array:
+    def _get_domain_bounds(self) -> torch.Tensor:
         """Return the bounding box of the SDF's domain.
 
         Subclasses must implement this to specify the spatial extent
@@ -280,11 +351,119 @@ class SDFBase(torch.nn.Module, ABC):
         """
         pass
 
-    def plot_slice(self, *args, **kwargs):
-        return plot_slice(self, *args, **kwargs)
+    def plot_slice(
+        self,
+        origin=(0, 0, 0),
+        normal=(0, 0, 1),
+        res=(100, 100),
+        ax=None,
+        clim=(-1, 1),
+        cmap="seismic",
+        show_zero_level=True,
+        deformation_function=None,
+    ):
+        """Plot a 2D slice through an SDF as a contour plot.
+
+        This function evaluates an SDF on a planar grid and visualizes the
+        signed distance values using a color map. The zero level set (the
+        actual surface) can be highlighted with a contour line.
+
+        Parameters
+        ----------
+        fun : callable
+            The SDF function to visualize. Should accept a torch.Tensor
+            of shape (N, 3) and return distances of shape (N, 1).
+        origin : tuple of float, default (0, 0, 0)
+            A point on the slice plane.
+        normal : tuple of float, default (0, 0, 1)
+            Normal vector of the slice plane. Currently supports only
+            axis-aligned planes: (1,0,0), (0,1,0), or (0,0,1).
+        res : tuple of int, default (100, 100)
+            Resolution of the slice grid (num_points_u, num_points_v).
+        ax : matplotlib.axes.Axes, optional
+            Axes to plot on. If None, creates a new figure.
+        xlim : tuple of float, default (-1, 1)
+            Range along the first plane axis.
+        ylim : tuple of float, default (-1, 1)
+            Range along the second plane axis.
+        clim : tuple of float, default (-1, 1)
+            Color map limits for distance values.
+        cmap : str, default 'seismic'
+            Matplotlib colormap name.
+        show_zero_level : bool, default True
+            If True, draws a black contour line at distance=0 (the surface).
+        deformation_function : callable, optional
+            Deformation mapping from parametric to physical space. If given,
+            sample points are deformed before SDF evaluation and plotting.
+
+        Returns
+        -------
+        fig, ax : matplotlib.figure.Figure, matplotlib.axes.Axes
+            Only returned if ax was None (i.e., a new figure was created).
+
+        Examples
+        --------
+        >>> from DeepSDFStruct.sdf_primitives import SphereSDF
+        >>> from DeepSDFStruct.plotting import plot_slice
+        >>> import matplotlib.pyplot as plt
+        >>>
+        >>> # Create a sphere
+        >>> sphere = SphereSDF(center=[0, 0, 0], radius=0.5)
+        >>>
+        >>> # Plot XY slice at z=0
+        >>> fig, ax = plot_slice(
+        ...     sphere,
+        ...     origin=(0, 0, 0),
+        ...     normal=(0, 0, 1),
+        ...     res=(200, 200)
+        ... )
+        >>> plt.title("XY Slice of Sphere")
+        >>> plt.show()
+
+        Notes
+        -----
+        The 'seismic' colormap is well-suited for SDFs as it uses blue for
+        negative (inside) and red for positive (outside), with white near zero.
+        """
+        plt_show = False
+        if ax is None:
+            fig, ax = plt.subplots()
+            plt_show = True
+        bounds = self._get_domain_bounds()
+        xlim, ylim = project_bounds(origin, normal, bounds=bounds)
+        points = generate_plane_points(origin, normal, res, xlim, ylim)
+
+        sdf_device = self.get_device()
+        points = torch.from_numpy(points).to(torch.float32).to(sdf_device)
+
+        if deformation_function is not None:
+            points_deformed = deformation_function.forward(points)
+        else:
+            points_deformed = points
+
+        sdf_values = self._compute(points).reshape(-1).detach().cpu().numpy()
+        points_np = points_deformed.detach().cpu().numpy()
+        axis0, axis1 = _get_plane_plot_axes(normal)
+        x_plot = points_np[:, axis0]
+        y_plot = points_np[:, axis1]
+        triangles = _build_structured_grid_triangles(res[0], res[1])
+        triangulation = mtri.Triangulation(x_plot, y_plot, triangles=triangles)
+
+        cbar = ax.tricontourf(triangulation, sdf_values, cmap=cmap, levels=10)
+        if show_zero_level:
+            ax.tricontour(
+                triangulation, sdf_values, levels=[0], colors="black", linewidths=0.5
+            )
+        cbar.set_clim(clim[0], clim[1])
+        ax.set_xticks([])
+        ax.set_yticks([])
+        ax.set_aspect(1)
+        if plt_show:
+            plt.show()
+            return fig, ax
 
     def __add__(self, other):
-        return SummedSDF(self, other)
+        return UnionSDF(self, other)
 
     def to2D(self, axes: list[int], offset=0.0):
         """
@@ -293,21 +472,22 @@ class SDFBase(torch.nn.Module, ABC):
         :param axis: list of axes that will be used for the 2D
         """
         sdf2D = SDF2D(self, axes, offset=offset)
-        sdf2D.deformation_spline = self.deformation_spline
         sdf2D.parametrization = self.parametrization
         return sdf2D
 
 
 class SDF2D(SDFBase):
+    obj: SDFBase
+
     def __init__(self, obj: SDFBase, axes: list[int], offset=0.0):
         super().__init__()
         self.obj = obj
-        self.deformation_spline = obj.deformation_spline
         assert (
             len(axes) == 2
         ), "List of axes must be of size 2 and needs to correspond to the 2D plane"
         self.axes = axes
         self.offset = offset
+        self.geometric_dim = 2
 
     def _compute(self, queries):
         queries_3D = (
@@ -322,7 +502,9 @@ class SDF2D(SDFBase):
         return result
 
     def _get_domain_bounds(self):
-        return self.obj._get_domain_bounds()
+        bounds_3d = self.obj._get_domain_bounds()
+        axes = torch.as_tensor(self.axes, device=bounds_3d.device)
+        return torch.index_select(bounds_3d, dim=1, index=axes)
 
     def _set_param(self, parameter):
         return self.obj._set_param(parameter)
@@ -330,15 +512,24 @@ class SDF2D(SDFBase):
 
 class SummedSDF(SDFBase):
     def __init__(self, obj1: SDFBase, obj2: SDFBase):
+        raise NotImplementedError("SummedSDF has been replaced by UnionSDF")
+
+
+class UnionSDF(SDFBase):
+    def __init__(self, obj1: SDFBase, obj2: SDFBase):
         super().__init__()
         self.obj1 = obj1
         self.obj2 = obj2
-        self.deformation_spline = obj1.deformation_spline
+        if self.obj1.geometric_dim != self.obj2.geometric_dim:
+            raise ValueError(
+                f"geometric dim of object 1 ({self.obj1.geometric_dim}) differs from geometric dim of object 2 ({self.obj2.geometric_dim})"
+            )
+        self.geometric_dim = self.obj1.geometric_dim
 
     def _compute(self, queries):
         result1 = self.obj1._compute(queries)
         result2 = self.obj2._compute(queries)
-        return -torch.maximum(-result1, -result2)
+        return torch.minimum(result1, result2)
 
     def _get_domain_bounds(self):
         bounds1 = self.obj1._get_domain_bounds()
@@ -353,15 +544,47 @@ class SummedSDF(SDFBase):
         return None
 
 
+class DifferenceSDF(SDFBase):
+    """
+    Subtracts objs2 from obj1
+    """
+
+    def __init__(self, obj1: SDFBase, obj2: SDFBase):
+        super().__init__()
+        self.obj1 = obj1
+        self.obj2 = obj2
+        if obj1.geometric_dim != obj2.geometric_dim:
+            raise ValueError(
+                "Geomeric dimensions of obj1 and obj2 do not correspond"
+                f" ({obj1.geometric_dim}!={obj2.geometric_dim})"
+            )
+        self.geometric_dim = obj1.geometric_dim
+
+    def _compute(self, queries):
+        result1 = self.obj1._compute(queries)
+        result2 = self.obj2._compute(queries)
+        return torch.maximum(result1, -result2)
+
+    def _get_domain_bounds(self):
+        # the domain bounds get smaller when we substract something
+        return self.obj1._get_domain_bounds()
+
+    def _set_param(self, parameter):
+        return None
+
+
 class NegatedCallable(SDFBase):
-    def __init__(self, obj):
+    def __init__(self, obj: SDFBase):
         super().__init__()
         self.obj = obj
-        self.deformation_spline = obj.deformation_spline
 
     def _compute(self, input_param):
         result = self.obj(input_param)
         return -result
+
+    def _get_domain_bounds(self):
+        # the domain bounds get smaller when we substract something
+        return self.obj._get_domain_bounds()
 
 
 class BoxSDF(SDFBase):
@@ -386,7 +609,7 @@ def union_torch(D, k=0):
     k: smoothness parameter
     """
     if k == 0:
-        return torch.min(D, axis=1)[0]
+        return torch.min(D, axis=1)[0].view(-1, 1)
     # Start with the first column as d1
     d1 = D[:, 0].copy()
 
@@ -396,7 +619,7 @@ def union_torch(D, k=0):
         h = torch.clip(0.5 + 0.5 * (d2 - d1) / k, 0, 1)
         d1 = d2 + (d1 - d2) * h - k * h * (1 - h)
 
-    return d1
+    return d1.view(-1, 1)
 
 
 def union_numpy(D, k=0):
@@ -479,7 +702,13 @@ class SDFfromMesh(SDFBase):
     """
 
     def __init__(
-        self, mesh, dtype=np.float32, flip_sign=False, scale=True, threshold=1e-5
+        self,
+        mesh,
+        dtype=np.float32,
+        flip_sign=False,
+        scale=True,
+        threshold=1e-5,
+        backend="igl",
     ):
         super().__init__()
         if type(mesh) is gustaf.faces.Faces:
@@ -488,11 +717,12 @@ class SDFfromMesh(SDFBase):
         if scale:
             # scales from [0,1] to [-1,1]
             # https://www.brainvoyager.com/bv/doc/UsersGuide/CoordsAndTransforms/SpatialTransformationMatrices.html
-            mesh = normalize_mesh_to_unit_cube(mesh)
+            mesh, _, _ = normalize_mesh_to_unit_cube(mesh)
         self.mesh = mesh
         self.dtype = dtype
         self.flip_sign = flip_sign
         self.threshold = threshold
+        self.backend = backend
 
     def _set_param(self, mesh):
         self.mesh = mesh
@@ -511,20 +741,29 @@ class SDFfromMesh(SDFBase):
             queries_np = np.asarray(queries)
             orig_device = None  # No device for numpy input
 
-        # Compute squared distance
-        squared_distance, hit_index, hit_coordinates = igl.point_mesh_squared_distance(
-            queries_np, self.mesh.vertices, np.array(self.mesh.faces, dtype=np.int32)
-        )
+        if self.backend == "trimesh":
+            # Compute squared distance
+            squared_distance, hit_index, hit_coordinates = (
+                igl.point_mesh_squared_distance(
+                    queries_np,
+                    self.mesh.vertices,
+                    np.array(self.mesh.faces, dtype=np.int32),
+                )
+            )
+            distances = np.sqrt(squared_distance, dtype=self.dtype)
 
-        distances = np.sqrt(squared_distance, dtype=self.dtype)
+            # Determine sign (negative if inside)
+            contains = trimesh.ray.ray_pyembree.RayMeshIntersector(
+                self.mesh, scale_to_box=False
+            ).contains_points(queries_np)
 
-        # Determine sign (negative if inside)
-        contains = trimesh.ray.ray_pyembree.RayMeshIntersector(
-            self.mesh, scale_to_box=False
-        ).contains_points(queries_np)
-
-        distances[contains] *= -1.0
-
+            distances[contains] *= -1.0
+        elif self.backend == "igl":
+            distances, _, _, _ = igl.signed_distance(
+                queries_np,
+                self.mesh.vertices,
+                np.array(self.mesh.faces, dtype=np.int32),
+            )
         # Apply threshold
         distances -= self.threshold
 
@@ -536,10 +775,17 @@ class SDFfromMesh(SDFBase):
             return result
 
 
-def normalize_mesh_to_unit_cube(mesh: trimesh.Trimesh):
+def normalize_mesh_to_unit_cube(mesh: trimesh.Trimesh, shrink_factor: float = 1.0):
     """
     Transform mesh coordinates uniformly to [-1, 1] in all axes.
     Keeps aspect ratio of original mesh.
+
+    shrink_factor : float
+        Uniform scaling factor applied after normalization.
+        1.0  -> exactly fills [-1, 1]
+        0.95 -> 5% smaller
+
+    :return: The fitted mesh, the inverse scaling factor applied (can directly be used as input for the TorchScaling), and the translation vector used.
     """
     logger.debug(f"Scaling mesh from {mesh.bounds.flatten()}")
     # --- Compute bounding box ---
@@ -550,7 +796,7 @@ def normalize_mesh_to_unit_cube(mesh: trimesh.Trimesh):
     center = (bbox_max + bbox_min) / 2.0
 
     # Largest extent
-    scale = (
+    base_scale = (
         np.max(bbox_max - bbox_min) / 2.0
     )  # divide by 2 because [-1,1] spans 2 units
 
@@ -564,11 +810,12 @@ def normalize_mesh_to_unit_cube(mesh: trimesh.Trimesh):
     mesh.apply_transform(matrix)
 
     # --- Apply uniform scaling ---
+    applied_scale = shrink_factor / base_scale
     scale_matrix = np.eye(4)
-    scale_matrix[:3, :3] *= 1.0 / scale
+    scale_matrix[:3, :3] *= applied_scale
     mesh.apply_transform(scale_matrix)
     logger.debug(f"to {mesh.bounds.flatten()}")
-    return mesh
+    return mesh, 1.0 / applied_scale, center
 
 
 class SDFfromLineMesh(SDFBase):
@@ -584,6 +831,7 @@ class SDFfromLineMesh(SDFBase):
         self.line_mesh = line_mesh
         self.t = thickness
         self.smoothness = smoothness
+        self.geometric_dim = line_mesh.vertices.shape[1]
 
     def _get_domain_bounds(self):
         return self.line_mesh.bounds()
@@ -617,6 +865,8 @@ class SDFfromDeepSDF(SDFBase):
         self.latvec = None
         self.parametrization = None
         self.max_batch = max_batch
+        self.set_latent_vec(model._trained_latent_vectors[0])
+        self.geometric_dim = model._decoder.geom_dimension
 
     def set_latent_vec(self, latent_vec: torch.Tensor):
         """
@@ -645,14 +895,14 @@ class SDFfromDeepSDF(SDFBase):
     def _compute(self, queries: torch.Tensor) -> torch.Tensor:
         # DeepSDF queries range from -1 to 1
         orig_device = queries.device
-        queries = queries.to(self.model.device) * 2 - 1
+        queries = queries.to(self.get_device())
         n_queries = queries.shape[0]
 
-        sdf_values = torch.zeros(n_queries, device=self.model.device)
+        sdf_values = torch.zeros(n_queries, device=self.get_device())
 
         head = 0
         if self.latvec is None:
-            latvec = self.parametrization(queries).to(self.model.device)
+            latvec = self.parametrization(queries).to(self.get_device())
         else:
             latent_dim = self.model._trained_latent_vectors[0].shape[0]
             num_samples = queries.shape[0]
@@ -702,22 +952,25 @@ def point_segment_distance(P1, P2, query_points):
     to one or more line segments defined by endpoints P1 and P2.
 
     Args:
-        P1 (np.ndarray): Array of shape (M, 2) or (2,) representing first endpoints of segments.
-        P2 (np.ndarray): Array of shape (M, 2) or (2,) representing second endpoints of segments.
-        query_points (np.ndarray): Array of shape (N, 2) or (2,) representing query point(s).
+        P1 (np.ndarray): Array of shape (M, 2) or (2,) representing
+            first endpoints of segments.
+        P2 (np.ndarray): Array of shape (M, 2) or (2,) representing
+            second endpoints of segments.
+        query_points (np.ndarray): Array of shape (N, 2) or (2,)
+            representing query point(s).
 
     Returns:
-        np.ndarray: Array of shape (N,) with the minimum distance from each query point
-                    to the closest segment.
+        np.ndarray: Array of shape (N,) with the minimum distance from
+            each query point to the closest segment.
     """
     P1 = np.atleast_2d(P1)  # (M, 2)
     P2 = np.atleast_2d(P2)  # (M, 2)
     Q = np.atleast_2d(query_points)  # (N, 2)
 
     # Handle degenerate case: one segment only
-    if P1.shape[0] == 1 and P2.shape[0] == 1:
-        P1 = np.repeat(P1, Q.shape[0], axis=0)
-        P2 = np.repeat(P2, Q.shape[0], axis=0)
+    # if P1.shape[0] == 1 and P2.shape[0] == 1:
+    #     P1 = np.repeat(P1, Q.shape[0], axis=0)
+    #     P2 = np.repeat(P2, Q.shape[0], axis=0)
 
     v = P2 - P1  # (M, 2) segment vectors
     w = Q[:, None, :] - P1[None, :, :]  # (N, M, 2): vector from P1 to each query point
@@ -758,33 +1011,40 @@ class TransformedSDF(SDFBase):
     Transformation can be rotation, translation, or scaling.
     """
 
-    def __init__(self, sdf: SDFBase, rotation=None, translation=None, scale=None):
+    def __init__(
+        self, sdf: SDFBase, rotationMatrix=None, translation=None, scaleFactor=None
+    ):
         super().__init__()
         self.sdf = sdf
-        self.rotation = rotation
-        self.translation = translation
-        self.scale = scale
+        if (rotationMatrix is None) or (rotationMatrix == [0, 0, 0]):
+            rotationMatrix = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
+        if translation is None:
+            translation = [0, 0, 0]
+        if scaleFactor is None:
+            scaleFactor = 1
+        r = torch.as_tensor(rotationMatrix, dtype=torch.float32)
+        s = torch.as_tensor([scaleFactor], dtype=torch.float32)
+        t = torch.as_tensor(translation, dtype=torch.float32)
+        self.translation = torch.nn.Parameter(t.reshape(1, 3))
+        self.rotationMatrix = torch.nn.Parameter(r.reshape(3, 3))
+        self.scale = torch.nn.Parameter(s)
 
     def _compute(self, queries: torch.Tensor) -> torch.Tensor:
         xyz = queries
 
-        # apply scale
-        if self.scale is not None:
-            xyz = xyz / self.scale  # inverse scale
+        # apply scale, for now, only uniform scale is allowd
+        xyz = xyz / self.scale  # inverse scale
 
         # apply rotation
-        if self.rotation is not None:
-            xyz = xyz @ self.rotation.T  # rotate points
+        xyz = xyz @ self.rotationMatrix.T  # rotate points
 
         # apply translation
-        if self.translation is not None:
-            xyz = xyz - self.translation
+        xyz = xyz - self.translation
 
         sdf_vals = self.sdf._compute(xyz)
 
         # rescale distances if scaled
-        if self.scale is not None:
-            sdf_vals = sdf_vals * self.scale
+        sdf_vals = sdf_vals * self.scale
         return sdf_vals
 
     def _get_domain_bounds(self) -> torch.Tensor:
@@ -798,10 +1058,9 @@ class CappedBorderSDF(SDFBase):
 
     cap_border_dict: CapBorderDict
 
-    def __init__(self, sdf: SDFBase, cap_border_dict=None):
+    def __init__(self, sdf: SDFBase, cap_border_dict=None, scale=(1, 1, 1)):
         super().__init__(geometric_dim=sdf.geometric_dim)
         self.sdf = sdf
-        self.deformation_spline = sdf.deformation_spline
         if cap_border_dict is None:
             match self.sdf.geometric_dim:
                 case 2:
@@ -809,6 +1068,7 @@ class CappedBorderSDF(SDFBase):
                 case 3:
                     cap_border_dict = UNIT_CUBE_CAPS_3D
         self.cap_border_dict = cap_border_dict
+        self.scale = scale
 
     def _compute(self, queries: torch.Tensor) -> torch.Tensor:
         sdf_values = self.sdf(queries)
@@ -842,12 +1102,12 @@ class CappedBorderSDF(SDFBase):
 
             # cap == 1 means add material
             if cap == 1:
-                sdf_values = torch.minimum(sdf_values, -border_sdf)
+                sdf_values = torch.minimum(sdf_values, -border_sdf * self.scale[dim])
                 # sdf_values = torch.where(outside, border_sdf, sdf_values)
 
             # cap == -1 means remove material
             elif cap == -1:
-                sdf_values = torch.maximum(sdf_values, -border_sdf)
+                sdf_values = torch.maximum(sdf_values, -border_sdf * self.scale[dim])
                 # sdf_values = torch.where(outside, border_sdf, sdf_values)
 
             else:
@@ -857,105 +1117,6 @@ class CappedBorderSDF(SDFBase):
 
     def _get_domain_bounds(self):
         return self.sdf._get_domain_bounds()
-
-
-def plot_slice(
-    fun: SDFBase,
-    origin=(0, 0, 0),
-    normal=(0, 0, 1),
-    res=(100, 100),
-    ax=None,
-    xlim=(-1, 1),
-    ylim=(-1, 1),
-    clim=(-1, 1),
-    cmap="seismic",
-    show_zero_level=True,
-):
-    """Plot a 2D slice through an SDF as a contour plot.
-
-    This function evaluates an SDF on a planar grid and visualizes the
-    signed distance values using a color map. The zero level set (the
-    actual surface) can be highlighted with a contour line.
-
-    Parameters
-    ----------
-    fun : callable
-        The SDF function to visualize. Should accept a torch.Tensor
-        of shape (N, 3) and return distances of shape (N, 1).
-    origin : tuple of float, default (0, 0, 0)
-        A point on the slice plane.
-    normal : tuple of float, default (0, 0, 1)
-        Normal vector of the slice plane. Currently supports only
-        axis-aligned planes: (1,0,0), (0,1,0), or (0,0,1).
-    res : tuple of int, default (100, 100)
-        Resolution of the slice grid (num_points_u, num_points_v).
-    ax : matplotlib.axes.Axes, optional
-        Axes to plot on. If None, creates a new figure.
-    xlim : tuple of float, default (-1, 1)
-        Range along the first plane axis.
-    ylim : tuple of float, default (-1, 1)
-        Range along the second plane axis.
-    clim : tuple of float, default (-1, 1)
-        Color map limits for distance values.
-    cmap : str, default 'seismic'
-        Matplotlib colormap name.
-    show_zero_level : bool, default True
-        If True, draws a black contour line at distance=0 (the surface).
-
-    Returns
-    -------
-    fig, ax : matplotlib.figure.Figure, matplotlib.axes.Axes
-        Only returned if ax was None (i.e., a new figure was created).
-
-    Examples
-    --------
-    >>> from DeepSDFStruct.sdf_primitives import SphereSDF
-    >>> from DeepSDFStruct.plotting import plot_slice
-    >>> import matplotlib.pyplot as plt
-    >>>
-    >>> # Create a sphere
-    >>> sphere = SphereSDF(center=[0, 0, 0], radius=0.5)
-    >>>
-    >>> # Plot XY slice at z=0
-    >>> fig, ax = plot_slice(
-    ...     sphere,
-    ...     origin=(0, 0, 0),
-    ...     normal=(0, 0, 1),
-    ...     res=(200, 200)
-    ... )
-    >>> plt.title("XY Slice of Sphere")
-    >>> plt.show()
-
-    Notes
-    -----
-    The 'seismic' colormap is well-suited for SDFs as it uses blue for
-    negative (inside) and red for positive (outside), with white near zero.
-    """
-    plt_show = False
-    if ax is None:
-        fig, ax = plt.subplots()
-        plt_show = True
-
-    points, u, v = generate_plane_points(origin, normal, res, xlim, ylim)
-
-    sdf_device = fun.get_device()
-    points = torch.from_numpy(points).to(torch.float32).to(sdf_device)
-    sdf = fun(points).reshape((res[0], res[1]))
-    X = u.reshape((res[0], res[1]))
-    Y = v.reshape((res[0], res[1]))
-    sdf = sdf.detach().cpu().numpy()
-
-    # cbar = ax[0].scatter(X, Y, c=sdf, cmap="seismic")c
-    cbar = ax.contourf(X, Y, sdf, cmap=cmap, levels=10)
-    if show_zero_level:
-        ax.contour(X, Y, sdf, levels=[0], colors="black", linewidths=0.5)
-    cbar.set_clim(clim[0], clim[1])
-    ax.set_xticks([])
-    ax.set_yticks([])
-    ax.set_aspect(1)
-    if plt_show:
-        plt.show()
-        return fig, ax
 
 
 def generate_plane_points(origin, normal, res, xlim, ylim):
@@ -1034,18 +1195,108 @@ def generate_plane_points(origin, normal, res, xlim, ylim):
             "Normal vector other than [1,0,0], [0,1,0] and [0,0,1] not supported yet."
         )
 
-    # Create grid points in 2D space (u-v plane)
     u_coords = np.linspace(xlim[0], xlim[1], res[0])
     v_coords = np.linspace(ylim[0], ylim[1], res[1])
+    u_mesh, v_mesh = np.meshgrid(u_coords, v_coords)
+    u_flat = u_mesh.reshape(-1)
+    v_flat = v_mesh.reshape(-1)
+    points = origin + u_flat[:, None] * u + v_flat[:, None] * v
 
-    points = []
-    u_exp = []
-    v_exp = []
-    for u_val in u_coords:
-        for v_val in v_coords:
-            point = origin + u_val * u + v_val * v
-            u_exp.append(u_val)
-            v_exp.append(v_val)
-            points.append(point)
+    return points
 
-    return np.array(points), np.array(u_exp), np.array(v_exp)
+
+def _get_plane_plot_axes(normal):
+    normal = np.array(normal)
+    normal = normal / np.linalg.norm(normal)
+    if np.allclose(normal, [0, 0, 1]):
+        return 0, 1
+    if np.allclose(normal, [0, 1, 0]):
+        return 0, 2
+    if np.allclose(normal, [1, 0, 0]):
+        return 1, 2
+    raise NotImplementedError(
+        "Normal vector other than [1,0,0], [0,1,0] and [0,0,1] not supported yet."
+    )
+
+
+def _build_structured_grid_triangles(nx, ny):
+    triangles = []
+    for j in range(ny - 1):
+        row_start = j * nx
+        next_row_start = (j + 1) * nx
+        for i in range(nx - 1):
+            p0 = row_start + i
+            p1 = row_start + i + 1
+            p2 = next_row_start + i
+            p3 = next_row_start + i + 1
+            triangles.append([p0, p1, p2])
+            triangles.append([p1, p3, p2])
+    return np.asarray(triangles, dtype=np.int32)
+
+
+def project_bounds(origin, normal, bounds=None):
+    """
+    Project 3D AABB bounds onto a slice plane and return 2D limits.
+
+    Parameters
+    ----------
+    origin : (3,)
+        Point on plane
+    normal : (3,)
+        Plane normal
+    bounds : (2, 3)
+        AABB bounds [[xmin,ymin,zmin],[xmax,ymax,zmax]]
+        If None, defaults to unit cube [0,1]^3
+
+    Returns
+    -------
+    xlim, ylim : tuple
+        Limits in plane coordinates
+    """
+    import numpy as np
+
+    if bounds is None:
+        bounds = np.array([[0, 0, 0], [1, 1, 1]])
+
+    bmin, bmax = bounds
+
+    normal = np.asarray(normal, dtype=float)
+    normal = normal / np.linalg.norm(normal)
+
+    origin = np.asarray(origin, dtype=float)
+
+    # --- build orthonormal basis (u, v) ---
+    if np.allclose(normal, [0, 0, 1]):
+        u = np.array([1, 0, 0])
+        v = np.array([0, 1, 0])
+    elif np.allclose(normal, [0, 1, 0]):
+        u = np.array([1, 0, 0])
+        v = np.array([0, 0, 1])
+    elif np.allclose(normal, [1, 0, 0]):
+        u = np.array([0, 1, 0])
+        v = np.array([0, 0, 1])
+    else:
+        raise NotImplementedError(
+            "normals different to the main axis are not implemented yet."
+        )
+
+    # --- generate 8 corners of AABB ---
+    corners = np.array(
+        [
+            [x, y, z]
+            for x in [bmin[0], bmax[0]]
+            for y in [bmin[1], bmax[1]]
+            for z in [bmin[2], bmax[2]]
+        ]
+    )
+
+    # --- project corners into plane coordinates ---
+    rel = corners - origin  # important: relative to plane origin
+
+    u_coords = rel @ u
+    v_coords = rel @ v
+
+    xlim = (u_coords.min(), u_coords.max())
+    ylim = (v_coords.min(), v_coords.max())
+
+    return xlim, ylim

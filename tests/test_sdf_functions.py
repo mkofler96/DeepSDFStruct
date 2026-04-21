@@ -2,9 +2,45 @@ import gustaf as gus
 import torch
 import numpy as np
 import itertools
-from DeepSDFStruct.SDF import SDFfromLineMesh, CappedBorderSDF
+import splinepy
+from DeepSDFStruct.SDF import SDFfromLineMesh, CappedBorderSDF, SDFfromMesh
 from DeepSDFStruct.mesh import export_sdf_grid_vtk, export_surface_mesh, create_3D_mesh
 from DeepSDFStruct.sdf_primitives import CrossMsSDF
+
+
+def test_sdf_from_multipatch_cubes_equivalence():
+
+    # --- define cubes ---
+    cube1 = splinepy.helpme.create.box(1.0, 1.0, 1.0)
+
+    cube2 = splinepy.helpme.create.box(1.0, 1.0, 1.0)
+    cube2.control_points[:, 0] = cube2.control_points[:, 0] + 1
+    big_cube = splinepy.helpme.create.box(2.0, 1.0, 1.0)
+
+    multipatch = splinepy.Multipatch([cube1, cube2])
+
+    n = 30
+    xs = torch.linspace(-0.5, 2.5, n)
+    ys = torch.linspace(-0.5, 1.5, n)
+    zs = torch.linspace(-0.5, 1.5, n)
+
+    queries = torch.stack(torch.meshgrid(xs, ys, zs, indexing="ij"), dim=-1).reshape(
+        -1, 3
+    )
+
+    multipatch_sdf = SDFfromMesh(multipatch.extract.faces(30))
+    big_cube_sdf = SDFfromMesh(big_cube.extract.faces(30))
+
+    vals_multipatch = multipatch_sdf(queries)
+    vals_big_cube = big_cube_sdf(queries)
+
+    torch.testing.assert_close(
+        vals_multipatch,
+        vals_big_cube,
+        atol=1e-2,
+        rtol=1e-2,
+        msg="Unified multipatch does not match single large cube",
+    )
 
 
 def test_cap_border_dict():
@@ -76,5 +112,6 @@ if __name__ == "__main__":
     import warnings
 
     warnings.filterwarnings("error")
+    test_sdf_from_multipatch_cubes_equivalence()
     test_cap_border_dict()
     test_sdf_from_linemesh()

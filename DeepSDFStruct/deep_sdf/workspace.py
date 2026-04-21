@@ -1,3 +1,46 @@
+"""
+Experiment Workspace Management
+===============================
+
+This module provides utilities for managing DeepSDF experiment workspaces,
+including directory structures, file naming conventions, and model loading/saving.
+
+Constants
+---------
+The module defines standard subdirectory and file names for organizing
+experiment artifacts:
+- Model parameters and checkpoints
+- Optimizer states
+- Latent code vectors
+- Training logs and plots
+- Reconstructions and evaluations
+- Dataset samples and normalization parameters
+
+Architecture Registry
+--------------------
+ARCHITECTURES: dict
+    Maps architecture names to decoder classes, enabling dynamic model
+    instantiation from configuration files.
+
+Functions
+---------
+
+load_experiment_specifications
+    Load experiment configuration from specs.json file.
+
+load_trained_model
+    Load a trained decoder network from checkpoint.
+
+load_latent_vectors
+    Load learned latent codes from checkpoint.
+
+create_experiment_directory
+    Initialize directory structure for a new experiment.
+
+The workspace utilities ensure consistent organization across experiments
+and simplify model loading for inference and continued training.
+"""
+
 #!/usr/bin/env python3
 # Copyright 2004-present Facebook. All Rights Reserved.
 
@@ -15,11 +58,11 @@ from .networks.hierarchical_positional_sdf_decoder import (
     HierachicalPositionalDeepSDFDecoder,
 )
 
-
 screenshots_subdir = "Screenshots"
 model_params_subdir = "ModelParameters"
 optimizer_params_subdir = "OptimizerParameters"
 latent_codes_subdir = "LatentCodes"
+latent_code_data_map_filename = "latent_code_data_map.json"
 logs_filename = "Logs.pth"
 logplot_filename = "Logs.png"
 reconstructions_subdir = "Reconstructions"
@@ -219,6 +262,14 @@ def get_latent_codes_dir(experiment_dir, create_if_nonexistent=False):
         os.makedirs(dir)
 
     return dir
+
+
+def get_latent_code_data_map_filename(experiment_dir):
+    """Return absolute path for the latent-to-data mapping JSON file."""
+    return os.path.join(
+        get_latent_codes_dir(experiment_dir, create_if_nonexistent=True),
+        latent_code_data_map_filename,
+    )
 
 
 def get_normalization_params_filename(

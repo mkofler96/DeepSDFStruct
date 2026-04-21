@@ -50,14 +50,78 @@ class SphereSDF(SDFBase):
 
     def __init__(self, center, radius):
         super().__init__()
-        self.center = torch.tensor(center, dtype=torch.float32)
-        self.r = radius
+        # make center and radius trainable parameters and ensure correct dtype
+        c = torch.as_tensor(center, dtype=torch.float32)
+        r = torch.as_tensor(radius, dtype=torch.float32)
+        self.center = torch.nn.Parameter(c)
+        self.r = torch.nn.Parameter(r.reshape(()))  # scalar parameter
 
     def _compute(self, queries: torch.Tensor) -> torch.Tensor:
-        return (torch.linalg.norm(queries - self.center, dim=1) - self.r).reshape(-1, 1)
+        # ensure computations use same dtype/device as queries
+        center = self.center.to(device=queries.device, dtype=queries.dtype)
+        r = self.r.to(device=queries.device, dtype=queries.dtype)
+        return (torch.linalg.norm(queries - center, dim=1) - r).reshape(-1, 1)
 
     def _get_domain_bounds(self) -> torch.Tensor:
         return torch.tensor([[-1.0, -1.0, -1.0], [1.0, 1.0, 1.0]])
+
+
+class BoxSDF(SDFBase):
+    def __init__(self, center, extents):
+        """3D axis-aligned box SDF.
+
+        extents defines full widths in x, y, z.
+        Both center and extents are torch parameters.
+
+                +--------+
+               /|       /|
+              +--------+ |
+              | |      | |
+              | +------|-+
+              |/       |/
+              +--------+
+
+        """
+        super().__init__(geometric_dim=3)
+
+        c = torch.as_tensor(center, dtype=torch.float32)
+        e = torch.as_tensor(extents, dtype=torch.float32)
+
+        if c.numel() != 3 or e.numel() != 3:
+            raise ValueError("center and extents must be length-3 for BoxSDF")
+
+        self.center = torch.nn.Parameter(c.reshape(3))
+        self.extents = torch.nn.Parameter(e.reshape(3))
+
+    def _compute(self, queries: torch.Tensor) -> torch.Tensor:
+        center = self.center.to(device=queries.device, dtype=queries.dtype)
+        half = self.extents.to(device=queries.device, dtype=queries.dtype) / 2.0
+
+        q = queries - center  # (N,3)
+        d = torch.abs(q) - half  # (N,3)
+
+        zero = torch.tensor(0.0, device=queries.device, dtype=queries.dtype)
+
+        # outside distance
+        d_clamped = torch.maximum(d, zero)
+        outside_dist = torch.linalg.norm(d_clamped, dim=1)
+
+        # inside distance (negative inside)
+        inside_dist = torch.minimum(
+            torch.maximum(torch.maximum(d[:, 0], d[:, 1]), d[:, 2]), zero
+        )
+
+        sdf = (outside_dist + inside_dist).reshape(-1, 1)
+        return sdf
+
+    def _get_domain_bounds(self) -> torch.Tensor:
+        center = self.center.detach()
+        half = self.extents.detach() / 2.0
+
+        lower = center - half
+        upper = center + half
+
+        return torch.stack([lower, upper], dim=0)
 
 
 class CylinderSDF(SDFBase):
@@ -87,28 +151,57 @@ class CylinderSDF(SDFBase):
     >>> print(distances)  # [-0.5, 0.5] (on axis, outside)
     """
 
-    def __init__(self, point, axis, radius):
+    def __init__(self, point, axis, radius, height):
         super().__init__()
         self.point = torch.tensor(point, dtype=torch.float32)
-        self.axis = axis
+        self.axis = torch.tensor(axis, dtype=torch.float32)
         self.r = radius
+        self.h = height
 
     def _compute(self, queries: torch.Tensor) -> torch.Tensor:
-        diff = queries - self.point
-        if self.axis == "x" or self.axis == 0:
-            dist = torch.sqrt(diff[:, 1] ** 2 + diff[:, 2] ** 2)
-        elif self.axis == "y" or self.axis == 1:
-            dist = torch.sqrt(diff[:, 0] ** 2 + diff[:, 2] ** 2)
-        elif self.axis == "z" or self.axis == 2:
-            dist = torch.sqrt(diff[:, 0] ** 2 + diff[:, 1] ** 2)
-        else:
-            raise ValueError(
-                "Axis must be either ['x', 'y','z'] or [0, 1, 2]." f" got {self.axis}"
-            )
-        return (dist - self.r).reshape(-1, 1)
+        point = self.point.to(device=queries.device, dtype=queries.dtype)
+        axis = self.axis.to(device=queries.device, dtype=queries.dtype)
+
+        # normalize axis direction
+        axis_norm = torch.linalg.norm(axis)
+        if axis_norm == 0:
+            raise ValueError("Cylinder axis vector must be non-zero")
+        axis_unit = axis / axis_norm
+
+        # vector from axis point to queries
+        diff = queries - point  # (N,3)
+
+        # project out axial component
+        # dot = (diff · axis_unit)
+        dot = torch.sum(diff * axis_unit, dim=1, keepdim=True)  # (N,1)
+        diff_perp = diff - dot * axis_unit  # (N,3)
+
+        # distance to axis
+        dist_radial = torch.linalg.norm(diff_perp, dim=1, keepdim=True)
+
+        d_r = dist_radial - self.r
+        d_a = torch.abs(dot) - (self.h / 2.0)
+
+        external_dist = torch.linalg.norm(
+            torch.clamp(torch.cat([d_r, d_a], dim=1), min=0), dim=1, keepdim=True
+        )
+        internal_dist = torch.clamp(torch.max(d_r, d_a), max=0)
+
+        return external_dist + internal_dist
 
     def _get_domain_bounds(self) -> torch.Tensor:
-        return torch.tensor([[-1.0, -1.0, -1.0], [1.0, 1.0, 1.0]])
+        """
+        Calculates a bounding box that encapsulates the cylinder.
+        Uses the radius and height to create a tight-ish box around the center.
+        """
+        # For a general oriented cylinder, the bounding box is a bit complex.
+        # Here we use a conservative bound: a cube that fits the maximum extent.
+        extent = max(self.r, self.h / 2.0)
+
+        min_bound = self.point - extent
+        max_bound = self.point + extent
+
+        return torch.stack([min_bound, max_bound])
 
 
 class TorusSDF(SDFBase):
@@ -221,3 +314,77 @@ class CrossMsSDF(SDFBase):
 
     def _get_domain_bounds(self) -> torch.Tensor:
         return torch.tensor([[-1.0, -1.0, -1.0], [1.0, 1.0, 1.0]])
+
+
+# New 2D primitives: CircleSDF and RectangleSDF
+class CircleSDF(SDFBase):
+    """2D circle SDF (geometric_dim=2). Center and radius are torch parameters."""
+
+    def __init__(self, center, radius):
+        super().__init__(geometric_dim=2)
+        c = torch.as_tensor(center, dtype=torch.float32)
+        r = torch.as_tensor(radius, dtype=torch.float32)
+        if c.numel() != 2:
+            raise ValueError("center must be length-2 for CircleSDF")
+        self.center = torch.nn.Parameter(c.reshape(2))
+        self.radius = torch.nn.Parameter(r.reshape(()))
+
+    def _compute(self, queries: torch.Tensor) -> torch.Tensor:
+        # queries expected shape (N,2)
+        if queries.shape[1] == 3:
+            queries = queries[:, :2]
+        center = self.center.to(device=queries.device, dtype=queries.dtype)
+        r = self.radius.to(device=queries.device, dtype=queries.dtype)
+        return (torch.linalg.norm(queries - center, dim=1) - r).reshape(-1, 1)
+
+    def _get_domain_bounds(self) -> torch.Tensor:
+        return torch.tensor([[-1.0, -1.0], [1.0, 1.0]])
+
+
+class RectangleSDF(SDFBase):
+    def __init__(self, center, extents):
+        """2D axis-aligned rectangle SDF. half_extents defines half-widths in x and y.
+        Both center and half_extents are torch parameters.
+        SDF computed using standard box SDF formula in 2D.
+        +---------------+
+        |     center    |
+        |       x       | extents[1]
+        |               |  (height)
+        +---------------+
+            extents[0]
+            (width)
+        """
+        super().__init__(geometric_dim=2)
+        c = torch.as_tensor(center, dtype=torch.float32)
+        h = torch.as_tensor(extents, dtype=torch.float32)
+        if c.numel() != 2 or h.numel() != 2:
+            raise ValueError(
+                "center and half_extents must be length-2 for RectangleSDF"
+            )
+        self.center = torch.nn.Parameter(c.reshape(2))
+        self.extents = torch.nn.Parameter(h.reshape(2))
+
+    def _compute(self, queries: torch.Tensor) -> torch.Tensor:
+        center = self.center.to(device=queries.device, dtype=queries.dtype)
+        half = self.extents.to(device=queries.device, dtype=queries.dtype) / 2
+        if queries.shape[1] == 3:
+            queries = queries[:, :2]
+        q = queries - center  # (N,2)
+        d = torch.abs(q) - half  # (N,2)
+        # outside distance
+        zero = torch.tensor(0.0, device=queries.device, dtype=queries.dtype)
+        d_clamped = torch.maximum(d, zero)
+        outside_dist = torch.linalg.norm(d_clamped, dim=1)
+        # inside distance (negative when inside)
+        inside_dist = torch.minimum(torch.maximum(d[:, 0], d[:, 1]), zero)
+        sdf = (outside_dist + inside_dist).reshape(-1, 1)
+        return sdf
+
+    def _get_domain_bounds(self) -> torch.Tensor:
+        center = self.center.detach()
+        half = self.extents.detach() / 2.0
+
+        lower = center - half
+        upper = center + half
+
+        return torch.stack([lower, upper], dim=0)

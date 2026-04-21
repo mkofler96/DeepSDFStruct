@@ -1,3 +1,69 @@
+"""
+Pretrained DeepSDF Models
+========================
+
+This module provides access to pretrained DeepSDF neural network models for
+common microstructure geometries. These models can be used directly for
+geometry generation or as starting points for transfer learning.
+
+Available Models
+----------------
+
+ChiAndCross
+    Chi-shaped and cross-shaped lattice structures, commonly used in
+    mechanical metamaterials.
+
+AnalyticRoundCross
+    Round cross-section variations with analytical parameterization,
+    useful for smooth stress distribution.
+
+RoundCross
+    Standard round cross structures with various connectivity patterns.
+
+Primitives
+    Basic 3D geometric primitives (spheres, cylinders, cubes, etc.)
+    for building more complex structures.
+
+Primitives2D
+    2D geometric primitives for planar structures and cross-sections.
+
+Functions
+---------
+
+get_model(model, checkpoint='latest', device=None)
+    Load a pretrained model by name or enum value. Returns a DeepSDFModel
+    ready for inference.
+
+list_available_models()
+    Get a list of all available pretrained models.
+
+The pretrained models are stored within the package and loaded on demand,
+enabling quick prototyping and exploration without requiring training.
+
+Examples
+--------
+Load and use a pretrained model::
+
+    from DeepSDFStruct.pretrained_models import get_model, PretrainedModels
+    import torch
+
+    # Load a model
+    model = get_model(PretrainedModels.RoundCross)
+
+    # Generate geometry with latent code
+    latent_code = torch.zeros(256)  # Use learned latent vector
+    points = torch.rand(1000, 3)
+    sdf_values = model(points, latent_code)
+
+List available models::
+
+    from DeepSDFStruct.pretrained_models import list_available_models
+
+    models = list_available_models()
+    for model in models:
+        print(f"Available model: {model.value}")
+"""
+
 from enum import Enum
 import importlib.resources
 from DeepSDFStruct.deep_sdf.workspace import load_trained_model, load_latent_vectors

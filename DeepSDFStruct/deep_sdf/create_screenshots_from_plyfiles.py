@@ -1,3 +1,29 @@
+"""
+PLY File Screenshot Generator
+=============================
+
+This utility script generates screenshots and animated GIFs from PLY mesh files.
+It uses Vedo for 3D rendering with a fixed camera configuration to ensure
+consistent viewpoints across multiple meshes.
+
+Usage
+-----
+From command line::
+
+    python create_screenshots_from_plyfiles.py /path/to/ply/files
+
+The script will:
+1. Find all .ply files in the specified folder
+2. Generate a .png screenshot for each mesh
+3. Create an animated GIF combining all screenshots
+
+This is useful for:
+- Visualizing reconstruction sequences
+- Creating animations of optimization progress
+- Generating consistent documentation images
+- Batch processing of mesh files
+"""
+
 import vedo
 import pathlib
 from natsort import natsorted
