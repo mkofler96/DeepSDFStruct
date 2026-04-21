@@ -29,7 +29,9 @@ def test_sdf_primitives(queries):
     cylinder_x = CylinderSDF(
         point=[0.0, 0.0, 0.0], axis=[1, 0, 0], radius=0.3, height=1
     )
-    torus = TorusSDF(center=[0.0, 0.0, 0.0], R=0.5, r=0.2)
+    torus = TorusSDF(
+        center=[0.0, 0.0, 0.0], major_radius=0.5, minor_radius=0.2, axis=[0, 0, 1]
+    )
     plane = PlaneSDF(point=[0.0, 0.0, 0.0], normal=[0.0, 1.0, 0.0])
     corner_spheres = CornerSpheresSDF(radius=0.2, limit=0.8)
     cross_ms = CrossMsSDF(radius=0.2)

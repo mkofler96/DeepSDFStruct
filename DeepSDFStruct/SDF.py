@@ -74,7 +74,6 @@ import gustaf
 
 from typing import TypedDict
 from DeepSDFStruct.deep_sdf.models import DeepSDFModel
-from DeepSDFStruct.torch_spline import TorchSpline
 from DeepSDFStruct.parametrization import Constant
 import DeepSDFStruct
 
@@ -516,27 +515,47 @@ class SummedSDF(SDFBase):
 
 
 class UnionSDF(SDFBase):
-    def __init__(self, obj1: SDFBase, obj2: SDFBase):
+    def __init__(self, *objects: SDFBase):
         super().__init__()
-        self.obj1 = obj1
-        self.obj2 = obj2
-        if self.obj1.geometric_dim != self.obj2.geometric_dim:
-            raise ValueError(
-                f"geometric dim of object 1 ({self.obj1.geometric_dim}) differs from geometric dim of object 2 ({self.obj2.geometric_dim})"
-            )
-        self.geometric_dim = self.obj1.geometric_dim
+
+        if len(objects) < 2:
+            raise ValueError("UnionSDF requires at least two objects.")
+
+        self.objects = list(objects)
+
+        # Check geometric dimensions match
+        geometric_dim = self.objects[0].geometric_dim
+        for i, obj in enumerate(self.objects[1:], start=1):
+            if obj.geometric_dim != geometric_dim:
+                raise ValueError(
+                    f"geometric dim mismatch between object 0 ({geometric_dim}) "
+                    f"and object {i} ({obj.geometric_dim})"
+                )
+
+        self.geometric_dim = geometric_dim
 
     def _compute(self, queries):
-        result1 = self.obj1._compute(queries)
-        result2 = self.obj2._compute(queries)
-        return torch.minimum(result1, result2)
+        # Compute first object
+        result = self.objects[0]._compute(queries)
+
+        # Iteratively take minimum with the rest
+        for obj in self.objects[1:]:
+            result = torch.minimum(result, obj._compute(queries))
+
+        return result
 
     def _get_domain_bounds(self):
-        bounds1 = self.obj1._get_domain_bounds()
-        bounds2 = self.obj2._get_domain_bounds()
+        # Initialize with first object's bounds
+        bounds = self.objects[0]._get_domain_bounds()
+        lower = bounds[0]
+        upper = bounds[1]
 
-        lower = torch.minimum(bounds1[0], bounds2[0])
-        upper = torch.maximum(bounds1[1], bounds2[1])
+        # Expand bounds across all objects
+        for obj in self.objects[1:]:
+            print(f"current bounds of union lower: {lower} upper: {upper}")
+            obj_bounds = obj._get_domain_bounds()
+            lower = torch.minimum(lower, obj_bounds[0])
+            upper = torch.maximum(upper, obj_bounds[1])
 
         return torch.stack([lower, upper], dim=0)
 
@@ -546,28 +565,49 @@ class UnionSDF(SDFBase):
 
 class DifferenceSDF(SDFBase):
     """
-    Subtracts objs2 from obj1
+    Subtracts multiple objects from a base object.
+
+    Computes:
+        obj0 - (obj1 ∪ obj2 ∪ ...)
+
+    i.e.
+        max(d0, -min(d1, d2, ...))
     """
 
-    def __init__(self, obj1: SDFBase, obj2: SDFBase):
+    def __init__(self, base_obj: SDFBase, *subtract_objs: SDFBase):
         super().__init__()
-        self.obj1 = obj1
-        self.obj2 = obj2
-        if obj1.geometric_dim != obj2.geometric_dim:
-            raise ValueError(
-                "Geomeric dimensions of obj1 and obj2 do not correspond"
-                f" ({obj1.geometric_dim}!={obj2.geometric_dim})"
-            )
-        self.geometric_dim = obj1.geometric_dim
+
+        if len(subtract_objs) == 0:
+            raise ValueError("DifferenceSDF requires at least one object to subtract.")
+
+        self.base_obj = base_obj
+        self.subtract_objs = list(subtract_objs)
+
+        geometric_dim = base_obj.geometric_dim
+
+        for i, obj in enumerate(self.subtract_objs):
+            if obj.geometric_dim != geometric_dim:
+                raise ValueError(
+                    f"Geometric dimension mismatch between base "
+                    f"({geometric_dim}) and subtract object {i} "
+                    f"({obj.geometric_dim})"
+                )
+
+        self.geometric_dim = geometric_dim
 
     def _compute(self, queries):
-        result1 = self.obj1._compute(queries)
-        result2 = self.obj2._compute(queries)
-        return torch.maximum(result1, -result2)
+        d_base = self.base_obj._compute(queries)
+
+        # Compute union of subtraction objects
+        d_sub = self.subtract_objs[0]._compute(queries)
+        for obj in self.subtract_objs[1:]:
+            d_sub = torch.minimum(d_sub, obj._compute(queries))
+
+        return torch.maximum(d_base, -d_sub)
 
     def _get_domain_bounds(self):
-        # the domain bounds get smaller when we substract something
-        return self.obj1._get_domain_bounds()
+        # Difference cannot expand beyond base object
+        return self.base_obj._get_domain_bounds()
 
     def _set_param(self, parameter):
         return None
@@ -1084,19 +1124,14 @@ class CappedBorderSDF(SDFBase):
             dim, side = location_lookup[loc]
             bound = bounds[side, dim]
             x = queries[:, dim].view(-1, 1)
-
             if side == 0 and cap == -1:
                 border_sdf = x - (bound + measure)
-                outside = x < (bound + measure)
             elif side == 0 and cap == 1:
                 border_sdf = (bound + measure) - x
-                outside = x < (bound + measure)
             elif side == 1 and cap == -1:
                 border_sdf = (bound - measure) - x
-                outside = x > (bound - measure)
             elif side == 1 and cap == 1:
                 border_sdf = x - (bound - measure)
-                outside = x > (bound - measure)
             else:
                 raise RuntimeError(f"Side must be either 0 or 1, not {side}")
 
