@@ -13,3 +13,5 @@ DeepSDFStruct.deep\_sdf.networks
    analytic_round_cross
    deep_sdf_decoder
    hierarchical_deep_sdf_decoder
+   hierarchical_positional_sdf_decoder
+   resnet_positional_sdf_decoder

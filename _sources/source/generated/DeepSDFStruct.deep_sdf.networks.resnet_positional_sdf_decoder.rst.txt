@@ -1,0 +1,12 @@
+DeepSDFStruct.deep\_sdf.networks.resnet\_positional\_sdf\_decoder
+=================================================================
+
+.. automodule:: DeepSDFStruct.deep_sdf.networks.resnet_positional_sdf_decoder
+
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      ResNetPositionalDeepSDFDecoder
+   

@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>DeepSDFStruct.deep_sdf &#8212; DeepSDFStruct 1.7.1.dev62+gd18374218 documentation</title>
+    <title>DeepSDFStruct.deep_sdf &#8212; DeepSDFStruct 1.7.2.dev1+g0ad60659d documentation</title>
   
   
   
@@ -38,7 +38,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=b22ed05f"></script>
+    <script src="../../_static/documentation_options.js?v=aa4ddba4"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'source/generated/DeepSDFStruct.deep_sdf';</script>
@@ -110,7 +110,7 @@
   
   
   
-    <p class="title logo__title">DeepSDFStruct 1.7.1.dev62+gd18374218 documentation</p>
+    <p class="title logo__title">DeepSDFStruct 1.7.2.dev1+g0ad60659d documentation</p>
   
 </a></div>
     
@@ -250,8 +250,11 @@
 <li class="toctree-l4"><a class="reference internal" href="DeepSDFStruct.deep_sdf.networks.analytic_round_cross.html">DeepSDFStruct.deep_sdf.networks.analytic_round_cross</a></li>
 <li class="toctree-l4"><a class="reference internal" href="DeepSDFStruct.deep_sdf.networks.deep_sdf_decoder.html">DeepSDFStruct.deep_sdf.networks.deep_sdf_decoder</a></li>
 <li class="toctree-l4"><a class="reference internal" href="DeepSDFStruct.deep_sdf.networks.hierarchical_deep_sdf_decoder.html">DeepSDFStruct.deep_sdf.networks.hierarchical_deep_sdf_decoder</a></li>
+<li class="toctree-l4"><a class="reference internal" href="DeepSDFStruct.deep_sdf.networks.hierarchical_positional_sdf_decoder.html">DeepSDFStruct.deep_sdf.networks.hierarchical_positional_sdf_decoder</a></li>
+<li class="toctree-l4"><a class="reference internal" href="DeepSDFStruct.deep_sdf.networks.resnet_positional_sdf_decoder.html">DeepSDFStruct.deep_sdf.networks.resnet_positional_sdf_decoder</a></li>
 </ul>
 </details></li>
+<li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.deep_sdf.nn_utils.html">DeepSDFStruct.deep_sdf.nn_utils</a></li>
 <li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.deep_sdf.plotting.html">DeepSDFStruct.deep_sdf.plotting</a></li>
 <li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.deep_sdf.reconstruction.html">DeepSDFStruct.deep_sdf.reconstruction</a></li>
 <li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.deep_sdf.training.html">DeepSDFStruct.deep_sdf.training</a></li>
@@ -433,13 +436,16 @@ schedules, and training loops.</p>
 <tr class="row-even"><td><p><a class="reference internal" href="DeepSDFStruct.deep_sdf.networks.html#module-DeepSDFStruct.deep_sdf.networks" title="DeepSDFStruct.deep_sdf.networks"><code class="xref py py-obj docutils literal notranslate"><span class="pre">networks</span></code></a></p></td>
 <td><p>DeepSDF Neural Network Architectures</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="DeepSDFStruct.deep_sdf.plotting.html#module-DeepSDFStruct.deep_sdf.plotting" title="DeepSDFStruct.deep_sdf.plotting"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plotting</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="DeepSDFStruct.deep_sdf.nn_utils.html#module-DeepSDFStruct.deep_sdf.nn_utils" title="DeepSDFStruct.deep_sdf.nn_utils"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nn_utils</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="DeepSDFStruct.deep_sdf.plotting.html#module-DeepSDFStruct.deep_sdf.plotting" title="DeepSDFStruct.deep_sdf.plotting"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plotting</span></code></a></p></td>
 <td><p>Training Visualization and Logging</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="DeepSDFStruct.deep_sdf.reconstruction.html#module-DeepSDFStruct.deep_sdf.reconstruction" title="DeepSDFStruct.deep_sdf.reconstruction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reconstruction</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="DeepSDFStruct.deep_sdf.reconstruction.html#module-DeepSDFStruct.deep_sdf.reconstruction" title="DeepSDFStruct.deep_sdf.reconstruction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reconstruction</span></code></a></p></td>
 <td><p>Shape Reconstruction and Latent Code Optimization</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="DeepSDFStruct.deep_sdf.training.html#module-DeepSDFStruct.deep_sdf.training" title="DeepSDFStruct.deep_sdf.training"><code class="xref py py-obj docutils literal notranslate"><span class="pre">training</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="DeepSDFStruct.deep_sdf.training.html#module-DeepSDFStruct.deep_sdf.training" title="DeepSDFStruct.deep_sdf.training"><code class="xref py py-obj docutils literal notranslate"><span class="pre">training</span></code></a></p></td>
 <td><p>DeepSDF Model Training
 
 :2: (WARNING/2) Title underline too short.
@@ -447,7 +453,7 @@ schedules, and training loops.</p>
 DeepSDF Model Training
 =====================</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="DeepSDFStruct.deep_sdf.workspace.html#module-DeepSDFStruct.deep_sdf.workspace" title="DeepSDFStruct.deep_sdf.workspace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">workspace</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="DeepSDFStruct.deep_sdf.workspace.html#module-DeepSDFStruct.deep_sdf.workspace" title="DeepSDFStruct.deep_sdf.workspace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">workspace</span></code></a></p></td>
 <td><p>Experiment Workspace Management</p></td>
 </tr>
 </tbody>

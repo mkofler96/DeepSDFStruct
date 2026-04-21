@@ -15,6 +15,7 @@ DeepSDFStruct.deep\_sdf
    metrics
    models
    networks
+   nn_utils
    plotting
    reconstruction
    training
