@@ -26,7 +26,10 @@ def test_generate_dataset_from_obj_files():
     sdf_sampler.add_class(meshs_augment, class_name="chairs")
 
     sdf_sampler.process_geometries(
-        sampling_strategy="uniform", add_surface_samples=True, also_save_vtk=True
+        sampling_strategy="uniform",
+        add_surface_samples=True,
+        also_save_vtk=True,
+        n_samples=1000,
     )
 
     sdf_sampler.write_json("chairs_train.json")
@@ -61,7 +64,9 @@ def test_generate_dataset(n_workers, tmp_path):
     sdf_sampler.add_class(chi_tiles, class_name="Chi3D_center", n_faces=100)
     sdf_sampler.add_class(crosslattice_tiles, class_name="CrossLattice", n_faces=100)
 
-    sdf_sampler.process_geometries(sampling_strategy="uniform", n_workers=n_workers)
+    sdf_sampler.process_geometries(
+        sampling_strategy="uniform", n_workers=n_workers, n_samples=1000
+    )
 
     sdf_sampler.write_json("chi_and_cross.json")
 
