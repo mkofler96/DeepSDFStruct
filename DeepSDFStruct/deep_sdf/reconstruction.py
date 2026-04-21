@@ -47,7 +47,7 @@ Reconstruct a shape from samples::
 """
 
 from DeepSDFStruct.SDF import SDFBase
-from DeepSDFStruct.deep_sdf.training import ClampedL1Loss
+from DeepSDFStruct.deep_sdf.nn_utils import ClampedL1Loss
 from torch.utils.data import TensorDataset, DataLoader
 from DeepSDFStruct.sampling import SampledSDF
 from DeepSDFStruct.deep_sdf.plotting import plot_reconstruction_loss

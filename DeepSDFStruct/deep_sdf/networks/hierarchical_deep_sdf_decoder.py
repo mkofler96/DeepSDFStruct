@@ -30,18 +30,7 @@ representations in generative models.
 import torch.nn as nn
 import torch
 import torch.nn.functional as F
-
-activations = {
-    "relu": nn.ReLU(),
-    "tanh": nn.Tanh(),
-    "gelu": nn.GELU(),
-    "silu": nn.SiLU(),
-    "leaky_relu": nn.LeakyReLU(),
-    "elu": nn.ELU(),
-    "selu": nn.SELU(),
-    "sigmoid": nn.Sigmoid(),
-    "softplus": nn.Softplus(),
-}
+from DeepSDFStruct.deep_sdf.nn_utils import activations
 
 
 class HierachicalDeepSDFDecoder(nn.Module):

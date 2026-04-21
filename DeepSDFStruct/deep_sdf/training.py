@@ -75,23 +75,11 @@ from DeepSDFStruct.deep_sdf.models import DeepSDFModel
 from DeepSDFStruct.deep_sdf.plotting import plot_logs
 from DeepSDFStruct.SDF import SDFfromDeepSDF
 from DeepSDFStruct.mesh import create_3D_mesh, export_surface_mesh
+from DeepSDFStruct.deep_sdf.nn_utils import get_loss_function
 from importlib.metadata import version
 import numpy as np
 
 logger = logging.getLogger(DeepSDFStruct.__name__)
-
-
-class ClampedL1Loss(torch.nn.Module):
-    def __init__(self, clamp_val=0.1):
-        super().__init__()
-        self.clamp_val = clamp_val
-        self.loss = torch.nn.L1Loss()
-
-    def forward(self, input, target):
-        # Clamp both input and target to [-clamp_val, clamp_val]
-        input_clamped = input.clamp(-self.clamp_val, self.clamp_val)
-        target_clamped = target.clamp(-self.clamp_val, self.clamp_val)
-        return self.loss(input_clamped, target_clamped)
 
 
 class LearningRateSchedule:
@@ -403,7 +391,6 @@ def train_deep_sdf(
     maxT = clamp_dist
     enforce_minmax = True
 
-    do_code_regularization = get_spec_with_default(specs, "CodeRegularization", True)
     code_reg_lambda = get_spec_with_default(specs, "CodeRegularizationLambda", 1e-4)
 
     code_bound = get_spec_with_default(specs, "CodeBound", None)
@@ -490,10 +477,8 @@ def train_deep_sdf(
             get_mean_latent_vector_magnitude(lat_vecs)
         )
     )
-
-    loss_l1 = torch.nn.L1Loss(reduction="sum")
-    if do_code_regularization == "homogenization":
-        loss_MSE = torch.nn.MSELoss(reduction="mean")
+    loss_fun_spec = get_spec_with_default(specs, "LossFunction", "clampedL1")
+    loss_fun = get_loss_function(loss_fun_spec)
 
     optimizer_all = torch.optim.Adam(
         [
@@ -605,19 +590,7 @@ def train_deep_sdf(
                 if enforce_minmax:
                     pred_sdf = torch.clamp(pred_sdf, minT, maxT)
 
-                chunk_loss = loss_l1(pred_sdf, sdf_gt[i].to(device)) / num_sdf_samples
-
-                if do_code_regularization == "homogenization":
-                    unique_lat_vecs = lat_vecs(indices[i].unique())
-
-                    pred_properties = decoder.module.regressor(
-                        unique_lat_vecs.to(device)
-                    )
-                    reg_loss = code_reg_lambda * loss_MSE(
-                        pred_properties, properties.to(device)
-                    )
-                    chunk_loss = chunk_loss + reg_loss.to(device)
-                    batch_reg_loss = batch_reg_loss + reg_loss.to(device)
+                chunk_loss = loss_fun(pred_sdf, sdf_gt[i].to(device))
 
                 l2_size_loss = torch.sum(torch.norm(batch_lat_vecs, dim=1))
                 reg_loss = (

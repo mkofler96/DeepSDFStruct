@@ -9,6 +9,9 @@ on:
 jobs:
   test:
     runs-on: ${{ matrix.os }}
+    env:
+      HF_HOME: ~/.cache/huggingface
+      HF_HUB_CACHE: ~/.cache/huggingface/hub
 
     strategy:
       matrix:
@@ -28,6 +31,22 @@ jobs:
         uses: astral-sh/setup-uv@v6
         with:
           enable-cache: true
+
+      - name: Cache Hugging Face hub
+        id: hf-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/huggingface
+          key: ${{ runner.os }}-hf-${{ hashFiles('pyproject.toml', 'uv.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-hf-
+
+      - name: Show Hugging Face cache status
+        run: |
+          echo "hf-cache-hit=${{ steps.hf-cache.outputs.cache-hit }}"
+          echo "HF_HOME=$HF_HOME"
+          du -sh "$HF_HOME" || true
+          du -sh "$HF_HUB_CACHE" || true
 
       - name: Sync dependencies with uv
         run: uv sync
