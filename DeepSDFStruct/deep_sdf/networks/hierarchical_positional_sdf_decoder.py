@@ -2,20 +2,9 @@ import torch
 import torch.nn as nn
 import logging
 import torch.nn.functional as F
+from deep_sdf.nn_utils import activations
 
 logger = logging.getLogger("DeepSDFStruct")
-
-activations = {
-    "relu": nn.ReLU(),
-    "tanh": nn.Tanh(),
-    "gelu": nn.GELU(),
-    "silu": nn.SiLU(),
-    "leaky_relu": nn.LeakyReLU(),
-    "elu": nn.ELU(),
-    "selu": nn.SELU(),
-    "sigmoid": nn.Sigmoid(),
-    "softplus": nn.Softplus(),
-}
 
 
 class HierachicalPositionalDeepSDFDecoder(nn.Module):

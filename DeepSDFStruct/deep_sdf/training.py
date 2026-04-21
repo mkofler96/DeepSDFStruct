@@ -22,23 +22,11 @@ from DeepSDFStruct.deep_sdf.models import DeepSDFModel
 from DeepSDFStruct.deep_sdf.plotting import plot_logs
 from DeepSDFStruct.SDF import SDFfromDeepSDF
 from DeepSDFStruct.mesh import create_3D_mesh, export_surface_mesh
+from DeepSDFStruct.deep_sdf.nn_utils import get_loss_function
 from importlib.metadata import version
 import numpy as np
 
 logger = logging.getLogger(DeepSDFStruct.__name__)
-
-
-class ClampedL1Loss(torch.nn.Module):
-    def __init__(self, clamp_val=0.1):
-        super().__init__()
-        self.clamp_val = clamp_val
-        self.loss = torch.nn.L1Loss()
-
-    def forward(self, input, target):
-        # Clamp both input and target to [-clamp_val, clamp_val]
-        input_clamped = input.clamp(-self.clamp_val, self.clamp_val)
-        target_clamped = target.clamp(-self.clamp_val, self.clamp_val)
-        return self.loss(input_clamped, target_clamped)
 
 
 class LearningRateSchedule:
@@ -397,15 +385,7 @@ def train_deep_sdf(
         )
     )
     loss_fun_spec = get_spec_with_default(specs, "LossFunction", "clampedL1")
-    match loss_fun_spec:
-        case "clampedL1":
-            loss_fun = ClampedL1Loss()
-        case "L1":
-            loss_fun = torch.nn.L1Loss()
-        case "MSE":
-            loss_fun = torch.nn.MSELoss()
-        case "huber":
-            loss_fun = torch.nn.HuberLoss()
+    loss_fun = get_loss_function(loss_fun_spec)
 
     optimizer_all = torch.optim.Adam(
         [
