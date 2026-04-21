@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 import logging
 import torch.nn.functional as F
-from deep_sdf.nn_utils import activations
+from DeepSDFStruct.deep_sdf.nn_utils import activations
 
 logger = logging.getLogger("DeepSDFStruct")
 
