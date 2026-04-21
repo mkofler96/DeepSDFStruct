@@ -10,6 +10,7 @@ DeepSDFStruct.sdf\_primitives
    
       BoxSDF
       CircleSDF
+      ConeSDF
       CornerSpheresSDF
       CrossMsSDF
       CylinderSDF

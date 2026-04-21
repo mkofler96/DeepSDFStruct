@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>DeepSDFStruct.SDF &#8212; DeepSDFStruct 1.7.2.dev4+gd3c1213a1 documentation</title>
+    <title>DeepSDFStruct.SDF &#8212; DeepSDFStruct 1.7.2.dev5+gdeda11924 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=a75e72ba"></script>
+    <script src="../../_static/documentation_options.js?v=d7807015"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'source/generated/DeepSDFStruct.SDF';</script>
@@ -110,7 +110,7 @@
   
   
   
-    <p class="title logo__title">DeepSDFStruct 1.7.2.dev4+gd3c1213a1 documentation</p>
+    <p class="title logo__title">DeepSDFStruct 1.7.2.dev5+gdeda11924 documentation</p>
   
 </a></div>
     
@@ -456,8 +456,8 @@ simulation, and machine learning applications.</p>
 <tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.SDF.CappedBorderSDF" title="DeepSDFStruct.SDF.CappedBorderSDF"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CappedBorderSDF</span></code></a>(sdf[, cap_border_dict, scale])</p></td>
 <td><p>Applies planar boundary caps to another SDF.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.SDF.DifferenceSDF" title="DeepSDFStruct.SDF.DifferenceSDF"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DifferenceSDF</span></code></a>(obj1, obj2)</p></td>
-<td><p>Subtracts objs2 from obj1</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.SDF.DifferenceSDF" title="DeepSDFStruct.SDF.DifferenceSDF"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DifferenceSDF</span></code></a>(base_obj, *subtract_objs)</p></td>
+<td><p>Subtracts multiple objects from a base object.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.SDF.NegatedCallable" title="DeepSDFStruct.SDF.NegatedCallable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">NegatedCallable</span></code></a>(obj)</p></td>
 <td><p></p></td>
@@ -483,7 +483,7 @@ simulation, and machine learning applications.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.SDF.TransformedSDF" title="DeepSDFStruct.SDF.TransformedSDF"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TransformedSDF</span></code></a>(sdf[, rotationMatrix, ...])</p></td>
 <td><p>Generic SDF wrapper that applies a transformation to the input queries.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.SDF.UnionSDF" title="DeepSDFStruct.SDF.UnionSDF"><code class="xref py py-obj docutils literal notranslate"><span class="pre">UnionSDF</span></code></a>(obj1, obj2)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.SDF.UnionSDF" title="DeepSDFStruct.SDF.UnionSDF"><code class="xref py py-obj docutils literal notranslate"><span class="pre">UnionSDF</span></code></a>(*objects)</p></td>
 <td><p></p></td>
 </tr>
 </tbody>
@@ -600,14 +600,20 @@ with two fields:</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="DeepSDFStruct.SDF.DifferenceSDF">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.SDF.</span></span><span class="sig-name descname"><span class="pre">DifferenceSDF</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obj2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.SDF.DifferenceSDF" title="Link to this definition">#</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.SDF.</span></span><span class="sig-name descname"><span class="pre">DifferenceSDF</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base_obj</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">subtract_objs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.SDF.DifferenceSDF" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#DeepSDFStruct.SDF.SDFBase" title="DeepSDFStruct.SDF.SDFBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">DeepSDFStruct.SDF.SDFBase</span></code></a></p>
-<p>Subtracts objs2 from obj1</p>
+<p>Subtracts multiple objects from a base object.</p>
+<dl class="simple">
+<dt>Computes:</dt><dd><p>obj0 - (obj1 ∪ obj2 ∪ …)</p>
+</dd>
+<dt>i.e.</dt><dd><p>max(d0, -min(d1, d2, …))</p>
+</dd>
+</dl>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>obj1</strong> (<a class="reference internal" href="#DeepSDFStruct.SDF.SDFBase" title="DeepSDFStruct.SDF.SDFBase"><em>DeepSDFStruct.SDF.SDFBase</em></a>)</p></li>
-<li><p><strong>obj2</strong> (<a class="reference internal" href="#DeepSDFStruct.SDF.SDFBase" title="DeepSDFStruct.SDF.SDFBase"><em>DeepSDFStruct.SDF.SDFBase</em></a>)</p></li>
+<li><p><strong>base_obj</strong> (<a class="reference internal" href="#DeepSDFStruct.SDF.SDFBase" title="DeepSDFStruct.SDF.SDFBase"><em>DeepSDFStruct.SDF.SDFBase</em></a>)</p></li>
+<li><p><strong>subtract_objs</strong> (<a class="reference internal" href="#DeepSDFStruct.SDF.SDFBase" title="DeepSDFStruct.SDF.SDFBase"><em>DeepSDFStruct.SDF.SDFBase</em></a>)</p></li>
 </ul>
 </dd>
 </dl>
@@ -961,14 +967,11 @@ Transformation can be rotation, translation, or scaling.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="DeepSDFStruct.SDF.UnionSDF">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.SDF.</span></span><span class="sig-name descname"><span class="pre">UnionSDF</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obj2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.SDF.UnionSDF" title="Link to this definition">#</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.SDF.</span></span><span class="sig-name descname"><span class="pre">UnionSDF</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">objects</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.SDF.UnionSDF" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#DeepSDFStruct.SDF.SDFBase" title="DeepSDFStruct.SDF.SDFBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">DeepSDFStruct.SDF.SDFBase</span></code></a></p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>obj1</strong> (<a class="reference internal" href="#DeepSDFStruct.SDF.SDFBase" title="DeepSDFStruct.SDF.SDFBase"><em>DeepSDFStruct.SDF.SDFBase</em></a>)</p></li>
-<li><p><strong>obj2</strong> (<a class="reference internal" href="#DeepSDFStruct.SDF.SDFBase" title="DeepSDFStruct.SDF.SDFBase"><em>DeepSDFStruct.SDF.SDFBase</em></a>)</p></li>
-</ul>
+<dd class="field-odd"><p><strong>objects</strong> (<a class="reference internal" href="#DeepSDFStruct.SDF.SDFBase" title="DeepSDFStruct.SDF.SDFBase"><em>DeepSDFStruct.SDF.SDFBase</em></a>)</p>
 </dd>
 </dl>
 </dd></dl>
