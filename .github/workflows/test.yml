@@ -10,8 +10,8 @@ jobs:
   test:
     runs-on: ${{ matrix.os }}
     env:
-      HF_HOME: ~/.cache/huggingface
-      HF_HUB_CACHE: ~/.cache/huggingface/hub
+      HF_HOME: ${{ github.workspace }}/.cache/huggingface
+      HF_HUB_CACHE: ${{ github.workspace }}/.cache/huggingface/hub
 
     strategy:
       matrix:
@@ -36,15 +36,20 @@ jobs:
         id: hf-cache
         uses: actions/cache@v4
         with:
-          path: ~/.cache/huggingface
+          path: ${{ env.HF_HOME }}
           key: ${{ runner.os }}-hf-${{ hashFiles('pyproject.toml', 'uv.lock') }}
           restore-keys: |
             ${{ runner.os }}-hf-
+
+      - name: Ensure Hugging Face cache directories exist
+        run: |
+          mkdir -p "$HF_HUB_CACHE"
 
       - name: Show Hugging Face cache status
         run: |
           echo "hf-cache-hit=${{ steps.hf-cache.outputs.cache-hit }}"
           echo "HF_HOME=$HF_HOME"
+          ls -la "$(dirname "$HF_HOME")" || true
           du -sh "$HF_HOME" || true
           du -sh "$HF_HUB_CACHE" || true
 
@@ -53,6 +58,13 @@ jobs:
 
       - name: Run tests
         run: uv run pytest --cov=DeepSDFStruct --cov-report=term-missing --cov-report=xml tests
+
+      - name: Show Hugging Face cache after tests
+        if: always()
+        run: |
+          echo "Post-test Hugging Face cache usage"
+          du -sh "$HF_HOME" || true
+          du -sh "$HF_HUB_CACHE" || true
 
       - name: Coveralls
         if: matrix.python-version == '3.13' && matrix.os == 'ubuntu-latest'
