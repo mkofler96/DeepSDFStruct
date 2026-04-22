@@ -218,6 +218,304 @@ sdf_sampler.write_json("chi_and_cross.json")
 ```
 
 For the full documentation, visit [mkofler96.github.io/DeepSDFStruct/](https://mkofler96.github.io/DeepSDFStruct/).
+
+## 🎨 SDF Primitives and Operations
+
+DeepSDFStruct provides a comprehensive set of geometric primitives and SDF operations for creating complex geometries. Below are visual examples of the available primitives and operations.
+
+### 3D Primitives
+
+<table>
+    <tbody>
+        <tr>
+            <td style="width: 25%;"><img src="benchmarks/sdf_showcase/primitives/3D/sphere.png" alt="Sphere"></td>
+            <td style="width: 25%;"><img src="benchmarks/sdf_showcase/primitives/3D/box.png" alt="Box"></td>
+            <td style="width: 25%;"><img src="benchmarks/sdf_showcase/primitives/3D/cylinder.png" alt="Cylinder"></td>
+            <td style="width: 25%;"><img src="benchmarks/sdf_showcase/primitives/3D/cone.png" alt="Cone"></td>
+        </tr>
+        <tr>
+            <td align="center"><b>Sphere:</b> Sphere with configurable center and radius</td>
+            <td align="center"><b>Box:</b> Axis-aligned 3D box with configurable extents</td>
+            <td align="center"><b>Cylinder:</b> Finite cylinder with customizable height and radius</td>
+            <td align="center"><b>Cone:</b> Finite cone with base radius and height</td>
+        </tr>
+        <tr>
+            <td style="width: 25%;"><img src="benchmarks/sdf_showcase/primitives/3D/torus.png" alt="Torus"></td>
+            <td style="width: 25%;"><img src="benchmarks/sdf_showcase/primitives/3D/rounded_box.png" alt="Rounded Box"></td>
+            <td style="width: 25%;"><img src="benchmarks/sdf_showcase/primitives/3D/wireframe_box.png" alt="Wireframe Box"></td>
+            <td style="width: 25%;"><img src="benchmarks/sdf_showcase/primitives/3D/capsule.png" alt="Capsule"></td>
+        </tr>
+        <tr>
+            <td align="center"><b>Torus:</b> Torus with major and minor radii</td>
+            <td align="center"><b>Rounded Box:</b> Box with rounded corners</td>
+            <td align="center"><b>Wireframe Box:</b> Box wireframe structure</td>
+            <td align="center"><b>Capsule:</b> Line segment with spherical ends</td>
+        </tr>
+        <tr>
+            <td style="width: 25%;"><img src="benchmarks/sdf_showcase/primitives/3D/ellipsoid.png" alt="Ellipsoid"></td>
+            <td style="width: 25%;"><img src="benchmarks/sdf_showcase/primitives/3D/pyramid.png" alt="Pyramid"></td>
+            <td style="width: 25%;"><img src="benchmarks/sdf_showcase/primitives/3D/tetrahedron.png" alt="Tetrahedron"></td>
+            <td style="width: 25%;"><img src="benchmarks/sdf_showcase/primitives/3D/octahedron.png" alt="Octahedron"></td>
+        </tr>
+        <tr>
+            <td align="center"><b>Ellipsoid:</b> Ellipsoid with different radii in each axis</td>
+            <td align="center"><b>Pyramid:</b> Square pyramid with configurable height</td>
+            <td align="center"><b>Tetrahedron:</b> Regular tetrahedron</td>
+            <td align="center"><b>Octahedron:</b> Regular octahedron</td>
+        </tr>
+        <tr>
+            <td style="width: 25%;"><img src="benchmarks/sdf_showcase/primitives/3D/dodecahedron.png" alt="Dodecahedron"></td>
+            <td style="width: 25%;"><img src="benchmarks/sdf_showcase/primitives/3D/icosahedron.png" alt="Icosahedron"></td>
+            <td style="width: 25%;"><img src="benchmarks/sdf_showcase/primitives/3D/capped_cylinder.png" alt="Capped Cylinder"></td>
+            <td style="width: 25%;"><img src="benchmarks/sdf_showcase/primitives/3D/capped_cone.png" alt="Capped Cone"></td>
+        </tr>
+        <tr>
+            <td align="center"><b>Dodecahedron:</b> Regular dodecahedron</td>
+            <td align="center"><b>Icosahedron:</b> Regular icosahedron</td>
+            <td align="center"><b>Capped Cylinder:</b> Cylinder with exact end caps</td>
+            <td align="center"><b>Capped Cone:</b> Cone with exact end caps</td>
+        </tr>
+        <tr>
+            <td style="width: 25%;"><img src="benchmarks/sdf_showcase/primitives/3D/rounded_cylinder.png" alt="Rounded Cylinder"></td>
+            <td style="width: 25%;"><img src="benchmarks/sdf_showcase/primitives/3D/rounded_cone.png" alt="Rounded Cone"></td>
+            <td style="width: 25%;"><img src="benchmarks_sdf_showcase/primitives/3D/corner_spheres.png" alt="Corner Spheres"></td>
+            <td style="width: 25%;"><img src="benchmarks/sdf_showcase/primitives/3D/cross_ms.png" alt="Cross M"></td>
+        </tr>
+        <tr>
+            <td align="center"><b>Rounded Cylinder:</b> Cylinder with smooth rounded transitions</td>
+            <td align="center"><b>Rounded Cone:</b> Cone with smooth rounded transitions</td>
+            <td align="center"><b>Corner Spheres:</b> Cube with spherical cutouts at corners</td>
+            <td align="center"><b>Cross M:</b> Cross-shaped structure</td>
+        </tr>
+    </tbody>
+</table>
+
+<details>
+<summary><b>Click to see 3D primitive code examples</b></summary>
+
+```python
+from DeepSDFStruct.sdf_primitives import (
+    SphereSDF, BoxSDF, CylinderSDF, ConeSDF, TorusSDF,
+    RoundedBoxSDF, WireframeBoxSDF, CapsuleSDF, EllipsoidSDF,
+    PyramidSDF, TetrahedronSDF, OctahedronSDF,
+    DodecahedronSDF, IcosahedronSDF, CappedCylinderSDF,
+    CappedConeSDF, RoundedCylinderSDF, RoundedConeSDF,
+    CornerSpheresSDF, CrossMsSDF
+)
+
+# Sphere
+sphere = SphereSDF(center=[0, 0, 0], radius=1.0)
+
+# Box
+box = BoxSDF(center=[0, 0, 0], extents=[1.0, 1.0, 1.0])
+
+# Cylinder
+cylinder = CylinderSDF(point=[0, 0, -0.5], axis=[0, 0, 1], radius=0.4, height=1.0)
+
+# Cone
+cone = ConeSDF(apexpoint=[0, 0, -0.5], axis=[0, 0, 1], radius=0.4, height=1.0)
+
+# Torus
+torus = TorusSDF(center=[0, 0, 0], axis=[0, 0, 1], major_radius=1.0, minor_radius=0.3)
+
+# Rounded Box
+rounded_box = RoundedBoxSDF(center=[0, 0, 0], extents=[1.0, 1.0, 1.0], radius=0.15)
+
+# Wireframe Box
+wireframe_box = WireframeBoxSDF(center=[0, 0, 0], extents=[1.0, 1.0, 1.0], thickness=0.08)
+
+# Capsule
+capsule = CapsuleSDF(point_a=[0, 0, -0.5], point_b=[0, 0, 0.5], radius=0.25)
+
+# Ellipsoid
+ellipsoid = EllipsoidSDF(center=[0, 0, 0], extents=[0.6, 0.8, 0.5])
+
+# Pyramid
+pyramid = PyramidSDF(height=1.0)
+
+# Platonic Solids
+tetrahedron = TetrahedronSDF(r=0.8)
+octahedron = OctahedronSDF(r=0.8)
+dodecahedron = DodecahedronSDF(r=0.8)
+icosahedron = IcosahedronSDF(r=0.8)
+
+# With caps and rounded transitions
+capped_cylinder = CappedCylinderSDF(point_a=[0, 0, -0.5], point_b=[0, 0, 0.5], radius=0.3)
+rounded_cylinder = RoundedCylinderSDF(ra=0.3, rb=0.1, h=1.0)
+capped_cone = CappedConeSDF(point_a=[0, 0, -0.5], point_b=[0, 0, 0.5], ra=0.1, rb=0.3)
+rounded_cone = RoundedConeSDF(r1=0.1, r2=0.3, h=1.0)
+
+# Special structures
+corner_spheres = CornerSpheresSDF(radius=0.15, limit=0.8)
+cross_ms = CrossMsSDF(radius=0.15)
+```
+
+</details>
+
+### 2D Primitives
+
+<table>
+    <tbody>
+        <tr>
+            <td style="width: 25%;"><img src="benchmarks/sdf_showcase/primitives/2D/circle.png" alt="Circle"></td>
+            <td style="width: 25%;"><img src="benchmarks/sdf_showcase/primitives/2D/rectangle.png" alt="Rectangle"></td>
+            <td style="width: 25%;"><img src="benchmarks/sdf_showcase/primitives/2D/rounded_rectangle.png" alt="Rounded Rectangle"></td>
+            <td style="width: 25%;"><img src="benchmarks/sdf_showcase/primitives/2D/equilateral_triangle.png" alt="Equilateral Triangle"></td>
+        </tr>
+        <tr>
+            <td align="center"><b>Circle:</b> Circle with configurable center and radius</td>
+            <td align="center"><b>Rectangle:</b> Axis-aligned 2D rectangle</td>
+            <td align="center"><b>Rounded Rectangle:</b> Rectangle with rounded corners</td>
+            <td align="center"><b>Equilateral Triangle:</b> Regular equilateral triangle</td>
+        </tr>
+        <tr>
+            <td style="width: 25%;"><img src="benchmarks/sdf_showcase/primitives/2D/hexagon.png" alt="Hexagon"></td>
+            <td style="width: 25%;"><img src="benchmarks/sdf_showcase/primitives/2D/polygon_pentagon.png" alt="Polygon (Pentagon)"></td>
+        </tr>
+        <tr>
+            <td align="center"><b>Hexagon:</b> Regular hexagon</td>
+            <td align="center"><b>Polygon:</b> Custom polygon (demonstrated with pentagon)</td>
+        </tr>
+    </tbody>
+</table>
+
+<details>
+<summary><b>Click to see 2D primitive code examples</b></summary>
+
+```python
+from DeepSDFStruct.sdf_primitives import (
+    CircleSDF, RectangleSDF, RoundedRectangleSDF,
+    EquilateralTriangleSDF, HexagonSDF, PolygonSDF
+)
+
+# Circle
+circle = CircleSDF(center=[0, 0], radius=1.0)
+
+# Rectangle
+rectangle = RectangleSDF(center=[0, 0], extents=[2.0, 1.5])
+
+# Rounded Rectangle
+rounded_rectangle = RoundedRectangleSDF(center=[0, 0], extents=[2.0, 1.5], radius=0.2)
+
+# Equilateral Triangle
+triangle = EquilateralTriangleSDF(size=1.5)
+
+# Hexagon
+hexagon = HexagonSDF(size=1.5)
+
+# Custom Polygon (Pentagon)
+pentagon = PolygonSDF([
+    [0, 1],
+    [0.95, 0.31],
+    [0.59, -0.81],
+    [-0.59, -0.81],
+    [-0.95, 0.31],
+])
+```
+
+</details>
+
+### SDF Operations
+
+<table>
+    <tbody>
+        <tr>
+            <td style="width: 25%;"><img src="benchmarks/sdf_showcase/operations/boolean/union_sphere_box.png" alt="Union"></td>
+            <td style="width: 25%;"><img src="benchmarks/sdf_showcase/operations/boolean/difference_sphere_box.png" alt="Difference"></td>
+            <td style="width: 25%;"><img src="benchmarks/sdf_showcase/operations/transformations/twist_torus.png" alt="Twist"></td>
+            <td style="width: 25%;"><img src="benchmarks/sdf_showcase/operations/transformations/dilate_sphere.png" alt="Dilate"></td>
+        </tr>
+        <tr>
+            <td align="center"><b>Union:</b> Union of sphere and box</td>
+            <td align="center"><b>Difference:</b> Sphere with box subtracted</td>
+            <td align="center"><b>Twist:</b> Torus twisted by 90 degrees around Z-axis</td>
+            <td align="center"><b>Dilate:</b> Sphere expanded by uniform distance</td>
+        </tr>
+        <tr>
+            <td style="width: 25%;"><img src="benchmarks/sdf_showcase/operations/transformations/shell_sphere.png" alt="Shell"></td>
+            <td style="width: 25%;"><img src="benchmarks/sdf_showcase/operations/transformations/repeat_sphere.png" alt="Repeat"></td>
+            <td style="width: 25%;"><img src="benchmarks/sdf_showcase/operations/transformations/mirror_sphere.png" alt="Mirror"></td>
+            <td style="width: 25%;"><img src="benchmarks/sdf_showcase/operations/transformations/circular_array_sphere.png" alt="Circular Array"></td>
+        </tr>
+        <tr>
+            <td align="center"><b>Shell:</b> Sphere with hollow shell</td>
+            <td align="center"><b>Repeat:</b> Sphere repeated in 3D grid pattern</td>
+            <td align="center"><b>Mirror:</b> Sphere reflected across YZ plane</td>
+            <td align="center"><b>Circular Array:</b> Sphere replicated 6 times in circular pattern</td>
+        </tr>
+        <tr>
+            <td colspan="2" style="width: 50%;"><img src="benchmarks/sdf_showcase/operations/transformations/revolve_circle.png" alt="Revolve"></td>
+        </tr>
+        <tr>
+            <td colspan="2" align="center"><b>Revolve:</b> 2D circle revolved around Z-axis creates torus</td>
+        </tr>
+    </tbody>
+</table>
+
+<details>
+<summary><b>Click to see boolean operation code examples</b></summary>
+
+```python
+from DeepSDFStruct.sdf_primitives import SphereSDF, BoxSDF
+from DeepSDFStruct.SDF import UnionSDF, DifferenceSDF
+
+sphere = SphereSDF(center=[-0.3, 0, 0], radius=0.5)
+box = BoxSDF(center=[0.3, 0, 0], extents=[0.8, 0.8, 0.8])
+
+# Union (can also use + operator)
+union = UnionSDF(sphere, box)
+
+# Difference
+difference = DifferenceSDF(sphere, box)
+```
+
+</details>
+
+<details>
+<summary><b>Click to see transformation operation code examples</b></summary>
+
+```python
+import numpy as np
+from DeepSDFStruct.sdf_primitives import SphereSDF, TorusSDF, CircleSDF
+from DeepSDFStruct.sdf_operations import TwistSDF, DilateSDF, ShellSDF, RepeatSDF, MirrorSDF, CircularArraySDF, RevolveSDF
+
+# Twisted Torus
+base_torus = TorusSDF(center=[0, 0, 0], axis=[0, 0, 1], major_radius=1.0, minor_radius=0.2)
+twisted_torus = TwistSDF(base_torus, k=np.pi/2)
+
+# Dilated Sphere
+sphere = SphereSDF(center=[0, 0, 0], radius=0.5)
+dilated_sphere = DilateSDF(sphere, r=0.15)
+
+# Shell
+shell_sphere = ShellSDF(sphere, thickness=0.1)
+
+# Repeat (creates infinite grid)
+small_sphere = SphereSDF(center=[0, 0, 0], radius=0.2)
+repeated_sphere = RepeatSDF(small_sphere, spacing=[0.6, 0.6, 0.6])
+
+# Mirror
+off_center_sphere = SphereSDF(center=[0.5, 0, 0], radius=0.3)
+mirrored_sphere = MirrorSDF(off_center_sphere, plane_point=[0, 0, 0], plane_normal=[1, 0, 0])
+
+# Circular Array
+arrayed_sphere = CircularArraySDF(off_center_sphere, count=6, radius=0.8)
+
+# Revolve (2D to 3D)
+circle_2d = CircleSDF(center=[0.8, 0], radius=0.15)
+revolved_shape = RevolveSDF(circle_2d, axis='z')
+```
+
+</details>
+
+All SDFs can be evaluated at query points:
+```python
+points = torch.tensor([[0, 0, 0], [1, 0, 0]], dtype=torch.float32)
+distances = sphere(points)  # Returns signed distances
+```
+
+*These images are automatically generated from the actual SDF implementations. Run `uv run python benchmarks/generate_sdf_showcase.py` to regenerate all showcases.*
+
 ## 🔗 Repository
 
 GitHub: [https://github.com/mkofler96/DeepSDFStruct](https://github.com/mkofler96/DeepSDFStruct)
