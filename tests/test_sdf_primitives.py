@@ -2,7 +2,6 @@ import torch
 from math import pi, cos, sin
 import pytest
 
-
 from DeepSDFStruct.sdf_primitives import (
     SphereSDF,
     CylinderSDF,
@@ -12,42 +11,15 @@ from DeepSDFStruct.sdf_primitives import (
     CrossMsSDF,
     CircleSDF,
     RectangleSDF,
-)
-from DeepSDFStruct.SDF import TransformedSDF
-
-"""
-Comprehensive SDF Tests
-======================
-
-Tests for all implemented SDF primitives and operations.
-Validates against expected behavior and trimesh comparisons where applicable.
-"""
-
-import torch
-import pytest
-import numpy as np
-import sys
-
-sys.path.insert(0, ".")
-
-from DeepSDFStruct.sdf_primitives import (
-    # 2D primitives
-    CircleSDF,
-    RectangleSDF,
     LineSDF,
     RoundedRectangleSDF,
     EquilateralTriangleSDF,
     HexagonSDF,
     PolygonSDF,
-    # 3D primitives
-    SphereSDF,
     BoxSDF,
     RoundedBoxSDF,
     WireframeBoxSDF,
-    TorusSDF,
-    CylinderSDF,
     ConeSDF,
-    PlaneSDF,
     CappedCylinderSDF,
     RoundedCylinderSDF,
     CappedConeSDF,
@@ -60,14 +32,9 @@ from DeepSDFStruct.sdf_primitives import (
     CapsuleSDF,
     EllipsoidSDF,
     PyramidSDF,
-    CornerSpheresSDF,
-    CrossMsSDF,
 )
 from DeepSDFStruct.sdf_operations import (
-    ElongateSDF,
     TwistSDF,
-    BendLinearSDF,
-    BendRadialSDF,
     DilateSDF,
     ErodeSDF,
     ShellSDF,
@@ -81,9 +48,7 @@ from DeepSDFStruct.SDF import (
     SmoothDifferenceSDF,
     SmoothIntersectionSDF,
     UnionSDF,
-    DifferenceSDF,
     TransformedSDF,
-    SDFBase,
 )
 
 # ==================== 2D Primitive Tests ====================
