@@ -633,7 +633,9 @@ class CircleSDF(SDFBase):
     def __init__(self, center, radius):
         super().__init__(geometric_dim=2)
         self.center = torch.nn.Parameter(torch.as_tensor(center, dtype=torch.float32))
-        self.radius = torch.nn.Parameter(torch.as_tensor(radius, dtype=torch.float32).reshape(()))
+        self.radius = torch.nn.Parameter(
+            torch.as_tensor(radius, dtype=torch.float32).reshape(())
+        )
 
     def _compute(self, queries: torch.Tensor) -> torch.Tensor:
         center = self.center.to(device=queries.device, dtype=queries.dtype)
@@ -697,13 +699,19 @@ class RoundedRectangleSDF(SDFBase):
         # Support single radius or tuple of 4 radii (one per quadrant)
         if isinstance(radius, (tuple, list)):
             if len(radius) == 1:
-                self.radii = torch.nn.Parameter(torch.as_tensor([radius[0]] * 4, dtype=torch.float32))
+                self.radii = torch.nn.Parameter(
+                    torch.as_tensor([radius[0]] * 4, dtype=torch.float32)
+                )
             elif len(radius) == 4:
-                self.radii = torch.nn.Parameter(torch.as_tensor(radius, dtype=torch.float32))
+                self.radii = torch.nn.Parameter(
+                    torch.as_tensor(radius, dtype=torch.float32)
+                )
             else:
                 raise ValueError("radius must be a single value or a tuple of 4 values")
         else:
-            self.radii = torch.nn.Parameter(torch.as_tensor([radius] * 4, dtype=torch.float32))
+            self.radii = torch.nn.Parameter(
+                torch.as_tensor([radius] * 4, dtype=torch.float32)
+            )
 
     def _compute(self, queries: torch.Tensor) -> torch.Tensor:
         center = self.center.to(device=queries.device, dtype=queries.dtype)
@@ -737,7 +745,9 @@ class EquilateralTriangleSDF(SDFBase):
 
     def __init__(self, size=1.0):
         super().__init__(geometric_dim=2)
-        self.size = torch.nn.Parameter(torch.as_tensor(size, dtype=torch.float32).reshape(()))
+        self.size = torch.nn.Parameter(
+            torch.as_tensor(size, dtype=torch.float32).reshape(())
+        )
 
     def _compute(self, queries: torch.Tensor) -> torch.Tensor:
         k = torch.sqrt(torch.tensor(3.0))
@@ -758,18 +768,29 @@ class HexagonSDF(SDFBase):
 
     def __init__(self, size=1.0):
         super().__init__(geometric_dim=2)
-        self.size = torch.nn.Parameter(torch.as_tensor(size, dtype=torch.float32).reshape(()))
+        self.size = torch.nn.Parameter(
+            torch.as_tensor(size, dtype=torch.float32).reshape(())
+        )
 
     def _compute(self, queries: torch.Tensor) -> torch.Tensor:
         k1 = torch.sqrt(torch.tensor(3.0)) / -2
-        kys = torch.tensor([torch.sqrt(torch.tensor(3.0)) / -2, 0.5, torch.tan(torch.tensor(np.pi) / 6)])
+        kys = torch.tensor(
+            [
+                torch.sqrt(torch.tensor(3.0)) / -2,
+                0.5,
+                torch.tan(torch.tensor(np.pi) / 6),
+            ]
+        )
         p = torch.abs(queries)
         dot_k = torch.sum(p * kys[:2], dim=1, keepdim=True)
         p = p - 2 * kys[:2] * torch.clamp(dot_k, max=0)
-        p = torch.stack([
-            torch.clamp(p[:, 0], -kys[2] * self.size, kys[2] * self.size),
-            torch.zeros_like(p[:, 0]) + self.size
-        ], dim=1)
+        p = torch.stack(
+            [
+                torch.clamp(p[:, 0], -kys[2] * self.size, kys[2] * self.size),
+                torch.zeros_like(p[:, 0]) + self.size,
+            ],
+            dim=1,
+        )
         return (torch.linalg.norm(p, dim=1) * torch.sign(p[:, 1])).reshape(-1, 1)
 
     def _get_domain_bounds(self) -> torch.Tensor:
@@ -784,7 +805,9 @@ class PolygonSDF(SDFBase):
         super().__init__(geometric_dim=2)
         if len(vertices) < 3:
             raise ValueError("Polygon needs at least 3 vertices")
-        self.vertices = torch.nn.Parameter(torch.as_tensor(vertices, dtype=torch.float32))
+        self.vertices = torch.nn.Parameter(
+            torch.as_tensor(vertices, dtype=torch.float32)
+        )
 
     def _compute(self, queries: torch.Tensor) -> torch.Tensor:
         verts = self.vertices.to(device=queries.device, dtype=queries.dtype)
@@ -802,10 +825,10 @@ class PolygonSDF(SDFBase):
             w = queries - vi
 
             # Distance to edge
-            e_len_sq = torch.sum(e ** 2)
+            e_len_sq = torch.sum(e**2)
             t = torch.clamp(torch.sum(w * e, dim=1) / e_len_sq, 0, 1)
             b = w - t.unsqueeze(1) * e
-            d = torch.minimum(d, torch.sum(b ** 2, dim=1))
+            d = torch.minimum(d, torch.sum(b**2, dim=1))
 
             # Winding number check
             c1 = queries[:, 1] >= vi[1]
@@ -829,33 +852,49 @@ class SlabSDF(SDFBase):
         # Bounds for each axis
         self.bounds = {}
         if x0 is not None:
-            self.bounds['x0'] = float(x0) if not isinstance(x0, torch.nn.Parameter) else x0
+            self.bounds["x0"] = (
+                float(x0) if not isinstance(x0, torch.nn.Parameter) else x0
+            )
         if x1 is not None:
-            self.bounds['x1'] = float(x1) if not isinstance(x1, torch.nn.Parameter) else x1
+            self.bounds["x1"] = (
+                float(x1) if not isinstance(x1, torch.nn.Parameter) else x1
+            )
         if y0 is not None:
-            self.bounds['y0'] = float(y0) if not isinstance(y0, torch.nn.Parameter) else y0
+            self.bounds["y0"] = (
+                float(y0) if not isinstance(y0, torch.nn.Parameter) else y0
+            )
         if y1 is not None:
-            self.bounds['y1'] = float(y1) if not isinstance(y1, torch.nn.Parameter) else y1
+            self.bounds["y1"] = (
+                float(y1) if not isinstance(y1, torch.nn.Parameter) else y1
+            )
         if z0 is not None:
-            self.bounds['z0'] = float(z0) if not isinstance(z0, torch.nn.Parameter) else z0
+            self.bounds["z0"] = (
+                float(z0) if not isinstance(z0, torch.nn.Parameter) else z0
+            )
         if z1 is not None:
-            self.bounds['z1'] = float(z1) if not isinstance(z1, torch.nn.Parameter) else z1
+            self.bounds["z1"] = (
+                float(z1) if not isinstance(z1, torch.nn.Parameter) else z1
+            )
 
     def _compute(self, queries: torch.Tensor) -> torch.Tensor:
-        dist = torch.full((len(queries),), -float('inf'),
-                         device=queries.device, dtype=queries.dtype)
+        dist = torch.full(
+            (len(queries),), -float("inf"), device=queries.device, dtype=queries.dtype
+        )
 
         # For each plane constraint
         for axis, side, bound_key, direction in [
-            ('x', 0, 'x0', 1), ('x', 1, 'x1', -1),
-            ('y', 0, 'y0', 1), ('y', 1, 'y1', -1),
-            ('z', 0, 'z0', 1), ('z', 1, 'z1', -1)
+            ("x", 0, "x0", 1),
+            ("x", 1, "x1", -1),
+            ("y", 0, "y0", 1),
+            ("y", 1, "y1", -1),
+            ("z", 0, "z0", 1),
+            ("z", 1, "z1", -1),
         ]:
             bound = self.bounds.get(bound_key)
             if bound is None:
                 continue
 
-            idx = {'x': 0, 'y': 1, 'z': 2}[axis]
+            idx = {"x": 0, "y": 1, "z": 2}[axis]
             if side == 0:
                 plane_dist = bound - queries[:, idx]
                 dist = torch.maximum(dist, plane_dist)
@@ -887,7 +926,7 @@ class CappedCylinderSDF(SDFBase):
         r = self.radius.to(device=queries.device, dtype=queries.dtype)
 
         ba = b - a
-        ba_length_sq = torch.sum(ba ** 2)
+        ba_length_sq = torch.sum(ba**2)
         pa = queries - a
 
         # Project onto cylinder axis, clamp to segment
@@ -896,20 +935,20 @@ class CappedCylinderSDF(SDFBase):
 
         # Distance to cylinder side
         pa_ba_diff = pa * ba_length_sq - h.unsqueeze(1) * ba
-        x = torch.sqrt(torch.sum(pa_ba_diff ** 2, dim=1)) - r * ba_length_sq
+        x = torch.sqrt(torch.sum(pa_ba_diff**2, dim=1)) - r * ba_length_sq
 
         # Distance to end caps
         y = torch.abs(paba) - ba_length_sq * 0.5
 
-        x2 = x ** 2
-        y2 = y ** 2 * ba_length_sq
+        x2 = x**2
+        y2 = y**2 * ba_length_sq
 
         # Mix inside/outside properly
         d = torch.where(
             (x < 0) & (y < 0),
             -torch.minimum(x2, y2),
-            torch.where(x > 0, x2, torch.tensor(0.0)) +
-            torch.where(y > 0, y2, torch.tensor(0.0))
+            torch.where(x > 0, x2, torch.tensor(0.0))
+            + torch.where(y > 0, y2, torch.tensor(0.0)),
         )
 
         # Fix sign
@@ -940,10 +979,13 @@ class RoundedCylinderSDF(SDFBase):
         rb = self.rb.to(device=queries.device, dtype=queries.dtype)
         h = self.h.to(device=queries.device, dtype=queries.dtype)
 
-        d = torch.stack([
-            torch.sqrt(queries[:, 0] ** 2 + queries[:, 1] ** 2) - ra + rb,
-            torch.abs(queries[:, 2]) - h / 2 + rb
-        ], dim=1)
+        d = torch.stack(
+            [
+                torch.sqrt(queries[:, 0] ** 2 + queries[:, 1] ** 2) - ra + rb,
+                torch.abs(queries[:, 2]) - h / 2 + rb,
+            ],
+            dim=1,
+        )
 
         outside = torch.linalg.norm(torch.clamp(d, min=0.0), dim=1)
         inside = torch.minimum(torch.maximum(d[:, 0], d[:, 1]), torch.tensor(0.0))
@@ -983,13 +1025,20 @@ class CappedConeSDF(SDFBase):
         cay = torch.abs(paba - 0.5) - 0.5
 
         cax = ca
-        cbx = q - ra - (torch.clamp((rba * (q - ra) + paba * baba) / (rba * rba + baba), 0, 1)) * rba
-        cby = paba - torch.clamp((rba * (q - ra) + paba * baba) / (rba * rba + baba), 0, 1)
+        cbx = (
+            q
+            - ra
+            - (torch.clamp((rba * (q - ra) + paba * baba) / (rba * rba + baba), 0, 1))
+            * rba
+        )
+        cby = paba - torch.clamp(
+            (rba * (q - ra) + paba * baba) / (rba * rba + baba), 0, 1
+        )
 
         s = torch.where((cbx < 0) & (cay < 0), -1, 1)
 
-        a_dist = cax ** 2 + cay ** 2 * baba
-        b_dist = cbx ** 2 + cby ** 2 * baba
+        a_dist = cax**2 + cay**2 * baba
+        b_dist = cbx**2 + cby**2 * baba
 
         # Determine which distance to use
         mask = (ca < 0) & (cay < 0)
@@ -1018,13 +1067,15 @@ class RoundedConeSDF(SDFBase):
         r2 = self.r2.to(device=queries.device, dtype=queries.dtype)
         h = self.h.to(device=queries.device, dtype=queries.dtype)
 
-        q = torch.stack([torch.sqrt(queries[:, 0] ** 2 + queries[:, 1] ** 2), queries[:, 2]], dim=1)
+        q = torch.stack(
+            [torch.sqrt(queries[:, 0] ** 2 + queries[:, 1] ** 2), queries[:, 2]], dim=1
+        )
         b = (r1 - r2) / h
         a = torch.sqrt(1 - b * b)
         k = torch.sum(q * torch.stack([-b, a]), dim=1)
 
         c1 = torch.linalg.norm(q, dim=1) - r1
-        c2 = torch.linalg.norm(q - torch.stack([torch.tensor(0.), h]), dim=1) - r2
+        c2 = torch.linalg.norm(q - torch.stack([torch.tensor(0.0), h]), dim=1) - r2
         c3 = torch.sum(q * torch.stack([a, b]), dim=1) - r1
 
         return torch.where(k < 0, c1, torch.where(k > a * h, c2, c3)).reshape(-1, 1)
@@ -1044,9 +1095,14 @@ class TetrahedronSDF(SDFBase):
 
     def _compute(self, queries: torch.Tensor) -> torch.Tensor:
         r = self.r.to(device=queries.device, dtype=queries.dtype)
-        result = (torch.maximum(torch.abs(queries[:, 0] + queries[:, 1]) - queries[:, 2],
-                               torch.abs(queries[:, 0] - queries[:, 1]) + queries[:, 2]) - r)
-        return (result.reshape(-1, 1) / torch.sqrt(torch.tensor(3.0)))
+        result = (
+            torch.maximum(
+                torch.abs(queries[:, 0] + queries[:, 1]) - queries[:, 2],
+                torch.abs(queries[:, 0] - queries[:, 1]) + queries[:, 2],
+            )
+            - r
+        )
+        return result.reshape(-1, 1) / torch.sqrt(torch.tensor(3.0))
 
     def _get_domain_bounds(self) -> torch.Tensor:
         r = self.r.item()
@@ -1062,7 +1118,10 @@ class OctahedronSDF(SDFBase):
 
     def _compute(self, queries: torch.Tensor) -> torch.Tensor:
         r = self.r.to(device=queries.device, dtype=queries.dtype)
-        return ((torch.sum(torch.abs(queries), dim=1) - r) * torch.tan(torch.tensor(np.pi / 6))).reshape(-1, 1)
+        return (
+            (torch.sum(torch.abs(queries), dim=1) - r)
+            * torch.tan(torch.tensor(np.pi / 6))
+        ).reshape(-1, 1)
 
     def _get_domain_bounds(self) -> torch.Tensor:
         r = self.r.item()
@@ -1087,8 +1146,12 @@ class DodecahedronSDF(SDFBase):
 
         p = torch.abs(queries / r)
         a = torch.sum(p * vn, dim=1)
-        b = torch.sum(p * torch.tensor([vn[1], vn[2], vn[0]], dtype=torch.float32), dim=1)
-        c = torch.sum(p * torch.tensor([vn[2], vn[0], vn[1]], dtype=torch.float32), dim=1)
+        b = torch.sum(
+            p * torch.tensor([vn[1], vn[2], vn[0]], dtype=torch.float32), dim=1
+        )
+        c = torch.sum(
+            p * torch.tensor([vn[2], vn[0], vn[1]], dtype=torch.float32), dim=1
+        )
 
         q = (torch.maximum(torch.maximum(a, b), c) - vn[0]) * r
         return q.reshape(-1, 1)
@@ -1110,7 +1173,9 @@ class IcosahedronSDF(SDFBase):
         r_scaled = r * torch.tensor(0.8506507174597755)
 
         # Normalized icosahedron vertices
-        vn_raw = torch.tensor([(torch.sqrt(torch.tensor(5.)) + 3) / 2, 1, 0], dtype=torch.float32)
+        vn_raw = torch.tensor(
+            [(torch.sqrt(torch.tensor(5.0)) + 3) / 2, 1, 0], dtype=torch.float32
+        )
         vn = vn_raw / torch.linalg.norm(vn_raw)
 
         w = torch.sqrt(torch.tensor(3.0)) / 3
@@ -1126,7 +1191,12 @@ class IcosahedronSDF(SDFBase):
 
         d = torch.sum(p * torch.tensor([w, w, w]), dim=1) - vn[0]
 
-        return torch.maximum(torch.maximum(torch.maximum(a, b), c) - vn[0], d).reshape(-1, 1) * r_scaled
+        return (
+            torch.maximum(torch.maximum(torch.maximum(a, b), c) - vn[0], d).reshape(
+                -1, 1
+            )
+            * r_scaled
+        )
 
     def _get_domain_bounds(self) -> torch.Tensor:
         r = self.r.item() * 0.8506507174597755
