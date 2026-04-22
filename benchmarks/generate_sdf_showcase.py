@@ -184,6 +184,7 @@ def create_2d_screenshot(
     resolution: int = 200,
     title: str = "",
     bounds: Optional[Tuple[float, float, float, float]] = None,
+    query_offset: Optional[Tuple[float, float]] = None,
     interior_color: str = "#6B9BD2",
     exterior_color: str = "#FFFFFF",
 ) -> bool:
@@ -202,6 +203,8 @@ def create_2d_screenshot(
         Title for the visualization
     bounds : tuple, optional
         Plot bounds (xmin, xmax, ymin, ymax). If None, uses SDF domain bounds.
+    query_offset : tuple, optional
+        Offset applied to sampling coordinates before SDF evaluation.
     interior_color : str, optional
         Hex color for interior region (default: nice blue)
     exterior_color : str, optional
@@ -230,8 +233,12 @@ def create_2d_screenshot(
 
         # Sample SDF values
         points = np.stack([X.ravel(), Y.ravel()], axis=1)
+        if query_offset is not None:
+            points_for_eval = points - np.asarray(query_offset, dtype=np.float32)
+        else:
+            points_for_eval = points
         sdf_values = (
-            sdf(torch.tensor(points, dtype=torch.float32))
+            sdf(torch.tensor(points_for_eval, dtype=torch.float32))
             .detach()
             .numpy()
             .reshape(X.shape)
@@ -261,6 +268,8 @@ def create_2d_screenshot(
 
         # Set plot properties
         axes.set_aspect("equal")
+        axes.set_xlim(bounds[0], bounds[1])
+        axes.set_ylim(bounds[2], bounds[3])
         axes.set_xlabel("X")
         axes.set_ylabel("Y")
         if title:
@@ -406,50 +415,75 @@ def create_sdf_primitives():
     # ======== 2D Primitives ========
     output_dir = OUTPUT_DIR / "primitives" / "2D"
     output_dir.mkdir(parents=True, exist_ok=True)
+    unit_bounds = (0.0, 1.0, 0.0, 1.0)
 
     print("\\n=== 2D Primitives ===")
 
     # Circle
     print("Circle")
-    circle = CircleSDF(center=[0, 0], radius=1.0)
-    create_2d_screenshot(circle, output_dir / "circle.png", resolution=200)
+    circle = CircleSDF(center=[0.5, 0.5], radius=0.35)
+    create_2d_screenshot(
+        circle, output_dir / "circle.png", resolution=200, bounds=unit_bounds
+    )
 
     # Rectangle
     print("Rectangle")
-    rectangle = RectangleSDF(center=[0, 0], extents=[2.0, 1.5])
-    create_2d_screenshot(rectangle, output_dir / "rectangle.png", resolution=200)
+    rectangle = RectangleSDF(center=[0.5, 0.5], extents=[0.7, 0.55])
+    create_2d_screenshot(
+        rectangle, output_dir / "rectangle.png", resolution=200, bounds=unit_bounds
+    )
 
     # Rounded Rectangle
     print("Rounded Rectangle")
-    rounded_rect = RoundedRectangleSDF(center=[0, 0], extents=[2.0, 1.5], radius=0.2)
+    rounded_rect = RoundedRectangleSDF(
+        center=[0.5, 0.5], extents=[0.72, 0.56], radius=0.08
+    )
     create_2d_screenshot(
-        rounded_rect, output_dir / "rounded_rectangle.png", resolution=200
+        rounded_rect,
+        output_dir / "rounded_rectangle.png",
+        resolution=200,
+        bounds=unit_bounds,
     )
 
     # Equilateral Triangle
     print("Equilateral Triangle")
-    triangle = EquilateralTriangleSDF(size=1.5)
+    triangle = EquilateralTriangleSDF(size=0.32)
     create_2d_screenshot(
-        triangle, output_dir / "equilateral_triangle.png", resolution=200
+        triangle,
+        output_dir / "equilateral_triangle.png",
+        resolution=200,
+        bounds=unit_bounds,
+        query_offset=(0.5, 0.5),
     )
 
     # Hexagon
     print("Hexagon")
-    hexagon = HexagonSDF(size=1.5)
-    create_2d_screenshot(hexagon, output_dir / "hexagon.png", resolution=200)
+    hexagon = HexagonSDF(size=0.28)
+    create_2d_screenshot(
+        hexagon,
+        output_dir / "hexagon.png",
+        resolution=200,
+        bounds=unit_bounds,
+        query_offset=(0.5, 0.5),
+    )
 
     # Polygon (custom shape)
     print("Polygon (Pentagon)")
     pentagon = PolygonSDF(
         [
-            [0, 1],  # Top
-            [0.95, 0.31],  # Top right
-            [0.59, -0.81],  # Bottom right
-            [-0.59, -0.81],  # Bottom left
-            [-0.95, 0.31],  # Top left
+            [0.5, 0.86],  # Top
+            [0.82, 0.62],  # Top right
+            [0.7, 0.24],  # Bottom right
+            [0.3, 0.24],  # Bottom left
+            [0.18, 0.62],  # Top left
         ]
     )
-    create_2d_screenshot(pentagon, output_dir / "polygon_pentagon.png", resolution=200)
+    create_2d_screenshot(
+        pentagon,
+        output_dir / "polygon_pentagon.png",
+        resolution=200,
+        bounds=unit_bounds,
+    )
 
     # ======== Boolean Operations ========
     output_dir = OUTPUT_DIR / "operations" / "boolean"
