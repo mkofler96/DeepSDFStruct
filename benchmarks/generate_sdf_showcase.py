@@ -286,20 +286,6 @@ def create_2d_screenshot(
         return False
 
 
-def save_metadata(
-    category: str, name: str, description: str, sdf_class: type, params: dict
-):
-    """Save metadata about the SDF for documentation purposes."""
-    metadata_file = OUTPUT_DIR / category / f"{name}_metadata.txt"
-
-    with open(metadata_file, "w") as f:
-        f.write(f"SDF Class: {sdf_class.__name__}\n")
-        f.write(f"Description: {description}\n")
-        f.write(f"Parameters:\n")
-        for key, value in params.items():
-            f.write(f"  - {key}: {value}\n")
-
-
 # ==================== SDF Definitions ====================
 
 
@@ -316,49 +302,21 @@ def create_sdf_primitives():
     print("Sphere")
     sphere = SphereSDF(center=[0, 0, 0], radius=1.0)
     create_screenshot(sphere, output_dir / "sphere.png", resolution=64)
-    save_metadata(
-        "primitives/3D",
-        "sphere",
-        "Sphere with radius 1.0 centered at origin",
-        SphereSDF,
-        {"center": [0, 0, 0], "radius": 1.0},
-    )
 
     # Box
     print("Box")
     box = BoxSDF(center=[0, 0, 0], extents=[1.5, 1.0, 0.8])
     create_screenshot(box, output_dir / "box.png", resolution=64)
-    save_metadata(
-        "primitives/3D",
-        "box",
-        "Box with extents [1.5, 1.0, 0.8]",
-        BoxSDF,
-        {"center": [0, 0, 0], "extents": [1.5, 1.0, 0.8]},
-    )
 
     # Cylinder
     print("Cylinder")
     cylinder = CylinderSDF(point=[0, 0, -0.5], axis=[0, 0, 1], radius=0.4, height=1.0)
     create_screenshot(cylinder, output_dir / "cylinder.png", resolution=64)
-    save_metadata(
-        "primitives/3D",
-        "cylinder",
-        "Cylinder with radius 0.4, height 1.0, centered at origin",
-        CylinderSDF,
-        {"point": [0, 0, -0.5], "axis": [0, 0, 1], "radius": 0.4, "height": 1.0},
-    )
 
     # Cone
     print("Cone")
     cone = ConeSDF(apexpoint=[0, 0, -0.5], axis=[0, 0, 1], radius=0.4, height=1.0)
     create_screenshot(cone, output_dir / "cone.png", resolution=64)
-    save_metadata(
-        "primitives/3D",
-        "cone",
-        "Cone with base radius 0.4, height 1.0",
-        ConeSDF,
-        {"apexpoint": [0, 0, -0.5], "axis": [0, 0, 1], "radius": 0.4, "height": 1.0},
-    )
 
     # Torus
     print("Torus")
@@ -366,30 +324,11 @@ def create_sdf_primitives():
         center=[0, 0, 0], axis=[0, 0, 1], major_radius=1.0, minor_radius=0.3
     )
     create_screenshot(torus, output_dir / "torus.png", resolution=64)
-    save_metadata(
-        "primitives/3D",
-        "torus",
-        "Torus with major radius 1.0, minor radius 0.3",
-        TorusSDF,
-        {
-            "center": [0, 0, 0],
-            "axis": [0, 0, 1],
-            "major_radius": 1.0,
-            "minor_radius": 0.3,
-        },
-    )
 
     # Rounded Box
     print("Rounded Box")
     rounded_box = RoundedBoxSDF(center=[0, 0, 0], extents=[1.0, 1.0, 1.0], radius=0.15)
     create_screenshot(rounded_box, output_dir / "rounded_box.png", resolution=64)
-    save_metadata(
-        "primitives/3D",
-        "rounded_box",
-        "Box with rounded corners (corner radius 0.15)",
-        RoundedBoxSDF,
-        {"center": [0, 0, 0], "extents": [1.0, 1.0, 1.0], "radius": 0.15},
-    )
 
     # Wireframe Box
     print("Wireframe Box")
@@ -397,73 +336,31 @@ def create_sdf_primitives():
         center=[0, 0, 0], extents=[1.0, 1.0, 1.0], thickness=0.08
     )
     create_screenshot(wireframe_box, output_dir / "wireframe_box.png", resolution=64)
-    save_metadata(
-        "primitives/3D",
-        "wireframe_box",
-        "Box wireframe with thickness 0.08",
-        WireframeBoxSDF,
-        {"center": [0, 0, 0], "extents": [1.0, 1.0, 1.0], "thickness": 0.08},
-    )
 
     # Capsule
     print("Capsule")
     capsule = CapsuleSDF(point_a=[0, 0, -0.5], point_b=[0, 0, 0.5], radius=0.25)
     create_screenshot(capsule, output_dir / "capsule.png", resolution=64)
-    save_metadata(
-        "primitives/3D",
-        "capsule",
-        "Capsule with radius 0.25, spanning z=[-0.5, 0.5]",
-        CapsuleSDF,
-        {"point_a": [0, 0, -0.5], "point_b": [0, 0, 0.5], "radius": 0.25},
-    )
 
     # Ellipsoid
     print("Ellipsoid")
     ellipsoid = EllipsoidSDF(center=[0, 0, 0], extents=[0.6, 0.8, 0.5])
     create_screenshot(ellipsoid, output_dir / "ellipsoid.png", resolution=64)
-    save_metadata(
-        "primitives/3D",
-        "ellipsoid",
-        "Ellipsoid with different radii in each axis",
-        EllipsoidSDF,
-        {"center": [0, 0, 0], "extents": [0.6, 0.8, 0.5]},
-    )
 
     # Pyramid
     print("Pyramid")
     pyramid = PyramidSDF(height=1.0)
     create_screenshot(pyramid, output_dir / "pyramid.png", resolution=64)
-    save_metadata(
-        "primitives/3D",
-        "pyramid",
-        "Square pyramid with height 1.0",
-        PyramidSDF,
-        {"height": 1.0},
-    )
 
     # Corner Spheres
     print("Corner Spheres")
     corner_spheres = CornerSpheresSDF(radius=0.15, limit=0.8)
     create_screenshot(corner_spheres, output_dir / "corner_spheres.png", resolution=64)
-    save_metadata(
-        "primitives/3D",
-        "corner_spheres",
-        "Cube with spherical cutouts at corners",
-        CornerSpheresSDF,
-        {"radius": 0.15, "limit": 0.8},
-    )
 
     # Cross M
     print("Cross M")
     cross_ms = CrossMsSDF(radius=0.15)
     create_screenshot(cross_ms, output_dir / "cross_ms.png", resolution=64)
-    save_metadata(
-        "primitives/3D",
-        "cross_ms",
-        "Cross-shaped structure (intersection of three cylinders)",
-        CrossMsSDF,
-        {"radius": 0.15},
-    )
 
     # Capped Cylinder
     print("Capped Cylinder")
@@ -471,25 +368,11 @@ def create_sdf_primitives():
         point_a=[0, 0, -0.5], point_b=[0, 0, 0.5], radius=0.3
     )
     create_screenshot(capped_cyl, output_dir / "capped_cylinder.png", resolution=64)
-    save_metadata(
-        "primitives/3D",
-        "capped_cylinder",
-        "Cylinder with exact end caps",
-        CappedCylinderSDF,
-        {"point_a": [0, 0, -0.5], "point_b": [0, 0, 0.5], "radius": 0.3},
-    )
 
     # Rounded Cylinder
     print("Rounded Cylinder")
     rounded_cyl = RoundedCylinderSDF(ra=0.3, rb=0.1, h=1.0)
     create_screenshot(rounded_cyl, output_dir / "rounded_cylinder.png", resolution=64)
-    save_metadata(
-        "primitives/3D",
-        "rounded_cylinder",
-        "Cylinder with smooth rounded transitions",
-        RoundedCylinderSDF,
-        {"ra": 0.3, "rb": 0.1, "h": 1.0},
-    )
 
     # Capped Cone
     print("Capped Cone")
@@ -497,66 +380,28 @@ def create_sdf_primitives():
         point_a=[0, 0, -0.5], point_b=[0, 0, 0.5], ra=0.1, rb=0.3
     )
     create_screenshot(capped_cone, output_dir / "capped_cone.png", resolution=64)
-    save_metadata(
-        "primitives/3D",
-        "capped_cone",
-        "Cone with exact end caps",
-        CappedConeSDF,
-        {"point_a": [0, 0, -0.5], "point_b": [0, 0, 0.5], "ra": 0.1, "rb": 0.3},
-    )
 
     # Rounded Cone
     print("Rounded Cone")
     rounded_cone = RoundedConeSDF(r1=0.1, r2=0.3, h=1.0)
     create_screenshot(rounded_cone, output_dir / "rounded_cone.png", resolution=64)
-    save_metadata(
-        "primitives/3D",
-        "rounded_cone",
-        "Cone with smooth rounded transitions",
-        RoundedConeSDF,
-        {"r1": 0.1, "r2": 0.3, "h": 1.0},
-    )
 
     # Platonic Solids
     print("Tetrahedron")
     tetra = TetrahedronSDF(r=0.8)
     create_screenshot(tetra, output_dir / "tetrahedron.png", resolution=64)
-    save_metadata(
-        "primitives/3D",
-        "tetrahedron",
-        "Regular tetrahedron",
-        TetrahedronSDF,
-        {"r": 0.8},
-    )
 
     print("Octahedron")
     octa = OctahedronSDF(r=0.8)
     create_screenshot(octa, output_dir / "octahedron.png", resolution=64)
-    save_metadata(
-        "primitives/3D", "octahedron", "Regular octahedron", OctahedronSDF, {"r": 0.8}
-    )
 
     print("Dodecahedron")
     dodeca = DodecahedronSDF(r=0.8)
     create_screenshot(dodeca, output_dir / "dodecahedron.png", resolution=64)
-    save_metadata(
-        "primitives/3D",
-        "dodecahedron",
-        "Regular dodecahedron",
-        DodecahedronSDF,
-        {"r": 0.8},
-    )
 
     print("Icosahedron")
     icosa = IcosahedronSDF(r=0.8)
     create_screenshot(icosa, output_dir / "icosahedron.png", resolution=64)
-    save_metadata(
-        "primitives/3D",
-        "icosahedron",
-        "Regular icosahedron",
-        IcosahedronSDF,
-        {"r": 0.8},
-    )
 
     # ======== 2D Primitives ========
     output_dir = OUTPUT_DIR / "primitives" / "2D"
@@ -568,38 +413,17 @@ def create_sdf_primitives():
     print("Circle")
     circle = CircleSDF(center=[0, 0], radius=1.0)
     create_2d_screenshot(circle, output_dir / "circle.png", resolution=200)
-    save_metadata(
-        "primitives/2D",
-        "circle",
-        "Circle with radius 1.0",
-        CircleSDF,
-        {"center": [0, 0], "radius": 1.0},
-    )
 
     # Rectangle
     print("Rectangle")
     rectangle = RectangleSDF(center=[0, 0], extents=[2.0, 1.5])
     create_2d_screenshot(rectangle, output_dir / "rectangle.png", resolution=200)
-    save_metadata(
-        "primitives/2D",
-        "rectangle",
-        "Rectangle with extents [2.0, 1.5]",
-        RectangleSDF,
-        {"center": [0, 0], "extents": [2.0, 1.5]},
-    )
 
     # Rounded Rectangle
     print("Rounded Rectangle")
     rounded_rect = RoundedRectangleSDF(center=[0, 0], extents=[2.0, 1.5], radius=0.2)
     create_2d_screenshot(
         rounded_rect, output_dir / "rounded_rectangle.png", resolution=200
-    )
-    save_metadata(
-        "primitives/2D",
-        "rounded_rectangle",
-        "Rectangle with rounded corners (corner radius 0.2)",
-        RoundedRectangleSDF,
-        {"center": [0, 0], "extents": [2.0, 1.5], "radius": 0.2},
     )
 
     # Equilateral Triangle
@@ -608,25 +432,11 @@ def create_sdf_primitives():
     create_2d_screenshot(
         triangle, output_dir / "equilateral_triangle.png", resolution=200
     )
-    save_metadata(
-        "primitives/2D",
-        "equilateral_triangle",
-        "Regular equilateral triangle with size 1.5",
-        EquilateralTriangleSDF,
-        {"size": 1.5},
-    )
 
     # Hexagon
     print("Hexagon")
     hexagon = HexagonSDF(size=1.5)
     create_2d_screenshot(hexagon, output_dir / "hexagon.png", resolution=200)
-    save_metadata(
-        "primitives/2D",
-        "hexagon",
-        "Regular hexagon with size 1.5",
-        HexagonSDF,
-        {"size": 1.5},
-    )
 
     # Polygon (custom shape)
     print("Polygon (Pentagon)")
@@ -640,13 +450,6 @@ def create_sdf_primitives():
         ]
     )
     create_2d_screenshot(pentagon, output_dir / "polygon_pentagon.png", resolution=200)
-    save_metadata(
-        "primitives/2D",
-        "polygon_pentagon",
-        "Custom pentagon polygon",
-        PolygonSDF,
-        {"vertices": "5 vertices of regular pentagon"},
-    )
 
     # ======== Boolean Operations ========
     output_dir = OUTPUT_DIR / "operations" / "boolean"
@@ -662,16 +465,6 @@ def create_sdf_primitives():
     create_screenshot(
         union, output_dir / "union_sphere_box.png", resolution=64, title="Union"
     )
-    save_metadata(
-        "operations/boolean",
-        "union_sphere_box",
-        "Union of sphere and box",
-        UnionSDF,
-        {
-            "sphere": "SphereSDF(center=[-0.3,0,0], radius=0.5)",
-            "box": "BoxSDF(center=[0.3,0,0], extents=[0.8,0.8,0.8])",
-        },
-    )
 
     # Difference
     print("Sphere - Box Difference")
@@ -681,13 +474,6 @@ def create_sdf_primitives():
         output_dir / "difference_sphere_box.png",
         resolution=64,
         title="Difference",
-    )
-    save_metadata(
-        "operations/boolean",
-        "difference_sphere_box",
-        "Sphere with box subtracted",
-        DifferenceSDF,
-        {"sphere": "SphereSDF", "box": "BoxSDF"},
     )
 
     # ======== Transformation Operations ========
@@ -706,13 +492,6 @@ def create_sdf_primitives():
     create_screenshot(
         twisted_torus, output_dir / "twist_torus.png", resolution=64, title="Twist"
     )
-    save_metadata(
-        "operations/transformations",
-        "twist_torus",
-        "Torus twisted by 90 degrees around Z-axis",
-        TwistSDF,
-        {"base_sdf": "Torus", "k": "pi/2"},
-    )
 
     # Dilate
     print("Dilated Sphere")
@@ -721,26 +500,12 @@ def create_sdf_primitives():
     create_screenshot(
         dilated_sphere, output_dir / "dilate_sphere.png", resolution=64, title="Dilated"
     )
-    save_metadata(
-        "operations/transformations",
-        "dilate_sphere",
-        "Sphere expanded by 0.15 units",
-        DilateSDF,
-        {"base_sdf": "Sphere (r=0.5)", "r": 0.15},
-    )
 
     # Shell
     print("Sphere Shell")
     shell_sphere = ShellSDF(base_sphere, thickness=0.1)
     create_screenshot(
         shell_sphere, output_dir / "shell_sphere.png", resolution=64, title="Shell"
-    )
-    save_metadata(
-        "operations/transformations",
-        "shell_sphere",
-        "Sphere with shell thickness 0.1",
-        ShellSDF,
-        {"base_sdf": "Sphere (r=0.5)", "thickness": 0.1},
     )
 
     # Repeat
@@ -752,13 +517,6 @@ def create_sdf_primitives():
         output_dir / "repeat_sphere.png",
         resolution=64,
         title="Repeated (2x2x2)",
-    )
-    save_metadata(
-        "operations/transformations",
-        "repeat_sphere",
-        "Sphere repeated in a 3D grid",
-        RepeatSDF,
-        {"base_sdf": "Sphere (r=0.2)", "spacing": "[0.6, 0.6, 0.6]"},
     )
 
     # Mirror
@@ -773,13 +531,6 @@ def create_sdf_primitives():
         resolution=64,
         title="Mirrored",
     )
-    save_metadata(
-        "operations/transformations",
-        "mirror_sphere",
-        "Sphere mirrored across YZ plane",
-        MirrorSDF,
-        {"base_sdf": "Sphere (at x=0.5)", "plane": "YZ plane (x=0)"},
-    )
 
     # Circular Array
     print("Circular Array of Spheres")
@@ -789,13 +540,6 @@ def create_sdf_primitives():
         output_dir / "circular_array_sphere.png",
         resolution=64,
         title="Circular Array (6x)",
-    )
-    save_metadata(
-        "operations/transformations",
-        "circular_array_sphere",
-        "Sphere replicated 6 times in circular pattern",
-        CircularArraySDF,
-        {"base_sdf": "Sphere", "count": 6, "radius": 0.8},
     )
 
     # Revolve (2D to 3D)
@@ -807,13 +551,6 @@ def create_sdf_primitives():
         output_dir / "revolve_circle.png",
         resolution=64,
         title="Revolved (Torus)",
-    )
-    save_metadata(
-        "operations/transformations",
-        "revolve_circle",
-        "2D circle revolved around Z-axis creates torus",
-        RevolveSDF,
-        {"base_sdf": "Circle (r=0.15 at distance 0.8)", "axis": "z"},
     )
 
 
