@@ -78,10 +78,14 @@ def test_rectangle_sdf_basic():
 
 def test_polygon_sdf():
     """Test PolygonSDF with triangle."""
-    # Equilateral triangle vertices
+    # Equilateral triangle vertices (CCW winding)
     poly = PolygonSDF([[0, 0], [1, 0], [0.5, 0.866]])
-    # Inside point (centroid)
-    assert poly(torch.tensor([[0.5, 0.3]])).item() < 0
+    # Inside point (should be negative)
+    val = poly(torch.tensor([[0.5, 0.3]])).item()
+    assert val < 0, f"Expected negative value for inside point, got {val}"
+    # Line points (should be zero)
+    val_on_bounds = poly(torch.tensor([[0, 0], [1, 0], [0.5, 0.866]]))
+    torch.testing.assert_close(val_on_bounds, torch.tensor([[0.0], [0.0], [0.0]]))
     # Domain bounds should be reasonable
     bounds = poly._get_domain_bounds()
     assert bounds.shape == (2, 2)
