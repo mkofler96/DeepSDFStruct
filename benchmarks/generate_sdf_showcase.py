@@ -58,7 +58,6 @@ from DeepSDFStruct.sdf_primitives import (
     PyramidSDF,
     CornerSpheresSDF,
     CrossMsSDF,
-    CappedCylinderSDF,
     RoundedCylinderSDF,
     CappedConeSDF,
     RoundedConeSDF,
@@ -317,10 +316,7 @@ def create_sdf_primitives():
     box = BoxSDF(center=[0, 0, 0], extents=[1.5, 1.0, 0.8])
     create_screenshot(box, output_dir / "box.png", resolution=64)
 
-    # Cylinder
-    print("Cylinder")
-    cylinder = CylinderSDF(point=[0, 0, -0.5], axis=[0, 0, 1], radius=0.4, height=1.0)
-    create_screenshot(cylinder, output_dir / "cylinder.png", resolution=64)
+    # Cone
 
     # Cone
     print("Cone")
@@ -330,7 +326,7 @@ def create_sdf_primitives():
     # Torus
     print("Torus")
     torus = TorusSDF(
-        center=[0, 0, 0], axis=[0, 0, 1], major_radius=1.0, minor_radius=0.3
+        center=[0, 0, 0], axis=[0, 0, 1], major_radius=0.5, minor_radius=0.15
     )
     create_screenshot(torus, output_dir / "torus.png", resolution=64)
 
@@ -371,12 +367,10 @@ def create_sdf_primitives():
     cross_ms = CrossMsSDF(radius=0.15)
     create_screenshot(cross_ms, output_dir / "cross_ms.png", resolution=64)
 
-    # Capped Cylinder
-    print("Capped Cylinder")
-    capped_cyl = CappedCylinderSDF(
-        point_a=[0, 0, -0.5], point_b=[0, 0, 0.5], radius=0.3
-    )
-    create_screenshot(capped_cyl, output_dir / "capped_cylinder.png", resolution=64)
+    # Cylinder
+    print("Cylinder")
+    cylinder = CylinderSDF(point_a=[0, 0, -0.5], point_b=[0, 0, 0.5], radius=0.3)
+    create_screenshot(cylinder, output_dir / "cylinder.png", resolution=64)
 
     # Rounded Cylinder
     print("Rounded Cylinder")
@@ -493,8 +487,8 @@ def create_sdf_primitives():
 
     # Union
     print("Sphere + Box Union")
-    sphere = SphereSDF(center=[-0.3, 0, 0], radius=0.5)
-    box = BoxSDF(center=[0.3, 0, 0], extents=[0.8, 0.8, 0.8])
+    sphere = SphereSDF(center=[0.0, 0, 0], radius=0.5)
+    box = BoxSDF(center=[0.0, 0, 0], extents=[2.0, 0.3, 0.3])
     union = sphere + box  # UnionSDF is the + operator
     create_screenshot(
         union, output_dir / "union_sphere_box.png", resolution=64, title="Union"

@@ -139,17 +139,16 @@ class BoxSDF(SDFBase):
 
 
 class CylinderSDF(SDFBase):
-    """Signed distance function for an infinite cylinder.
+    """Signed distance function for a finite cylinder with exact end caps.
 
-    Creates a cylinder extending infinitely along a specified coordinate axis.
-    The cylinder is defined by a point on the axis and a radius.
+    Creates a cylinder defined by two endpoints and a radius.
 
     Parameters
     ----------
-    point : array-like of shape (3,)
-        A point on the cylinder's axis.
-    axis : str or int
-        Axis direction: 'x'/0, 'y'/1, or 'z'/2.
+    point_a : array-like of shape (3,)
+        First endpoint of the cylinder's axis.
+    point_b : array-like of shape (3,)
+        Second endpoint of the cylinder's axis.
     radius : float
         Radius of the cylinder.
 
@@ -158,64 +157,66 @@ class CylinderSDF(SDFBase):
     >>> from DeepSDFStruct.sdf_primitives import CylinderSDF
     >>> import torch
     >>>
-    >>> # Cylinder along z-axis
-    >>> cylinder = CylinderSDF(point=[0, 0, 0], axis='z', radius=0.5)
+    >>> # Cylinder along z-axis from -1 to 1
+    >>> cylinder = CylinderSDF(point_a=[0, 0, -1], point_b=[0, 0, 1], radius=0.5)
     >>> points = torch.tensor([[0.0, 0.0, 0.0], [1.0, 0.0, 0.0]])
     >>> distances = cylinder(points)
-    >>> print(distances)  # [-0.5, 0.5] (on axis, outside)
+    >>> print(distances)  # negative inside, positive outside
     """
 
-    def __init__(self, point, axis, radius, height):
+    def __init__(self, point_a, point_b, radius):
         super().__init__()
-        self.point = torch.tensor(point, dtype=torch.float32)
-        self.axis = torch.tensor(axis, dtype=torch.float32)
-        self.r = radius
-        self.h = height
+        a = torch.as_tensor(point_a, dtype=torch.float32)
+        b = torch.as_tensor(point_b, dtype=torch.float32)
+        r = torch.as_tensor(radius, dtype=torch.float32)
+        self.point_a = torch.nn.Parameter(a)
+        self.point_b = torch.nn.Parameter(b)
+        self.radius = torch.nn.Parameter(r.reshape(()))
 
     def _compute(self, queries: torch.Tensor) -> torch.Tensor:
-        point = self.point.to(device=queries.device, dtype=queries.dtype)
-        axis = self.axis.to(device=queries.device, dtype=queries.dtype)
+        a = self.point_a.to(device=queries.device, dtype=queries.dtype)
+        b = self.point_b.to(device=queries.device, dtype=queries.dtype)
+        r = self.radius.to(device=queries.device, dtype=queries.dtype)
 
-        # normalize axis direction
-        axis_norm = torch.linalg.norm(axis)
-        if axis_norm == 0:
-            raise ValueError("Cylinder axis vector must be non-zero")
-        axis_unit = axis / axis_norm
+        ba = b - a
+        pa = queries - a
 
-        # vector from axis point to queries
-        diff = queries - point  # (N,3)
+        # Squared length of ba
+        baba = torch.sum(ba**2)
 
-        # project out axial component
-        # dot = (diff · axis_unit)
-        dot = torch.sum(diff * axis_unit, dim=1, keepdim=True)  # (N,1)
-        diff_perp = diff - dot * axis_unit  # (N,3)
+        # Projection of pa onto ba
+        paba = torch.sum(pa * ba, dim=1)
 
-        # distance to axis
-        dist_radial = torch.linalg.norm(diff_perp, dim=1, keepdim=True)
+        # Distance to cylinder side
+        # x = length(pa * baba - ba * paba) - radius * baba
+        pa_scaled = pa * baba
+        ba_paba = ba * paba.unsqueeze(1)
+        x = torch.sqrt(torch.sum((pa_scaled - ba_paba) ** 2, dim=1)) - r * baba
 
-        d_r = dist_radial - self.r
-        d_a = torch.abs(dot) - (self.h / 2.0)
+        # Distance to end caps
+        # y = |paba - baba * 0.5| - baba * 0.5
+        y = torch.abs(paba - baba * 0.5) - baba * 0.5
 
-        external_dist = torch.linalg.norm(
-            torch.clamp(torch.cat([d_r, d_a], dim=1), min=0), dim=1, keepdim=True
+        # Combine distances
+        x2 = x**2
+        y2 = y**2 * baba
+
+        d = torch.where(
+            torch.maximum(x, y) < 0,
+            -torch.minimum(x2, y2),
+            torch.where(x > 0, x2, torch.tensor(0.0, device=x.device))
+            + torch.where(y > 0, y2, torch.tensor(0.0, device=y.device)),
         )
-        internal_dist = torch.clamp(torch.max(d_r, d_a), max=0)
 
-        return external_dist + internal_dist
+        return (torch.sign(d) * torch.sqrt(torch.abs(d)) / baba).reshape(-1, 1)
 
     def _get_domain_bounds(self) -> torch.Tensor:
-        """
-        Calculates a bounding box that encapsulates the cylinder.
-        Uses the radius and height to create a tight-ish box around the center.
-        """
-        # For a general oriented cylinder, the bounding box is a bit complex.
-        # Here we use a conservative bound: a cube that fits the maximum extent.
-        extent = max(self.r, self.h / 2.0)
-
-        min_bound = self.point - extent
-        max_bound = self.point + extent
-
-        return torch.stack([min_bound, max_bound])
+        a = self.point_a.detach()
+        b = self.point_b.detach()
+        r = self.radius.detach()
+        lower = torch.minimum(a, b) - r
+        upper = torch.maximum(a, b) + r
+        return torch.stack([lower, upper])
 
 
 class ConeSDF(SDFBase):
@@ -931,63 +932,6 @@ class SlabSDF(SDFBase):
 
     def _get_domain_bounds(self) -> torch.Tensor:
         return torch.tensor([[-1e9, -1e9, -1e9], [1e9, 1e9, 1e9]])
-
-
-class CappedCylinderSDF(SDFBase):
-    """SDF for a finite cylinder with exact end caps."""
-
-    def __init__(self, point_a, point_b, radius):
-        super().__init__()
-        a = torch.as_tensor(point_a, dtype=torch.float32)
-        b = torch.as_tensor(point_b, dtype=torch.float32)
-        r = torch.as_tensor(radius, dtype=torch.float32)
-        self.point_a = torch.nn.Parameter(a)
-        self.point_b = torch.nn.Parameter(b)
-        self.radius = torch.nn.Parameter(r.reshape(()))
-
-    def _compute(self, queries: torch.Tensor) -> torch.Tensor:
-        a = self.point_a.to(device=queries.device, dtype=queries.dtype)
-        b = self.point_b.to(device=queries.device, dtype=queries.dtype)
-        r = self.radius.to(device=queries.device, dtype=queries.dtype)
-
-        ba = b - a
-        ba_length_sq = torch.sum(ba**2)
-        pa = queries - a
-
-        # Project onto cylinder axis, clamp to segment
-        paba = torch.sum(pa * ba, dim=1)
-        h = torch.clamp(paba / ba_length_sq, 0, 1)
-
-        # Distance to cylinder side
-        pa_ba_diff = pa * ba_length_sq - h.unsqueeze(1) * ba
-        x = torch.sqrt(torch.sum(pa_ba_diff**2, dim=1)) - r * ba_length_sq
-
-        # Distance to end caps
-        y = torch.abs(paba) - ba_length_sq * 0.5
-
-        x2 = x**2
-        y2 = y**2 * ba_length_sq
-
-        # Mix inside/outside properly
-        d = torch.where(
-            (x < 0) & (y < 0),
-            -torch.minimum(x2, y2),
-            torch.where(x > 0, x2, torch.tensor(0.0))
-            + torch.where(y > 0, y2, torch.tensor(0.0)),
-        )
-
-        # Fix sign
-        d = torch.sign(d + torch.tensor(1e-9)) * torch.sqrt(torch.abs(d))
-
-        return (d / ba_length_sq).reshape(-1, 1)
-
-    def _get_domain_bounds(self) -> torch.Tensor:
-        a = self.point_a.detach()
-        b = self.point_b.detach()
-        r = self.radius.detach()
-        lower = torch.minimum(a, b) - r
-        upper = torch.maximum(a, b) + r
-        return torch.stack([lower, upper])
 
 
 class RoundedCylinderSDF(SDFBase):
