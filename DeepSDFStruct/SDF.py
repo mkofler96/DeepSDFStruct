@@ -613,6 +613,125 @@ class DifferenceSDF(SDFBase):
         return None
 
 
+class SmoothUnionSDF(SDFBase):
+    """Smooth blending of multiple SDFs with smoothing parameter k."""
+
+    def __init__(self, *sdfs: SDFBase, k=0):
+        super().__init__()
+        if len(sdfs) < 2:
+            raise ValueError("SmoothUnionSDF requires at least 2 SDFs")
+        self.sdfs = list(sdfs)
+        self.k = torch.nn.Parameter(torch.as_tensor(k, dtype=torch.float32))
+
+    def _compute(self, queries: torch.Tensor) -> torch.Tensor:
+        k = self.k.to(device=queries.device, dtype=queries.dtype)
+
+        if k == 0:
+            # Sharp union - same as UnionSDF
+            result = self.sdfs[0]._compute(queries)
+            for sdf in self.sdfs[1:]:
+                result = torch.minimum(result, sdf._compute(queries))
+            return result
+
+        # Smooth union with polynomial blending
+        d = torch.stack([sdf._compute(queries).squeeze(1) for sdf in self.sdfs], dim=1)
+
+        # Iterative smooth union using the same formula as smooth_min
+        d1 = d[:, 0]
+        for i in range(1, d.shape[1]):
+            d2 = d[:, i]
+            h = torch.clamp(0.5 + 0.5 * (d2 - d1) / k, 0, 1)
+            d1 = d2 + (d1 - d2) * h - k * h * (1 - h)
+
+        return d1.reshape(-1, 1)
+
+    def _get_domain_bounds(self) -> torch.Tensor:
+        bounds = self.sdfs[0]._get_domain_bounds()
+        lower, upper = bounds[0], bounds[1]
+        for sdf in self.sdfs[1:]:
+            b = sdf._get_domain_bounds()
+            lower = torch.minimum(lower, b[0])
+            upper = torch.maximum(upper, b[1])
+        return torch.stack([lower, upper])
+
+
+class SmoothDifferenceSDF(SDFBase):
+    """Smooth subtraction of SDFs."""
+
+    def __init__(self, base_sdf: SDFBase, *subtract_sdfs: SDFBase, k=0):
+        super().__init__()
+        self.base = base_sdf
+        self.subtract = list(subtract_sdfs)
+        self.k = torch.nn.Parameter(torch.as_tensor(k, dtype=torch.float32))
+
+    def _compute(self, queries: torch.Tensor) -> torch.Tensor:
+        k = self.k.to(device=queries.device, dtype=queries.dtype)
+
+        d_base = self.base._compute(queries).squeeze(1)
+
+        # Union of subtraction objects
+        d_sub = self.subtract[0]._compute(queries).squeeze(1)
+        for sdf in self.subtract[1:]:
+            if k == 0:
+                d_sub = torch.minimum(d_sub, sdf._compute(queries).squeeze(1))
+            else:
+                d2 = sdf._compute(queries).squeeze(1)
+                h = torch.clamp(0.5 + 0.5 * (d2 - d_sub) / k, 0, 1)
+                d_sub = d2 + (d_sub - d2) * h - k * h * (1 - h)
+
+        if k == 0:
+            return torch.maximum(d_base, -d_sub).reshape(-1, 1)
+
+        # Smooth difference
+        h = torch.clamp(0.5 - 0.5 * (d_base + d_sub) / k, 0, 1)
+        return (d_base + d_sub + k * h * (1 - h)).reshape(-1, 1)
+
+    def _get_domain_bounds(self) -> torch.Tensor:
+        return self.base._get_domain_bounds()
+
+
+class SmoothIntersectionSDF(SDFBase):
+    """Smooth intersection of multiple SDFs with smoothing parameter k."""
+
+    def __init__(self, *sdfs: SDFBase, k=0):
+        super().__init__()
+        if len(sdfs) < 2:
+            raise ValueError("SmoothIntersectionSDF requires at least 2 SDFs")
+        self.sdfs = list(sdfs)
+        self.k = torch.nn.Parameter(torch.as_tensor(k, dtype=torch.float32))
+
+    def _compute(self, queries: torch.Tensor) -> torch.Tensor:
+        k = self.k.to(device=queries.device, dtype=queries.dtype)
+
+        if k == 0:
+            # Sharp intersection
+            result = self.sdfs[0]._compute(queries)
+            for sdf in self.sdfs[1:]:
+                result = torch.maximum(result, sdf._compute(queries))
+            return result
+
+        # Smooth intersection using the same formula as smooth_max
+        d = torch.stack([sdf._compute(queries).squeeze(1) for sdf in self.sdfs], dim=1)
+
+        # Iterative smooth intersection
+        d1 = d[:, 0]
+        for i in range(1, d.shape[1]):
+            d2 = d[:, i]
+            h = torch.clamp(0.5 - 0.5 * (d2 - d1) / k, 0, 1)
+            d1 = d2 - (d2 - d1) * h + k * h * (1 - h)
+
+        return d1.reshape(-1, 1)
+
+    def _get_domain_bounds(self) -> torch.Tensor:
+        bounds = self.sdfs[0]._get_domain_bounds()
+        lower, upper = bounds[0], bounds[1]
+        for sdf in self.sdfs[1:]:
+            b = sdf._get_domain_bounds()
+            lower = torch.maximum(lower, b[0])
+            upper = torch.minimum(upper, b[1])
+        return torch.stack([lower, upper])
+
+
 class NegatedCallable(SDFBase):
     def __init__(self, obj: SDFBase):
         super().__init__()
