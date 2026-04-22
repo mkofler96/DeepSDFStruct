@@ -750,12 +750,24 @@ class EquilateralTriangleSDF(SDFBase):
         )
 
     def _compute(self, queries: torch.Tensor) -> torch.Tensor:
-        k = torch.sqrt(torch.tensor(3.0))
-        p = torch.abs(queries / self.size)
-        w = p[:, 0] + k * p[:, 1] > 0
-        q = torch.stack([p[:, 0] - k * p[:, 1], -k * p[:, 0] - p[:, 1]], dim=1)
+        r_val = self.size.item() if isinstance(self.size, torch.Tensor) else self.size
+        r = torch.tensor(r_val, device=queries.device, dtype=queries.dtype)
+        k = torch.tensor(np.sqrt(3.0), device=queries.device, dtype=queries.dtype)
+        p = queries.clone()
+
+        # Apply abs and offset
+        p[:, 0] = torch.abs(p[:, 0]) - r
+        p[:, 1] = p[:, 1] + r / k
+
+        # Conditional transformation
+        w = (p[:, 0] + k * p[:, 1]) > 0
+        q = torch.stack([p[:, 0] - k * p[:, 1], -k * p[:, 0] - p[:, 1]], dim=1) / 2.0
         p = torch.where(w.unsqueeze(1), q, p)
-        p = torch.stack([torch.clamp(p[:, 0], -2, 0), p[:, 1]], dim=1)
+
+        # Clamp x
+        p[:, 0] = p[:, 0] - torch.clamp(p[:, 0], min=-2.0 * r, max=0.0)
+
+        # Compute signed distance
         return (-torch.linalg.norm(p, dim=1) * torch.sign(p[:, 1])).reshape(-1, 1)
 
     def _get_domain_bounds(self) -> torch.Tensor:
@@ -773,21 +785,20 @@ class HexagonSDF(SDFBase):
         )
 
     def _compute(self, queries: torch.Tensor) -> torch.Tensor:
-        k1 = torch.sqrt(torch.tensor(3.0)) / -2
-        kys = torch.tensor(
-            [
-                torch.sqrt(torch.tensor(3.0)) / -2,
-                0.5,
-                torch.tan(torch.tensor(np.pi) / 6),
-            ]
+        r = self.size
+        k = torch.tensor(
+            [-np.sqrt(3.0) / 2.0, 0.5, np.tan(np.pi / 6.0)],
+            device=queries.device,
+            dtype=queries.dtype,
         )
         p = torch.abs(queries)
-        dot_k = torch.sum(p * kys[:2], dim=1, keepdim=True)
-        p = p - 2 * kys[:2] * torch.clamp(dot_k, max=0)
-        p = torch.stack(
+        p = p - 2.0 * torch.clamp(torch.sum(p * k[:2], dim=1, keepdim=True), max=0) * k[
+            :2
+        ].unsqueeze(0)
+        p = p - torch.stack(
             [
-                torch.clamp(p[:, 0], -kys[2] * self.size, kys[2] * self.size),
-                torch.zeros_like(p[:, 0]) + self.size,
+                torch.clamp(p[:, 0], min=-k[2] * r, max=k[2] * r),
+                torch.ones_like(p[:, 0]) * r,
             ],
             dim=1,
         )
@@ -810,32 +821,46 @@ class PolygonSDF(SDFBase):
         )
 
     def _compute(self, queries: torch.Tensor) -> torch.Tensor:
-        verts = self.vertices.to(device=queries.device, dtype=queries.dtype)
-        n = len(verts)
+        """
+        Signed distance for convex polygon using winding number method.
+        Returns negative values for points inside the polygon.
+        """
+        points = self.vertices.to(device=queries.device, dtype=queries.dtype)
+        p = queries
+        n = len(points)
 
-        # Initialize distance and winding number
-        d = torch.sum((queries - verts[0]) ** 2, dim=1)
-        s = torch.ones(len(queries), device=queries.device, dtype=queries.dtype)
+        # Initialize distance squared to distance from first vertex
+        d = torch.sum((p - points[0]) ** 2, dim=1)
+
+        # Initialize sign (positive = outside)
+        s = torch.ones(len(p), device=p.device, dtype=p.dtype)
 
         for i in range(n):
             j = (i + n - 1) % n
-            vi = verts[i]
-            vj = verts[j]
+            vi = points[i]
+            vj = points[j]
             e = vj - vi
-            w = queries - vi
+            w = p - vi
 
-            # Distance to edge
+            # Compute distance to edge segment
+            # Project w onto e, clamp to [0, 1], then compute perpendicular distance
             e_len_sq = torch.sum(e**2)
-            t = torch.clamp(torch.sum(w * e, dim=1) / e_len_sq, 0, 1)
-            b = w - t.unsqueeze(1) * e
-            d = torch.minimum(d, torch.sum(b**2, dim=1))
+            if e_len_sq > 1e-12:
+                t = torch.clamp(torch.sum(w * e, dim=1) / e_len_sq, 0, 1)
+                b = w - t.unsqueeze(1) * e
+                d = torch.minimum(d, torch.sum(b**2, dim=1))
 
-            # Winding number check
-            c1 = queries[:, 1] >= vi[1]
-            c2 = queries[:, 1] < vj[1]
-            c3 = e[0] * queries[:, 1] > e[1] * queries[:, 0]
-            c = (c1 & c2) | ((~c1) & (~c2)) & c3
-            s = torch.where(c, -s, s)
+            # Winding number computation using cross products
+            # Check conditions: (p.y >= vi.y), (p.y < vj.y), (e.x * w.y > e.y * w.x)
+            c1 = p[:, 1] >= vi[1]
+            c2 = p[:, 1] < vj[1]
+            c3 = e[0] * w[:, 1] > e[1] * w[:, 0]
+
+            # Flip sign if point crosses edge (all conditions true or all false)
+            all_c = c1 & c2 & c3
+            all_not_c = (~c1) & (~c2) & (~c3)
+            condition = all_c | all_not_c
+            s = torch.where(condition, -s, s)
 
         return (s * torch.sqrt(d)).reshape(-1, 1)
 
