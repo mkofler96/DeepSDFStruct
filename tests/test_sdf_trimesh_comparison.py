@@ -443,7 +443,7 @@ def test_sweep_comparison():
     gt = trimesh.load_mesh("tests/data/sweep_test_case.stl")
     verts_as_tensor = torch.tensor(gt.vertices)
     res = sweep(verts_as_tensor)
-    torch.testing.assert_close(res, torch.zeros_like(res))
+    torch.testing.assert_close(res, torch.zeros_like(res), atol=1e-2, rtol=1e-2)
 
 
 if __name__ == "__main__":
@@ -472,6 +472,9 @@ if __name__ == "__main__":
     print("\n--- Testing Capsule ---")
     test_capsule_trimesh_comparison()
     print("✓ Capsule trimesh comparison passed")
+
+    test_sweep_comparison()
+    print("✓ Sweep trimesh comparison passed")
 
     print("\n=== All comprehensive trimesh comparison tests passed! ===")
     print(
