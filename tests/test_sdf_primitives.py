@@ -251,7 +251,7 @@ def test_revolve():
     from DeepSDFStruct.sdf_primitives import CircleSDF
 
     circle = CircleSDF([1.0, 0.0], 0.2)
-    revolved = RevolveSDF(circle, axis="z")
+    revolved = RevolveSDF(circle, axis=torch.tensor([0, 0, 1], dtype=torch.float32))
 
     # On tube surface (circle at distance 1 from origin, radius 0.2)
     # This creates a torus with major radius 1.0 and minor radius 0.2

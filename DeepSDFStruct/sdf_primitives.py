@@ -909,18 +909,24 @@ class SlabSDF(SDFBase):
 
         # For each plane constraint
         for axis, side, bound_key, direction in [
-            ("x", 0, "x0", 1),
-            ("x", 1, "x1", -1),
-            ("y", 0, "y0", 1),
-            ("y", 1, "y1", -1),
-            ("z", 0, "z0", 1),
-            ("z", 1, "z1", -1),
+            (torch.tensor([1, 0, 0], dtype=torch.float32), 0, "x0", 1),
+            (torch.tensor([1, 0, 0], dtype=torch.float32), 1, "x1", -1),
+            (torch.tensor([0, 1, 0], dtype=torch.float32), 0, "y0", 1),
+            (torch.tensor([0, 1, 0], dtype=torch.float32), 1, "y1", -1),
+            (torch.tensor([0, 0, 1], dtype=torch.float32), 0, "z0", 1),
+            (torch.tensor([0, 0, 1], dtype=torch.float32), 1, "z1", -1),
         ]:
             bound = self.bounds.get(bound_key)
             if bound is None:
                 continue
 
-            idx = {"x": 0, "y": 1, "z": 2}[axis]
+            idx = 0
+            if torch.all(axis == torch.tensor([1, 0, 0])):
+                idx = 0
+            elif torch.all(axis == torch.tensor([0, 1, 0])):
+                idx = 1
+            elif torch.all(axis == torch.tensor([0, 0, 1])):
+                idx = 2
             if side == 0:
                 plane_dist = bound - queries[:, idx]
                 dist = torch.maximum(dist, plane_dist)

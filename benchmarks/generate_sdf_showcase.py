@@ -573,7 +573,9 @@ def create_sdf_primitives():
     # Revolve (2D to 3D)
     print("Revolved Circle")
     circle_2d = CircleSDF(center=[0.8, 0], radius=0.15)
-    revolved_shape = RevolveSDF(circle_2d, axis="z")
+    revolved_shape = RevolveSDF(
+        circle_2d, axis=torch.tensor([0, 0, 1], dtype=torch.float32)
+    )
     create_screenshot(
         revolved_shape,
         output_dir / "revolve_circle.png",

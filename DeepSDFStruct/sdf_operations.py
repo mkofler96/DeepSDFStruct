@@ -235,19 +235,28 @@ class MirrorSDF(SDFBase):
 class CircularArraySDF(SDFBase):
     """Create count copies of an SDF rotated around an axis."""
 
-    def __init__(self, sdf: SDFBase, count, radius, axis="z"):
+    def __init__(
+        self,
+        sdf: SDFBase,
+        count,
+        radius,
+        axis=torch.tensor([0, 0, 1], dtype=torch.float32),
+    ):
         super().__init__()
         self.sdf = sdf
         self.count = count
         self.radius = torch.nn.Parameter(torch.as_tensor(radius, dtype=torch.float32))
-        self.axis = axis
+        self.axis = torch.nn.Parameter(torch.as_tensor(axis, dtype=torch.float32))
 
     def _compute(self, queries: torch.Tensor) -> torch.Tensor:
         r = self.radius.to(device=queries.device, dtype=queries.dtype)
         da = 2 * torch.pi / self.count
+        axis = self.axis.to(device=queries.device, dtype=queries.dtype)
 
         # Get coordinates based on axis
-        if self.axis == "z":
+        if torch.all(
+            axis == torch.tensor([0, 0, 1], device=queries.device, dtype=queries.dtype)
+        ):
             x, y, z = queries[:, 0], queries[:, 1], queries[:, 2]
             dist = torch.sqrt(x**2 + y**2)
             angle = torch.arctan2(y, x) % da
@@ -258,7 +267,9 @@ class CircularArraySDF(SDFBase):
             q2 = torch.stack(
                 [torch.cos(angle) * dist, torch.sin(angle) * dist, z], dim=1
             )
-        elif self.axis == "x":
+        elif torch.all(
+            axis == torch.tensor([1, 0, 0], device=queries.device, dtype=queries.dtype)
+        ):
             y, z, x = queries[:, 1], queries[:, 2], queries[:, 0]
             dist = torch.sqrt(y**2 + z**2)
             angle = torch.arctan2(z, y) % da
@@ -268,7 +279,9 @@ class CircularArraySDF(SDFBase):
             q2 = torch.stack(
                 [torch.cos(angle) * dist, torch.sin(angle) * dist, x], dim=1
             )
-        elif self.axis == "y":
+        elif torch.all(
+            axis == torch.tensor([0, 1, 0], device=queries.device, dtype=queries.dtype)
+        ):
             z, x, y = queries[:, 2], queries[:, 0], queries[:, 1]
             dist = torch.sqrt(z**2 + x**2)
             angle = torch.arctan2(x, z) % da
@@ -279,7 +292,9 @@ class CircularArraySDF(SDFBase):
                 [torch.cos(angle) * dist, torch.sin(angle) * dist, y], dim=1
             )
         else:
-            raise ValueError(f"Invalid axis: {self.axis}. Must be 'x', 'y', or 'z'")
+            raise ValueError(
+                f"Invalid axis: {self.axis}. Must be [1,0,0], [0,1,0], or [0,0,1]"
+            )
 
         d1 = self.sdf(q1)
         d2 = self.sdf(q2)
@@ -289,7 +304,8 @@ class CircularArraySDF(SDFBase):
         # Conservative bounds
         b = self.sdf._get_domain_bounds()
         r = self.radius
-        if self.axis == "z":
+        axis = self.axis
+        if torch.all(axis == torch.tensor([0, 0, 1])):
             return torch.stack(
                 [
                     torch.tensor(
@@ -307,31 +323,45 @@ class CircularArraySDF(SDFBase):
 class RevolveSDF(SDFBase):
     """Revolve a 2D profile to create 3D surface."""
 
-    def __init__(self, sdf_2d: SDFBase, axis="z", offset=0.0):
+    def __init__(
+        self,
+        sdf_2d: SDFBase,
+        axis=torch.tensor([0, 0, 1], dtype=torch.float32),
+        offset=0.0,
+    ):
         super().__init__()
         if sdf_2d.geometric_dim != 2:
             raise ValueError("RevolveSDF requires a 2D SDF")
         self.sdf_2d = sdf_2d
-        self.axis = axis
+        self.axis = torch.nn.Parameter(torch.as_tensor(axis, dtype=torch.float32))
         self.offset = torch.nn.Parameter(torch.as_tensor(offset, dtype=torch.float32))
 
     def _compute(self, queries: torch.Tensor) -> torch.Tensor:
         offset = self.offset.to(device=queries.device, dtype=queries.dtype)
+        axis = self.axis.to(device=queries.device, dtype=queries.dtype)
 
-        if self.axis == "z":
+        if torch.all(
+            axis == torch.tensor([0, 0, 1], device=queries.device, dtype=queries.dtype)
+        ):
             # Use x,y plane distance as radius, z as height in 2D space
             radius = torch.sqrt(queries[:, 0] ** 2 + queries[:, 1] ** 2) - offset
             pts_2d = torch.stack([radius, queries[:, 2]], dim=1)
-        elif self.axis == "x":
+        elif torch.all(
+            axis == torch.tensor([1, 0, 0], device=queries.device, dtype=queries.dtype)
+        ):
             # Use y,z plane
             radius = torch.sqrt(queries[:, 1] ** 2 + queries[:, 2] ** 2) - offset
             pts_2d = torch.stack([radius, queries[:, 0]], dim=1)
-        elif self.axis == "y":
+        elif torch.all(
+            axis == torch.tensor([0, 1, 0], device=queries.device, dtype=queries.dtype)
+        ):
             # Use x,z plane
             radius = torch.sqrt(queries[:, 0] ** 2 + queries[:, 2] ** 2) - offset
             pts_2d = torch.stack([radius, queries[:, 1]], dim=1)
         else:
-            raise ValueError(f"Invalid axis: {self.axis}. Must be 'x', 'y', or 'z'")
+            raise ValueError(
+                f"Invalid axis: {self.axis}. Must be [1,0,0], [0,1,0], or [0,0,1]"
+            )
 
         return self.sdf_2d(pts_2d)
 
