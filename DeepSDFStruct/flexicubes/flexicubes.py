@@ -906,6 +906,28 @@ class FlexiCubes:
             inside_verts_idx = inside_verts_idx.unsqueeze(1).expand(-1, 4).reshape(-1)
 
         tets_surface = torch.cat([faces, inside_verts_idx.unsqueeze(-1)], -1)
+        # Orient all surface tets so they have positive signed volume (as required
+        # by FEA solvers using the right-hand-rule convention).
+        #
+        # A uniform v0/v1 swap is insufficient: although surface triangles
+        # nominally have outward-pointing normals, FlexiCubes sometimes places
+        # dual vertices deeper inside the solid than a nearby interior grid
+        # vertex.  When this happens the interior vertex (apex) ends up
+        # geometrically on the outward side of the face plane, meaning the tet
+        # already has a positive signed volume and swapping it would make things
+        # worse.  We therefore compute the signed volume per tet and flip only
+        # those that are negative.
+        with torch.no_grad():
+            all_v = torch.cat([vertices, inside_verts])
+            v0 = all_v[tets_surface[:, 0]]
+            v1 = all_v[tets_surface[:, 1]]
+            v2 = all_v[tets_surface[:, 2]]
+            v3 = all_v[tets_surface[:, 3]]
+            vols = torch.einsum(
+                "ij,ij->i", torch.cross(v1 - v0, v2 - v0, dim=1), v3 - v0
+            )
+            neg = vols < 0
+        tets_surface[neg] = tets_surface[neg][:, [0, 2, 1, 3]]
         """ 
         For each grid edge connecting two grid vertices with the
         same sign, the tetrahedron is formed by the two grid vertices
