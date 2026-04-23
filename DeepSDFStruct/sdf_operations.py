@@ -344,3 +344,209 @@ class RevolveSDF(SDFBase):
                 torch.tensor([max(b[0, 0], b[1, 0]), max(b[0, 0], b[1, 0]), b[1, 1]]),
             ]
         )
+
+
+def cubic_bezier_distance(p, control_points, samples=100):
+    """
+    Compute distance from point p to cubic bezier curve using sampling.
+
+    Samples the curve at many points and finds the closest one.
+    Fast and suitable for batch operations in sweep SDFs.
+
+    Args:
+        p: Query point(s), shape (N, 3) or (3,)
+        control_points: Control points tensor, shape (4, 3)
+        samples: Number of samples along the curve
+
+    Returns:
+        Tuple of (dist, t, closest_point) where:
+            - dist: distance to curve, shape (N, 1)
+            - t: parameter value at closest point, shape (N, 1)
+            - closest_point: closest point on curve, shape (N, 3)
+    """
+    if p.dim() == 1:
+        p = p.unsqueeze(0)
+
+    # Move control points to same device as p
+    control_points = control_points.to(device=p.device, dtype=p.dtype)
+
+    p0, p1, p2, p3 = control_points
+
+    # Sample the curve
+    t_samples = torch.linspace(0, 1, samples, device=p.device, dtype=p.dtype)
+    u_samples = 1 - t_samples
+
+    # Evaluate cubic bezier at all sample points
+    # B(t) = (1-t)^3 P0 + 3(1-t)^2 t P1 + 3(1-t) t^2 P2 + t^3 P3
+    t_vec = t_samples.unsqueeze(1)  # (samples, 1)
+    u_vec = u_samples.unsqueeze(1)  # (samples, 1)
+
+    curve_points = (
+        (u_vec**3) * p0
+        + (3 * u_vec**2 * t_vec) * p1
+        + (3 * u_vec * t_vec**2) * p2
+        + (t_vec**3) * p3
+    )  # (samples, 3)
+
+    # Compute distances from all query points to all curve samples
+    # p: (N, 3), curve_points: (samples, 3)
+    # We want pairwise distances: result shape (N, samples)
+    # Use broadcasting: p.unsqueeze(1) - curve_points.unsqueeze(0)
+    diff = p.unsqueeze(1) - curve_points.unsqueeze(0)  # (N, samples, 3)
+    dists = torch.linalg.norm(diff, dim=2)  # (N, samples)
+
+    # Find minimum distance and corresponding sample
+    min_dists, min_idx = torch.min(dists, dim=1, keepdim=True)  # (N, 1)
+
+    # Get the parameter t and closest point at the minimum
+    t_closest = t_samples[min_idx.squeeze(1)].unsqueeze(1)  # (N, 1)
+    point_closest = curve_points[min_idx.squeeze(1)]  # (N, 3)
+
+    return min_dists, t_closest, point_closest
+
+
+class SweepSDF(SDFBase):
+    """Sweep a 2D profile along a cubic bezier curve."""
+
+    def __init__(self, profile_sdf: SDFBase, trajectory, bezier_samples=100):
+        super().__init__()
+        assert profile_sdf.geometric_dim == 2, "SweepSDF requires a 2D profile SDF"
+        self.profile_sdf = profile_sdf
+        self.trajectory = trajectory
+        self.bezier_samples = bezier_samples
+
+    def _compute(self, queries: torch.Tensor) -> torch.Tensor:
+        # Ensure queries has shape (N, 3)
+        original_shape = queries.shape
+        if queries.dim() == 1:
+            queries = queries.unsqueeze(0)
+
+        control_points = self.trajectory.control_points
+        device = queries.device
+
+        # Move control points to correct device
+        control_points = control_points.to(device=device, dtype=queries.dtype)
+
+        # Find closest point and parameter t on bezier for each query
+        dist_to_curve, t, closest_point = cubic_bezier_distance(
+            queries, control_points, self.bezier_samples
+        )
+
+        # Compute tangent at closest point
+        t_values = t[:, 0:1]
+        u = 1 - t_values
+        p0, p1, p2, p3 = control_points
+
+        # Compute tangent for each point
+        tangent_per_point = (
+            (3 * u**2) * (p1 - p0).unsqueeze(0)
+            + (6 * u * t_values) * (p2 - p1).unsqueeze(0)
+            + (3 * t_values**2) * (p3 - p2).unsqueeze(0)
+        )
+
+        # Normalize each tangent
+        tangent_norms = torch.linalg.norm(tangent_per_point, dim=1, keepdim=True)
+        tangent = tangent_per_point / (tangent_norms + 1e-10)
+
+        # Compute normal using curvature (second derivative)
+        curvature_per_point = (6 * u) * (p2 - 2 * p1 + p0).unsqueeze(0) + (
+            6 * t_values
+        ) * (p3 - 2 * p2 + p1).unsqueeze(0)
+
+        # Initialize normal array
+        normal = torch.zeros_like(queries)
+
+        # For each point, compute normal based on curvature
+        curvature_norms = torch.linalg.norm(curvature_per_point, dim=1, keepdim=True)
+        has_curvature = curvature_norms.squeeze(1) > 1e-10
+
+        # Points with significant curvature use curvature direction
+        if has_curvature.any():
+            # Make normal perpendicular to tangent using Gram-Schmidt
+            normal_curv = curvature_per_point / (curvature_norms + 1e-10)
+            # Project out tangential component
+            proj = torch.sum(normal_curv * tangent, dim=1, keepdim=True) * tangent
+            normal_curv = normal_curv - proj
+            normal_curv_norms = torch.linalg.norm(normal_curv, dim=1, keepdim=True)
+            normal_curv = normal_curv / (normal_curv_norms + 1e-10)
+            normal = torch.where(
+                has_curvature.unsqueeze(1).expand_as(normal), normal_curv, normal
+            )
+
+        # Points with no curvature (straight segments)
+        # Need an arbitrary perpendicular direction
+        no_curvature = ~has_curvature
+        if no_curvature.any():
+            # Try Y axis first
+            try_normal = torch.tensor(
+                [0.0, 1.0, 0.0], device=device, dtype=queries.dtype
+            )
+            try_normal = try_normal.unsqueeze(0).expand(queries.shape[0], -1)
+
+            # Check dot product with tangent
+            dot_with_tangent = torch.sum(tangent * try_normal, dim=1)
+
+            # Where dot product is close to 1 or -1 (parallel), use X axis instead
+            parallel_to_y = torch.abs(dot_with_tangent) > 0.9
+            n_base = torch.where(
+                parallel_to_y.unsqueeze(1).expand_as(try_normal),
+                torch.tensor([1.0, 0.0, 0.0], device=device, dtype=queries.dtype)
+                .unsqueeze(0)
+                .expand(queries.shape[0], -1),
+                try_normal,
+            )
+
+            # Make perpendicular to tangent
+            proj = torch.sum(n_base * tangent, dim=1, keepdim=True) * tangent
+            n_perp = n_base - proj
+            n_perp_norms = torch.linalg.norm(n_perp, dim=1, keepdim=True)
+            n_perp = n_perp / (n_perp_norms + 1e-10)
+
+            normal = torch.where(
+                no_curvature.unsqueeze(1).expand_as(normal), n_perp, normal
+            )
+
+        # Compute binormal as cross product
+        binormal = torch.linalg.cross(tangent, normal, dim=1)
+        binormal_norm = torch.linalg.norm(binormal, dim=1, keepdim=True)
+        binormal = binormal / (binormal_norm + 1e-10)
+
+        # Vector from closest point to query
+        vec_to_query = queries - closest_point
+
+        # Project onto normal and binormal to get profile coordinates
+        coord_n = torch.sum(vec_to_query * normal, dim=1, keepdim=True)
+        coord_b = torch.sum(vec_to_query * binormal, dim=1, keepdim=True)
+
+        # Profile SDF expects 2D points (u, v)
+        pts_2d = torch.cat([coord_n, coord_b], dim=1)
+
+        # Evaluate profile SDF
+        profile_dist = self.profile_sdf(pts_2d)
+
+        # The final SDF should combine:
+        # 1. Distance to profile in the perpendicular plane
+        # 2. Distance along the curve (for capped ends)
+        # For now, just use the profile distance (no end capping)
+
+        result = profile_dist
+        return result
+
+    def _get_domain_bounds(self) -> torch.Tensor:
+        # Get curve control points bounds
+        cp = self.trajectory.control_points
+        curve_min = cp.min(dim=0).values
+        curve_max = cp.max(dim=0).values
+
+        # Get profile bounds (profile is 2D)
+        profile_bounds = self.profile_sdf._get_domain_bounds()
+
+        # Approximate by extending curve bounds by profile radius
+        # Profile extends in radial direction
+        profile_radius = max(abs(profile_bounds[0, 0]), abs(profile_bounds[1, 0]))
+
+        # Extend curve bounds in all directions by profile radius
+        lower = curve_min - profile_radius
+        upper = curve_max + profile_radius
+
+        return torch.stack([lower, upper])
