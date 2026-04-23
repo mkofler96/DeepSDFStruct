@@ -8,7 +8,10 @@ from DeepSDFStruct.sdf_primitives import (
     CylinderSDF,
     ConeSDF,
     CapsuleSDF,
+    CircleSDF,
 )
+from DeepSDFStruct.sdf_operations import SweepSDF
+from DeepSDFStruct.torch_spline import CubicBezier
 
 # ==================== Test Functions ====================
 
@@ -399,6 +402,48 @@ def test_capsule_trimesh_comparison():
     assert torch.allclose(
         dist_mesh_random, dist_analytical_random, atol=2e-2, rtol=2e-2
     ), "Capsule SDF mismatch on random points"
+
+
+def test_sweep_comparison():
+    """
+    Simple Test for Cubic Bezier Adaptative Subdivision
+    ===================================================
+
+    Test circle sweep along Bezier using the same parameters as sweep_test_case.stl
+    """
+
+    # Circle profile (radius 0.5, centered at origin)
+    circle_profile = CircleSDF(center=[0, 0], radius=0.5)
+
+    # Cubic Bezier control points (matching sweep_test_case.stl)
+    points = [
+        [0.0, 0.0, 0.0],  # P0: [0, 0, 0]
+        [0.0, 0.0, 5.0],  # P1: [0, 0, 5]
+        [5.0, 0.0, 5.0],  # P2: [5, 0, 5]
+        [5.0, 0.0, 10.0],  # P3: [5, 0, 10]
+    ]
+
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+    print(f"Using device: {device}")
+
+    bezier_trajectory = CubicBezier(control_points=points, device=device)
+
+    # Create sweep with adaptive subdivision
+    sweep = SweepSDF(
+        circle_profile,
+        bezier_trajectory,
+        bezier_samples=100,  # Number of samples along the curve
+    )
+
+    # Test a few points
+    print("\nTest points:")
+    # all points on the trajectory should be -radius inside
+    test_points = sweep(bezier_trajectory([0.2, 0.4, 0.6, 0.8]))
+    assert (test_points < 0).all()
+    gt = trimesh.load_mesh("tests/data/sweep_test_case.stl")
+    verts_as_tensor = torch.tensor(gt.vertices)
+    res = sweep(verts_as_tensor)
+    torch.testing.assert_close(res, torch.zeros_like(res))
 
 
 if __name__ == "__main__":
