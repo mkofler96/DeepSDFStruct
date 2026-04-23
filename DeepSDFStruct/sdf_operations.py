@@ -406,7 +406,10 @@ def cubic_bezier_distance(p, control_points, samples=100):
 
 
 class SweepSDF(SDFBase):
-    """Sweep a 2D profile along a cubic bezier curve with flat end caps."""
+    """Sweep a 2D profile along a cubic bezier curve with flat end caps.
+    See https://blog.pkh.me/p/46-fast-calculation-of-the-distance-to-cubic-bezier-curves-on-the-gpu.html
+    for more details
+    """
 
     def __init__(
         self, profile_sdf: SDFBase, trajectory, bezier_samples=100, cap_ends=True
