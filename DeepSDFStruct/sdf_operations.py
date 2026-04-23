@@ -406,14 +406,17 @@ def cubic_bezier_distance(p, control_points, samples=100):
 
 
 class SweepSDF(SDFBase):
-    """Sweep a 2D profile along a cubic bezier curve."""
+    """Sweep a 2D profile along a cubic bezier curve with flat end caps."""
 
-    def __init__(self, profile_sdf: SDFBase, trajectory, bezier_samples=100):
+    def __init__(
+        self, profile_sdf: SDFBase, trajectory, bezier_samples=100, cap_ends=True
+    ):
         super().__init__()
         assert profile_sdf.geometric_dim == 2, "SweepSDF requires a 2D profile SDF"
         self.profile_sdf = profile_sdf
         self.trajectory = trajectory
         self.bezier_samples = bezier_samples
+        self.cap_ends = cap_ends
 
     def _compute(self, queries: torch.Tensor) -> torch.Tensor:
         # Ensure queries has shape (N, 3)
@@ -431,6 +434,23 @@ class SweepSDF(SDFBase):
         dist_to_curve, t, closest_point = cubic_bezier_distance(
             queries, control_points, self.bezier_samples
         )
+
+        # Get start and end points of the curve
+        start_point = control_points[0]
+        end_point = control_points[3]
+
+        # Compute tangents at the start and end
+        # Tangent at t=0: 3(P1 - P0)
+        start_tangent = 3 * (control_points[1] - control_points[0])
+        start_tangent_norm = torch.linalg.norm(start_tangent)
+        if start_tangent_norm > 1e-10:
+            start_tangent = start_tangent / start_tangent_norm
+
+        # Tangent at t=1: 3(P3 - P2)
+        end_tangent = 3 * (control_points[3] - control_points[2])
+        end_tangent_norm = torch.linalg.norm(end_tangent)
+        if end_tangent_norm > 1e-10:
+            end_tangent = end_tangent / end_tangent_norm
 
         # Compute tangent at closest point
         t_values = t[:, 0:1]
@@ -524,12 +544,34 @@ class SweepSDF(SDFBase):
         # Evaluate profile SDF
         profile_dist = self.profile_sdf(pts_2d)
 
-        # The final SDF should combine:
-        # 1. Distance to profile in the perpendicular plane
-        # 2. Distance along the curve (for capped ends)
-        # For now, just use the profile distance (no end capping)
-
         result = profile_dist
+
+        # Add end caps if requested
+        if self.cap_ends:
+            # Distance to start cap plane
+            # The cap plane is perpendicular to the start tangent and passes through start_point
+            dist_to_start_plane = torch.sum(
+                (queries - start_point) * start_tangent, dim=1, keepdim=True
+            )
+            # Distance from the start cap is positive if behind the cap (negative direction)
+            start_cap_dist = -dist_to_start_plane
+
+            # Distance to end cap plane
+            # The cap plane is perpendicular to the end tangent and passes through end_point
+            dist_to_end_plane = torch.sum(
+                (queries - end_point) * end_tangent, dim=1, keepdim=True
+            )
+            # Distance from the end cap is positive if beyond the cap (positive direction)
+            end_cap_dist = dist_to_end_plane
+
+            # The overall SDF is the maximum of profile distance and cap distances
+            # Points inside the profile but beyond the caps should be clipped by the caps
+            # We take the maximum because we want the intersection of:
+            # - Inside/outside of the tube profile
+            # - Inside/outside of the cap planes
+            result = torch.maximum(result, start_cap_dist)
+            result = torch.maximum(result, end_cap_dist)
+
         return result
 
     def _get_domain_bounds(self) -> torch.Tensor:
