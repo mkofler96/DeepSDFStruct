@@ -489,6 +489,7 @@ class SDF2D(SDFBase):
         self.geometric_dim = 2
 
     def _compute(self, queries):
+        logger.debug(f"SDF2D._compute - {queries.shape[0]} points, axes={self.axes}")
         queries_3D = (
             torch.zeros(
                 (queries.shape[0], 3), dtype=queries.dtype, device=queries.device
@@ -535,6 +536,9 @@ class UnionSDF(SDFBase):
         self.geometric_dim = geometric_dim
 
     def _compute(self, queries):
+        logger.debug(
+            f"UnionSDF._compute - {queries.shape[0]} points, {len(self.objects)} objects"
+        )
         # Compute first object
         result = self.objects[0]._compute(queries)
 
@@ -552,7 +556,9 @@ class UnionSDF(SDFBase):
 
         # Expand bounds across all objects
         for obj in self.objects[1:]:
-            print(f"current bounds of union lower: {lower} upper: {upper}")
+            logger.debug(
+                f"UnionSDF._get_domain_bounds - iterating through {len(self.objects)} objects"
+            )
             obj_bounds = obj._get_domain_bounds()
             lower = torch.minimum(lower, obj_bounds[0])
             upper = torch.maximum(upper, obj_bounds[1])
@@ -596,6 +602,9 @@ class DifferenceSDF(SDFBase):
         self.geometric_dim = geometric_dim
 
     def _compute(self, queries):
+        logger.debug(
+            f"DifferenceSDF._compute - {queries.shape[0]} points, base={type(self.base_obj).__name__}, subtract={len(self.subtract_objs)}"
+        )
         d_base = self.base_obj._compute(queries)
 
         # Compute union of subtraction objects
@@ -624,9 +633,13 @@ class SmoothUnionSDF(SDFBase):
         self.k = torch.nn.Parameter(torch.as_tensor(k, dtype=torch.float32))
 
     def _compute(self, queries: torch.Tensor) -> torch.Tensor:
-        k = self.k.to(device=queries.device, dtype=queries.dtype)
+        k_val = self.k.to(device=queries.device, dtype=queries.dtype)
+        smooth_mode = "smooth" if k_val != 0 else "sharp"
+        logger.debug(
+            f"SmoothUnionSDF._compute - {queries.shape[0]} points, sdfs={len(self.sdfs)}, mode={smooth_mode}"
+        )
 
-        if k == 0:
+        if k_val == 0:
             # Sharp union - same as UnionSDF
             result = self.sdfs[0]._compute(queries)
             for sdf in self.sdfs[1:]:
@@ -640,8 +653,8 @@ class SmoothUnionSDF(SDFBase):
         d1 = d[:, 0]
         for i in range(1, d.shape[1]):
             d2 = d[:, i]
-            h = torch.clamp(0.5 + 0.5 * (d2 - d1) / k, 0, 1)
-            d1 = d2 + (d1 - d2) * h - k * h * (1 - h)
+            h = torch.clamp(0.5 + 0.5 * (d2 - d1) / k_val, 0, 1)
+            d1 = d2 + (d1 - d2) * h - k_val * h * (1 - h)
 
         return d1.reshape(-1, 1)
 
@@ -665,26 +678,30 @@ class SmoothDifferenceSDF(SDFBase):
         self.k = torch.nn.Parameter(torch.as_tensor(k, dtype=torch.float32))
 
     def _compute(self, queries: torch.Tensor) -> torch.Tensor:
-        k = self.k.to(device=queries.device, dtype=queries.dtype)
+        k_val = self.k.to(device=queries.device, dtype=queries.dtype)
+        smooth_mode = "smooth" if k_val != 0 else "sharp"
+        logger.debug(
+            f"SmoothDifferenceSDF._compute - {queries.shape[0]} points, base={type(self.base).__name__}, subtract={len(self.subtract)}, mode={smooth_mode}"
+        )
 
         d_base = self.base._compute(queries).squeeze(1)
 
         # Union of subtraction objects
         d_sub = self.subtract[0]._compute(queries).squeeze(1)
         for sdf in self.subtract[1:]:
-            if k == 0:
+            if k_val == 0:
                 d_sub = torch.minimum(d_sub, sdf._compute(queries).squeeze(1))
             else:
                 d2 = sdf._compute(queries).squeeze(1)
-                h = torch.clamp(0.5 + 0.5 * (d2 - d_sub) / k, 0, 1)
-                d_sub = d2 + (d_sub - d2) * h - k * h * (1 - h)
+                h = torch.clamp(0.5 + 0.5 * (d2 - d_sub) / k_val, 0, 1)
+                d_sub = d2 + (d_sub - d2) * h - k_val * h * (1 - h)
 
-        if k == 0:
+        if k_val == 0:
             return torch.maximum(d_base, -d_sub).reshape(-1, 1)
 
         # Smooth difference
-        h = torch.clamp(0.5 - 0.5 * (d_base + d_sub) / k, 0, 1)
-        return (d_base + d_sub + k * h * (1 - h)).reshape(-1, 1)
+        h = torch.clamp(0.5 - 0.5 * (d_base + d_sub) / k_val, 0, 1)
+        return (d_base + d_sub + k_val * h * (1 - h)).reshape(-1, 1)
 
     def _get_domain_bounds(self) -> torch.Tensor:
         return self.base._get_domain_bounds()
@@ -701,9 +718,13 @@ class SmoothIntersectionSDF(SDFBase):
         self.k = torch.nn.Parameter(torch.as_tensor(k, dtype=torch.float32))
 
     def _compute(self, queries: torch.Tensor) -> torch.Tensor:
-        k = self.k.to(device=queries.device, dtype=queries.dtype)
+        k_val = self.k.to(device=queries.device, dtype=queries.dtype)
+        smooth_mode = "smooth" if k_val != 0 else "sharp"
+        logger.debug(
+            f"SmoothIntersectionSDF._compute - {queries.shape[0]} points, sdfs={len(self.sdfs)}, mode={smooth_mode}"
+        )
 
-        if k == 0:
+        if k_val == 0:
             # Sharp intersection
             result = self.sdfs[0]._compute(queries)
             for sdf in self.sdfs[1:]:
@@ -717,8 +738,8 @@ class SmoothIntersectionSDF(SDFBase):
         d1 = d[:, 0]
         for i in range(1, d.shape[1]):
             d2 = d[:, i]
-            h = torch.clamp(0.5 - 0.5 * (d2 - d1) / k, 0, 1)
-            d1 = d2 - (d2 - d1) * h + k * h * (1 - h)
+            h = torch.clamp(0.5 - 0.5 * (d2 - d1) / k_val, 0, 1)
+            d1 = d2 - (d2 - d1) * h + k_val * h * (1 - h)
 
         return d1.reshape(-1, 1)
 
@@ -890,6 +911,12 @@ class SDFfromMesh(SDFBase):
         return self.mesh.bounds
 
     def _compute(self, queries: torch.Tensor | np.ndarray):
+        num_points = (
+            queries.shape[0] if isinstance(queries, torch.Tensor) else queries.shape[0]
+        )
+        logger.debug(
+            f"SDFfromMesh._compute - {num_points} points, backend={self.backend}"
+        )
         is_tensor = isinstance(queries, torch.Tensor)
 
         if is_tensor:
@@ -1000,6 +1027,12 @@ class SDFfromLineMesh(SDFBase):
         self.smoothness = parameters[1]
 
     def _compute(self, queries: torch.Tensor | np.ndarray):
+        num_points = (
+            queries.shape[0] if isinstance(queries, torch.Tensor) else queries.shape[0]
+        )
+        logger.debug(
+            f"SDFfromLineMesh._compute - {num_points} points, thickness={self.t}, smoothness={self.smoothness}"
+        )
         is_tensor = isinstance(queries, torch.Tensor)
         if is_tensor:
             orig_device = queries.device
@@ -1052,6 +1085,9 @@ class SDFfromDeepSDF(SDFBase):
         return self.set_latent_vec(parameters)
 
     def _compute(self, queries: torch.Tensor) -> torch.Tensor:
+        logger.debug(
+            f"SDFfromDeepSDF._compute - {queries.shape[0]} points, batch_size={self.max_batch}, latent_shape={self.latvec.shape if self.latvec is not None else 'None'}"
+        )
         # DeepSDF queries range from -1 to 1
         orig_device = queries.device
         queries = queries.to(self.get_device())
@@ -1189,6 +1225,9 @@ class TransformedSDF(SDFBase):
         self.scale = torch.nn.Parameter(s)
 
     def _compute(self, queries: torch.Tensor) -> torch.Tensor:
+        logger.debug(
+            f"TransformedSDF._compute - {queries.shape[0]} points, sdf={type(self.sdf).__name__}"
+        )
         xyz = queries
 
         # apply scale, for now, only uniform scale is allowd
@@ -1230,6 +1269,9 @@ class CappedBorderSDF(SDFBase):
         self.scale = scale
 
     def _compute(self, queries: torch.Tensor) -> torch.Tensor:
+        logger.debug(
+            f"CappedBorderSDF._compute - {queries.shape[0]} points, sdf={type(self.sdf).__name__}"
+        )
         sdf_values = self.sdf(queries)
 
         bounds = self.sdf._get_domain_bounds().to(
@@ -1469,6 +1511,9 @@ class ExtrudeSDF(SDFBase):
         self.height = height
 
     def _compute(self, queries: torch.Tensor) -> torch.Tensor:
+        logger.debug(
+            f"ExtrudeSDF._compute - {queries.shape[0]} points, height={self.height}"
+        )
         # queries are (N, 3)
         d = self.sdf_2d(queries[:, :2])  # (N, 1)
 
