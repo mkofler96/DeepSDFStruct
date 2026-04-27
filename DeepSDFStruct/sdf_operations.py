@@ -233,91 +233,103 @@ class MirrorSDF(SDFBase):
 
 
 class CircularArraySDF(SDFBase):
-    """Create count copies of an SDF rotated around an axis."""
+    """Create count copies of an SDF rotated around an arbitrary axis line.
+
+    The axis line is defined by an ``axis`` direction and a ``base_point``
+    lying on that axis. Copies are sampled at evenly spaced angles in the
+    half-open interval [start_angle, end_angle).
+
+    """
 
     def __init__(
         self,
         sdf: SDFBase,
         count,
-        radius,
         axis=torch.tensor([0, 0, 1], dtype=torch.float32),
+        base_point=torch.tensor([0, 0, 0], dtype=torch.float32),
+        start_angle_deg=0.0,
+        end_angle_deg=360,
     ):
         super().__init__()
         self.sdf = sdf
-        self.count = count
-        self.radius = torch.nn.Parameter(torch.as_tensor(radius, dtype=torch.float32))
+        self.count = int(count)
+
         self.axis = torch.nn.Parameter(torch.as_tensor(axis, dtype=torch.float32))
+        self.base_point = torch.nn.Parameter(
+            torch.as_tensor(base_point, dtype=torch.float32)
+        )
+        self.start_angle = torch.nn.Parameter(
+            torch.as_tensor(start_angle_deg, dtype=torch.float32)
+        )
+        self.end_angle = torch.nn.Parameter(
+            torch.as_tensor(end_angle_deg, dtype=torch.float32)
+        )
+
+    @staticmethod
+    def _normalize_axis(axis: torch.Tensor) -> torch.Tensor:
+        axis_norm = torch.linalg.norm(axis)
+        if axis_norm <= 0:
+            raise ValueError("Axis must be non-zero")
+        return axis / axis_norm
+
+    @staticmethod
+    def _rotate_about_axis(
+        points: torch.Tensor, axis_unit: torch.Tensor, angles: torch.Tensor
+    ) -> torch.Tensor:
+        """Rotate points around an arbitrary axis for a batch of angles."""
+        k = axis_unit.view(1, 1, 3)
+        p = points.unsqueeze(0).expand(angles.shape[0], -1, -1)
+        a = angles.view(-1, 1, 1)
+        c = torch.cos(torch.deg2rad(a))
+        s = torch.sin(torch.deg2rad(a))
+
+        cross = torch.cross(k, p, dim=2)
+        dot = torch.sum(p * k, dim=2, keepdim=True)
+        return p * c + cross * s + k * dot * (1 - c)
 
     def _compute(self, queries: torch.Tensor) -> torch.Tensor:
-        r = self.radius.to(device=queries.device, dtype=queries.dtype)
-        da = 2 * torch.pi / self.count
+        if self.count <= 0:
+            raise ValueError("count must be a positive integer")
+
         axis = self.axis.to(device=queries.device, dtype=queries.dtype)
+        axis_unit = self._normalize_axis(axis)
+        base = self.base_point.to(device=queries.device, dtype=queries.dtype)
+        start = self.start_angle.to(device=queries.device, dtype=queries.dtype)
+        end = self.end_angle.to(device=queries.device, dtype=queries.dtype)
 
-        # Get coordinates based on axis
-        if torch.all(
-            axis == torch.tensor([0, 0, 1], device=queries.device, dtype=queries.dtype)
-        ):
-            x, y, z = queries[:, 0], queries[:, 1], queries[:, 2]
-            dist = torch.sqrt(x**2 + y**2)
-            angle = torch.arctan2(y, x) % da
-            # Evaluate at angle and angle-da
-            q1 = torch.stack(
-                [torch.cos(angle - da) * dist, torch.sin(angle - da) * dist, z], dim=1
-            )
-            q2 = torch.stack(
-                [torch.cos(angle) * dist, torch.sin(angle) * dist, z], dim=1
-            )
-        elif torch.all(
-            axis == torch.tensor([1, 0, 0], device=queries.device, dtype=queries.dtype)
-        ):
-            y, z, x = queries[:, 1], queries[:, 2], queries[:, 0]
-            dist = torch.sqrt(y**2 + z**2)
-            angle = torch.arctan2(z, y) % da
-            q1 = torch.stack(
-                [torch.cos(angle - da) * dist, torch.sin(angle - da) * dist, x], dim=1
-            )
-            q2 = torch.stack(
-                [torch.cos(angle) * dist, torch.sin(angle) * dist, x], dim=1
-            )
-        elif torch.all(
-            axis == torch.tensor([0, 1, 0], device=queries.device, dtype=queries.dtype)
-        ):
-            z, x, y = queries[:, 2], queries[:, 0], queries[:, 1]
-            dist = torch.sqrt(z**2 + x**2)
-            angle = torch.arctan2(x, z) % da
-            q1 = torch.stack(
-                [torch.cos(angle - da) * dist, torch.sin(angle - da) * dist, y], dim=1
-            )
-            q2 = torch.stack(
-                [torch.cos(angle) * dist, torch.sin(angle) * dist, y], dim=1
-            )
-        else:
-            raise ValueError(
-                f"Invalid axis: {self.axis}. Must be [1,0,0], [0,1,0], or [0,0,1]"
-            )
+        step = (end - start) / self.count
+        angles = start + step * torch.arange(
+            self.count, device=queries.device, dtype=queries.dtype
+        )
 
-        d1 = self.sdf(q1)
-        d2 = self.sdf(q2)
-        return torch.minimum(d1, d2)
+        # Pull query points back through inverse rotations and evaluate all copies.
+        centered = queries - base
+        rotated = self._rotate_about_axis(centered, axis_unit, -angles)
+        eval_points = (rotated + base).reshape(-1, 3)
+
+        d = self.sdf(eval_points).reshape(self.count, queries.shape[0], 1)
+        return torch.min(d, dim=0).values
 
     def _get_domain_bounds(self) -> torch.Tensor:
-        # Conservative bounds
         b = self.sdf._get_domain_bounds()
-        r = self.radius
-        axis = self.axis
-        if torch.all(axis == torch.tensor([0, 0, 1])):
-            return torch.stack(
-                [
-                    torch.tensor(
-                        [min(b[0, 0], b[1, 0]) - r, min(b[0, 1], b[1, 1]) - r, b[0, 2]]
-                    ),
-                    torch.tensor(
-                        [max(b[0, 0], b[1, 0]) + r, max(b[0, 1], b[1, 1]) + r, b[1, 2]]
-                    ),
-                ]
-            )
-        else:
-            return b
+        minb = torch.minimum(b[0], b[1])
+        maxb = torch.maximum(b[0], b[1])
+
+        corners = torch.stack(
+            [
+                torch.tensor([x, y, z], dtype=minb.dtype, device=minb.device)
+                for x in (minb[0], maxb[0])
+                for y in (minb[1], maxb[1])
+                for z in (minb[2], maxb[2])
+            ],
+            dim=0,
+        )
+        base = self.base_point.detach().to(device=minb.device, dtype=minb.dtype)
+        rho = torch.max(torch.linalg.norm(corners - base, dim=1))
+
+        lower = base - rho
+        upper = base + rho
+        return torch.stack([lower, upper], dim=0)
 
 
 class RevolveSDF(SDFBase):

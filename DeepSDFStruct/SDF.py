@@ -759,6 +759,9 @@ class NegatedCallable(SDFBase):
         self.obj = obj
 
     def _compute(self, input_param):
+        logger.debug(
+            f"NegatedCallable._compute - {input_param.shape[0]} points, obj={type(self.obj).__name__}"
+        )
         result = self.obj(input_param)
         return -result
 
@@ -776,6 +779,9 @@ class BoxSDF(SDFBase):
         self.center = center
 
     def _compute(self, queries: torch.tensor) -> torch.tensor:
+        logger.debug(
+            f"BoxSDF._compute - {queries.shape[0]} points, box_size={self.box_size}"
+        )
         output = (
             torch.linalg.norm(queries - self.center, axis=1, ord=torch.inf)
             - self.box_size

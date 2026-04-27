@@ -25,8 +25,12 @@ in optimization workflows.
 """
 
 from DeepSDFStruct.SDF import SDFBase
+import DeepSDFStruct
+import logging
 import torch
 import numpy as np
+
+logger = logging.getLogger(DeepSDFStruct.__name__)
 
 
 class SphereSDF(SDFBase):
@@ -63,6 +67,7 @@ class SphereSDF(SDFBase):
         self.r = torch.nn.Parameter(r.reshape(()))  # scalar parameter
 
     def _compute(self, queries: torch.Tensor) -> torch.Tensor:
+        logger.debug(f"{type(self).__name__}._compute - {queries.shape[0]} points")
         # ensure computations use same dtype/device as queries
         center = self.center.to(device=queries.device, dtype=queries.dtype)
         r = self.r.to(device=queries.device, dtype=queries.dtype)
@@ -108,6 +113,7 @@ class BoxSDF(SDFBase):
         self.extents = torch.nn.Parameter(e.reshape(3))
 
     def _compute(self, queries: torch.Tensor) -> torch.Tensor:
+        logger.debug(f"{type(self).__name__}._compute - {queries.shape[0]} points")
         center = self.center.to(device=queries.device, dtype=queries.dtype)
         half = self.extents.to(device=queries.device, dtype=queries.dtype) / 2.0
 
@@ -174,6 +180,7 @@ class CylinderSDF(SDFBase):
         self.radius = torch.nn.Parameter(r.reshape(()))
 
     def _compute(self, queries: torch.Tensor) -> torch.Tensor:
+        logger.debug(f"{type(self).__name__}._compute - {queries.shape[0]} points")
         a = self.point_a.to(device=queries.device, dtype=queries.dtype)
         b = self.point_b.to(device=queries.device, dtype=queries.dtype)
         r = self.radius.to(device=queries.device, dtype=queries.dtype)
@@ -257,6 +264,7 @@ class ConeSDF(SDFBase):
         self.geometric_dim = 3
 
     def _compute(self, queries: torch.Tensor) -> torch.Tensor:
+        logger.debug(f"{type(self).__name__}._compute - {queries.shape[0]} points")
         point = self.point.to(device=queries.device, dtype=queries.dtype)
         axis = self.axis.to(device=queries.device, dtype=queries.dtype)
 
@@ -342,6 +350,7 @@ class TorusSDF(SDFBase):
         self.geometric_dim = 3
 
     def _compute(self, queries: torch.Tensor) -> torch.Tensor:
+        logger.debug(f"{type(self).__name__}._compute - {queries.shape[0]} points")
         # align dtype/device
         center = self.center.to(device=queries.device, dtype=queries.dtype)
         axis = self.axis.to(device=queries.device, dtype=queries.dtype)
@@ -384,6 +393,7 @@ class PlaneSDF(SDFBase):
         self.normal = self.normal / torch.linalg.norm(self.normal)
 
     def _compute(self, queries: torch.Tensor) -> torch.Tensor:
+        logger.debug(f"{type(self).__name__}._compute - {queries.shape[0]} points")
         return torch.matmul(queries - self.point, self.normal).reshape(-1, 1)
 
     def _get_domain_bounds(self) -> torch.Tensor:
@@ -403,6 +413,7 @@ class CornerSpheresSDF(SDFBase):
         )
 
     def _compute(self, queries: torch.Tensor) -> torch.Tensor:
+        logger.debug(f"{type(self).__name__}._compute - {queries.shape[0]} points")
 
         # start with the cube SDF
         output = torch.linalg.norm(queries, dim=1, ord=float("inf")) - self.limit
@@ -424,6 +435,7 @@ class CrossMsSDF(SDFBase):
         self.r = radius
 
     def _compute(self, queries: torch.Tensor) -> torch.Tensor:
+        logger.debug(f"{type(self).__name__}._compute - {queries.shape[0]} points")
         # start with the L∞ norm
         output = torch.linalg.norm(queries, dim=1, ord=float("inf"))
 
@@ -458,6 +470,7 @@ class RoundedBoxSDF(SDFBase):
         self.radius = torch.nn.Parameter(r.reshape(()))
 
     def _compute(self, queries: torch.Tensor) -> torch.Tensor:
+        logger.debug(f"{type(self).__name__}._compute - {queries.shape[0]} points")
         center = self.center.to(device=queries.device, dtype=queries.dtype)
         extents = self.extents.to(device=queries.device, dtype=queries.dtype)
         radius = self.radius.to(device=queries.device, dtype=queries.dtype)
@@ -490,6 +503,7 @@ class WireframeBoxSDF(SDFBase):
         self.thickness = torch.nn.Parameter(t.reshape(()))
 
     def _compute(self, queries: torch.Tensor) -> torch.Tensor:
+        logger.debug(f"{type(self).__name__}._compute - {queries.shape[0]} points")
         center = self.center.to(device=queries.device, dtype=queries.dtype)
         extents = self.extents.to(device=queries.device, dtype=queries.dtype)
         thickness = self.thickness.to(device=queries.device, dtype=queries.dtype)
@@ -530,6 +544,7 @@ class CapsuleSDF(SDFBase):
         self.radius = torch.nn.Parameter(r.reshape(()))
 
     def _compute(self, queries: torch.Tensor) -> torch.Tensor:
+        logger.debug(f"{type(self).__name__}._compute - {queries.shape[0]} points")
         point_a = self.point_a.to(device=queries.device, dtype=queries.dtype)
         point_b = self.point_b.to(device=queries.device, dtype=queries.dtype)
         radius = self.radius.to(device=queries.device, dtype=queries.dtype)
@@ -563,6 +578,7 @@ class EllipsoidSDF(SDFBase):
         self.extents = torch.nn.Parameter(e.reshape(3))
 
     def _compute(self, queries: torch.Tensor) -> torch.Tensor:
+        logger.debug(f"{type(self).__name__}._compute - {queries.shape[0]} points")
         center = self.center.to(device=queries.device, dtype=queries.dtype)
         extents = self.extents.to(device=queries.device, dtype=queries.dtype)
 
@@ -589,6 +605,7 @@ class PyramidSDF(SDFBase):
         self.height = torch.nn.Parameter(h.reshape(()))
 
     def _compute(self, queries: torch.Tensor) -> torch.Tensor:
+        logger.debug(f"{type(self).__name__}._compute - {queries.shape[0]} points")
         h = self.height.to(device=queries.device, dtype=queries.dtype)
 
         a = torch.abs(queries[:, :2]) - 0.5
@@ -639,6 +656,7 @@ class CircleSDF(SDFBase):
         )
 
     def _compute(self, queries: torch.Tensor) -> torch.Tensor:
+        logger.debug(f"{type(self).__name__}._compute - {queries.shape[0]} points")
         center = self.center.to(device=queries.device, dtype=queries.dtype)
         radius = self.radius.to(device=queries.device, dtype=queries.dtype)
         return (torch.linalg.norm(queries - center, dim=1) - radius).reshape(-1, 1)
@@ -658,6 +676,7 @@ class RectangleSDF(SDFBase):
         self.extents = torch.nn.Parameter(torch.as_tensor(extents, dtype=torch.float32))
 
     def _compute(self, queries: torch.Tensor) -> torch.Tensor:
+        logger.debug(f"{type(self).__name__}._compute - {queries.shape[0]} points")
         center = self.center.to(device=queries.device, dtype=queries.dtype)
         half = self.extents.to(device=queries.device, dtype=queries.dtype) / 2.0
         q = torch.abs(queries - center) - half
@@ -680,6 +699,7 @@ class LineSDF(SDFBase):
         self.point = torch.nn.Parameter(torch.as_tensor(point, dtype=torch.float32))
 
     def _compute(self, queries: torch.Tensor) -> torch.Tensor:
+        logger.debug(f"{type(self).__name__}._compute - {queries.shape[0]} points")
         n = self.normal.to(device=queries.device, dtype=queries.dtype)
         p = self.point.to(device=queries.device, dtype=queries.dtype)
         n_normalized = n / torch.linalg.norm(n)
@@ -715,6 +735,7 @@ class RoundedRectangleSDF(SDFBase):
             )
 
     def _compute(self, queries: torch.Tensor) -> torch.Tensor:
+        logger.debug(f"{type(self).__name__}._compute - {queries.shape[0]} points")
         center = self.center.to(device=queries.device, dtype=queries.dtype)
         extents = self.extents.to(device=queries.device, dtype=queries.dtype)
         radii = self.radii.to(device=queries.device, dtype=queries.dtype)
@@ -751,6 +772,7 @@ class EquilateralTriangleSDF(SDFBase):
         )
 
     def _compute(self, queries: torch.Tensor) -> torch.Tensor:
+        logger.debug(f"{type(self).__name__}._compute - {queries.shape[0]} points")
         r_val = self.size.item() if isinstance(self.size, torch.Tensor) else self.size
         r = torch.tensor(r_val, device=queries.device, dtype=queries.dtype)
         k = torch.tensor(np.sqrt(3.0), device=queries.device, dtype=queries.dtype)
@@ -786,6 +808,7 @@ class HexagonSDF(SDFBase):
         )
 
     def _compute(self, queries: torch.Tensor) -> torch.Tensor:
+        logger.debug(f"{type(self).__name__}._compute - {queries.shape[0]} points")
         r = self.size
         k = torch.tensor(
             [-np.sqrt(3.0) / 2.0, 0.5, np.tan(np.pi / 6.0)],
@@ -826,6 +849,7 @@ class PolygonSDF(SDFBase):
         Signed distance for convex polygon using winding number method.
         Returns negative values for points inside the polygon.
         """
+        logger.debug(f"{type(self).__name__}._compute - {queries.shape[0]} points")
         points = self.vertices.to(device=queries.device, dtype=queries.dtype)
         p = queries
         n = len(points)
@@ -903,6 +927,7 @@ class SlabSDF(SDFBase):
             )
 
     def _compute(self, queries: torch.Tensor) -> torch.Tensor:
+        logger.debug(f"{type(self).__name__}._compute - {queries.shape[0]} points")
         dist = torch.full(
             (len(queries),), -float("inf"), device=queries.device, dtype=queries.dtype
         )
@@ -950,6 +975,7 @@ class RoundedCylinderSDF(SDFBase):
         self.h = torch.nn.Parameter(torch.as_tensor(h, dtype=torch.float32))
 
     def _compute(self, queries: torch.Tensor) -> torch.Tensor:
+        logger.debug(f"{type(self).__name__}._compute - {queries.shape[0]} points")
         ra = self.ra.to(device=queries.device, dtype=queries.dtype)
         rb = self.rb.to(device=queries.device, dtype=queries.dtype)
         h = self.h.to(device=queries.device, dtype=queries.dtype)
@@ -983,6 +1009,7 @@ class CappedConeSDF(SDFBase):
         self.rb = torch.nn.Parameter(torch.as_tensor(rb, dtype=torch.float32))
 
     def _compute(self, queries: torch.Tensor) -> torch.Tensor:
+        logger.debug(f"{type(self).__name__}._compute - {queries.shape[0]} points")
         a = self.point_a.to(device=queries.device, dtype=queries.dtype)
         b = self.point_b.to(device=queries.device, dtype=queries.dtype)
         ra = self.ra.to(device=queries.device, dtype=queries.dtype)
@@ -1038,6 +1065,7 @@ class RoundedConeSDF(SDFBase):
         self.h = torch.nn.Parameter(torch.as_tensor(h, dtype=torch.float32))
 
     def _compute(self, queries: torch.Tensor) -> torch.Tensor:
+        logger.debug(f"{type(self).__name__}._compute - {queries.shape[0]} points")
         r1 = self.r1.to(device=queries.device, dtype=queries.dtype)
         r2 = self.r2.to(device=queries.device, dtype=queries.dtype)
         h = self.h.to(device=queries.device, dtype=queries.dtype)
@@ -1069,6 +1097,7 @@ class TetrahedronSDF(SDFBase):
         self.r = torch.nn.Parameter(torch.as_tensor(r, dtype=torch.float32))
 
     def _compute(self, queries: torch.Tensor) -> torch.Tensor:
+        logger.debug(f"{type(self).__name__}._compute - {queries.shape[0]} points")
         r = self.r.to(device=queries.device, dtype=queries.dtype)
         result = (
             torch.maximum(
@@ -1092,6 +1121,7 @@ class OctahedronSDF(SDFBase):
         self.r = torch.nn.Parameter(torch.as_tensor(r, dtype=torch.float32))
 
     def _compute(self, queries: torch.Tensor) -> torch.Tensor:
+        logger.debug(f"{type(self).__name__}._compute - {queries.shape[0]} points")
         r = self.r.to(device=queries.device, dtype=queries.dtype)
         return (
             (torch.sum(torch.abs(queries), dim=1) - r)
@@ -1111,6 +1141,7 @@ class DodecahedronSDF(SDFBase):
         self.r = torch.nn.Parameter(torch.as_tensor(r, dtype=torch.float32))
 
     def _compute(self, queries: torch.Tensor) -> torch.Tensor:
+        logger.debug(f"{type(self).__name__}._compute - {queries.shape[0]} points")
         r = self.r.to(device=queries.device, dtype=queries.dtype)
 
         # Golden ratio
@@ -1144,6 +1175,7 @@ class IcosahedronSDF(SDFBase):
         self.r = torch.nn.Parameter(torch.as_tensor(r, dtype=torch.float32))
 
     def _compute(self, queries: torch.Tensor) -> torch.Tensor:
+        logger.debug(f"{type(self).__name__}._compute - {queries.shape[0]} points")
         r = self.r.to(device=queries.device, dtype=queries.dtype)
         r_scaled = r * torch.tensor(0.8506507174597755)
 

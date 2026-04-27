@@ -1,6 +1,8 @@
 import torch
 from math import pi, cos, sin
 import pytest
+import trimesh
+from pathlib import Path
 
 from DeepSDFStruct.sdf_primitives import (
     SphereSDF,
@@ -49,6 +51,7 @@ from DeepSDFStruct.SDF import (
     UnionSDF,
     TransformedSDF,
 )
+from DeepSDFStruct.mesh import create_3D_mesh, export_surface_mesh
 
 # ==================== 2D Primitive Tests ====================
 
@@ -234,7 +237,12 @@ def test_mirror():
 def test_circular_array():
     """Test CircularArraySDF radial replication."""
     sphere = SphereSDF([1.0, 0, 0], 0.2)
-    arrayed = CircularArraySDF(sphere, count=4, radius=1.0)
+    arrayed = CircularArraySDF(
+        sphere,
+        count=4,
+        axis=torch.tensor([0, 0, 1], dtype=torch.float32),
+        base_point=torch.tensor([0, 0, 0], dtype=torch.float32),
+    )
 
     # Point on surface of one of the arrayed spheres (at angle 0)
     # The sphere center is at (1,0,0), radius is 0.2, so surface is at (1.2, 0, 0)
@@ -244,6 +252,40 @@ def test_circular_array():
     # At 90 degrees rotated should also be on surface (at (0, 1, 0))
     val = arrayed(torch.tensor([[0.0, 1.2, 0]])).item()
     assert abs(val) < 0.05, f"Expected SDF near 0 on surface, got {val}"
+
+
+def test_circular_array_y_axis():
+    """Test CircularArraySDF replication around Y axis."""
+    sphere = SphereSDF([1.0, 0, 0], 0.2)
+    arrayed = CircularArraySDF(
+        sphere,
+        count=4,
+        axis=torch.tensor([0, 1, 0], dtype=torch.float32),
+        base_point=torch.tensor([0, 0, 0], dtype=torch.float32),
+    )
+
+    val = arrayed(torch.tensor([[1.2, 0, 0]], dtype=torch.float32)).item()
+    assert abs(val) < 0.05, f"Expected SDF near 0 on +X surface, got {val}"
+
+    val = arrayed(torch.tensor([[0.0, 0, 1.2]], dtype=torch.float32)).item()
+    assert abs(val) < 0.05, f"Expected SDF near 0 on +Z surface, got {val}"
+
+
+def test_circular_array_x_axis():
+    """Test CircularArraySDF replication around X axis."""
+    sphere = SphereSDF([0.0, 1.0, 0], 0.2)
+    arrayed = CircularArraySDF(
+        sphere,
+        count=4,
+        axis=torch.tensor([1, 0, 0], dtype=torch.float32),
+        base_point=torch.tensor([0, 0, 0], dtype=torch.float32),
+    )
+
+    val = arrayed(torch.tensor([[0.0, 1.2, 0]], dtype=torch.float32)).item()
+    assert abs(val) < 0.05, f"Expected SDF near 0 on +Y surface, got {val}"
+
+    val = arrayed(torch.tensor([[0.0, 0, 1.2]], dtype=torch.float32)).item()
+    assert abs(val) < 0.05, f"Expected SDF near 0 on +Z surface, got {val}"
 
 
 def test_revolve():
@@ -258,6 +300,62 @@ def test_revolve():
     # Point on the tube at angle 0: (1.2, 0, 0)
     val = revolved(torch.tensor([[1.2, 0, 0]])).item()
     assert abs(val) < 0.05, f"Expected SDF near 0 on surface, got {val}"
+
+
+def test_circular_array_base_point_offset():
+    """Test CircularArraySDF rotation about an offset axis line."""
+    sphere = SphereSDF([2.0, 0.0, 0.0], 0.2)
+    arrayed = CircularArraySDF(
+        sphere,
+        count=4,
+        axis=torch.tensor([0, 0, 1], dtype=torch.float32),
+        base_point=torch.tensor([1.0, 0.0, 0.0], dtype=torch.float32),
+    )
+
+    val = arrayed(torch.tensor([[2.2, 0.0, 0.0]], dtype=torch.float32)).item()
+    assert abs(val) < 0.05, f"Expected SDF near 0 near +X copy, got {val}"
+
+    val = arrayed(torch.tensor([[1.0, 1.2, 0.0]], dtype=torch.float32)).item()
+    assert abs(val) < 0.05, f"Expected SDF near 0 near +Y copy, got {val}"
+
+
+def test_circular_array_matches_stl_vertices():
+    """Circular array should match the reference STL on its surface vertices."""
+    mesh = trimesh.load("tests/data/circular_balls_test_case.stl", force="mesh")
+    vertices = torch.tensor(mesh.vertices, dtype=torch.float32)
+    stl_bounds = torch.tensor(mesh.bounds, dtype=torch.float32)
+
+    sphere = SphereSDF(center=[0.0, -1.0, 0.0], radius=0.25)
+    arrayed = CircularArraySDF(
+        sphere,
+        count=5,
+        axis=torch.tensor([0.0, 0.0, 1.0], dtype=torch.float32),
+        base_point=torch.tensor([0.0, 0.0, 0.0], dtype=torch.float32),
+        start_angle_deg=0.0,
+        end_angle_deg=360.0,
+    )
+
+    sdf_vals = arrayed(vertices).reshape(-1).detach()
+    max_abs = torch.max(torch.abs(sdf_vals)).item()
+    assert (
+        max_abs < 1e-5
+    ), f"Expected STL vertices to lie on surface, max |SDF|={max_abs}"
+
+    # Export generated mesh and compare its bounds to the reference STL.
+    surf_mesh, _ = create_3D_mesh(arrayed, N_base=64, mesh_type="surface")
+    export_path = Path("tests/tmp_outputs/circular_balls_from_sdf.vtk")
+    export_surface_mesh(export_path, surf_mesh)
+
+    generated_vertices = surf_mesh.vertices.detach().cpu()
+    generated_bounds = torch.stack(
+        [generated_vertices.min(dim=0).values, generated_vertices.max(dim=0).values],
+        dim=0,
+    )
+    bbox_max_err = torch.max(torch.abs(generated_bounds - stl_bounds)).item()
+    assert bbox_max_err < 1e-2, (
+        "Expected generated mesh bounds to roughly match STL bounds, "
+        f"max |delta|={bbox_max_err}"
+    )
 
 
 # ==================== Boolean Operation Tests ====================
@@ -390,7 +488,12 @@ def test_all_primitives_callable():
     operations = [
         RepeatSDF(SphereSDF([0, 0, 0], 0.3), [1, 1, 1]),
         MirrorSDF(SphereSDF([0.5, 0, 0], 0.3), [0, 0, 0], [1, 0, 0]),
-        CircularArraySDF(SphereSDF([1, 0, 0], 0.2), 4, 1.0),
+        CircularArraySDF(
+            SphereSDF([1, 0, 0], 0.2),
+            count=4,
+            axis=torch.tensor([0, 0, 1], dtype=torch.float32),
+            base_point=torch.tensor([0, 0, 0], dtype=torch.float32),
+        ),
         RevolveSDF(CircleSDF([1, 0], 0.2)),
     ]
 
