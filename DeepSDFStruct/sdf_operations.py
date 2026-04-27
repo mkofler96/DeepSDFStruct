@@ -302,15 +302,24 @@ class CircularArraySDF(SDFBase):
             self.count, device=queries.device, dtype=queries.dtype
         )
 
-        # Pull query points back through inverse rotations and evaluate all copies.
+        # Pull query points back through inverse rotations and evaluate each copy
+        # without changing the number of points passed to the child SDF.
         centered = queries - base
-        rotated = self._rotate_about_axis(centered, axis_unit, -angles)
-        eval_points = (rotated + base).reshape(-1, 3)
+        dmin = None
+        for angle in angles:
+            rotated = self._rotate_about_axis(centered, axis_unit, (-angle).reshape(1))[
+                0
+            ]
+            eval_points = rotated + base
+            d = self.sdf(eval_points)
+            dmin = d if dmin is None else torch.minimum(dmin, d)
 
-        d = self.sdf(eval_points).reshape(self.count, queries.shape[0], 1)
-        return torch.min(d, dim=0).values
+        return dmin
 
     def _get_domain_bounds(self) -> torch.Tensor:
+        if self.count <= 0:
+            raise ValueError("count must be a positive integer")
+
         b = self.sdf._get_domain_bounds()
         minb = torch.minimum(b[0], b[1])
         maxb = torch.maximum(b[0], b[1])
@@ -324,11 +333,24 @@ class CircularArraySDF(SDFBase):
             ],
             dim=0,
         )
-        base = self.base_point.detach().to(device=minb.device, dtype=minb.dtype)
-        rho = torch.max(torch.linalg.norm(corners - base, dim=1))
 
-        lower = base - rho
-        upper = base + rho
+        axis = self.axis.detach().to(device=minb.device, dtype=minb.dtype)
+        axis_unit = self._normalize_axis(axis)
+        base = self.base_point.detach().to(device=minb.device, dtype=minb.dtype)
+        start = self.start_angle.detach().to(device=minb.device, dtype=minb.dtype)
+        end = self.end_angle.detach().to(device=minb.device, dtype=minb.dtype)
+
+        step = (end - start) / self.count
+        angles = start + step * torch.arange(
+            self.count, device=minb.device, dtype=minb.dtype
+        )
+
+        centered = corners - base
+        rotated = self._rotate_about_axis(centered, axis_unit, angles)
+        rotated_world = rotated + base.view(1, 1, 3)
+
+        lower = torch.min(rotated_world.reshape(-1, 3), dim=0).values
+        upper = torch.max(rotated_world.reshape(-1, 3), dim=0).values
         return torch.stack([lower, upper], dim=0)
 
 
