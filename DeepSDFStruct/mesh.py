@@ -611,17 +611,30 @@ def prune_collinear(points, tol=1e-9):
     return np.array(pruned)
 
 
-def process_N_base_input(N, tiling, dim=3):
+def process_N_base_input(N, tiling, bounds=None, dim=3):
     if isinstance(N, list):
         if len(N) != dim:
             raise ValueError("Number of grid points must be a list of 3 integers")
         N = _torch.tensor(N)
+        N_mod = N * tiling + 1
     elif isinstance(N, int):
         N = _torch.tensor([N] * dim)
+        if bounds is not None:
+            bounds_device = bounds.device if hasattr(bounds, "device") else "cpu"
+            if bounds_device != "cpu":
+                N = N.to(bounds_device)
+                tiling = tiling.to(bounds_device)
+            extents = bounds[1] - bounds[0]
+            max_extent = extents.max()
+            if max_extent == 0:
+                raise ValueError("Bounds must have non-zero extent")
+            ratios = extents / max_extent
+            N_adaptive = _torch.ceil(N.float() * ratios * tiling.float()).int() + 1
+            N_mod = _torch.clamp(N_adaptive, min=4)
+        else:
+            N_mod = N * tiling + 1
     else:
         raise ValueError("Number of grid points must be a list or an integer")
-    # add 1 on each side to slightly include the border
-    N_mod = N * tiling + 1
     return N_mod
 
 
@@ -678,9 +691,17 @@ def create_3D_mesh(
         The signed distance function to mesh. Can be any SDFBase subclass
         including primitives, lattice structures, or learned representations.
     N_base : int or list of int
-        Base resolution per unit cell. If an int, uses the same resolution
-        in all dimensions. If a list, specifies resolution [nx, ny, nz].
-        For lattice structures, the total resolution is N_base * tiling.
+        Base resolution. Behavior depends on input type:
+
+        - If **int**: Base resolution for the **largest dimension**. Other dimensions
+          are adaptively scaled based on bounding box proportions to maintain
+          consistent spatial resolution. Minimum 4 points per dimension.
+          Example: For bounds 10x1x1 with N_base=64, resolution ~{64, 7, 7}.
+
+        - If **list [nx, ny, nz]**: Explicit resolution per dimension. No adaptive
+          scaling is applied.
+
+        For lattice structures, the final resolution is N × tiling + 1.
     mesh_type : {'surface', 'volume'}
         Type of mesh to generate:
         - 'surface': Triangle surface mesh (torchSurfMesh)
@@ -751,7 +772,7 @@ def create_3D_mesh(
     extended_bounds[0] -= off
     extended_bounds[1] += off
 
-    N = process_N_base_input(N_base, tiling)
+    N = process_N_base_input(N_base, tiling, bounds=extended_bounds)
 
     constructor, samples, cube_idx = _prepare_flexicubes_querypoints(
         N, device=device, bounds=extended_bounds
