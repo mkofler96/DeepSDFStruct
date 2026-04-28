@@ -612,7 +612,8 @@ class DifferenceSDF(SDFBase):
         for obj in self.subtract_objs[1:]:
             d_sub = torch.minimum(d_sub, obj._compute(queries))
 
-        return torch.maximum(d_base, -d_sub)
+        # Subtract with bias so subtraction wins on ties (prevents slivers)
+        return torch.maximum(d_base, -d_sub - 1e-6)
 
     def _get_domain_bounds(self):
         # Difference cannot expand beyond base object
@@ -697,7 +698,8 @@ class SmoothDifferenceSDF(SDFBase):
                 d_sub = d2 + (d_sub - d2) * h - k_val * h * (1 - h)
 
         if k_val == 0:
-            return torch.maximum(d_base, -d_sub).reshape(-1, 1)
+            # Subtract with bias so subtraction wins on ties (prevents slivers)
+            return torch.maximum(d_base, -d_sub - 1e-6).reshape(-1, 1)
 
         # Smooth difference
         h = torch.clamp(0.5 - 0.5 * (d_base + d_sub) / k_val, 0, 1)

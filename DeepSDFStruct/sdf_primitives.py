@@ -377,9 +377,29 @@ class TorusSDF(SDFBase):
         return out.reshape(-1, 1)
 
     def _get_domain_bounds(self) -> torch.Tensor:
-        # conservative AABB
+        # tight AABB accounting for torus orientation
         center = self.center
-        extent = (self.R + self.r).reshape(())
+        R = self.R
+        r = self.r
+
+        # normalize axis
+        axis = self.axis
+        axis_unit = axis / torch.linalg.norm(axis)
+
+        # extent along axis direction is only the tube radius
+        extent_along_axis = r
+
+        # extent perpendicular to axis is major + minor radius
+        extent_perp = R + r
+
+        # For each coordinate axis i, the extent is:
+        # sqrt(extent_perp^2 * (1 - axis[i]^2) + extent_along^2 * axis[i]^2)
+        # This accounts for how much the torus extends in each coordinate direction
+        axis_sq = axis_unit**2
+        extent = torch.sqrt(
+            extent_perp**2 * (1 - axis_sq) + extent_along_axis**2 * axis_sq
+        )
+
         lower = center - extent
         upper = center + extent
         return torch.stack([lower, upper], dim=0)
