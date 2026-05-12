@@ -13,9 +13,40 @@ from DeepSDFStruct.SDF import SDFBase
 
 
 class ElongateSDF(SDFBase):
-    """Elongate an SDF by adding material along axes."""
+    """Elongate an SDF by adding material along the coordinate axes.
+
+    Extends the geometry by adding material in the positive and negative
+    directions along each axis. Useful for creating stretched or extended
+    versions of existing shapes.
+
+    Parameters
+    ----------
+    sdf : SDFBase
+        The base SDF to elongate.
+    size : array-like of shape (3,) or float
+        Elongation amount along each axis (x, y, z). If a single float,
+        applies uniform elongation in all directions.
+
+    Examples
+    --------
+    >>> # Elongate a sphere by 0.5 in all directions
+    >>> sphere = SphereSDF(center=[0, 0, 0], radius=0.5)
+    >>> ElongateSDF(sphere, size=0.5)
+    >>>
+    >>> # Elongate more in x-direction than y and z
+    >>> ElongateSDF(sphere, size=[1.0, 0.2, 0.2])
+    """
 
     def __init__(self, sdf: SDFBase, size):
+        """Initialize ElongateSDF.
+
+        Parameters
+        ----------
+        sdf : SDFBase
+            The base SDF to elongate.
+        size : array-like of shape (3,) or float
+            Elongation amount along each axis.
+        """
         super().__init__()
         self.sdf = sdf
         self.size = torch.nn.Parameter(torch.as_tensor(size, dtype=torch.float32))
@@ -25,9 +56,9 @@ class ElongateSDF(SDFBase):
         q = torch.abs(queries) - size
         w = torch.minimum(
             torch.maximum(torch.maximum(q[:, 0], q[:, 1]), q[:, 2]), torch.tensor(0.0)
-        )
-        sdf_q = self.sdf(torch.clamp(q, min=0.0))
-        return torch.maximum(sdf_q, w).reshape(-1, 1)
+        ).unsqueeze(1)
+        sdf_q = self.sdf._compute(torch.clamp(q, min=0.0))
+        return torch.maximum(sdf_q, w)
 
     def _get_domain_bounds(self) -> torch.Tensor:
         b = self.sdf._get_domain_bounds()
@@ -35,9 +66,39 @@ class ElongateSDF(SDFBase):
 
 
 class TwistSDF(SDFBase):
-    """Twist an SDF around Z-axis by angle k*z."""
+    """Twist an SDF around the Z-axis by an angle proportional to height.
+
+    Applies a rotational deformation where the rotation angle increases
+    linearly with the z-coordinate. Creates a spiral or twisted effect.
+
+    Parameters
+    ----------
+    sdf : SDFBase
+        The SDF to twist.
+    k : float
+        Twist rate (radians per unit length). Positive values create
+        counter-clockwise twist when looking down the Z-axis.
+
+    Examples
+    --------
+    >>> # Twist a box by 0.5 radians per unit height
+    >>> box = BoxSDF(center=[0, 0, 0], extents=[1, 1, 2])
+    >>> TwistSDF(box, k=0.5)
+    >>>
+    >>> # Stronger twist (full rotation over height 2π)
+    >>> TwistSDF(box, k=1.0)
+    """
 
     def __init__(self, sdf: SDFBase, k):
+        """Initialize TwistSDF.
+
+        Parameters
+        ----------
+        sdf : SDFBase
+            The SDF to twist.
+        k : float
+            Twist rate in radians per unit length.
+        """
         super().__init__()
         self.sdf = sdf
         self.k = torch.nn.Parameter(torch.as_tensor(k, dtype=torch.float32))
@@ -50,7 +111,7 @@ class TwistSDF(SDFBase):
         x2 = c * x - s * y
         y2 = s * x + c * y
         rotated = torch.stack([x2, y2, z], dim=1)
-        return self.sdf(rotated)
+        return self.sdf._compute(rotated)
 
     def _get_domain_bounds(self) -> torch.Tensor:
         return self.sdf._get_domain_bounds()
@@ -74,7 +135,7 @@ class BendLinearSDF(SDFBase):
         ab = p1 - p0
         t = torch.clamp(torch.sum((queries - p0) * ab, dim=1) / torch.sum(ab**2), 0, 1)
         t = t.reshape(-1, 1)
-        return self.sdf(queries + t * v)
+        return self.sdf._compute(queries + t * v)
 
     def _get_domain_bounds(self) -> torch.Tensor:
         b = self.sdf._get_domain_bounds()
@@ -103,23 +164,54 @@ class BendRadialSDF(SDFBase):
         z = queries[:, 2] - dz * t
 
         p = torch.stack([queries[:, 0], queries[:, 1], z], dim=1)
-        return self.sdf(p)
+        return self.sdf._compute(p)
 
     def _get_domain_bounds(self) -> torch.Tensor:
         return self.sdf._get_domain_bounds()
 
 
 class DilateSDF(SDFBase):
-    """Expand an SDF uniformly by distance r."""
+    """Expand an SDF uniformly by adding material to the surface.
+
+    Increases the size of the geometry by moving the surface outward
+    by a specified distance. Equivalent to making the object larger
+    while maintaining its shape.
+
+    Parameters
+    ----------
+    sdf : SDFBase
+        The SDF to expand.
+    r : float
+        Expansion distance. Positive values add material (make larger),
+        negative values remove material (make smaller).
+
+    Examples
+    --------
+    >>> # Expand a sphere by 0.1 units
+    >>> sphere = SphereSDF(center=[0, 0, 0], radius=0.5)
+    >>> DilateSDF(sphere, r=0.1)  # radius effectively becomes 0.6
+    >>>
+    >>> # Shrink by using negative dilation
+    >>> DilateSDF(sphere, r=-0.1)  # radius effectively becomes 0.4
+    """
 
     def __init__(self, sdf: SDFBase, r):
+        """Initialize DilateSDF.
+
+        Parameters
+        ----------
+        sdf : SDFBase
+            The SDF to expand.
+        r : float
+            Expansion distance (positive=larger, negative=smaller).
+        """
         super().__init__()
         self.sdf = sdf
         self.r = torch.nn.Parameter(torch.as_tensor(r, dtype=torch.float32))
 
     def _compute(self, queries) -> torch.Tensor:
         r = self.r.to(device=queries.device, dtype=queries.dtype)
-        return self.sdf(queries) - r
+        return self.sdf._compute(queries) - r
 
     def _get_domain_bounds(self) -> torch.Tensor:
         b = self.sdf._get_domain_bounds()
@@ -128,25 +220,87 @@ class DilateSDF(SDFBase):
 
 
 class ErodeSDF(SDFBase):
-    """Contract an SDF uniformly by distance r."""
+    """Contract an SDF uniformly by removing material from the surface.
+
+    Decreases the size of the geometry by moving the surface inward
+    by a specified distance. Equivalent to making the object smaller
+    while maintaining its shape.
+
+    Parameters
+    ----------
+    sdf : SDFBase
+        The SDF to contract.
+    r : float
+        Contraction distance. Must be positive. For expansion, use
+        DilateSDF instead.
+
+    Examples
+    --------
+    >>> # Shrink a sphere by 0.1 units
+    >>> sphere = SphereSDF(center=[0, 0, 0], radius=0.5)
+    >>> ErodeSDF(sphere, r=0.1)  # radius effectively becomes 0.4
+    >>>
+    >>> # Create a thin shell by combining with original
+    >>> ErodeSDF(sphere, r=0.05)
+    """
 
     def __init__(self, sdf: SDFBase, r):
+        """Initialize ErodeSDF.
+
+        Parameters
+        ----------
+        sdf : SDFBase
+            The SDF to contract.
+        r : float
+            Contraction distance (must be positive).
+        """
         super().__init__()
         self.sdf = sdf
         self.r = torch.nn.Parameter(torch.as_tensor(r, dtype=torch.float32))
 
     def _compute(self, queries) -> torch.Tensor:
         r = self.r.to(device=queries.device, dtype=queries.dtype)
-        return self.sdf(queries) + r
+        return self.sdf._compute(queries) + r
 
     def _get_domain_bounds(self) -> torch.Tensor:
         return self.sdf._get_domain_bounds()
 
 
 class ShellSDF(SDFBase):
-    """Create a hollow shell of thickness t."""
+    """Create a hollow shell by keeping only a thin layer around the surface.
+
+    Converts a solid object into a hollow shell by taking the absolute
+    value of the SDF and offsetting by half the thickness. The result
+    is a shell centered on the original surface.
+
+    Parameters
+    ----------
+    sdf : SDFBase
+        The SDF to convert to a shell.
+    thickness : float
+        Total thickness of the shell wall. Must be positive.
+
+    Examples
+    --------
+    >>> # Create a hollow sphere with 0.05 wall thickness
+    >>> sphere = SphereSDF(center=[0, 0, 0], radius=0.5)
+    >>> ShellSDF(sphere, thickness=0.05)
+    >>>
+    >>> # Create a thin-walled box
+    >>> box = BoxSDF(center=[0, 0, 0], extents=[1, 1, 1])
+    >>> ShellSDF(box, thickness=0.02)
+    """
 
     def __init__(self, sdf: SDFBase, thickness):
+        """Initialize ShellSDF.
+
+        Parameters
+        ----------
+        sdf : SDFBase
+            The SDF to convert to a shell.
+        thickness : float
+            Total thickness of the shell wall.
+        """
         super().__init__()
         self.sdf = sdf
         self.thickness = torch.nn.Parameter(
@@ -155,7 +309,7 @@ class ShellSDF(SDFBase):
 
     def _compute(self, queries) -> torch.Tensor:
         t = self.thickness.to(device=queries.device, dtype=queries.dtype)
-        return torch.abs(self.sdf(queries)) - t / 2
+        return torch.abs(self.sdf._compute(queries)) - t / 2
 
     def _get_domain_bounds(self) -> torch.Tensor:
         return self.sdf._get_domain_bounds()
@@ -185,7 +339,7 @@ class RepeatSDF(SDFBase):
             # Clamp to finite range
             q = torch.clamp(q, -half, half)
 
-        return self.sdf(q)
+        return self.sdf._compute(q)
 
     def _get_domain_bounds(self) -> torch.Tensor:
         if self.count is None:
@@ -198,9 +352,58 @@ class RepeatSDF(SDFBase):
 
 
 class MirrorSDF(SDFBase):
-    """Reflect an SDF across a plane."""
+    """Reflect an SDF across a plane to create symmetric geometry.
+
+    Creates a mirror copy of an SDF across a specified plane, effectively
+    doubling the geometry. The result is the union of the original and
+    reflected SDF, creating a symmetric object.
+
+    Parameters
+    ----------
+    sdf : SDFBase
+        The SDF to mirror. This will be reflected across the plane.
+    plane_point : array-like of shape (3,)
+        A point that lies on the mirror plane. This point, together with
+        plane_normal, defines the mirror plane.
+    plane_normal : array-like of shape (3,)
+        Normal vector of the mirror plane. The plane is perpendicular to
+        this vector. Will be normalized internally.
+
+    Examples
+    --------
+    >>> # Mirror a sphere across the YZ plane (x=0)
+    >>> sphere = SphereSDF(center=[0.5, 0, 0], radius=0.3)
+    >>> MirrorSDF(sphere, plane_point=[0, 0, 0], plane_normal=[1, 0, 0])
+    >>>
+    >>> # Mirror across the XY plane (z=0)
+    >>> MirrorSDF(sphere, plane_point=[0, 0, 0], plane_normal=[0, 0, 1])
+    >>>
+    >>> # Mirror across a diagonal plane
+    >>> MirrorSDF(sphere, plane_point=[0, 0, 0], plane_normal=[1, 1, 0])
+
+    Notes
+    -----
+    - The result is the union (minimum) of original and mirrored SDF
+    - Use plane_point and plane_normal to define any mirror plane
+    - Common mirror planes:
+      - YZ plane: point=[0,0,0], normal=[1,0,0]
+      - XZ plane: point=[0,0,0], normal=[0,1,0]
+      - XY plane: point=[0,0,0], normal=[0,0,1]
+    - The mirrored geometry is exactly symmetric - no thickness or gap
+    """
 
     def __init__(self, sdf: SDFBase, plane_point, plane_normal):
+        """Initialize MirrorSDF.
+
+        Parameters
+        ----------
+        sdf : SDFBase
+            The SDF to mirror.
+        plane_point : array-like of shape (3,)
+            A point on the mirror plane.
+        plane_normal : array-like of shape (3,)
+            Normal vector of the mirror plane.
+        """
         super().__init__()
         self.sdf = sdf
         self.point = torch.nn.Parameter(
@@ -219,11 +422,11 @@ class MirrorSDF(SDFBase):
         d = torch.sum((queries - pt) * nm, dim=1, keepdim=True)
 
         # Distance from original SDF
-        d_orig = self.sdf(queries)
+        d_orig = self.sdf._compute(queries)
 
         # Distance from reflected SDF
         queries_reflected = queries - 2 * d * nm
-        d_reflected = self.sdf(queries_reflected)
+        d_reflected = self.sdf._compute(queries_reflected)
 
         # Take minimum (union of original and mirror)
         return torch.minimum(d_orig, d_reflected)
@@ -311,7 +514,7 @@ class CircularArraySDF(SDFBase):
                 0
             ]
             eval_points = rotated + base
-            d = self.sdf(eval_points)
+            d = self.sdf._compute(eval_points)
             dmin = d if dmin is None else torch.minimum(dmin, d)
 
         return dmin
@@ -355,7 +558,55 @@ class CircularArraySDF(SDFBase):
 
 
 class RevolveSDF(SDFBase):
-    """Revolve a 2D profile to create 3D surface."""
+    """Revolve a 2D profile around an axis to create a 3D surface of revolution.
+
+    Takes a 2D SDF profile and rotates it around a specified axis to generate
+    a 3D axisymmetric object. The 2D profile is defined in a plane containing
+    the rotation axis.
+
+    Parameters
+    ----------
+    sdf_2d : SDFBase
+        A 2D SDF (geometric_dim=2) representing the profile to revolve.
+        The profile should be in the plane where the first coordinate is
+        the radial distance from the axis, and the second coordinate is
+        the height along the axis.
+    axis : torch.Tensor, default [0, 0, 1]
+        The 3D axis vector to revolve around. Must be one of the principal
+        axes: [1,0,0] (X-axis), [0,1,0] (Y-axis), or [0,0,1] (Z-axis).
+        The 2D profile's first coordinate becomes the radial distance from
+        this axis.
+    offset : float, default 0.0
+        Radial offset from the axis. Positive values move the profile away
+        from the axis, creating a hole in the center. Use this to create
+        hollow objects or to position the profile at a specific radius.
+
+    Raises
+    ------
+    ValueError
+        If sdf_2d is not a 2D SDF, or if axis is not a principal axis.
+
+    Examples
+    --------
+    >>> # Create a sphere by revolving a circle around Z-axis
+    >>> circle = CircleSDF(center=[0.5, 0], radius=0.5)
+    >>> RevolveSDF(circle, axis=[0, 0, 1])
+    >>>
+    >>> # Create a torus by revolving a circle with offset
+    >>> circle = CircleSDF(center=[1.0, 0], radius=0.2)
+    >>> RevolveSDF(circle, axis=[0, 0, 1])
+    >>>
+    >>> # Revolve around X-axis instead
+    >>> RevolveSDF(circle, axis=[1, 0, 0])
+
+    Notes
+    -----
+    - The 2D profile's first coordinate (x) represents radial distance from axis
+    - The 2D profile's second coordinate (y) represents height along the axis
+    - Only principal axes ([1,0,0], [0,1,0], [0,0,1]) are supported
+    - The profile should be positioned appropriately for the desired shape
+    - Use offset to create holes or position the profile away from the axis
+    """
 
     def __init__(
         self,
@@ -363,6 +614,17 @@ class RevolveSDF(SDFBase):
         axis=torch.tensor([0, 0, 1], dtype=torch.float32),
         offset=0.0,
     ):
+        """Initialize RevolveSDF with a 2D profile.
+
+        Parameters
+        ----------
+        sdf_2d : SDFBase
+            2D SDF profile to revolve.
+        axis : torch.Tensor, default [0, 0, 1]
+            Axis of revolution (must be principal axis).
+        offset : float, default 0.0
+            Radial offset from the axis.
+        """
         super().__init__()
         if sdf_2d.geometric_dim != 2:
             raise ValueError("RevolveSDF requires a 2D SDF")
@@ -397,7 +659,7 @@ class RevolveSDF(SDFBase):
                 f"Invalid axis: {self.axis}. Must be [1,0,0], [0,1,0], or [0,0,1]"
             )
 
-        return self.sdf_2d(pts_2d)
+        return self.sdf_2d._compute(pts_2d)
 
     def _get_domain_bounds(self) -> torch.Tensor:
         b = self.sdf_2d._get_domain_bounds()
@@ -676,7 +938,7 @@ class SweepSDF(SDFBase):
             pts_2d = torch.cat([coord_n, coord_b], dim=1)
 
             # Evaluate profile SDF
-            profile_dist = self.profile_sdf(pts_2d)
+            profile_dist = self.profile_sdf._compute(pts_2d)
 
             chunk_result = profile_dist
 

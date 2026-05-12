@@ -271,6 +271,12 @@ class SDFBase(torch.nn.Module, ABC):
         sdf_values = self._compute(queries)
         if sdf_values is None:
             raise RuntimeError("Invalid SDF output")
+        if sdf_values.shape[0] != queries.shape[0]:
+            raise RuntimeError(
+                f"SDF _compute output shape mismatch: expected ({queries.shape[0]}, 1), "
+                f"got {sdf_values.shape}. This can happen when wrapper SDFs (ElongateSDF, "
+                f"TwistSDF, etc.) don't preserve the number of query points."
+            )
         return sdf_values
 
     def _validate_input(self, queries: torch.Tensor):
@@ -476,9 +482,51 @@ class SDFBase(torch.nn.Module, ABC):
 
 
 class SDF2D(SDFBase):
+    """Convert a 3D SDF to 2D by slicing through specified axes.
+
+    Creates a 2D SDF by taking a cross-section of a 3D SDF along specified
+    axes at a given offset. This is useful for visualizing 3D SDFs or
+    working with 2D profiles.
+
+    Parameters
+    ----------
+    obj : SDFBase
+        The 3D SDF object to convert to 2D.
+    axes : list of int
+        List of two axis indices [axis0, axis1] to keep for the 2D slice.
+        For example, [0, 1] keeps x and y axes (XY plane).
+    offset : float, default 0.0
+        Offset value for the third (unused) axis.
+
+    Examples
+
+    >>> sphere_3d = SphereSDF(center=[0, 0, 0], radius=1.0)
+    >>>
+    >>> # Convert to 2D (XY plane at z=0)
+    >>> sphere_2d = sphere_3d.to2D(axes=[0, 1], offset=0.0)
+    >>> points = torch.tensor([[0.0, 0.0], [0.5, 0.5]])
+    >>> distances = sphere_2d(points)
+
+    Notes
+    -----
+    The 2D SDF queries points in the plane defined by the two axes,
+    with the third axis fixed at the offset value.
+    """
+
     obj: SDFBase
 
     def __init__(self, obj: SDFBase, axes: list[int], offset=0.0):
+        """Convert a 3D SDF to 2D.
+
+        Parameters
+        ----------
+        obj : SDFBase
+            The 3D SDF object to convert.
+        axes : list of int
+            Two axis indices to keep for the 2D slice.
+        offset : float, default 0.0
+            Offset for the third axis.
+        """
         super().__init__()
         self.obj = obj
         assert (
@@ -516,7 +564,38 @@ class SummedSDF(SDFBase):
 
 
 class UnionSDF(SDFBase):
+    """Union of multiple SDFs using the minimum operator.
+
+    Combines multiple SDFs by computing the minimum distance at each query
+    point. This creates the union (boolean OR) of all input geometries.
+
+    Parameters
+    ----------
+    *objects : SDFBase
+        Two or more SDF objects to combine. All objects must have the same
+        geometric dimension (2D or 3D).
+
+    Raises
+    ------
+    ValueError
+        If fewer than two objects are provided, or if objects have
+        mismatched geometric dimensions.
+
+    Examples
+    --------
+    >>> sphere1 = SphereSDF([0, 0, 0], radius=1.0)
+    >>> sphere2 = SphereSDF([1.5, 0, 0], radius=1.0)
+    >>> union = UnionSDF(sphere1, sphere2)
+    """
+
     def __init__(self, *objects: SDFBase):
+        """Initialize UnionSDF with two or more SDF objects.
+
+        Parameters
+        ----------
+        *objects : SDFBase
+            Two or more SDF objects to combine.
+        """
         super().__init__()
 
         if len(objects) < 2:
@@ -1013,13 +1092,57 @@ def normalize_mesh_to_unit_cube(mesh: trimesh.Trimesh, shrink_factor: float = 1.
 
 
 class SDFfromLineMesh(SDFBase):
+    """Signed distance function from a line mesh (collection of line segments).
+
+    Creates an SDF by computing the minimum distance from query points to
+    line segments in the mesh. Each line segment is treated as a cylinder
+    with the specified thickness.
+
+    Parameters
+    ----------
+    line_mesh : gustaf.Edges
+        Line mesh containing vertices and edge connectivity.
+    thickness : float
+        Thickness (diameter) of the lines. Points within half this distance
+        are considered inside.
+    smoothness : float, default 0
+        Smoothing parameter for the union operation. Higher values create
+        smoother transitions between line segments. Use 0 for sharp union.
+
+    Examples
+    --------
+    >>> import gustaf
+    >>> import numpy as np
+    >>> from DeepSDFStruct.SDF import SDFfromLineMesh
+    >>>
+    >>> # Create a simple line segment
+    >>> vertices = np.array([[0, 0], [1, 1]])
+    >>> edges = np.array([[0, 1]])
+    >>> line_mesh = gustaf.Edges(vertices, edges)
+    >>>
+    >>> sdf = SDFfromLineMesh(line_mesh, thickness=0.1)
+    >>> import torch
+    >>> points = torch.tensor([[0.0, 0.0], [0.5, 0.5]])
+    >>> distances = sdf(points)
+
+    Notes
+    -----
+    Currently supports only 2D line meshes.
+    """
+
     line_mesh: gustaf.Edges
 
     def __init__(self, line_mesh: gustaf.Edges, thickness, smoothness=0):
-        """
-        takes a line mesh and the thickness of the lines as inputs and
-        generates a SDF from it
-        for now only supports lines in 2D
+        """Initialize SDF from a line mesh.
+
+        Parameters
+        ----------
+        line_mesh : gustaf.Edges
+            Line mesh containing vertices and edge connectivity.
+        thickness : float
+            Thickness (diameter) of the lines.
+        smoothness : float, default 0
+            Smoothing parameter for the union operation.
         """
         super().__init__()
         self.line_mesh = line_mesh
@@ -1059,7 +1182,59 @@ class SDFfromLineMesh(SDFBase):
 
 
 class SDFfromDeepSDF(SDFBase):
+    """Signed distance function from a trained DeepSDF neural network model.
+
+    Wraps a trained DeepSDF model to provide SDF queries. The model uses
+    latent vectors to condition the SDF on specific shapes from a learned
+    distribution.
+
+    Parameters
+    ----------
+    model : DeepSDFModel
+        Trained DeepSDF model with decoder network.
+    max_batch : int, default 8192 (32**3)
+        Maximum number of query points to process in a single batch.
+        Useful for managing GPU memory when querying many points.
+
+    Attributes
+    ----------
+    model : DeepSDFModel
+        The underlying DeepSDF model.
+    latvec : torch.Tensor or None
+        Latent vector(s) for conditioning. Can be set via set_latent_vec().
+    geometric_dim : int
+        Geometric dimension (2 or 3) from the model's decoder.
+
+    Examples
+    --------
+    >>> from DeepSDFStruct.SDF import SDFfromDeepSDF
+    >>> from DeepSDFStruct.deep_sdf.models import DeepSDFModel
+    >>> import torch
+    >>>
+    >>> # Load a trained model
+    >>> model = DeepSDFModel.load_from_checkpoint("path/to/checkpoint")
+    >>> sdf = SDFfromDeepSDF(model)
+    >>>
+    >>> # Query the SDF
+    >>> points = torch.rand(1000, 3)
+    >>> distances = sdf(points)
+
+    Notes
+    -----
+    The latent vector can be updated to query different shapes from the
+    learned distribution using set_latent_vec().
+    """
+
     def __init__(self, model: DeepSDFModel, max_batch=32**3):
+        """Initialize SDF from a trained DeepSDF model.
+
+        Parameters
+        ----------
+        model : DeepSDFModel
+            Trained DeepSDF model.
+        max_batch : int, default 8192
+            Maximum batch size for query processing.
+        """
         super().__init__()
         self.model = model
         self.latvec = None

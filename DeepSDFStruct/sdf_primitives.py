@@ -49,13 +49,11 @@ class SphereSDF(SDFBase):
 
     Examples
     --------
-    >>> import torch
-    >>> from DeepSDFStruct.sdf_primitives import SphereSDF
+    >>> # Sphere centered at origin with radius 0.5
+    >>> SphereSDF(center=[0, 0, 0], radius=0.5)
     >>>
-    >>> sphere = SphereSDF(center=[0, 0, 0], radius=1.0)
-    >>> points = torch.tensor([[0.0, 0.0, 0.0], [1.0, 0.0, 0.0]])
-    >>> distances = sphere(points)
-    >>> print(distances)  # [-1.0, 0.0] (center, surface)
+    >>> # Sphere at different location with larger radius
+    >>> SphereSDF(center=[1, 0, 0], radius=1.0)
     """
 
     def __init__(self, center, radius):
@@ -86,20 +84,36 @@ class SphereSDF(SDFBase):
 
 
 class BoxSDF(SDFBase):
+    """Signed distance function for a 3D axis-aligned box.
+
+    The box is defined by its center point and extents (full widths) along each axis.
+    Both center and extents are trainable torch parameters.
+
+    Parameters
+    ----------
+    center : array-like of shape (3,)
+        Center point of the box in 3D space.
+    extents : array-like of shape (3,)
+        Full widths of the box along x, y, z axes.
+
+    Examples
+    --------
+    >>> # Box centered at origin with dimensions 2x1x1
+    >>> BoxSDF(center=[0, 0, 0], extents=[2.0, 1.0, 1.0])
+    >>>
+    >>> # Elongated box in x-direction
+    >>> BoxSDF(center=[1, 0, 0], extents=[3.0, 0.5, 0.5])
+    """
+
     def __init__(self, center, extents):
-        """3D axis-aligned box SDF.
+        """Initialize BoxSDF with center and extents.
 
-        extents defines full widths in x, y, z.
-        Both center and extents are torch parameters.
-
-                +--------+
-               /|       /|
-              +--------+ |
-              | |      | |
-              | +------|-+
-              |/       |/
-              +--------+
-
+        Parameters
+        ----------
+        center : array-like of shape (3,)
+            Center point of the box in 3D space.
+        extents : array-like of shape (3,)
+            Full widths of the box along x, y, z axes.
         """
         super().__init__(geometric_dim=3)
 
@@ -160,14 +174,14 @@ class CylinderSDF(SDFBase):
 
     Examples
     --------
-    >>> from DeepSDFStruct.sdf_primitives import CylinderSDF
-    >>> import torch
+    >>> # Cylinder along z-axis from -1 to 1 with radius 0.5
+    >>> CylinderSDF(point_a=[0, 0, -1], point_b=[0, 0, 1], radius=0.5)
     >>>
-    >>> # Cylinder along z-axis from -1 to 1
-    >>> cylinder = CylinderSDF(point_a=[0, 0, -1], point_b=[0, 0, 1], radius=0.5)
-    >>> points = torch.tensor([[0.0, 0.0, 0.0], [1.0, 0.0, 0.0]])
-    >>> distances = cylinder(points)
-    >>> print(distances)  # negative inside, positive outside
+    >>> # Cylinder along x-axis
+    >>> CylinderSDF(point_a=[-1, 0, 0], point_b=[1, 0, 0], radius=0.3)
+    >>>
+    >>> # Diagonal cylinder
+    >>> CylinderSDF(point_a=[0, 0, 0], point_b=[1, 1, 1], radius=0.2)
     """
 
     def __init__(self, point_a, point_b, radius):
@@ -237,7 +251,7 @@ class ConeSDF(SDFBase):
 
     Parameters
     ----------
-    point : array-like of shape (3,)
+    apexpoint : array-like of shape (3,)
         Apex position of the cone.
     axis : array-like of shape (3,)
         Direction vector of the cone axis.
@@ -248,7 +262,7 @@ class ConeSDF(SDFBase):
 
     Example
     -------
-    >>> cone = ConeSDF(point=[0,0,0], axis=[0,1,0], radius=1.0, height=2.0)
+    >>> cone = ConeSDF(apexpoint=[0,0,0], axis=[0,1,0], radius=1.0, height=2.0)
     """
 
     def __init__(self, apexpoint, axis, radius, height):
@@ -267,6 +281,8 @@ class ConeSDF(SDFBase):
         logger.debug(f"{type(self).__name__}._compute - {queries.shape[0]} points")
         point = self.point.to(device=queries.device, dtype=queries.dtype)
         axis = self.axis.to(device=queries.device, dtype=queries.dtype)
+        radius = self.radius.to(device=queries.device, dtype=queries.dtype)
+        height = self.height.to(device=queries.device, dtype=queries.dtype)
 
         # Normalize axis
         axis_norm = torch.linalg.norm(axis)
@@ -286,14 +302,14 @@ class ConeSDF(SDFBase):
 
         # Linear radius scaling along height
         # radius(y) = (y/h) * r
-        k = self.radius / self.height
+        k = radius / height
         r_at_y = k * y
 
         # Distance to infinite cone surface
         d_side = x - r_at_y
 
         # Distance to base plane
-        d_base = y - self.height
+        d_base = y - height
 
         # Distance to apex cap (prevent below apex)
         d_apex = -y
@@ -319,22 +335,56 @@ class ConeSDF(SDFBase):
 
 
 class TorusSDF(SDFBase):
-    """
-    Torus SDF with trainable parameters.
+    """Signed distance function for a torus (doughnut shape).
+
+    Creates a torus defined by its center, orientation axis, and two radii.
+    The torus is rotationally symmetric around the axis direction.
 
     Parameters
     ----------
-    center : array-like (3,)
-        Center of the torus.
-    axis : array-like (3,)
-        Axis normal to the torus ring plane.
+    center : array-like of shape (3,)
+        Center point of the torus in 3D space.
+    axis : array-like of shape (3,)
+        Axis vector normal to the torus ring plane. The torus is
+        rotationally symmetric around this axis. Will be normalized.
     major_radius : float
-        Distance from center to tube center (R).
+        Distance from the center to the tube center (R). This is the
+        radius of the ring itself. Must be positive.
     minor_radius : float
-        Tube radius (r).
+        Radius of the tube cross-section (r). This is the thickness
+        of the ring. Must be positive and typically less than major_radius.
+
+    Examples
+    --------
+    >>> # Torus centered at origin, lying in XY plane (axis along Z)
+    >>> TorusSDF(center=[0, 0, 0], axis=[0, 0, 1], major_radius=1.0, minor_radius=0.2)
+    >>>
+    >>> # Tilted torus with axis at an angle
+    >>> TorusSDF(center=[0, 0, 0], axis=[1, 0, 1], major_radius=1.0, minor_radius=0.1)
+
+    Notes
+    -----
+    - The torus lies in a plane perpendicular to the axis vector
+    - major_radius > minor_radius creates a ring torus (standard doughnut)
+    - major_radius = minor_radius creates a horn torus (hole closes)
+    - major_radius < minor_radius creates a self-intersecting spindle torus
+    - All parameters are trainable for optimization
     """
 
     def __init__(self, center, axis, major_radius, minor_radius):
+        """Initialize TorusSDF.
+
+        Parameters
+        ----------
+        center : array-like of shape (3,)
+            Center of the torus.
+        axis : array-like of shape (3,)
+            Axis normal to the torus ring plane.
+        major_radius : float
+            Distance from center to tube center (R).
+        minor_radius : float
+            Tube radius (r).
+        """
         super().__init__()
         # store as trainable parameters
         c = torch.as_tensor(center, dtype=torch.float32)
@@ -406,7 +456,41 @@ class TorusSDF(SDFBase):
 
 
 class PlaneSDF(SDFBase):
+    """Signed distance function for a half-space defined by a point and normal vector.
+
+    Computes the signed distance from query points to a plane. The distance is
+    negative on the side the normal points toward, zero on the plane, and
+    positive on the opposite side.
+
+    Parameters
+    ----------
+    point : array-like of shape (3,)
+        A point on the plane.
+    normal : array-like of shape (3,)
+        Normal vector defining the plane orientation (will be normalized).
+
+    Examples
+    --------
+    >>> from DeepSDFStruct.sdf_primitives import PlaneSDF
+    >>> import torch
+    >>>
+    >>> # Plane at z=0 with normal pointing up
+    >>> plane = PlaneSDF(point=[0, 0, 0], normal=[0, 0, 1])
+    >>> points = torch.tensor([[0.0, 0.0, 0.0], [0.0, 0.0, 1.0], [0.0, 0.0, -1.0]])
+    >>> distances = plane(points)
+    >>> print(distances)  # [0.0, 1.0, -1.0]
+    """
+
     def __init__(self, point, normal):
+        """Initialize PlaneSDF with a point and normal vector.
+
+        Parameters
+        ----------
+        point : array-like of shape (3,)
+            A point on the plane.
+        normal : array-like of shape (3,)
+            Normal vector defining the plane orientation.
+        """
         super().__init__()
         self.point = torch.tensor(point, dtype=torch.float32)
         self.normal = torch.tensor(normal, dtype=torch.float32)
@@ -421,7 +505,38 @@ class PlaneSDF(SDFBase):
 
 
 class CornerSpheresSDF(SDFBase):
+    """Signed distance function for a cube with spherical cutouts at the corners.
+
+    Creates a cube with rounded corners by subtracting spheres from each of
+    the 8 corners. The result is a cube-like shape with smooth corner transitions.
+
+    Parameters
+    ----------
+    radius : float
+        Radius of the spherical cutouts at each corner.
+    limit : float, default 1.0
+        Half-size of the cube (distance from center to each face).
+
+    Examples
+    --------
+    >>> from DeepSDFStruct.sdf_primitives import CornerSpheresSDF
+    >>> import torch
+    >>>
+    >>> corner_spheres = CornerSpheresSDF(radius=0.3, limit=1.0)
+    >>> points = torch.tensor([[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]])
+    >>> distances = corner_spheres(points)
+    """
+
     def __init__(self, radius, limit=1.0):
+        """Initialize CornerSpheresSDF with corner sphere radius and cube size.
+
+        Parameters
+        ----------
+        radius : float
+            Radius of the spherical cutouts at each corner.
+        limit : float, default 1.0
+            Half-size of the cube.
+        """
         super().__init__()
         self.r = radius
         self.limit = limit
@@ -450,7 +565,35 @@ class CornerSpheresSDF(SDFBase):
 
 
 class CrossMsSDF(SDFBase):
+    """Signed distance function for a cross-shaped structure.
+
+    Creates a 3D cross by computing the intersection of three cylinders
+    aligned along the x, y, and z axes. The result is a symmetric
+    cross-like structure centered at the origin.
+
+    Parameters
+    ----------
+    radius : float
+        Radius of each cylinder forming the cross.
+
+    Examples
+    --------
+    >>> from DeepSDFStruct.sdf_primitives import CrossMsSDF
+    >>> import torch
+    >>>
+    >>> cross = CrossMsSDF(radius=0.2)
+    >>> points = torch.tensor([[0.0, 0.0, 0.0], [1.0, 0.0, 0.0]])
+    >>> distances = cross(points)
+    """
+
     def __init__(self, radius):
+        """Initialize CrossMsSDF with cylinder radius.
+
+        Parameters
+        ----------
+        radius : float
+            Radius of each cylinder.
+        """
         super().__init__()
         self.r = radius
 
@@ -793,8 +936,8 @@ class EquilateralTriangleSDF(SDFBase):
 
     def _compute(self, queries: torch.Tensor) -> torch.Tensor:
         logger.debug(f"{type(self).__name__}._compute - {queries.shape[0]} points")
-        r_val = self.size.item() if isinstance(self.size, torch.Tensor) else self.size
-        r = torch.tensor(r_val, device=queries.device, dtype=queries.dtype)
+        size = self.size.to(device=queries.device, dtype=queries.dtype)
+        r = size
         k = torch.tensor(np.sqrt(3.0), device=queries.device, dtype=queries.dtype)
         p = queries.clone()
 
@@ -829,7 +972,7 @@ class HexagonSDF(SDFBase):
 
     def _compute(self, queries: torch.Tensor) -> torch.Tensor:
         logger.debug(f"{type(self).__name__}._compute - {queries.shape[0]} points")
-        r = self.size
+        r = self.size.to(device=queries.device, dtype=queries.dtype)
         k = torch.tensor(
             [-np.sqrt(3.0) / 2.0, 0.5, np.tan(np.pi / 6.0)],
             device=queries.device,
@@ -1019,9 +1162,52 @@ class RoundedCylinderSDF(SDFBase):
 
 
 class CappedConeSDF(SDFBase):
-    """SDF for a finite cone with exact end caps."""
+    """Signed distance function for a finite cone with exact end caps.
+
+    Creates a cone frustum (or full cone if rb=0) defined by two endpoints
+    and radii at each end. The cone has flat end caps at both ends.
+
+    Parameters
+    ----------
+    point_a : array-like of shape (3,)
+        First endpoint of the cone axis (base center).
+    point_b : array-like of shape (3,)
+        Second endpoint of the cone axis (top center).
+    ra : float
+        Radius at point_a (base radius). Must be non-negative.
+    rb : float
+        Radius at point_b (top radius). Use 0 for a sharp cone tip.
+
+    Examples
+    --------
+    >>> # Cone from (0,0,0) to (0,0,2) with base radius 0.5 and sharp tip
+    >>> CappedConeSDF(point_a=[0, 0, 0], point_b=[0, 0, 2], ra=0.5, rb=0.0)
+    >>>
+    >>> # Cone frustum with radii at both ends
+    >>> CappedConeSDF(point_a=[0, 0, 0], point_b=[0, 0, 1], ra=0.3, rb=0.1)
+
+    Notes
+    -----
+    - The cone axis is the line segment from point_a to point_b
+    - ra and rb control the radii at each end independently
+    - Set rb=0 for a cone with a sharp tip
+    - Set ra=rb for a cylinder (use CylinderSDF instead for better accuracy)
+    """
 
     def __init__(self, point_a, point_b, ra, rb):
+        """Initialize CappedConeSDF.
+
+        Parameters
+        ----------
+        point_a : array-like of shape (3,)
+            First endpoint of the cone axis.
+        point_b : array-like of shape (3,)
+            Second endpoint of the cone axis.
+        ra : float
+            Radius at point_a.
+        rb : float
+            Radius at point_b.
+        """
         super().__init__()
         self.point_a = torch.nn.Parameter(torch.as_tensor(point_a, dtype=torch.float32))
         self.point_b = torch.nn.Parameter(torch.as_tensor(point_b, dtype=torch.float32))
