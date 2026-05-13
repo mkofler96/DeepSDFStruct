@@ -18,6 +18,7 @@ DeepSDFStruct.torch\_spline
 
    .. autosummary::
    
+      CubicBezier
       TorchScaling
       TorchSpline
    

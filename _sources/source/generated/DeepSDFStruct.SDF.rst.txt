@@ -25,12 +25,16 @@ DeepSDFStruct.SDF
       CapType
       CappedBorderSDF
       DifferenceSDF
+      ExtrudeSDF
       NegatedCallable
       SDF2D
       SDFBase
       SDFfromDeepSDF
       SDFfromLineMesh
       SDFfromMesh
+      SmoothDifferenceSDF
+      SmoothIntersectionSDF
+      SmoothUnionSDF
       SummedSDF
       TransformedSDF
       UnionSDF

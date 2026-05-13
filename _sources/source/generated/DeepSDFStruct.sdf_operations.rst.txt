@@ -1,0 +1,29 @@
+DeepSDFStruct.sdf\_operations
+=============================
+
+.. automodule:: DeepSDFStruct.sdf_operations
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      cubic_bezier_distance
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      BendLinearSDF
+      BendRadialSDF
+      CircularArraySDF
+      DilateSDF
+      ElongateSDF
+      ErodeSDF
+      MirrorSDF
+      RepeatSDF
+      RevolveSDF
+      ShellSDF
+      SweepSDF
+      TwistSDF
+   

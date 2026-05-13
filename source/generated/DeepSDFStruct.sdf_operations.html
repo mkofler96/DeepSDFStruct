@@ -1,0 +1,874 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>DeepSDFStruct.sdf_operations &#8212; DeepSDFStruct 1.7.2.dev7+g14e080e7a.d20260513 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../_static/documentation_options.js?v=897b9fd5"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'source/generated/DeepSDFStruct.sdf_operations';</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="DeepSDFStruct.sdf_primitives" href="DeepSDFStruct.sdf_primitives.html" />
+    <link rel="prev" title="DeepSDFStruct.sampling" href="DeepSDFStruct.sampling.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">DeepSDFStruct 1.7.2.dev7+g14e080e7a.d20260513 documentation</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../api_reference.html">
+    <no title>
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../api_reference.html">
+    <no title>
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="DeepSDFStruct.html">DeepSDFStruct</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.SDF.html">DeepSDFStruct.SDF</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="DeepSDFStruct.deep_sdf.html">DeepSDFStruct.deep_sdf</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.deep_sdf.data.html">DeepSDFStruct.deep_sdf.data</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="DeepSDFStruct.deep_sdf.metrics.html">DeepSDFStruct.deep_sdf.metrics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="DeepSDFStruct.deep_sdf.metrics.mesh_to_analytical.html">DeepSDFStruct.deep_sdf.metrics.mesh_to_analytical</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.deep_sdf.models.html">DeepSDFStruct.deep_sdf.models</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="DeepSDFStruct.deep_sdf.networks.html">DeepSDFStruct.deep_sdf.networks</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="DeepSDFStruct.deep_sdf.networks.analytic_round_cross.html">DeepSDFStruct.deep_sdf.networks.analytic_round_cross</a></li>
+<li class="toctree-l4"><a class="reference internal" href="DeepSDFStruct.deep_sdf.networks.deep_sdf_decoder.html">DeepSDFStruct.deep_sdf.networks.deep_sdf_decoder</a></li>
+<li class="toctree-l4"><a class="reference internal" href="DeepSDFStruct.deep_sdf.networks.hierarchical_deep_sdf_decoder.html">DeepSDFStruct.deep_sdf.networks.hierarchical_deep_sdf_decoder</a></li>
+<li class="toctree-l4"><a class="reference internal" href="DeepSDFStruct.deep_sdf.networks.hierarchical_positional_sdf_decoder.html">DeepSDFStruct.deep_sdf.networks.hierarchical_positional_sdf_decoder</a></li>
+<li class="toctree-l4"><a class="reference internal" href="DeepSDFStruct.deep_sdf.networks.resnet_positional_sdf_decoder.html">DeepSDFStruct.deep_sdf.networks.resnet_positional_sdf_decoder</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.deep_sdf.nn_utils.html">DeepSDFStruct.deep_sdf.nn_utils</a></li>
+<li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.deep_sdf.plotting.html">DeepSDFStruct.deep_sdf.plotting</a></li>
+<li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.deep_sdf.reconstruction.html">DeepSDFStruct.deep_sdf.reconstruction</a></li>
+<li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.deep_sdf.training.html">DeepSDFStruct.deep_sdf.training</a></li>
+<li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.deep_sdf.workspace.html">DeepSDFStruct.deep_sdf.workspace</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.design_of_experiments.html">DeepSDFStruct.design_of_experiments</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="DeepSDFStruct.flexicubes.html">DeepSDFStruct.flexicubes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.flexicubes.flexicubes.html">DeepSDFStruct.flexicubes.flexicubes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.flexicubes.tables.html">DeepSDFStruct.flexicubes.tables</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="DeepSDFStruct.flexisquares.html">DeepSDFStruct.flexisquares</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.flexisquares.flexisquares.html">DeepSDFStruct.flexisquares.flexisquares</a></li>
+<li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.flexisquares.tables.html">DeepSDFStruct.flexisquares.tables</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.lattice_structure.html">DeepSDFStruct.lattice_structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.local_shapes.html">DeepSDFStruct.local_shapes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.mesh.html">DeepSDFStruct.mesh</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.optimization.html">DeepSDFStruct.optimization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.parametrization.html">DeepSDFStruct.parametrization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.pretrained_models.html">DeepSDFStruct.pretrained_models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.sampling.html">DeepSDFStruct.sampling</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">DeepSDFStruct.sdf_operations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.sdf_primitives.html">DeepSDFStruct.sdf_primitives</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="DeepSDFStruct.splinepy_unitcells.html">DeepSDFStruct.splinepy_unitcells</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.splinepy_unitcells.chi_3D.html">DeepSDFStruct.splinepy_unitcells.chi_3D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.splinepy_unitcells.cross_lattice.html">DeepSDFStruct.splinepy_unitcells.cross_lattice</a></li>
+<li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.splinepy_unitcells.double_lattice_extruded.html">DeepSDFStruct.splinepy_unitcells.double_lattice_extruded</a></li>
+<li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.splinepy_unitcells.snappy_3d.html">DeepSDFStruct.splinepy_unitcells.snappy_3d</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.torch_spline.html">DeepSDFStruct.torch_spline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.utils.html">DeepSDFStruct.utils</a></li>
+</ul>
+</details></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../api_reference.html" class="nav-link">&lt;no title&gt;</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="DeepSDFStruct.html" class="nav-link">DeepSDFStruct</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">DeepSDFStruct.sdf_operations</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="module-DeepSDFStruct.sdf_operations">
+<span id="deepsdfstruct-sdf-operations"></span><h1>DeepSDFStruct.sdf_operations<a class="headerlink" href="#module-DeepSDFStruct.sdf_operations" title="Link to this heading">#</a></h1>
+<section id="sdf-operations-and-transformations">
+<h2>SDF Operations and Transformations<a class="headerlink" href="#sdf-operations-and-transformations" title="Link to this heading">#</a></h2>
+<p>This module provides various operations that can be applied to SDFs,
+including space warping transformations like elongation, twisting,
+bending, dilation/erosion, and shell creation.</p>
+<p class="rubric">Functions</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.sdf_operations.cubic_bezier_distance" title="DeepSDFStruct.sdf_operations.cubic_bezier_distance"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cubic_bezier_distance</span></code></a>(p, control_points[, ...])</p></td>
+<td><p>Compute distance from point p to cubic bezier curve using sampling with refinement.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p class="rubric">Classes</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.sdf_operations.BendLinearSDF" title="DeepSDFStruct.sdf_operations.BendLinearSDF"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BendLinearSDF</span></code></a>(sdf, p0, p1, v)</p></td>
+<td><p>Bend SDF linearly between two control points.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.sdf_operations.BendRadialSDF" title="DeepSDFStruct.sdf_operations.BendRadialSDF"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BendRadialSDF</span></code></a>(sdf, r0, r1, dz)</p></td>
+<td><p>Bend SDF radially.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.sdf_operations.CircularArraySDF" title="DeepSDFStruct.sdf_operations.CircularArraySDF"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CircularArraySDF</span></code></a>(sdf, count[, axis, ...])</p></td>
+<td><p>Create count copies of an SDF rotated around an arbitrary axis line.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.sdf_operations.DilateSDF" title="DeepSDFStruct.sdf_operations.DilateSDF"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DilateSDF</span></code></a>(sdf, r)</p></td>
+<td><p>Expand an SDF uniformly by adding material to the surface.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.sdf_operations.ElongateSDF" title="DeepSDFStruct.sdf_operations.ElongateSDF"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ElongateSDF</span></code></a>(sdf, size)</p></td>
+<td><p>Elongate an SDF by adding material along the coordinate axes.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.sdf_operations.ErodeSDF" title="DeepSDFStruct.sdf_operations.ErodeSDF"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ErodeSDF</span></code></a>(sdf, r)</p></td>
+<td><p>Contract an SDF uniformly by removing material from the surface.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.sdf_operations.MirrorSDF" title="DeepSDFStruct.sdf_operations.MirrorSDF"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MirrorSDF</span></code></a>(sdf, plane_point, plane_normal)</p></td>
+<td><p>Reflect an SDF across a plane to create symmetric geometry.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.sdf_operations.RepeatSDF" title="DeepSDFStruct.sdf_operations.RepeatSDF"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RepeatSDF</span></code></a>(sdf, spacing[, count])</p></td>
+<td><p>Infinite or finite grid repetition of an SDF.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.sdf_operations.RevolveSDF" title="DeepSDFStruct.sdf_operations.RevolveSDF"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RevolveSDF</span></code></a>(sdf_2d[, axis, offset])</p></td>
+<td><p>Revolve a 2D profile around an axis to create a 3D surface of revolution.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.sdf_operations.ShellSDF" title="DeepSDFStruct.sdf_operations.ShellSDF"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ShellSDF</span></code></a>(sdf, thickness)</p></td>
+<td><p>Create a hollow shell by keeping only a thin layer around the surface.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.sdf_operations.SweepSDF" title="DeepSDFStruct.sdf_operations.SweepSDF"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SweepSDF</span></code></a>(profile_sdf, trajectory[, ...])</p></td>
+<td><p>Sweep a 2D profile along a cubic bezier curve with flat end caps.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.sdf_operations.TwistSDF" title="DeepSDFStruct.sdf_operations.TwistSDF"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TwistSDF</span></code></a>(sdf, k)</p></td>
+<td><p>Twist an SDF around the Z-axis by an angle proportional to height.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<dl class="py class">
+<dt class="sig sig-object py" id="DeepSDFStruct.sdf_operations.BendLinearSDF">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.sdf_operations.</span></span><span class="sig-name descname"><span class="pre">BendLinearSDF</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sdf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.sdf_operations.BendLinearSDF" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="DeepSDFStruct.SDF.html#DeepSDFStruct.SDF.SDFBase" title="DeepSDFStruct.SDF.SDFBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">DeepSDFStruct.SDF.SDFBase</span></code></a></p>
+<p>Bend SDF linearly between two control points.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>sdf</strong> (<a class="reference internal" href="DeepSDFStruct.SDF.html#DeepSDFStruct.SDF.SDFBase" title="DeepSDFStruct.SDF.SDFBase"><em>DeepSDFStruct.SDF.SDFBase</em></a>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="DeepSDFStruct.sdf_operations.BendRadialSDF">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.sdf_operations.</span></span><span class="sig-name descname"><span class="pre">BendRadialSDF</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sdf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dz</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.sdf_operations.BendRadialSDF" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="DeepSDFStruct.SDF.html#DeepSDFStruct.SDF.SDFBase" title="DeepSDFStruct.SDF.SDFBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">DeepSDFStruct.SDF.SDFBase</span></code></a></p>
+<p>Bend SDF radially.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>sdf</strong> (<a class="reference internal" href="DeepSDFStruct.SDF.html#DeepSDFStruct.SDF.SDFBase" title="DeepSDFStruct.SDF.SDFBase"><em>DeepSDFStruct.SDF.SDFBase</em></a>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="DeepSDFStruct.sdf_operations.CircularArraySDF">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.sdf_operations.</span></span><span class="sig-name descname"><span class="pre">CircularArraySDF</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sdf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">count</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">tensor([0.,</span> <span class="pre">0.,</span> <span class="pre">1.])</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base_point</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">tensor([0.,</span> <span class="pre">0.,</span> <span class="pre">0.])</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_angle_deg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_angle_deg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">360</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.sdf_operations.CircularArraySDF" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="DeepSDFStruct.SDF.html#DeepSDFStruct.SDF.SDFBase" title="DeepSDFStruct.SDF.SDFBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">DeepSDFStruct.SDF.SDFBase</span></code></a></p>
+<p>Create count copies of an SDF rotated around an arbitrary axis line.</p>
+<p>The axis line is defined by an <code class="docutils literal notranslate"><span class="pre">axis</span></code> direction and a <code class="docutils literal notranslate"><span class="pre">base_point</span></code>
+lying on that axis. Copies are sampled at evenly spaced angles in the
+half-open interval [start_angle, end_angle).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>sdf</strong> (<a class="reference internal" href="DeepSDFStruct.SDF.html#DeepSDFStruct.SDF.SDFBase" title="DeepSDFStruct.SDF.SDFBase"><em>DeepSDFStruct.SDF.SDFBase</em></a>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="DeepSDFStruct.sdf_operations.DilateSDF">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.sdf_operations.</span></span><span class="sig-name descname"><span class="pre">DilateSDF</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sdf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.sdf_operations.DilateSDF" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="DeepSDFStruct.SDF.html#DeepSDFStruct.SDF.SDFBase" title="DeepSDFStruct.SDF.SDFBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">DeepSDFStruct.SDF.SDFBase</span></code></a></p>
+<p>Expand an SDF uniformly by adding material to the surface.</p>
+<p>Increases the size of the geometry by moving the surface outward
+by a specified distance. Equivalent to making the object larger
+while maintaining its shape.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sdf</strong> (<a class="reference internal" href="DeepSDFStruct.SDF.html#DeepSDFStruct.SDF.SDFBase" title="DeepSDFStruct.SDF.SDFBase"><em>SDFBase</em></a>) – The SDF to expand.</p></li>
+<li><p><strong>r</strong> (<em>float</em>) – Expansion distance. Positive values add material (make larger),
+negative values remove material (make smaller).</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Expand a sphere by 0.1 units</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sphere</span> <span class="o">=</span> <span class="n">SphereSDF</span><span class="p">(</span><span class="n">center</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">radius</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">DilateSDF</span><span class="p">(</span><span class="n">sphere</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>  <span class="c1"># radius effectively becomes 0.6</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Shrink by using negative dilation</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">DilateSDF</span><span class="p">(</span><span class="n">sphere</span><span class="p">,</span> <span class="n">r</span><span class="o">=-</span><span class="mf">0.1</span><span class="p">)</span>  <span class="c1"># radius effectively becomes 0.4</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="DeepSDFStruct.sdf_operations.ElongateSDF">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.sdf_operations.</span></span><span class="sig-name descname"><span class="pre">ElongateSDF</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sdf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.sdf_operations.ElongateSDF" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="DeepSDFStruct.SDF.html#DeepSDFStruct.SDF.SDFBase" title="DeepSDFStruct.SDF.SDFBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">DeepSDFStruct.SDF.SDFBase</span></code></a></p>
+<p>Elongate an SDF by adding material along the coordinate axes.</p>
+<p>Extends the geometry by adding material in the positive and negative
+directions along each axis. Useful for creating stretched or extended
+versions of existing shapes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sdf</strong> (<a class="reference internal" href="DeepSDFStruct.SDF.html#DeepSDFStruct.SDF.SDFBase" title="DeepSDFStruct.SDF.SDFBase"><em>SDFBase</em></a>) – The base SDF to elongate.</p></li>
+<li><p><strong>size</strong> (<em>array-like</em><em> of </em><em>shape</em><em> (</em><em>3</em><em>,</em><em>) or </em><em>float</em>) – Elongation amount along each axis (x, y, z). If a single float,
+applies uniform elongation in all directions.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Elongate a sphere by 0.5 in all directions</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sphere</span> <span class="o">=</span> <span class="n">SphereSDF</span><span class="p">(</span><span class="n">center</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">radius</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ElongateSDF</span><span class="p">(</span><span class="n">sphere</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Elongate more in x-direction than y and z</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ElongateSDF</span><span class="p">(</span><span class="n">sphere</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="DeepSDFStruct.sdf_operations.ErodeSDF">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.sdf_operations.</span></span><span class="sig-name descname"><span class="pre">ErodeSDF</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sdf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.sdf_operations.ErodeSDF" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="DeepSDFStruct.SDF.html#DeepSDFStruct.SDF.SDFBase" title="DeepSDFStruct.SDF.SDFBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">DeepSDFStruct.SDF.SDFBase</span></code></a></p>
+<p>Contract an SDF uniformly by removing material from the surface.</p>
+<p>Decreases the size of the geometry by moving the surface inward
+by a specified distance. Equivalent to making the object smaller
+while maintaining its shape.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sdf</strong> (<a class="reference internal" href="DeepSDFStruct.SDF.html#DeepSDFStruct.SDF.SDFBase" title="DeepSDFStruct.SDF.SDFBase"><em>SDFBase</em></a>) – The SDF to contract.</p></li>
+<li><p><strong>r</strong> (<em>float</em>) – Contraction distance. Must be positive. For expansion, use
+DilateSDF instead.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Shrink a sphere by 0.1 units</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sphere</span> <span class="o">=</span> <span class="n">SphereSDF</span><span class="p">(</span><span class="n">center</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">radius</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ErodeSDF</span><span class="p">(</span><span class="n">sphere</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>  <span class="c1"># radius effectively becomes 0.4</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Create a thin shell by combining with original</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ErodeSDF</span><span class="p">(</span><span class="n">sphere</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="mf">0.05</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="DeepSDFStruct.sdf_operations.MirrorSDF">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.sdf_operations.</span></span><span class="sig-name descname"><span class="pre">MirrorSDF</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sdf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plane_point</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plane_normal</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.sdf_operations.MirrorSDF" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="DeepSDFStruct.SDF.html#DeepSDFStruct.SDF.SDFBase" title="DeepSDFStruct.SDF.SDFBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">DeepSDFStruct.SDF.SDFBase</span></code></a></p>
+<p>Reflect an SDF across a plane to create symmetric geometry.</p>
+<p>Creates a mirror copy of an SDF across a specified plane, effectively
+doubling the geometry. The result is the union of the original and
+reflected SDF, creating a symmetric object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sdf</strong> (<a class="reference internal" href="DeepSDFStruct.SDF.html#DeepSDFStruct.SDF.SDFBase" title="DeepSDFStruct.SDF.SDFBase"><em>SDFBase</em></a>) – The SDF to mirror. This will be reflected across the plane.</p></li>
+<li><p><strong>plane_point</strong> (<em>array-like</em><em> of </em><em>shape</em><em> (</em><em>3</em><em>,</em><em>)</em>) – A point that lies on the mirror plane. This point, together with
+plane_normal, defines the mirror plane.</p></li>
+<li><p><strong>plane_normal</strong> (<em>array-like</em><em> of </em><em>shape</em><em> (</em><em>3</em><em>,</em><em>)</em>) – Normal vector of the mirror plane. The plane is perpendicular to
+this vector. Will be normalized internally.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Mirror a sphere across the YZ plane (x=0)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sphere</span> <span class="o">=</span> <span class="n">SphereSDF</span><span class="p">(</span><span class="n">center</span><span class="o">=</span><span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">radius</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">MirrorSDF</span><span class="p">(</span><span class="n">sphere</span><span class="p">,</span> <span class="n">plane_point</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">plane_normal</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Mirror across the XY plane (z=0)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">MirrorSDF</span><span class="p">(</span><span class="n">sphere</span><span class="p">,</span> <span class="n">plane_point</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">plane_normal</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Mirror across a diagonal plane</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">MirrorSDF</span><span class="p">(</span><span class="n">sphere</span><span class="p">,</span> <span class="n">plane_point</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">plane_normal</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+</pre></div>
+</div>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>The result is the union (minimum) of original and mirrored SDF</p></li>
+<li><p>Use plane_point and plane_normal to define any mirror plane</p></li>
+<li><p>Common mirror planes:
+- YZ plane: point=[0,0,0], normal=[1,0,0]
+- XZ plane: point=[0,0,0], normal=[0,1,0]
+- XY plane: point=[0,0,0], normal=[0,0,1]</p></li>
+<li><p>The mirrored geometry is exactly symmetric - no thickness or gap</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="DeepSDFStruct.sdf_operations.RepeatSDF">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.sdf_operations.</span></span><span class="sig-name descname"><span class="pre">RepeatSDF</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sdf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spacing</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">count</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.sdf_operations.RepeatSDF" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="DeepSDFStruct.SDF.html#DeepSDFStruct.SDF.SDFBase" title="DeepSDFStruct.SDF.SDFBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">DeepSDFStruct.SDF.SDFBase</span></code></a></p>
+<p>Infinite or finite grid repetition of an SDF.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>sdf</strong> (<a class="reference internal" href="DeepSDFStruct.SDF.html#DeepSDFStruct.SDF.SDFBase" title="DeepSDFStruct.SDF.SDFBase"><em>DeepSDFStruct.SDF.SDFBase</em></a>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="DeepSDFStruct.sdf_operations.RevolveSDF">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.sdf_operations.</span></span><span class="sig-name descname"><span class="pre">RevolveSDF</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sdf_2d</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">tensor([0.,</span> <span class="pre">0.,</span> <span class="pre">1.])</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.sdf_operations.RevolveSDF" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="DeepSDFStruct.SDF.html#DeepSDFStruct.SDF.SDFBase" title="DeepSDFStruct.SDF.SDFBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">DeepSDFStruct.SDF.SDFBase</span></code></a></p>
+<p>Revolve a 2D profile around an axis to create a 3D surface of revolution.</p>
+<p>Takes a 2D SDF profile and rotates it around a specified axis to generate
+a 3D axisymmetric object. The 2D profile is defined in a plane containing
+the rotation axis.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sdf_2d</strong> (<a class="reference internal" href="DeepSDFStruct.SDF.html#DeepSDFStruct.SDF.SDFBase" title="DeepSDFStruct.SDF.SDFBase"><em>SDFBase</em></a>) – A 2D SDF (geometric_dim=2) representing the profile to revolve.
+The profile should be in the plane where the first coordinate is
+the radial distance from the axis, and the second coordinate is
+the height along the axis.</p></li>
+<li><p><strong>axis</strong> (<em>torch.Tensor</em><em>, </em><em>default</em><em> [</em><em>0</em><em>, </em><em>0</em><em>, </em><em>1</em><em>]</em>) – The 3D axis vector to revolve around. Must be one of the principal
+axes: [1,0,0] (X-axis), [0,1,0] (Y-axis), or [0,0,1] (Z-axis).
+The 2D profile’s first coordinate becomes the radial distance from
+this axis.</p></li>
+<li><p><strong>offset</strong> (<em>float</em><em>, </em><em>default 0.0</em>) – Radial offset from the axis. Positive values move the profile away
+from the axis, creating a hole in the center. Use this to create
+hollow objects or to position the profile at a specific radius.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If sdf_2d is not a 2D SDF, or if axis is not a principal axis.</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Create a sphere by revolving a circle around Z-axis</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">circle</span> <span class="o">=</span> <span class="n">CircleSDF</span><span class="p">(</span><span class="n">center</span><span class="o">=</span><span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">radius</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">RevolveSDF</span><span class="p">(</span><span class="n">circle</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Create a torus by revolving a circle with offset</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">circle</span> <span class="o">=</span> <span class="n">CircleSDF</span><span class="p">(</span><span class="n">center</span><span class="o">=</span><span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">radius</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">RevolveSDF</span><span class="p">(</span><span class="n">circle</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Revolve around X-axis instead</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">RevolveSDF</span><span class="p">(</span><span class="n">circle</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+</pre></div>
+</div>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>The 2D profile’s first coordinate (x) represents radial distance from axis</p></li>
+<li><p>The 2D profile’s second coordinate (y) represents height along the axis</p></li>
+<li><p>Only principal axes ([1,0,0], [0,1,0], [0,0,1]) are supported</p></li>
+<li><p>The profile should be positioned appropriately for the desired shape</p></li>
+<li><p>Use offset to create holes or position the profile away from the axis</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="DeepSDFStruct.sdf_operations.ShellSDF">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.sdf_operations.</span></span><span class="sig-name descname"><span class="pre">ShellSDF</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sdf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thickness</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.sdf_operations.ShellSDF" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="DeepSDFStruct.SDF.html#DeepSDFStruct.SDF.SDFBase" title="DeepSDFStruct.SDF.SDFBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">DeepSDFStruct.SDF.SDFBase</span></code></a></p>
+<p>Create a hollow shell by keeping only a thin layer around the surface.</p>
+<p>Converts a solid object into a hollow shell by taking the absolute
+value of the SDF and offsetting by half the thickness. The result
+is a shell centered on the original surface.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sdf</strong> (<a class="reference internal" href="DeepSDFStruct.SDF.html#DeepSDFStruct.SDF.SDFBase" title="DeepSDFStruct.SDF.SDFBase"><em>SDFBase</em></a>) – The SDF to convert to a shell.</p></li>
+<li><p><strong>thickness</strong> (<em>float</em>) – Total thickness of the shell wall. Must be positive.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Create a hollow sphere with 0.05 wall thickness</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sphere</span> <span class="o">=</span> <span class="n">SphereSDF</span><span class="p">(</span><span class="n">center</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">radius</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ShellSDF</span><span class="p">(</span><span class="n">sphere</span><span class="p">,</span> <span class="n">thickness</span><span class="o">=</span><span class="mf">0.05</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Create a thin-walled box</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">box</span> <span class="o">=</span> <span class="n">BoxSDF</span><span class="p">(</span><span class="n">center</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">extents</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ShellSDF</span><span class="p">(</span><span class="n">box</span><span class="p">,</span> <span class="n">thickness</span><span class="o">=</span><span class="mf">0.02</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="DeepSDFStruct.sdf_operations.SweepSDF">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.sdf_operations.</span></span><span class="sig-name descname"><span class="pre">SweepSDF</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">profile_sdf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trajectory</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bezier_samples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">500</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cap_ends</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunk_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">refine</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.sdf_operations.SweepSDF" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="DeepSDFStruct.SDF.html#DeepSDFStruct.SDF.SDFBase" title="DeepSDFStruct.SDF.SDFBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">DeepSDFStruct.SDF.SDFBase</span></code></a></p>
+<p>Sweep a 2D profile along a cubic bezier curve with flat end caps.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>profile_sdf</strong> (<a class="reference internal" href="DeepSDFStruct.SDF.html#DeepSDFStruct.SDF.SDFBase" title="DeepSDFStruct.SDF.SDFBase"><em>DeepSDFStruct.SDF.SDFBase</em></a>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="DeepSDFStruct.sdf_operations.TwistSDF">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.sdf_operations.</span></span><span class="sig-name descname"><span class="pre">TwistSDF</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sdf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.sdf_operations.TwistSDF" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="DeepSDFStruct.SDF.html#DeepSDFStruct.SDF.SDFBase" title="DeepSDFStruct.SDF.SDFBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">DeepSDFStruct.SDF.SDFBase</span></code></a></p>
+<p>Twist an SDF around the Z-axis by an angle proportional to height.</p>
+<p>Applies a rotational deformation where the rotation angle increases
+linearly with the z-coordinate. Creates a spiral or twisted effect.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sdf</strong> (<a class="reference internal" href="DeepSDFStruct.SDF.html#DeepSDFStruct.SDF.SDFBase" title="DeepSDFStruct.SDF.SDFBase"><em>SDFBase</em></a>) – The SDF to twist.</p></li>
+<li><p><strong>k</strong> (<em>float</em>) – Twist rate (radians per unit length). Positive values create
+counter-clockwise twist when looking down the Z-axis.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Twist a box by 0.5 radians per unit height</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">box</span> <span class="o">=</span> <span class="n">BoxSDF</span><span class="p">(</span><span class="n">center</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">extents</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">TwistSDF</span><span class="p">(</span><span class="n">box</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Stronger twist (full rotation over height 2π)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">TwistSDF</span><span class="p">(</span><span class="n">box</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="DeepSDFStruct.sdf_operations.cubic_bezier_distance">
+<span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.sdf_operations.</span></span><span class="sig-name descname"><span class="pre">cubic_bezier_distance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">control_points</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">samples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">500</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunk_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">refine</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.sdf_operations.cubic_bezier_distance" title="Link to this definition">#</a></dt>
+<dd><p>Compute distance from point p to cubic bezier curve using sampling with refinement.</p>
+<p>Samples the curve at many points and finds the closest one, then refines locally.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>p</strong> – Query point(s), shape (N, 3)</p></li>
+<li><p><strong>control_points</strong> – Control points tensor, shape (4, 3)</p></li>
+<li><p><strong>samples</strong> – Number of samples along the curve</p></li>
+<li><p><strong>chunk_size</strong> – Number of query points to process at a time (for memory efficiency)</p></li>
+<li><p><strong>refine</strong> – Whether to refine the minimum with local optimization</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>dist: distance to curve, shape (N, 1)</p></li>
+<li><p>t: parameter value at closest point, shape (N, 1)</p></li>
+<li><p>closest_point: closest point on curve, shape (N, 3)</p></li>
+</ul>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Tuple of (dist, t, closest_point) where</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="DeepSDFStruct.sampling.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">DeepSDFStruct.sampling</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="DeepSDFStruct.sdf_primitives.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">DeepSDFStruct.sdf_primitives</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sdf-operations-and-transformations">SDF Operations and Transformations</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.sdf_operations.BendLinearSDF"><code class="docutils literal notranslate"><span class="pre">BendLinearSDF</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.sdf_operations.BendRadialSDF"><code class="docutils literal notranslate"><span class="pre">BendRadialSDF</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.sdf_operations.CircularArraySDF"><code class="docutils literal notranslate"><span class="pre">CircularArraySDF</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.sdf_operations.DilateSDF"><code class="docutils literal notranslate"><span class="pre">DilateSDF</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.sdf_operations.ElongateSDF"><code class="docutils literal notranslate"><span class="pre">ElongateSDF</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.sdf_operations.ErodeSDF"><code class="docutils literal notranslate"><span class="pre">ErodeSDF</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.sdf_operations.MirrorSDF"><code class="docutils literal notranslate"><span class="pre">MirrorSDF</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.sdf_operations.RepeatSDF"><code class="docutils literal notranslate"><span class="pre">RepeatSDF</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.sdf_operations.RevolveSDF"><code class="docutils literal notranslate"><span class="pre">RevolveSDF</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.sdf_operations.ShellSDF"><code class="docutils literal notranslate"><span class="pre">ShellSDF</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.sdf_operations.SweepSDF"><code class="docutils literal notranslate"><span class="pre">SweepSDF</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.sdf_operations.TwistSDF"><code class="docutils literal notranslate"><span class="pre">TwistSDF</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.sdf_operations.cubic_bezier_distance"><code class="docutils literal notranslate"><span class="pre">cubic_bezier_distance()</span></code></a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/source/generated/DeepSDFStruct.sdf_operations.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, Michael Kofler.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.0.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
