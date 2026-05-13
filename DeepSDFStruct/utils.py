@@ -50,11 +50,11 @@ def configure_logging(level=logging.INFO, logfile=None):
     """
     logger = logging.getLogger(DeepSDFStruct.__name__)
     logger.setLevel(level)
-
-    logger_handler = logging.StreamHandler()
-    formatter = logging.Formatter("%(asctime)s %(message)s", datefmt="%H:%M:%S")
-    logger_handler.setFormatter(formatter)
-    logger.addHandler(logger_handler)
+    if not logger.hasHandlers():
+        logger_handler = logging.StreamHandler()
+        formatter = logging.Formatter("%(asctime)s %(message)s", datefmt="%H:%M:%S")
+        logger_handler.setFormatter(formatter)
+        logger.addHandler(logger_handler)
 
     if logfile is not None:
         file_logger_handler = logging.FileHandler(logfile)

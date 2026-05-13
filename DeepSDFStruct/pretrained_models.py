@@ -79,16 +79,18 @@ class PretrainedModels(Enum):
     Primitives2D = "primitives_2d"
 
 
-# Maps enum entries to file paths
 main_dir = importlib.resources.files("DeepSDFStruct")
+with importlib.resources.as_file(main_dir) as path:
+    print(type(path))  # pathlib.Path
+    PRETRAINED_MODELS_DIR = path / "trained_models"
+
+# Maps enum entries to file paths
 _MODEL_REGISTRY = {
-    PretrainedModels.ChiAndCross: main_dir / "trained_models" / "chi_and_cross",
-    PretrainedModels.AnalyticRoundCross: main_dir
-    / "trained_models"
-    / "analytic_round_cross",
-    PretrainedModels.RoundCross: main_dir / "trained_models" / "round_cross",
-    PretrainedModels.Primitives: main_dir / "trained_models" / "primitives",
-    PretrainedModels.Primitives2D: main_dir / "trained_models" / "primitives_2d",
+    PretrainedModels.ChiAndCross: PRETRAINED_MODELS_DIR / "chi_and_cross",
+    PretrainedModels.AnalyticRoundCross: PRETRAINED_MODELS_DIR / "analytic_round_cross",
+    PretrainedModels.RoundCross: PRETRAINED_MODELS_DIR / "round_cross",
+    PretrainedModels.Primitives: PRETRAINED_MODELS_DIR / "primitives",
+    PretrainedModels.Primitives2D: PRETRAINED_MODELS_DIR / "primitives_2d",
 }
 
 
