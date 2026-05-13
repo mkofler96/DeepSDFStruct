@@ -193,4 +193,3 @@ class TestFormula1CarScenario:
 
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])
-EOF

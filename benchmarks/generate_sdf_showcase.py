@@ -537,14 +537,14 @@ def create_sdf_primitives():
     )
 
     # Repeat
-    print("Repeated Spheres (2D array)")
+    print("Repeated Spheres (3x3x3)")
     small_sphere = SphereSDF(center=[0, 0, 0], radius=0.2)
-    repeated_sphere = RepeatSDF(small_sphere, spacing=[0.6, 0.6, 0.6])
+    repeated_sphere = RepeatSDF(small_sphere, spacing=[0.6, 0.6, 0.6], count=3)
     create_screenshot(
         repeated_sphere,
         output_dir / "repeat_sphere.png",
         resolution=64,
-        title="Repeated (2x2x2)",
+        title="Repeated (3x3x3)",
     )
 
     # Mirror
