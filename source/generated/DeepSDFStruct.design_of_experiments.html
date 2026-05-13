@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>DeepSDFStruct.design_of_experiments &#8212; DeepSDFStruct 1.7.2.dev5+gdeda11924 documentation</title>
+    <title>DeepSDFStruct.design_of_experiments &#8212; DeepSDFStruct 1.7.2.dev6+g30992fe3a.d20260513 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=d7807015"></script>
+    <script src="../../_static/documentation_options.js?v=2b4bdb2d"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'source/generated/DeepSDFStruct.design_of_experiments';</script>
@@ -110,7 +110,7 @@
   
   
   
-    <p class="title logo__title">DeepSDFStruct 1.7.2.dev5+gdeda11924 documentation</p>
+    <p class="title logo__title">DeepSDFStruct 1.7.2.dev6+g30992fe3a.d20260513 documentation</p>
   
 </a></div>
     
@@ -423,7 +423,7 @@ versioning and reproducibility features.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.design_of_experiments.create_experiment" title="DeepSDFStruct.design_of_experiments.create_experiment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_experiment</span></code></a>(exp_dir, specs)</p></td>
 <td><p>Create a new experiment directory and specs.json file, copying defaults and applying overrides.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.design_of_experiments.run_experiment" title="DeepSDFStruct.design_of_experiments.run_experiment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">run_experiment</span></code></a>(exp_name, data_dir[, ...])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.design_of_experiments.run_experiment" title="DeepSDFStruct.design_of_experiments.run_experiment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">run_experiment</span></code></a>(exp_name, data_dir, specs[, ...])</p></td>
 <td><p>Creates an experiment with overrides, trains the model, and logs everything to MLflow.</p></td>
 </tr>
 </tbody>
@@ -522,7 +522,7 @@ with dot-separated keys.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="DeepSDFStruct.design_of_experiments.run_experiment">
-<span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.design_of_experiments.</span></span><span class="sig-name descname"><span class="pre">run_experiment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exp_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_split</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">run_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">specs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cpu'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tracking_uri</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mlruns'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.design_of_experiments.run_experiment" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.design_of_experiments.</span></span><span class="sig-name descname"><span class="pre">run_experiment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exp_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">specs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_split</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">run_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cpu'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tracking_uri</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'sqlite:///mlruns.db'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.design_of_experiments.run_experiment" title="Link to this definition">#</a></dt>
 <dd><p>Creates an experiment with overrides, trains the model, and logs everything to MLflow.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
