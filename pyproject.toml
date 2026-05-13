@@ -41,6 +41,7 @@ dependencies = [
     "torch-fem<=0.5.0",
     "numpy>=2.0.0",
     "mlflow>=3.10.1",
+    "tqdm"
 ]
 
 [tool.setuptools_scm]
