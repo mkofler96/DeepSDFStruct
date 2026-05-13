@@ -53,14 +53,14 @@ This document tracks the implementation status and test coverage of SDF primitiv
 | Rotate | ✅ | | Part of `TransformedSDF` |
 | Scale | ✅ | | Part of `TransformedSDF` |
 | **Alterations** | | | |
-| Elongate | ⬜️ | ⬜️ | |
-| Twist | ⬜️ | ⬜️ | |
-| Bend | ⬜️ | ⬜️ | |
-| Shell / Dilate / Erode | ⬜️ | ⬜️ | |
+| Elongate | ✅ | ⬜️ | |
+| Twist | ✅ | ⬜️ | |
+| Bend | ✅ | ⬜️ | |
+| Shell / Dilate / Erode | ✅ | ⬜️ | |
 | **2D -> 3D** | | | |
 | Extrude | ✅ | ⬜️ | `ExtrudeSDF` |
-| Revolve | ⬜️ | ⬜️ | |
+| Revolve | ✅ | ⬜️ | |
 | **Other** | | | |
-| Repeat | ⬜️ | ⬜️ | |
-| Mirror | ⬜️ | ⬜️ | |
-| Circular Array | ⬜️ | ⬜️ | |
+| Repeat | ✅ | ⬜️ | |
+| Mirror | ✅ | ⬜️ | |
+| Circular Array | ✅ | ⬜️ | |
