@@ -81,7 +81,6 @@ class PretrainedModels(Enum):
 
 main_dir = importlib.resources.files("DeepSDFStruct")
 with importlib.resources.as_file(main_dir) as path:
-    print(type(path))  # pathlib.Path
     PRETRAINED_MODELS_DIR = path / "trained_models"
 
 # Maps enum entries to file paths
