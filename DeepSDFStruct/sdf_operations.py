@@ -327,24 +327,22 @@ class RepeatSDF(SDFBase):
     def _compute(self, queries: torch.Tensor) -> torch.Tensor:
         spacing = self.spacing.to(device=queries.device, dtype=queries.dtype)
 
-        if self.count is None:
-            # Infinite repetition - use modulo to map back to base domain
-            eps = torch.tensor(1e-9, device=queries.device, dtype=queries.dtype)
-            q = (queries + eps) % spacing - eps
-        else:
-            # Finite repetition
-            half = (self.count - 1) * spacing / 2
-            eps = torch.tensor(1e-9, device=queries.device, dtype=queries.dtype)
-            q = (queries + eps) % spacing - eps
-            # Clamp to finite range
-            q = torch.clamp(q, -half, half)
+        # Fold all points symmetrically into [-spacing/2, spacing/2]
+        q = queries - spacing * torch.round(queries / spacing)
+
+        if self.count is not None:
+            # Clamp the grid index so only `count` copies are active
+            half = (self.count - 1) / 2.0
+            n = torch.round(queries / spacing)
+            n = torch.clamp(n, -half, half)
+            q = queries - spacing * n
 
         return self.sdf._compute(q)
 
     def _get_domain_bounds(self) -> torch.Tensor:
         if self.count is None:
-            # Infinite bounds
-            return torch.tensor([[-1e9, -1e9, -1e9], [1e9, 1e9, 1e9]])
+            # Return single-period bounds for visualization
+            return self.sdf._get_domain_bounds()
         else:
             b = self.sdf._get_domain_bounds()
             span = (self.count - 1) * self.spacing
@@ -663,11 +661,13 @@ class RevolveSDF(SDFBase):
 
     def _get_domain_bounds(self) -> torch.Tensor:
         b = self.sdf_2d._get_domain_bounds()
-        # Conservative estimate for 3D bounds based on 2D bounds
+        # The 2D profile's first coordinate is the radial distance from the axis.
+        # When revolved, this creates a full circle, so x/y bounds are symmetric.
+        max_radius = torch.maximum(b[0, 0].abs(), b[1, 0].abs())
         return torch.stack(
             [
-                torch.tensor([min(b[0, 0], b[1, 0]), min(b[0, 0], b[1, 0]), b[0, 1]]),
-                torch.tensor([max(b[0, 0], b[1, 0]), max(b[0, 0], b[1, 0]), b[1, 1]]),
+                torch.stack([-max_radius, -max_radius, b[0, 1]]),
+                torch.stack([max_radius, max_radius, b[1, 1]]),
             ]
         )
 

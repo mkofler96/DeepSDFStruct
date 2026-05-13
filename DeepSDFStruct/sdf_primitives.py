@@ -951,7 +951,7 @@ class EquilateralTriangleSDF(SDFBase):
         p = torch.where(w.unsqueeze(1), q, p)
 
         # Clamp x
-        p[:, 0] = p[:, 0] - torch.clamp(p[:, 0], min=-2.0 * r, max=0.0)
+        p[:, 0] = p[:, 0] - torch.clamp(p[:, 0], min=-2.0 * r, max=torch.zeros_like(r))
 
         # Compute signed distance
         return (-torch.linalg.norm(p, dim=1) * torch.sign(p[:, 1])).reshape(-1, 1)
