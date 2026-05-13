@@ -194,11 +194,11 @@ def create_experiment(exp_dir, specs):
 def run_experiment(
     exp_name,
     data_dir,
+    specs: ExperimentSpecifications,
     batch_split=1,
     run_name=None,
-    specs: ExperimentSpecifications | None = None,
     device="cpu",
-    tracking_uri="mlruns",
+    tracking_uri="sqlite:///mlruns.db",
 ):
     """
     Creates an experiment with overrides, trains the model, and logs everything to MLflow.
@@ -229,7 +229,7 @@ def run_experiment(
         summary = train_deep_sdf(
             exp_dir, data_dir, device=device, batch_split=batch_split
         )
-        mlflow.set_tags(summary)
+        mlflow.set_tags(dict(summary))
 
         mlflow.log_metric("train_loss", summary["loss"])
     return summary["loss"]

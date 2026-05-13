@@ -67,6 +67,7 @@ import datetime
 import random
 import pathlib
 import socket
+import tqdm
 
 import DeepSDFStruct.deep_sdf
 import DeepSDFStruct.deep_sdf.workspace as ws
@@ -240,11 +241,6 @@ def save_logs(
         },
         os.path.join(experiment_directory, ws.logs_filename),
     )
-    plot_logs(
-        experiment_directory,
-        show_lr=True,
-        filename=os.path.join(experiment_directory, ws.logplot_filename),
-    )
 
 
 def load_logs(experiment_directory):
@@ -303,10 +299,6 @@ def append_parameter_magnitudes(param_mag_log, model):
 def train_deep_sdf(
     experiment_directory, data_source, continue_from=None, batch_split=1, device=None
 ):
-    logging.basicConfig(
-        level=logging.INFO, format="%(asctime)s %(message)s", datefmt="%H:%M:%S"
-    )
-    logging.debug("running " + experiment_directory)
     if device is None:
         device = "cuda" if torch.cuda.is_available() else "cpu"
 
@@ -318,8 +310,8 @@ def train_deep_sdf(
         raise RuntimeError("Device must be either cpu or cuda")
 
     specs = ws.load_experiment_specifications(experiment_directory)
-
-    logging.info("Experiment description: \n" + specs["Description"])
+    logger.info(f"Reading experiment configuration from {experiment_directory}")
+    logger.info("Experiment description: \n" + specs["Description"])
 
     # reconstruction_split_file = specs["ReconstructionSplit"]
     # if os.path.isfile(reconstruction_split_file):
@@ -328,7 +320,7 @@ def train_deep_sdf(
     # else:
     #     reconstruction_split = None
 
-    logging.debug(specs["NetworkSpecs"])
+    logger.debug(specs["NetworkSpecs"])
 
     latent_size = specs["CodeLength"]
 
@@ -348,7 +340,7 @@ def train_deep_sdf(
 
     grad_clip = get_spec_with_default(specs, "GradientClipNorm", None)
     if grad_clip is not None:
-        logging.debug("clipping gradients to max norm {}".format(grad_clip))
+        logger.debug("clipping gradients to max norm {}".format(grad_clip))
 
     def save_latest(epoch):
 
@@ -361,9 +353,23 @@ def train_deep_sdf(
         save_model(experiment_directory, str(epoch) + ".pth", decoder, epoch)
         save_optimizer(experiment_directory, str(epoch) + ".pth", optimizer_all, epoch)
         save_latent_vectors(experiment_directory, str(epoch) + ".pth", lat_vecs, epoch)
+        save_logs(
+            experiment_directory,
+            loss_log,
+            lr_log,
+            timing_log,
+            lat_mag_log,
+            param_mag_log,
+            epoch,
+        )
+        plot_logs(
+            experiment_directory,
+            show_lr=True,
+            filename=os.path.join(experiment_directory, ws.logplot_filename),
+        )
 
     def signal_handler(sig, frame):
-        logging.info("Stopping early...")
+        logger.info("Stopping early...")
         sys.exit(0)
 
     def adjust_learning_rate(lr_schedules, optimizer, epoch):
@@ -404,10 +410,10 @@ def train_deep_sdf(
 
     geom_dimension = decoder.geom_dimension
     host_name = socket.gethostname()
-    logging.info(f"training on {host_name} with {device_name}")
+    logger.info(f"training on {host_name} with {device_name}")
 
     seed = get_spec_with_default(specs, "seed", 42)
-    logging.info(f"Setting random seed to {seed}")
+    logger.info(f"Setting random seed to {seed}")
     random.seed(seed)
     np.random.seed(seed)
     torch.manual_seed(seed)
@@ -434,7 +440,7 @@ def train_deep_sdf(
     save_latent_code_data_map(experiment_directory, data_source, sdf_dataset.npyfiles)
 
     num_data_loader_threads = get_spec_with_default(specs, "DataLoaderThreads", 1)
-    logging.debug("loading data with {} threads".format(num_data_loader_threads))
+    logger.debug("loading data with {} threads".format(num_data_loader_threads))
 
     # if the batch size is larger than the dataset, we cannot use drop last,
     # otherwise the dataloader does not load any data
@@ -451,13 +457,13 @@ def train_deep_sdf(
         drop_last=drop_last,
     )
 
-    logging.debug("torch num_threads: {}".format(torch.get_num_threads()))
+    logger.debug("torch num_threads: {}".format(torch.get_num_threads()))
 
     num_scenes = len(sdf_dataset)
 
-    logging.info("There are {} scenes".format(num_scenes))
+    logger.info("There are {} scenes".format(num_scenes))
 
-    logging.debug(decoder)
+    logger.debug(decoder)
     if isinstance(latent_size, list):
         latent_size_embedding = torch.tensor(latent_size).sum()
     else:
@@ -472,7 +478,7 @@ def train_deep_sdf(
         / math.sqrt(latent_size_embedding),
     )
 
-    logging.debug(
+    logger.debug(
         "initialized with mean magnitude {}".format(
             get_mean_latent_vector_magnitude(lat_vecs)
         )
@@ -503,7 +509,7 @@ def train_deep_sdf(
 
     if continue_from is not None:
 
-        logging.info('continuing from "{}"'.format(continue_from))
+        logger.info('continuing from "{}"'.format(continue_from))
 
         _ = ws.load_latent_vectors(experiment_directory, continue_from, device=device)
 
@@ -526,16 +532,16 @@ def train_deep_sdf(
 
         start_epoch = model_epoch + 1
 
-        logging.debug("loaded")
+        logger.debug("loaded")
 
-    logging.info("starting from epoch {}".format(start_epoch))
+    logger.info("starting from epoch {}".format(start_epoch))
 
-    logging.info(
+    logger.info(
         "Number of decoder parameters: {}".format(
             sum(p.data.nelement() for p in decoder.parameters())
         )
     )
-    logging.info(
+    logger.info(
         "Number of shape code parameters: {} (# codes {}, code dim {})".format(
             lat_vecs.num_embeddings * lat_vecs.embedding_dim,
             lat_vecs.num_embeddings,
@@ -543,7 +549,8 @@ def train_deep_sdf(
         )
     )
     start_train = time.time()
-    for epoch in range(start_epoch, num_epochs + 1):
+    pbar = tqdm.trange(start_epoch, num_epochs + 1, desc="Training", smoothing=0)
+    for epoch in pbar:
         epoch_error = 0.0
         start = time.time()
 
@@ -604,7 +611,7 @@ def train_deep_sdf(
 
                 batch_loss += chunk_loss.item()
 
-            logging.debug("loss = {}".format(batch_loss))
+            logger.debug("loss = {}".format(batch_loss))
 
             loss_log.append(batch_loss)
             grad_clip = 1.0
@@ -618,23 +625,20 @@ def train_deep_sdf(
         error = epoch_error / len(sdf_loader)
 
         end = time.time()
-        # logging.info("epoch {}...".format(epoch))
+        # logger.info("epoch {}...".format(epoch))
         tot_time = time.time() - start_train
         avg_time_per_epoch = tot_time / (epoch)
         estimated_remaining_time = avg_time_per_epoch * (num_epochs - (epoch))
         time_string = str(datetime.timedelta(seconds=round(estimated_remaining_time)))
+
         if epoch == num_epochs:
             total_time = str(datetime.timedelta(seconds=round(tot_time)))
             logging.info(
                 f"Finished {epoch} ({epoch}/{num_epochs}) [{epoch/num_epochs*100:.2f}%] after {total_time}"
             )
         else:
-            logging.info(
-                f"Finished epoch {epoch:5g}/{num_epochs} | "
-                f"with Reg.: {batch_reg_loss:.4f} "
-                f"and Tot.: {batch_loss:.4f} "
-                f"[{epoch/num_epochs*100:.2f}%] in {time_string} "
-                f"({avg_time_per_epoch:.2f}s/epoch)"
+            pbar.set_postfix(
+                {"Loss": f"{batch_loss:.4f}", "Reg": f"{batch_reg_loss:.4f}"}
             )
         seconds_elapsed = end - start
         timing_log.append(seconds_elapsed)
@@ -649,7 +653,6 @@ def train_deep_sdf(
             save_checkpoints(epoch)
 
         if epoch % log_frequency == 0:
-
             save_latest(epoch)
             save_logs(
                 experiment_directory,
@@ -660,6 +663,7 @@ def train_deep_sdf(
                 param_mag_log,
                 epoch,
             )
+
     summary = ws.ExperimentSummary(
         loss=error,
         num_epochs=epoch,
@@ -794,7 +798,7 @@ def create_interpolated_meshes_from_latent(
             export_surface_mesh(fname, surf_mesh)
 
             # end = time.time()
-            # logging.info("epoch {}...".format(epoch))
+            # logger.info("epoch {}...".format(epoch))
             tot_time = time.time() - start
             avg_time_per_sample = tot_time / (i_sample)
             estimated_remaining_time = avg_time_per_sample * (num_samples - (i_sample))

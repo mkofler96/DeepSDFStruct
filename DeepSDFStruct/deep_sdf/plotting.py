@@ -34,6 +34,8 @@ import matplotlib.pyplot as plt
 
 import DeepSDFStruct.deep_sdf.workspace as ws
 
+logger = logging.getLogger(__name__)
+
 
 def extract_paths(data, current_path=""):
     paths = []
@@ -62,12 +64,8 @@ def plot_logs(experiment_directory, show_lr=False, ax=None, filename=None):
 
     logs = torch.load(os.path.join(experiment_directory, ws.logs_filename))
 
-    logging.info("latest epoch is {}".format(logs["epoch"]))
-
     num_iters = len(logs["loss"])
     iters_per_epoch = num_iters / logs["epoch"]
-
-    logging.info("{} iters per epoch".format(iters_per_epoch))
 
     smoothed_loss_41 = running_mean(logs["loss"], 41)
 
@@ -112,6 +110,7 @@ def plot_logs(experiment_directory, show_lr=False, ax=None, filename=None):
         axis.grid()
     if filename is not None:
         plt.savefig(filename, bbox_inches="tight")
+        plt.close()
     elif show_plt:
         plt.show()
 
@@ -122,8 +121,8 @@ def plot_reconstruction_loss(loss_history, iters_per_epoch, filename=None):
     num_iters = len(losses)
 
     latest_epoch = num_iters / iters_per_epoch
-    logging.info("latest epoch is {}".format(latest_epoch))
-    logging.info("{} iters per epoch".format(iters_per_epoch))
+    logger.info("latest epoch is {}".format(latest_epoch))
+    logger.info("{} iters per epoch".format(iters_per_epoch))
 
     smoothed_loss_41 = running_mean(losses, 41)
 

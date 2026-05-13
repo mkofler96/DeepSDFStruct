@@ -39,8 +39,9 @@ dependencies = [
     "triangle>=20250106",
     "vtk>=9.5.1",
     "torch-fem<=0.5.0",
-    "mlflow>=3.5.0",
     "numpy>=2.0.0",
+    "mlflow>=3.10.1",
+    "tqdm"
 ]
 
 [tool.setuptools_scm]
@@ -50,6 +51,14 @@ docs = [
     "sphinx",
     "pydata-sphinx-theme",
     "sphinx-autodoc-typehints",
+]
+visualization = [
+    "streamlit>=1.55.0",
+    "streamlit-stl>=0.0.6",
+    "scikit-learn",
+]
+computation = [
+    "pypardiso>=0.4.6",
 ]
 
 [tool.setuptools]

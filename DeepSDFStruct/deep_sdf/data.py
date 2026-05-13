@@ -51,6 +51,8 @@ import torch.utils.data
 
 import DeepSDFStruct.deep_sdf.workspace as ws
 
+logger = logging.getLogger(__name__)
+
 
 def get_instance_filenames(data_source, split):
     npzfiles = []
@@ -198,7 +200,7 @@ class SDFSamples(torch.utils.data.Dataset):
         self.data_source = data_source
         self.npyfiles = get_instance_filenames(data_source, split)
         self.filenames = []
-        logging.debug(
+        logger.debug(
             "using "
             + str(len(self.npyfiles))
             + " shapes from data source "
