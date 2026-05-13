@@ -29,6 +29,7 @@ Licensed under the Apache License, Version 2.0.
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import torch
+import warnings
 from DeepSDFStruct.flexicubes.tables import *
 
 __all__ = ["FlexiCubes"]
@@ -234,14 +235,22 @@ class FlexiCubes:
             + 0.5 * (bounds[1] - bounds[0])
             + (bounds[1] - bounds[0]) * samples
         )
-        tolerance = 1e-6
-        torch._assert(
-            torch.all(
-                verts_scaled.ge(bounds[0] - tolerance)
-                & verts_scaled.le(bounds[1] + tolerance)
-            ),
-            "Samples are out of specified bounds",
+        bounds_range = bounds[1] - bounds[0]
+        tolerance = torch.maximum(
+            torch.tensor(1e-6, device=bounds.device), 1e-6 * bounds_range.max()
         )
+        below = verts_scaled < bounds[0] - tolerance
+        above = verts_scaled > bounds[1] + tolerance
+        if below.any() or above.any():
+            violations = below | above
+            num_violations = violations.sum().item()
+            max_violation = torch.maximum(
+                (bounds[0] - verts_scaled).max(), (verts_scaled - bounds[1]).max()
+            ).item()
+            warnings.warn(
+                f"{num_violations} samples are out of specified bounds by max {max_violation:.6e}. "
+                f"Bounds: [{bounds[0].tolist()}, {bounds[1].tolist()}]"
+            )
         return verts_scaled, cubes
 
     # changes mkofler: adapted function signature to match the kaolin package

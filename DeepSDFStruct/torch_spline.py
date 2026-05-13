@@ -372,3 +372,75 @@ def generate_bbox_spline(bounds):
 
     spline = sp.BSpline(degrees, knots, control_points)
     return spline
+
+
+class CubicBezier(torch.nn.Module):
+    def __init__(self, control_points, device="cpu", dtype=torch.float32):
+        super().__init__()
+        self.device = device
+        self.dtype = dtype
+        cp = torch.as_tensor(control_points, dtype=dtype, device=device)
+        assert cp.shape == (
+            4,
+            3,
+        ), f"CubicBezier requires 4 control points (3D), got {cp.shape}"
+        self.control_points = torch.nn.Parameter(cp)
+
+    def forward(self, t):
+        """
+        Evaluate cubic bezier at parameter t in [0,1].
+
+        B(t) = (1-t)^3 P0 + 3(1-t)^2 t P1 + 3(1-t) t^2 P2 + t^3 P3
+        """
+        t = torch.as_tensor(t, dtype=self.dtype, device=self.device)
+        if t.dim() == 0:
+            t = t.unsqueeze(0)
+
+        p0, p1, p2, p3 = self.control_points
+
+        u = 1 - t
+        points = (
+            (u**3).unsqueeze(-1) * p0
+            + (3 * u**2 * t).unsqueeze(-1) * p1
+            + (3 * u * t**2).unsqueeze(-1) * p2
+            + (t**3).unsqueeze(-1) * p3
+        )
+        return points
+
+    def eval_tangent(self, t):
+        """
+        Evaluate tangent vector at parameter t.
+
+        B'(t) = 3(1-t)^2 (P1-P0) + 6(1-t)t (P2-P1) + 3t^2 (P3-P2)
+        """
+        t = torch.as_tensor(t, dtype=self.dtype, device=self.device)
+        if t.dim() == 0:
+            t = t.unsqueeze(0)
+
+        p0, p1, p2, p3 = self.control_points
+
+        u = 1 - t
+        tangent = (
+            (3 * u**2).unsqueeze(-1) * (p1 - p0)
+            + (6 * u * t).unsqueeze(-1) * (p2 - p1)
+            + (3 * t**2).unsqueeze(-1) * (p3 - p2)
+        )
+        return tangent
+
+    def eval_curvature(self, t):
+        """
+        Evaluate second derivative at parameter t.
+
+        B''(t) = 6(1-t)(P2-2P1+P0) + 6t(P3-2P2+P1)
+        """
+        t = torch.as_tensor(t, dtype=self.dtype, device=self.device)
+        if t.dim() == 0:
+            t = t.unsqueeze(0)
+
+        p0, p1, p2, p3 = self.control_points
+
+        u = 1 - t
+        curvature = (6 * u).unsqueeze(-1) * (p2 - 2 * p1 + p0) + (6 * t).unsqueeze(
+            -1
+        ) * (p3 - 2 * p2 + p1)
+        return curvature

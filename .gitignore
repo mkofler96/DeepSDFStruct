@@ -110,6 +110,7 @@ DeepSDFStruct/trained_models/test_experiment_hierarchical/**/Logs.png
 DeepSDFStruct/trained_models/**/Reconstructions/*
 training_data
 tests/tmp_outputs
+*.vtk
 
 # doc temp files
 docs/_build

@@ -1,0 +1,990 @@
+"""
+SDF Operations and Transformations
+==================================
+
+This module provides various operations that can be applied to SDFs,
+including space warping transformations like elongation, twisting,
+bending, dilation/erosion, and shell creation.
+"""
+
+import torch
+import numpy as np
+from DeepSDFStruct.SDF import SDFBase
+
+
+class ElongateSDF(SDFBase):
+    """Elongate an SDF by adding material along the coordinate axes.
+
+    Extends the geometry by adding material in the positive and negative
+    directions along each axis. Useful for creating stretched or extended
+    versions of existing shapes.
+
+    Parameters
+    ----------
+    sdf : SDFBase
+        The base SDF to elongate.
+    size : array-like of shape (3,) or float
+        Elongation amount along each axis (x, y, z). If a single float,
+        applies uniform elongation in all directions.
+
+    Examples
+    --------
+    >>> # Elongate a sphere by 0.5 in all directions
+    >>> sphere = SphereSDF(center=[0, 0, 0], radius=0.5)
+    >>> ElongateSDF(sphere, size=0.5)
+    >>>
+    >>> # Elongate more in x-direction than y and z
+    >>> ElongateSDF(sphere, size=[1.0, 0.2, 0.2])
+    """
+
+    def __init__(self, sdf: SDFBase, size):
+        """Initialize ElongateSDF.
+
+        Parameters
+        ----------
+        sdf : SDFBase
+            The base SDF to elongate.
+        size : array-like of shape (3,) or float
+            Elongation amount along each axis.
+        """
+        super().__init__()
+        self.sdf = sdf
+        self.size = torch.nn.Parameter(torch.as_tensor(size, dtype=torch.float32))
+
+    def _compute(self, queries: torch.Tensor) -> torch.Tensor:
+        size = self.size.to(device=queries.device, dtype=queries.dtype)
+        q = torch.abs(queries) - size
+        w = torch.minimum(
+            torch.maximum(torch.maximum(q[:, 0], q[:, 1]), q[:, 2]), torch.tensor(0.0)
+        ).unsqueeze(1)
+        sdf_q = self.sdf._compute(torch.clamp(q, min=0.0))
+        return torch.maximum(sdf_q, w)
+
+    def _get_domain_bounds(self) -> torch.Tensor:
+        b = self.sdf._get_domain_bounds()
+        return torch.stack([b[0] - self.size, b[1] + self.size])
+
+
+class TwistSDF(SDFBase):
+    """Twist an SDF around the Z-axis by an angle proportional to height.
+
+    Applies a rotational deformation where the rotation angle increases
+    linearly with the z-coordinate. Creates a spiral or twisted effect.
+
+    Parameters
+    ----------
+    sdf : SDFBase
+        The SDF to twist.
+    k : float
+        Twist rate (radians per unit length). Positive values create
+        counter-clockwise twist when looking down the Z-axis.
+
+    Examples
+    --------
+    >>> # Twist a box by 0.5 radians per unit height
+    >>> box = BoxSDF(center=[0, 0, 0], extents=[1, 1, 2])
+    >>> TwistSDF(box, k=0.5)
+    >>>
+    >>> # Stronger twist (full rotation over height 2π)
+    >>> TwistSDF(box, k=1.0)
+    """
+
+    def __init__(self, sdf: SDFBase, k):
+        """Initialize TwistSDF.
+
+        Parameters
+        ----------
+        sdf : SDFBase
+            The SDF to twist.
+        k : float
+            Twist rate in radians per unit length.
+        """
+        super().__init__()
+        self.sdf = sdf
+        self.k = torch.nn.Parameter(torch.as_tensor(k, dtype=torch.float32))
+
+    def _compute(self, queries: torch.Tensor) -> torch.Tensor:
+        k = self.k.to(device=queries.device, dtype=queries.dtype)
+        x, y, z = queries[:, 0], queries[:, 1], queries[:, 2]
+        c = torch.cos(k * z)
+        s = torch.sin(k * z)
+        x2 = c * x - s * y
+        y2 = s * x + c * y
+        rotated = torch.stack([x2, y2, z], dim=1)
+        return self.sdf._compute(rotated)
+
+    def _get_domain_bounds(self) -> torch.Tensor:
+        return self.sdf._get_domain_bounds()
+
+
+class BendLinearSDF(SDFBase):
+    """Bend SDF linearly between two control points."""
+
+    def __init__(self, sdf: SDFBase, p0, p1, v):
+        super().__init__()
+        self.sdf = sdf
+        self.p0 = torch.nn.Parameter(torch.as_tensor(p0, dtype=torch.float32))
+        self.p1 = torch.nn.Parameter(torch.as_tensor(p1, dtype=torch.float32))
+        self.v = torch.nn.Parameter(torch.as_tensor(v, dtype=torch.float32))
+
+    def _compute(self, queries: torch.Tensor) -> torch.Tensor:
+        p0 = self.p0.to(device=queries.device, dtype=queries.dtype)
+        p1 = self.p1.to(device=queries.device, dtype=queries.dtype)
+        v = self.v.to(device=queries.device, dtype=queries.dtype)
+
+        ab = p1 - p0
+        t = torch.clamp(torch.sum((queries - p0) * ab, dim=1) / torch.sum(ab**2), 0, 1)
+        t = t.reshape(-1, 1)
+        return self.sdf._compute(queries + t * v)
+
+    def _get_domain_bounds(self) -> torch.Tensor:
+        b = self.sdf._get_domain_bounds()
+        return b
+
+
+class BendRadialSDF(SDFBase):
+    """Bend SDF radially."""
+
+    def __init__(self, sdf: SDFBase, r0, r1, dz):
+        super().__init__()
+        self.sdf = sdf
+        self.r0 = torch.nn.Parameter(torch.as_tensor(r0, dtype=torch.float32))
+        self.r1 = torch.nn.Parameter(torch.as_tensor(r1, dtype=torch.float32))
+        self.dz = torch.nn.Parameter(torch.as_tensor(dz, dtype=torch.float32))
+
+    def _compute(self, queries: torch.Tensor) -> torch.Tensor:
+        r0 = self.r0.to(device=queries.device, dtype=queries.dtype)
+        r1 = self.r1.to(device=queries.device, dtype=queries.dtype)
+        dz = self.dz.to(device=queries.device, dtype=queries.dtype)
+
+        x = queries[:, 0]
+        y = queries[:, 1]
+        r = torch.sqrt(x**2 + y**2)
+        t = torch.clamp((r - r0) / (r1 - r0), 0, 1)
+        z = queries[:, 2] - dz * t
+
+        p = torch.stack([queries[:, 0], queries[:, 1], z], dim=1)
+        return self.sdf._compute(p)
+
+    def _get_domain_bounds(self) -> torch.Tensor:
+        return self.sdf._get_domain_bounds()
+
+
+class DilateSDF(SDFBase):
+    """Expand an SDF uniformly by adding material to the surface.
+
+    Increases the size of the geometry by moving the surface outward
+    by a specified distance. Equivalent to making the object larger
+    while maintaining its shape.
+
+    Parameters
+    ----------
+    sdf : SDFBase
+        The SDF to expand.
+    r : float
+        Expansion distance. Positive values add material (make larger),
+        negative values remove material (make smaller).
+
+    Examples
+    --------
+    >>> # Expand a sphere by 0.1 units
+    >>> sphere = SphereSDF(center=[0, 0, 0], radius=0.5)
+    >>> DilateSDF(sphere, r=0.1)  # radius effectively becomes 0.6
+    >>>
+    >>> # Shrink by using negative dilation
+    >>> DilateSDF(sphere, r=-0.1)  # radius effectively becomes 0.4
+    """
+
+    def __init__(self, sdf: SDFBase, r):
+        """Initialize DilateSDF.
+
+        Parameters
+        ----------
+        sdf : SDFBase
+            The SDF to expand.
+        r : float
+            Expansion distance (positive=larger, negative=smaller).
+        """
+        super().__init__()
+        self.sdf = sdf
+        self.r = torch.nn.Parameter(torch.as_tensor(r, dtype=torch.float32))
+
+    def _compute(self, queries) -> torch.Tensor:
+        r = self.r.to(device=queries.device, dtype=queries.dtype)
+        return self.sdf._compute(queries) - r
+
+    def _get_domain_bounds(self) -> torch.Tensor:
+        b = self.sdf._get_domain_bounds()
+        # Expand bounds by r
+        return torch.stack([b[0] - self.r, b[1] + self.r])
+
+
+class ErodeSDF(SDFBase):
+    """Contract an SDF uniformly by removing material from the surface.
+
+    Decreases the size of the geometry by moving the surface inward
+    by a specified distance. Equivalent to making the object smaller
+    while maintaining its shape.
+
+    Parameters
+    ----------
+    sdf : SDFBase
+        The SDF to contract.
+    r : float
+        Contraction distance. Must be positive. For expansion, use
+        DilateSDF instead.
+
+    Examples
+    --------
+    >>> # Shrink a sphere by 0.1 units
+    >>> sphere = SphereSDF(center=[0, 0, 0], radius=0.5)
+    >>> ErodeSDF(sphere, r=0.1)  # radius effectively becomes 0.4
+    >>>
+    >>> # Create a thin shell by combining with original
+    >>> ErodeSDF(sphere, r=0.05)
+    """
+
+    def __init__(self, sdf: SDFBase, r):
+        """Initialize ErodeSDF.
+
+        Parameters
+        ----------
+        sdf : SDFBase
+            The SDF to contract.
+        r : float
+            Contraction distance (must be positive).
+        """
+        super().__init__()
+        self.sdf = sdf
+        self.r = torch.nn.Parameter(torch.as_tensor(r, dtype=torch.float32))
+
+    def _compute(self, queries) -> torch.Tensor:
+        r = self.r.to(device=queries.device, dtype=queries.dtype)
+        return self.sdf._compute(queries) + r
+
+    def _get_domain_bounds(self) -> torch.Tensor:
+        return self.sdf._get_domain_bounds()
+
+
+class ShellSDF(SDFBase):
+    """Create a hollow shell by keeping only a thin layer around the surface.
+
+    Converts a solid object into a hollow shell by taking the absolute
+    value of the SDF and offsetting by half the thickness. The result
+    is a shell centered on the original surface.
+
+    Parameters
+    ----------
+    sdf : SDFBase
+        The SDF to convert to a shell.
+    thickness : float
+        Total thickness of the shell wall. Must be positive.
+
+    Examples
+    --------
+    >>> # Create a hollow sphere with 0.05 wall thickness
+    >>> sphere = SphereSDF(center=[0, 0, 0], radius=0.5)
+    >>> ShellSDF(sphere, thickness=0.05)
+    >>>
+    >>> # Create a thin-walled box
+    >>> box = BoxSDF(center=[0, 0, 0], extents=[1, 1, 1])
+    >>> ShellSDF(box, thickness=0.02)
+    """
+
+    def __init__(self, sdf: SDFBase, thickness):
+        """Initialize ShellSDF.
+
+        Parameters
+        ----------
+        sdf : SDFBase
+            The SDF to convert to a shell.
+        thickness : float
+            Total thickness of the shell wall.
+        """
+        super().__init__()
+        self.sdf = sdf
+        self.thickness = torch.nn.Parameter(
+            torch.as_tensor(thickness, dtype=torch.float32)
+        )
+
+    def _compute(self, queries) -> torch.Tensor:
+        t = self.thickness.to(device=queries.device, dtype=queries.dtype)
+        return torch.abs(self.sdf._compute(queries)) - t / 2
+
+    def _get_domain_bounds(self) -> torch.Tensor:
+        return self.sdf._get_domain_bounds()
+
+
+class RepeatSDF(SDFBase):
+    """Infinite or finite grid repetition of an SDF."""
+
+    def __init__(self, sdf: SDFBase, spacing, count=None):
+        super().__init__()
+        self.sdf = sdf
+        self.spacing = torch.nn.Parameter(torch.as_tensor(spacing, dtype=torch.float32))
+        self.count = count  # None for infinite, odd number for finite
+
+    def _compute(self, queries: torch.Tensor) -> torch.Tensor:
+        spacing = self.spacing.to(device=queries.device, dtype=queries.dtype)
+
+        # Fold all points symmetrically into [-spacing/2, spacing/2]
+        q = queries - spacing * torch.round(queries / spacing)
+
+        if self.count is not None:
+            # Clamp the grid index so only `count` copies are active
+            half = (self.count - 1) / 2.0
+            n = torch.round(queries / spacing)
+            n = torch.clamp(n, -half, half)
+            q = queries - spacing * n
+
+        return self.sdf._compute(q)
+
+    def _get_domain_bounds(self) -> torch.Tensor:
+        if self.count is None:
+            # Return single-period bounds for visualization
+            return self.sdf._get_domain_bounds()
+        else:
+            b = self.sdf._get_domain_bounds()
+            span = (self.count - 1) * self.spacing
+            return torch.stack([b[0] - span / 2, b[1] + span / 2])
+
+
+class MirrorSDF(SDFBase):
+    """Reflect an SDF across a plane to create symmetric geometry.
+
+    Creates a mirror copy of an SDF across a specified plane, effectively
+    doubling the geometry. The result is the union of the original and
+    reflected SDF, creating a symmetric object.
+
+    Parameters
+    ----------
+    sdf : SDFBase
+        The SDF to mirror. This will be reflected across the plane.
+    plane_point : array-like of shape (3,)
+        A point that lies on the mirror plane. This point, together with
+        plane_normal, defines the mirror plane.
+    plane_normal : array-like of shape (3,)
+        Normal vector of the mirror plane. The plane is perpendicular to
+        this vector. Will be normalized internally.
+
+    Examples
+    --------
+    >>> # Mirror a sphere across the YZ plane (x=0)
+    >>> sphere = SphereSDF(center=[0.5, 0, 0], radius=0.3)
+    >>> MirrorSDF(sphere, plane_point=[0, 0, 0], plane_normal=[1, 0, 0])
+    >>>
+    >>> # Mirror across the XY plane (z=0)
+    >>> MirrorSDF(sphere, plane_point=[0, 0, 0], plane_normal=[0, 0, 1])
+    >>>
+    >>> # Mirror across a diagonal plane
+    >>> MirrorSDF(sphere, plane_point=[0, 0, 0], plane_normal=[1, 1, 0])
+
+    Notes
+    -----
+    - The result is the union (minimum) of original and mirrored SDF
+    - Use plane_point and plane_normal to define any mirror plane
+    - Common mirror planes:
+      - YZ plane: point=[0,0,0], normal=[1,0,0]
+      - XZ plane: point=[0,0,0], normal=[0,1,0]
+      - XY plane: point=[0,0,0], normal=[0,0,1]
+    - The mirrored geometry is exactly symmetric - no thickness or gap
+    """
+
+    def __init__(self, sdf: SDFBase, plane_point, plane_normal):
+        """Initialize MirrorSDF.
+
+        Parameters
+        ----------
+        sdf : SDFBase
+            The SDF to mirror.
+        plane_point : array-like of shape (3,)
+            A point on the mirror plane.
+        plane_normal : array-like of shape (3,)
+            Normal vector of the mirror plane.
+        """
+        super().__init__()
+        self.sdf = sdf
+        self.point = torch.nn.Parameter(
+            torch.as_tensor(plane_point, dtype=torch.float32)
+        )
+        self.normal = torch.nn.Parameter(
+            torch.as_tensor(plane_normal, dtype=torch.float32)
+        )
+
+    def _compute(self, queries: torch.Tensor) -> torch.Tensor:
+        pt = self.point.to(device=queries.device, dtype=queries.dtype)
+        nm = self.normal.to(device=queries.device, dtype=queries.dtype)
+        nm = nm / torch.linalg.norm(nm)
+
+        # Signed distance to plane
+        d = torch.sum((queries - pt) * nm, dim=1, keepdim=True)
+
+        # Distance from original SDF
+        d_orig = self.sdf._compute(queries)
+
+        # Distance from reflected SDF
+        queries_reflected = queries - 2 * d * nm
+        d_reflected = self.sdf._compute(queries_reflected)
+
+        # Take minimum (union of original and mirror)
+        return torch.minimum(d_orig, d_reflected)
+
+    def _get_domain_bounds(self) -> torch.Tensor:
+        return self.sdf._get_domain_bounds()
+
+
+class CircularArraySDF(SDFBase):
+    """Create count copies of an SDF rotated around an arbitrary axis line.
+
+    The axis line is defined by an ``axis`` direction and a ``base_point``
+    lying on that axis. Copies are sampled at evenly spaced angles in the
+    half-open interval [start_angle, end_angle).
+
+    """
+
+    def __init__(
+        self,
+        sdf: SDFBase,
+        count,
+        axis=torch.tensor([0, 0, 1], dtype=torch.float32),
+        base_point=torch.tensor([0, 0, 0], dtype=torch.float32),
+        start_angle_deg=0.0,
+        end_angle_deg=360,
+    ):
+        super().__init__()
+        self.sdf = sdf
+        self.count = int(count)
+
+        self.axis = torch.nn.Parameter(torch.as_tensor(axis, dtype=torch.float32))
+        self.base_point = torch.nn.Parameter(
+            torch.as_tensor(base_point, dtype=torch.float32)
+        )
+        self.start_angle = torch.nn.Parameter(
+            torch.as_tensor(start_angle_deg, dtype=torch.float32)
+        )
+        self.end_angle = torch.nn.Parameter(
+            torch.as_tensor(end_angle_deg, dtype=torch.float32)
+        )
+
+    @staticmethod
+    def _normalize_axis(axis: torch.Tensor) -> torch.Tensor:
+        axis_norm = torch.linalg.norm(axis)
+        if axis_norm <= 0:
+            raise ValueError("Axis must be non-zero")
+        return axis / axis_norm
+
+    @staticmethod
+    def _rotate_about_axis(
+        points: torch.Tensor, axis_unit: torch.Tensor, angles: torch.Tensor
+    ) -> torch.Tensor:
+        """Rotate points around an arbitrary axis for a batch of angles."""
+        k = axis_unit.view(1, 1, 3)
+        p = points.unsqueeze(0).expand(angles.shape[0], -1, -1)
+        a = angles.view(-1, 1, 1)
+        c = torch.cos(torch.deg2rad(a))
+        s = torch.sin(torch.deg2rad(a))
+
+        cross = torch.cross(k, p, dim=2)
+        dot = torch.sum(p * k, dim=2, keepdim=True)
+        return p * c + cross * s + k * dot * (1 - c)
+
+    def _compute(self, queries: torch.Tensor) -> torch.Tensor:
+        if self.count <= 0:
+            raise ValueError("count must be a positive integer")
+
+        axis = self.axis.to(device=queries.device, dtype=queries.dtype)
+        axis_unit = self._normalize_axis(axis)
+        base = self.base_point.to(device=queries.device, dtype=queries.dtype)
+        start = self.start_angle.to(device=queries.device, dtype=queries.dtype)
+        end = self.end_angle.to(device=queries.device, dtype=queries.dtype)
+
+        step = (end - start) / self.count
+        angles = start + step * torch.arange(
+            self.count, device=queries.device, dtype=queries.dtype
+        )
+
+        # Pull query points back through inverse rotations and evaluate each copy
+        # without changing the number of points passed to the child SDF.
+        centered = queries - base
+        dmin = None
+        for angle in angles:
+            rotated = self._rotate_about_axis(centered, axis_unit, (-angle).reshape(1))[
+                0
+            ]
+            eval_points = rotated + base
+            d = self.sdf._compute(eval_points)
+            dmin = d if dmin is None else torch.minimum(dmin, d)
+
+        return dmin
+
+    def _get_domain_bounds(self) -> torch.Tensor:
+        if self.count <= 0:
+            raise ValueError("count must be a positive integer")
+
+        b = self.sdf._get_domain_bounds()
+        minb = torch.minimum(b[0], b[1])
+        maxb = torch.maximum(b[0], b[1])
+
+        corners = torch.stack(
+            [
+                torch.tensor([x, y, z], dtype=minb.dtype, device=minb.device)
+                for x in (minb[0], maxb[0])
+                for y in (minb[1], maxb[1])
+                for z in (minb[2], maxb[2])
+            ],
+            dim=0,
+        )
+
+        axis = self.axis.detach().to(device=minb.device, dtype=minb.dtype)
+        axis_unit = self._normalize_axis(axis)
+        base = self.base_point.detach().to(device=minb.device, dtype=minb.dtype)
+        start = self.start_angle.detach().to(device=minb.device, dtype=minb.dtype)
+        end = self.end_angle.detach().to(device=minb.device, dtype=minb.dtype)
+
+        step = (end - start) / self.count
+        angles = start + step * torch.arange(
+            self.count, device=minb.device, dtype=minb.dtype
+        )
+
+        centered = corners - base
+        rotated = self._rotate_about_axis(centered, axis_unit, angles)
+        rotated_world = rotated + base.view(1, 1, 3)
+
+        lower = torch.min(rotated_world.reshape(-1, 3), dim=0).values
+        upper = torch.max(rotated_world.reshape(-1, 3), dim=0).values
+        return torch.stack([lower, upper], dim=0)
+
+
+class RevolveSDF(SDFBase):
+    """Revolve a 2D profile around an axis to create a 3D surface of revolution.
+
+    Takes a 2D SDF profile and rotates it around a specified axis to generate
+    a 3D axisymmetric object. The 2D profile is defined in a plane containing
+    the rotation axis.
+
+    Parameters
+    ----------
+    sdf_2d : SDFBase
+        A 2D SDF (geometric_dim=2) representing the profile to revolve.
+        The profile should be in the plane where the first coordinate is
+        the radial distance from the axis, and the second coordinate is
+        the height along the axis.
+    axis : torch.Tensor, default [0, 0, 1]
+        The 3D axis vector to revolve around. Must be one of the principal
+        axes: [1,0,0] (X-axis), [0,1,0] (Y-axis), or [0,0,1] (Z-axis).
+        The 2D profile's first coordinate becomes the radial distance from
+        this axis.
+    offset : float, default 0.0
+        Radial offset from the axis. Positive values move the profile away
+        from the axis, creating a hole in the center. Use this to create
+        hollow objects or to position the profile at a specific radius.
+
+    Raises
+    ------
+    ValueError
+        If sdf_2d is not a 2D SDF, or if axis is not a principal axis.
+
+    Examples
+    --------
+    >>> # Create a sphere by revolving a circle around Z-axis
+    >>> circle = CircleSDF(center=[0.5, 0], radius=0.5)
+    >>> RevolveSDF(circle, axis=[0, 0, 1])
+    >>>
+    >>> # Create a torus by revolving a circle with offset
+    >>> circle = CircleSDF(center=[1.0, 0], radius=0.2)
+    >>> RevolveSDF(circle, axis=[0, 0, 1])
+    >>>
+    >>> # Revolve around X-axis instead
+    >>> RevolveSDF(circle, axis=[1, 0, 0])
+
+    Notes
+    -----
+    - The 2D profile's first coordinate (x) represents radial distance from axis
+    - The 2D profile's second coordinate (y) represents height along the axis
+    - Only principal axes ([1,0,0], [0,1,0], [0,0,1]) are supported
+    - The profile should be positioned appropriately for the desired shape
+    - Use offset to create holes or position the profile away from the axis
+    """
+
+    def __init__(
+        self,
+        sdf_2d: SDFBase,
+        axis=torch.tensor([0, 0, 1], dtype=torch.float32),
+        offset=0.0,
+    ):
+        """Initialize RevolveSDF with a 2D profile.
+
+        Parameters
+        ----------
+        sdf_2d : SDFBase
+            2D SDF profile to revolve.
+        axis : torch.Tensor, default [0, 0, 1]
+            Axis of revolution (must be principal axis).
+        offset : float, default 0.0
+            Radial offset from the axis.
+        """
+        super().__init__()
+        if sdf_2d.geometric_dim != 2:
+            raise ValueError("RevolveSDF requires a 2D SDF")
+        self.sdf_2d = sdf_2d
+        self.axis = torch.nn.Parameter(torch.as_tensor(axis, dtype=torch.float32))
+        self.offset = torch.nn.Parameter(torch.as_tensor(offset, dtype=torch.float32))
+
+    def _compute(self, queries: torch.Tensor) -> torch.Tensor:
+        offset = self.offset.to(device=queries.device, dtype=queries.dtype)
+        axis = self.axis.to(device=queries.device, dtype=queries.dtype)
+
+        if torch.all(
+            axis == torch.tensor([0, 0, 1], device=queries.device, dtype=queries.dtype)
+        ):
+            # Use x,y plane distance as radius, z as height in 2D space
+            radius = torch.sqrt(queries[:, 0] ** 2 + queries[:, 1] ** 2) - offset
+            pts_2d = torch.stack([radius, queries[:, 2]], dim=1)
+        elif torch.all(
+            axis == torch.tensor([1, 0, 0], device=queries.device, dtype=queries.dtype)
+        ):
+            # Use y,z plane
+            radius = torch.sqrt(queries[:, 1] ** 2 + queries[:, 2] ** 2) - offset
+            pts_2d = torch.stack([radius, queries[:, 0]], dim=1)
+        elif torch.all(
+            axis == torch.tensor([0, 1, 0], device=queries.device, dtype=queries.dtype)
+        ):
+            # Use x,z plane
+            radius = torch.sqrt(queries[:, 0] ** 2 + queries[:, 2] ** 2) - offset
+            pts_2d = torch.stack([radius, queries[:, 1]], dim=1)
+        else:
+            raise ValueError(
+                f"Invalid axis: {self.axis}. Must be [1,0,0], [0,1,0], or [0,0,1]"
+            )
+
+        return self.sdf_2d._compute(pts_2d)
+
+    def _get_domain_bounds(self) -> torch.Tensor:
+        b = self.sdf_2d._get_domain_bounds()
+        # The 2D profile's first coordinate is the radial distance from the axis.
+        # When revolved, this creates a full circle, so x/y bounds are symmetric.
+        max_radius = torch.maximum(b[0, 0].abs(), b[1, 0].abs())
+        return torch.stack(
+            [
+                torch.stack([-max_radius, -max_radius, b[0, 1]]),
+                torch.stack([max_radius, max_radius, b[1, 1]]),
+            ]
+        )
+
+
+def cubic_bezier_distance(p, control_points, samples=500, chunk_size=1000, refine=True):
+    """
+    Compute distance from point p to cubic bezier curve using sampling with refinement.
+
+    Samples the curve at many points and finds the closest one, then refines locally.
+
+    Args:
+        p: Query point(s), shape (N, 3)
+        control_points: Control points tensor, shape (4, 3)
+        samples: Number of samples along the curve
+        chunk_size: Number of query points to process at a time (for memory efficiency)
+        refine: Whether to refine the minimum with local optimization
+
+    Returns:
+        Tuple of (dist, t, closest_point) where:
+            - dist: distance to curve, shape (N, 1)
+            - t: parameter value at closest point, shape (N, 1)
+            - closest_point: closest point on curve, shape (N, 3)
+    """
+    if p.dim() == 1:
+        p = p.unsqueeze(0)
+
+    # Move control points to same device as p
+    control_points = control_points.to(device=p.device, dtype=p.dtype)
+
+    p0, p1, p2, p3 = control_points
+
+    # Sample the curve once (shared across all queries)
+    t_samples = torch.linspace(0, 1, samples, device=p.device, dtype=p.dtype)
+    u_samples = 1 - t_samples
+
+    # Evaluate cubic bezier at all sample points
+    t_vec = t_samples.unsqueeze(1)  # (samples, 1)
+    u_vec = u_samples.unsqueeze(1)  # (samples, 1)
+
+    curve_points = (
+        (u_vec**3) * p0
+        + (3 * u_vec**2 * t_vec) * p1
+        + (3 * u_vec * t_vec**2) * p2
+        + (t_vec**3) * p3
+    )  # (samples, 3)
+
+    # Initialize output tensors
+    n_points = p.shape[0]
+    dtype = p.dtype
+    device = p.device
+
+    min_dists = torch.full((n_points, 1), float("inf"), dtype=dtype, device=device)
+    min_idx = torch.zeros(n_points, dtype=torch.long, device=device)
+
+    # Process in chunks to reduce memory
+    for i in range(0, n_points, chunk_size):
+        end_idx = min(i + chunk_size, n_points)
+        chunk = p[i:end_idx]  # (chunk_size, 3)
+
+        # Compute distances for this chunk
+        chunk_expanded = chunk.unsqueeze(1)  # (chunk_size, 1, 3)
+        curve_expanded = curve_points.unsqueeze(0)  # (1, samples, 3)
+
+        diff = chunk_expanded - curve_expanded  # (chunk_size, samples, 3)
+        dists_chunk = torch.linalg.norm(diff, dim=2)  # (chunk_size, samples)
+
+        # Find minimum for this chunk
+        min_dists_chunk, min_idx_chunk = torch.min(
+            dists_chunk, dim=1
+        )  # (chunk_size), (chunk_size)
+
+        min_dists[i:end_idx] = min_dists_chunk.unsqueeze(1)
+        min_idx[i:end_idx] = min_idx_chunk
+
+    # Get initial best t and points
+    t_closest = t_samples[min_idx].unsqueeze(1)  # (N, 1)
+    point_closest = curve_points[min_idx]  # (N, 3)
+
+    # Local refinement around the minimum (optional)
+    if refine:
+        # Process refinement in chunks as well to save memory
+        for i in range(0, n_points, chunk_size):
+            end_idx = min(i + chunk_size, n_points)
+            chunk = p[i:end_idx]
+            t_chunk_base = t_closest[i:end_idx]
+
+            # Create refined samples around each minimum for this chunk
+            refine_points = 20
+            refine_delta = 0.02  # Larger refinement window
+
+            t_refine_base = t_chunk_base.squeeze(1)  # (chunk,)
+            t_refine_start = torch.clamp(t_refine_base - refine_delta, 0, 1)
+            t_refine_width = (
+                torch.clamp(t_refine_base + refine_delta, 0, 1) - t_refine_start
+            )
+
+            min_dists_chunk = min_dists[i:end_idx].clone()
+            min_t_chunk = t_chunk_base.clone()
+
+            # Evaluate at multiple refinement points for this chunk
+            for j in range(refine_points + 1):
+                t_refine = t_refine_start + (t_refine_width * j / refine_points)
+                t_refine_exp = t_refine.unsqueeze(1)  # (chunk, 1)
+
+                # Evaluate bezier at this t
+                u_val = 1 - t_refine_exp
+                curve_at_t = (
+                    (u_val**3) * p0
+                    + (3 * u_val**2 * t_refine_exp) * p1
+                    + (3 * u_val * t_refine_exp**2) * p2
+                    + (t_refine_exp**3) * p3
+                )
+
+                # Compute distances
+                diff = chunk - curve_at_t  # (chunk, 3)
+                dists = torch.linalg.norm(diff, dim=1, keepdim=True)
+
+                # Update minimum if better
+                mask = dists < min_dists_chunk
+                min_dists_chunk = torch.where(mask, dists, min_dists_chunk)
+                min_t_chunk = torch.where(mask, t_refine_exp, min_t_chunk)
+
+            # Update global results with refined chunk results
+            min_dists[i:end_idx] = min_dists_chunk
+            t_closest[i:end_idx] = min_t_chunk
+
+        # Recompute closest points with refined t values
+        t_closest_exp = t_closest
+        point_closest = (
+            (1 - t_closest_exp) ** 3 * p0
+            + 3 * (1 - t_closest_exp) ** 2 * t_closest_exp * p1
+            + 3 * (1 - t_closest_exp) * t_closest_exp**2 * p2
+            + t_closest_exp**3 * p3
+        )
+
+    return min_dists, t_closest, point_closest
+
+
+class SweepSDF(SDFBase):
+    """Sweep a 2D profile along a cubic bezier curve with flat end caps."""
+
+    def __init__(
+        self,
+        profile_sdf: SDFBase,
+        trajectory,
+        bezier_samples=500,
+        cap_ends=True,
+        chunk_size=1000,
+        refine=True,
+    ):
+        super().__init__()
+        assert profile_sdf.geometric_dim == 2, "SweepSDF requires a 2D profile SDF"
+        self.profile_sdf = profile_sdf
+        self.trajectory = trajectory
+        self.bezier_samples = bezier_samples
+        self.cap_ends = cap_ends
+        self.chunk_size = chunk_size
+        self.refine = refine
+
+    def _compute(self, queries: torch.Tensor) -> torch.Tensor:
+        # Ensure queries has shape (N, 3)
+        original_shape = queries.shape
+        if queries.dim() == 1:
+            queries = queries.unsqueeze(0)
+
+        control_points = self.trajectory.control_points
+        device = queries.device
+
+        # Move control points to correct device
+        control_points = control_points.to(device=device, dtype=queries.dtype)
+
+        n_points = queries.shape[0]
+
+        # Initialize output
+        result = torch.zeros(n_points, 1, dtype=queries.dtype, device=device)
+
+        # Process in chunks to reduce memory
+        for i in range(0, n_points, self.chunk_size):
+            end_idx = min(i + self.chunk_size, n_points)
+            chunk_queries = queries[i:end_idx]  # (chunk, 3)
+
+            # Find closest point and parameter t on bezier for this chunk
+            dist_to_curve, t, closest_point = cubic_bezier_distance(
+                chunk_queries,
+                control_points,
+                self.bezier_samples,
+                chunk_size=self.chunk_size,
+                refine=self.refine,
+            )
+
+            # Compute tangent at closest point
+            t_values = t[:, 0:1]
+            u = 1 - t_values
+            p0, p1, p2, p3 = control_points
+
+            tangent_per_point = (
+                (3 * u**2) * (p1 - p0).unsqueeze(0)
+                + (6 * u * t_values) * (p2 - p1).unsqueeze(0)
+                + (3 * t_values**2) * (p3 - p2).unsqueeze(0)
+            )
+
+            tangent_norms = torch.linalg.norm(tangent_per_point, dim=1, keepdim=True)
+            tangent = tangent_per_point / (tangent_norms + 1e-10)
+
+            # Compute normal using curvature (second derivative)
+            curvature_per_point = (6 * u) * (p2 - 2 * p1 + p0).unsqueeze(0) + (
+                6 * t_values
+            ) * (p3 - 2 * p2 + p1).unsqueeze(0)
+
+            normal = torch.zeros_like(chunk_queries)
+            curvature_norms = torch.linalg.norm(
+                curvature_per_point, dim=1, keepdim=True
+            )
+            has_curvature = curvature_norms.squeeze(1) > 1e-10
+
+            if has_curvature.any():
+                normal_curv = curvature_per_point / (curvature_norms + 1e-10)
+                proj = torch.sum(normal_curv * tangent, dim=1, keepdim=True) * tangent
+                normal_curv = normal_curv - proj
+                normal_curv_norms = torch.linalg.norm(normal_curv, dim=1, keepdim=True)
+                normal_curv = normal_curv / (normal_curv_norms + 1e-10)
+                normal = torch.where(
+                    has_curvature.unsqueeze(1).expand_as(normal), normal_curv, normal
+                )
+
+            no_curvature = ~has_curvature
+            if no_curvature.any():
+                try_normal = torch.tensor(
+                    [0.0, 1.0, 0.0], device=device, dtype=chunk_queries.dtype
+                )
+                try_normal = try_normal.unsqueeze(0).expand(chunk_queries.shape[0], -1)
+
+                dot_with_tangent = torch.sum(tangent * try_normal, dim=1)
+
+                parallel_to_y = torch.abs(dot_with_tangent) > 0.9
+                n_base = torch.where(
+                    parallel_to_y.unsqueeze(1).expand_as(try_normal),
+                    torch.tensor(
+                        [1.0, 0.0, 0.0], device=device, dtype=chunk_queries.dtype
+                    )
+                    .unsqueeze(0)
+                    .expand(chunk_queries.shape[0], -1),
+                    try_normal,
+                )
+
+                proj = torch.sum(n_base * tangent, dim=1, keepdim=True) * tangent
+                n_perp = n_base - proj
+                n_perp_norms = torch.linalg.norm(n_perp, dim=1, keepdim=True)
+                n_perp = n_perp / (n_perp_norms + 1e-10)
+
+                normal = torch.where(
+                    no_curvature.unsqueeze(1).expand_as(normal), n_perp, normal
+                )
+
+            # Compute binormal
+            binormal = torch.linalg.cross(tangent, normal, dim=1)
+            binormal_norm = torch.linalg.norm(binormal, dim=1, keepdim=True)
+            binormal = binormal / (binormal_norm + 1e-10)
+
+            # Vector from closest point to query
+            vec_to_query = chunk_queries - closest_point
+
+            # Project onto normal and binormal to get profile coordinates
+            coord_n = torch.sum(vec_to_query * normal, dim=1, keepdim=True)
+            coord_b = torch.sum(vec_to_query * binormal, dim=1, keepdim=True)
+
+            # Profile SDF expects 2D points (u, v)
+            pts_2d = torch.cat([coord_n, coord_b], dim=1)
+
+            # Evaluate profile SDF
+            profile_dist = self.profile_sdf._compute(pts_2d)
+
+            chunk_result = profile_dist
+
+            # Add end caps if requested
+            if self.cap_ends:
+                start_point = control_points[0]
+                end_point = control_points[3]
+
+                # Tangent at t=0: 3(P1 - P0)
+                start_tangent = 3 * (control_points[1] - control_points[0])
+                start_tangent_norm = torch.linalg.norm(start_tangent)
+                if start_tangent_norm > 1e-10:
+                    start_tangent = start_tangent / start_tangent_norm
+
+                # Tangent at t=1: 3(P3 - P2)
+                end_tangent = 3 * (control_points[3] - control_points[2])
+                end_tangent_norm = torch.linalg.norm(end_tangent)
+                if end_tangent_norm > 1e-10:
+                    end_tangent = end_tangent / end_tangent_norm
+
+                dist_to_start_plane = torch.sum(
+                    (chunk_queries - start_point) * start_tangent, dim=1, keepdim=True
+                )
+                start_cap_dist = -dist_to_start_plane
+
+                dist_to_end_plane = torch.sum(
+                    (chunk_queries - end_point) * end_tangent, dim=1, keepdim=True
+                )
+                end_cap_dist = dist_to_end_plane
+
+                chunk_result = torch.maximum(chunk_result, start_cap_dist)
+                chunk_result = torch.maximum(chunk_result, end_cap_dist)
+
+            result[i:end_idx] = chunk_result
+
+        return result
+
+    def _get_domain_bounds(self) -> torch.Tensor:
+        cp = self.trajectory.control_points
+        curve_min = cp.min(dim=0).values
+        curve_max = cp.max(dim=0).values
+
+        profile_bounds = self.profile_sdf._get_domain_bounds()
+        profile_radius = max(abs(profile_bounds[0, 0]), abs(profile_bounds[1, 0]))
+
+        lower = curve_min - profile_radius
+        upper = curve_max + profile_radius
+
+        return torch.stack([lower, upper])
