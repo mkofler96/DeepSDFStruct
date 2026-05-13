@@ -13,11 +13,11 @@ This document tracks the implementation status and test coverage of SDF primitiv
 | Torus | ✅ | | `TorusSDF` |
 | Capsule | ✅ | ⬜️ | `CapsuleSDF` |
 | Cylinder | ✅ | | `CylinderSDF` |
-| Capped Cylinder | ⬜️ | ⬜️ | |
-| Rounded Cylinder | ⬜️ | ⬜️ | |
+| Capped Cylinder | ✅ | ⬜️ | `CappedCylinderSDF` |
+| Rounded Cylinder | ✅ | ⬜️ | `RoundedCylinderSDF` |
 | Cone | ✅ | | `ConeSDF` |
-| Capped Cone | ⬜️ | ⬜️ | |
-| Rounded Cone | ⬜️ | ⬜️ | |
+| Capped Cone | ✅ | ⬜️ | `CappedConeSDF` |
+| Rounded Cone | ✅ | ⬜️ | `RoundedConeSDF` |
 | Plane | ✅ | | `PlaneSDF` |
 | Slab | ⬜️ | ⬜️ | Can be done with `Intersection` of `PlaneSDF`s |
 | Ellipsoid | ✅ | ⬜️ | `EllipsoidSDF` |
