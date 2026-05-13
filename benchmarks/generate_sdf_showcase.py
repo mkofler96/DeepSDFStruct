@@ -562,7 +562,7 @@ def create_sdf_primitives():
 
     # Circular Array
     print("Circular Array of Spheres")
-    arrayed_sphere = CircularArraySDF(off_center_sphere, count=6, radius=0.8)
+    arrayed_sphere = CircularArraySDF(off_center_sphere, count=6)
     create_screenshot(
         arrayed_sphere,
         output_dir / "circular_array_sphere.png",
