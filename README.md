@@ -309,8 +309,8 @@ sphere = SphereSDF(center=[0, 0, 0], radius=1.0)
 # Box
 box = BoxSDF(center=[0, 0, 0], extents=[1.0, 1.0, 1.0])
 
-# Cylinder
-cylinder = CylinderSDF(point=[0, 0, -0.5], axis=[0, 0, 1], radius=0.4, height=1.0)
+# Cylinder (defined by endpoints)
+cylinder = CylinderSDF(point_a=[0, 0, -0.5], point_b=[0, 0, 0.5], radius=0.4)
 
 # Cone
 cone = ConeSDF(apexpoint=[0, 0, -0.5], axis=[0, 0, 1], radius=0.4, height=1.0)
