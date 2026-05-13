@@ -53,7 +53,8 @@ docs = [
 ]
 visualization = [
     "streamlit>=1.55.0",
-    "streamlit-stl>=0.0.6"
+    "streamlit-stl>=0.0.6",
+    "scikit-learn",
 ]
 computation = [
     "pypardiso>=0.4.6",
