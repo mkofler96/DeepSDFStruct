@@ -278,7 +278,7 @@ DeepSDFStruct provides a comprehensive set of geometric primitives and SDF opera
         <tr>
             <td style="width: 25%;"><img src="benchmarks/sdf_showcase/primitives/3D/rounded_cylinder.png" alt="Rounded Cylinder"></td>
             <td style="width: 25%;"><img src="benchmarks/sdf_showcase/primitives/3D/rounded_cone.png" alt="Rounded Cone"></td>
-            <td style="width: 25%;"><img src="benchmarks_sdf_showcase/primitives/3D/corner_spheres.png" alt="Corner Spheres"></td>
+            <td style="width: 25%;"><img src="benchmarks/sdf_showcase/primitives/3D/corner_spheres.png" alt="Corner Spheres"></td>
             <td style="width: 25%;"><img src="benchmarks/sdf_showcase/primitives/3D/cross_ms.png" alt="Cross M"></td>
         </tr>
         <tr>
