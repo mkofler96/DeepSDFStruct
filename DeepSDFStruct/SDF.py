@@ -1151,7 +1151,7 @@ class SDFfromLineMesh(SDFBase):
         self.geometric_dim = line_mesh.vertices.shape[1]
 
     def _get_domain_bounds(self):
-        return self.line_mesh.bounds()
+        return torch.tensor(self.line_mesh.bounds())
 
     def _set_param(self, parameters):
         self.t = parameters[0]
