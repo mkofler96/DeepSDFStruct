@@ -600,9 +600,9 @@ def train_deep_sdf(
                 chunk_loss = loss_fun(pred_sdf, sdf_gt[i].to(device))
 
                 l2_size_loss = torch.sum(torch.norm(batch_lat_vecs, dim=1))
-                reg_loss = (
-                    code_reg_lambda * min(1, epoch / 100) * l2_size_loss
-                ) / num_sdf_samples
+                reg_loss = (code_reg_lambda * min(1, epoch / 100) * l2_size_loss) / (
+                    num_sdf_samples / batch_split
+                )
 
                 chunk_loss = chunk_loss + reg_loss.to(device)
                 batch_reg_loss = batch_reg_loss + reg_loss.to(device)
