@@ -227,9 +227,9 @@ class SDFSamples(torch.utils.data.Dataset):
                         neg_tensor[torch.randperm(neg_tensor.shape[0])],
                     ]
                 )
-                if "E" in npz.keys():
+                if "C" in npz.keys():
                     self.loaded_mat_properties.append(
-                        torch.from_numpy(npz["E.npy"]).to(torch.float32)
+                        torch.from_numpy(npz["C.npy"]).to(torch.float32).reshape(-1)
                     )
                 self.filenames.append(filename)
 
@@ -247,12 +247,12 @@ class SDFSamples(torch.utils.data.Dataset):
         if self.load_ram:
             return (
                 unpack_sdf_samples_from_ram(self.loaded_data[idx], self.subsample),
-                mat_prop,
+                mat_prop.unsqueeze(0).expand(self.subsample, -1),
                 idx,
             )
         else:
             return (
                 unpack_sdf_samples(filename, self.geom_dimension, self.subsample),
-                mat_prop,
+                mat_prop.unsqueeze(0).expand(self.subsample, -1),
                 idx,
             )

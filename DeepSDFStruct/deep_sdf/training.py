@@ -485,6 +485,9 @@ def train_deep_sdf(
     )
     loss_fun_spec = get_spec_with_default(specs, "LossFunction", "clampedL1")
     loss_fun = get_loss_function(loss_fun_spec)
+    add_homogeniation = get_spec_with_default(specs, "AddHomogenization", False)
+    if add_homogeniation:
+        logger.info("adding homogenization loss")
 
     optimizer_all = torch.optim.Adam(
         [
@@ -561,7 +564,10 @@ def train_deep_sdf(
         for sdf_data, properties, indices in sdf_loader:
             # Process the input data
             sdf_data = sdf_data.reshape(-1, geom_dimension + 1).to(device)
-            properties = properties.to(device)
+            properties_expanded = properties.reshape(-1, properties.shape[-1]).to(
+                device
+            )
+
             indices = indices.to(device)
 
             num_sdf_samples = sdf_data.shape[0]
@@ -581,13 +587,16 @@ def train_deep_sdf(
             )
 
             sdf_gt = torch.chunk(sdf_gt, batch_split)
+            properties_chunked = torch.chunk(properties_expanded, batch_split)
 
             batch_loss = 0.0
             batch_reg_loss = 0.0
+            batch_hom_loss = 0.0
             optimizer_all.zero_grad()
 
             for i in range(batch_split):
                 batch_lat_vecs = lat_vecs(indices[i])
+                batch_properties = properties_chunked[i]
 
                 input = torch.cat([batch_lat_vecs, xyz[i]], dim=1)
 
@@ -599,13 +608,38 @@ def train_deep_sdf(
 
                 chunk_loss = loss_fun(pred_sdf, sdf_gt[i].to(device))
 
-                l2_size_loss = torch.sum(torch.norm(batch_lat_vecs, dim=1))
-                reg_loss = (code_reg_lambda * min(1, epoch / 100) * l2_size_loss) / (
-                    num_sdf_samples / batch_split
-                )
+                if add_homogeniation:
+                    prop_dim = batch_properties.shape[1]
 
-                chunk_loss = chunk_loss + reg_loss.to(device)
-                batch_reg_loss = batch_reg_loss + reg_loss.to(device)
+                    # the first part of the latent vector should be the
+                    # homogenized property tensor
+                    latent_props = batch_lat_vecs[:, :prop_dim]
+                    latent_extra = batch_lat_vecs[:, prop_dim:]
+                    # drive first dimensions toward homogenized properties
+                    hom_loss = torch.sum(
+                        torch.norm(latent_props - batch_properties, dim=1)
+                    ) / (num_sdf_samples / batch_split)
+
+                    chunk_loss += hom_loss.to(device)
+                    batch_hom_loss += hom_loss.item()
+                    # regularize remaining latent dimensions toward zero
+                    if latent_extra.shape[1] > 0:
+                        extra_reg_loss = (
+                            code_reg_lambda
+                            * min(1, epoch / 100)
+                            * torch.sum(torch.norm(latent_extra, dim=1))
+                        ) / (num_sdf_samples / batch_split)
+
+                        chunk_loss += extra_reg_loss.to(device)
+                else:
+                    # standard l2 latent vector loss
+                    l2_size_loss = torch.sum(torch.norm(batch_lat_vecs, dim=1))
+                    reg_loss = (
+                        code_reg_lambda * min(1, epoch / 100) * l2_size_loss
+                    ) / (num_sdf_samples / batch_split)
+
+                    chunk_loss = chunk_loss + reg_loss.to(device)
+                    batch_reg_loss = batch_reg_loss + reg_loss.to(device)
 
                 chunk_loss.backward()
 
@@ -637,9 +671,18 @@ def train_deep_sdf(
                 f"Finished {epoch} ({epoch}/{num_epochs}) [{epoch/num_epochs*100:.2f}%] after {total_time}"
             )
         else:
-            pbar.set_postfix(
-                {"Loss": f"{batch_loss:.4f}", "Reg": f"{batch_reg_loss:.4f}"}
-            )
+            if add_homogeniation:
+                pbar.set_postfix(
+                    {
+                        "Loss": f"{batch_loss:.4f}",
+                        "Reg": f"{batch_reg_loss:.4f}",
+                        "Hom": f"{batch_hom_loss:.4f}",
+                    }
+                )
+            else:
+                pbar.set_postfix(
+                    {"Loss": f"{batch_loss:.4f}", "Reg": f"{batch_reg_loss:.4f}"}
+                )
         seconds_elapsed = end - start
         timing_log.append(seconds_elapsed)
 

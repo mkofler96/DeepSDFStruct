@@ -8,6 +8,15 @@ from huggingface_hub import snapshot_download
 import torch
 
 
+def test_train_homogenization_model():
+    data_dir = "/storage/mkofler/dissertation/data/"
+    exp_dir = "DeepSDFStruct/trained_models/test_experiment_homogenization"
+
+    device = "cpu"
+    torch.set_default_device("cpu")
+    train_deep_sdf(exp_dir, data_dir, device=device)
+
+
 def test_train_hierarchical_model():
     data_dir = snapshot_download(
         "mkofler/lattice_structure_unit_cells",
@@ -65,6 +74,7 @@ if __name__ == "__main__":
     import warnings
 
     warnings.filterwarnings("error")
+    test_train_homogenization_model()
     test_train_hierarchical_model()
     test_train_model()
     test_continue_from()
