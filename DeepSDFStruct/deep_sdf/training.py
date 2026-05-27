@@ -609,37 +609,23 @@ def train_deep_sdf(
                 chunk_loss = loss_fun(pred_sdf, sdf_gt[i].to(device))
 
                 if add_homogeniation:
-                    prop_dim = batch_properties.shape[1]
+                    pred_properties = decoder.predict_C_homogenized(batch_lat_vecs)
 
-                    # the first part of the latent vector should be the
-                    # homogenized property tensor
-                    latent_props = batch_lat_vecs[:, :prop_dim]
-                    latent_extra = batch_lat_vecs[:, prop_dim:]
-                    # drive first dimensions toward homogenized properties
-                    hom_loss = torch.sum(
-                        torch.norm(latent_props - batch_properties, dim=1)
-                    ) / (num_sdf_samples / batch_split)
+                    hom_loss = torch.nn.functional.mse_loss(
+                        pred_properties, batch_properties, reduction="mean"
+                    )
 
                     chunk_loss += hom_loss.to(device)
                     batch_hom_loss += hom_loss.item()
-                    # regularize remaining latent dimensions toward zero
-                    if latent_extra.shape[1] > 0:
-                        extra_reg_loss = (
-                            code_reg_lambda
-                            * min(1, epoch / 100)
-                            * torch.sum(torch.norm(latent_extra, dim=1))
-                        ) / (num_sdf_samples / batch_split)
 
-                        chunk_loss += extra_reg_loss.to(device)
-                else:
-                    # standard l2 latent vector loss
-                    l2_size_loss = torch.sum(torch.norm(batch_lat_vecs, dim=1))
-                    reg_loss = (
-                        code_reg_lambda * min(1, epoch / 100) * l2_size_loss
-                    ) / (num_sdf_samples / batch_split)
-
-                    chunk_loss = chunk_loss + reg_loss.to(device)
-                    batch_reg_loss = batch_reg_loss + reg_loss.to(device)
+                # standard l2 latent vector loss
+                reg_loss = (
+                    code_reg_lambda
+                    * min(1, epoch / 100)
+                    * torch.mean(torch.norm(batch_lat_vecs, dim=1))
+                )
+                chunk_loss = chunk_loss + reg_loss.to(device)
+                batch_reg_loss = batch_reg_loss + reg_loss.to(device)
 
                 chunk_loss.backward()
 
