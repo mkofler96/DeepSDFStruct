@@ -18,9 +18,9 @@ from DeepSDFStruct.optimization import tet_signed_vol
 
 def _sphere_volume_mesh(res=16, radius=0.7, center=(0.0, 0.0, 0.0)):
     fc = FlexiCubes(device="cpu")
-    x_nx3, cube_fx8 = fc.construct_voxel_grid(res)
-    # Spread the unit grid over [-1, 1] so the sphere sits inside the domain.
-    x_nx3 = x_nx3 * 2.0
+    x_nx3, cube_fx8 = fc.construct_voxel_grid(
+        res, bounds=[[-1.0, -1.0, -1.0], [1.0, 1.0, 1.0]]
+    )
     c = torch.tensor(center, dtype=x_nx3.dtype)
     s_n = torch.linalg.norm(x_nx3 - c, dim=1) - radius
     verts, tets, _ = fc(x_nx3, s_n, cube_fx8, res, output_tetmesh=True)

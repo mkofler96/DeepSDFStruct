@@ -1031,21 +1031,26 @@ class FlexiCubes:
         """
         if tets.shape[0] == 0:
             return tets
-        v0 = vertices[tets[:, 0]]
-        v1 = vertices[tets[:, 1]]
-        v2 = vertices[tets[:, 2]]
-        v3 = vertices[tets[:, 3]]
-        e1, e2, e3 = v1 - v0, v2 - v0, v3 - v0
-        signed_vol = torch.einsum("ij,ij->i", e1, torch.linalg.cross(e2, e3, dim=1))
-        inverted = signed_vol < 0
+        # Only integer index masks are derived here, so skip autograd
+        # recording even when ``vertices`` requires gradients.
+        with torch.no_grad():
+            v0 = vertices[tets[:, 0]]
+            v1 = vertices[tets[:, 1]]
+            v2 = vertices[tets[:, 2]]
+            v3 = vertices[tets[:, 3]]
+            e1, e2, e3 = v1 - v0, v2 - v0, v3 - v0
+            signed_vol = torch.einsum(
+                "ij,ij->i", e1, torch.linalg.cross(e2, e3, dim=1)
+            )
+            inverted = signed_vol < 0
+            # Coplanar tets only evaluate to exactly zero up to floating-point
+            # rounding (which depends on the association order of the triple
+            # product), so compare against a tolerance relative to the Hadamard
+            # bound |e1||e2||e3| of the determinant instead of zero itself.
+            scale = e1.norm(dim=1) * e2.norm(dim=1) * e3.norm(dim=1)
+            degenerate = signed_vol.abs() <= 1e-5 * scale
         tets = tets.clone()
         tets[inverted] = tets[inverted][:, [0, 1, 3, 2]]
-        # Coplanar tets only evaluate to exactly zero up to floating-point
-        # rounding (which depends on the association order of the triple
-        # product), so compare against a tolerance relative to the Hadamard
-        # bound |e1||e2||e3| of the determinant instead of zero itself.
-        scale = e1.norm(dim=1) * e2.norm(dim=1) * e3.norm(dim=1)
-        degenerate = signed_vol.abs() <= 1e-5 * scale
         if degenerate.any():
             logger.info(f"removed {int(degenerate.sum())} elements with 0 volume")
             tets = tets[~degenerate]
