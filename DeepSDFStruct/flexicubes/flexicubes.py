@@ -28,9 +28,13 @@ Licensed under the Apache License, Version 2.0.
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+import logging
+
 import torch
 import warnings
 from DeepSDFStruct.flexicubes.tables import *
+
+logger = logging.getLogger(__name__)
 
 __all__ = ["FlexiCubes"]
 
@@ -1005,13 +1009,14 @@ class FlexiCubes:
         # The surface (pyramid) and interior sub-procedures above emit tets
         # with inconsistent winding, so a large fraction come out inverted
         # (negative signed volume). FEA solvers require a positive signed
-        # volume / Jacobian, so normalize every tet to positive orientation.
+        # volume / Jacobian, so normalize every tet to positive orientation
+        # and drop degenerate (zero-volume) elements.
         tets = self._orient_tets(vertices, tets)
         return vertices, tets
 
     @staticmethod
     def _orient_tets(vertices, tets):
-        """Return ``tets`` with a consistent, positive signed volume.
+        """Return ``tets`` with a consistent, strictly positive signed volume.
 
         For a tetrahedron with vertices ``(v0, v1, v2, v3)`` the signed volume
         is proportional to ``det([v1 - v0, v2 - v0, v3 - v0])``. Elements with
@@ -1019,6 +1024,10 @@ class FlexiCubes:
         flips the orientation so the signed volume becomes positive without
         changing the element's geometry. The vertex indices are merely
         reordered, so gradients to ``vertices`` are unaffected.
+
+        Degenerate elements (four coplanar vertices, zero volume) cannot be
+        repaired by reordering and are removed instead. Vertices are left
+        untouched, so indices of the remaining tets stay valid.
         """
         if tets.shape[0] == 0:
             return tets
@@ -1026,10 +1035,18 @@ class FlexiCubes:
         v1 = vertices[tets[:, 1]]
         v2 = vertices[tets[:, 2]]
         v3 = vertices[tets[:, 3]]
-        signed_vol = torch.einsum(
-            "ij,ij->i", v1 - v0, torch.linalg.cross(v2 - v0, v3 - v0, dim=1)
-        )
+        e1, e2, e3 = v1 - v0, v2 - v0, v3 - v0
+        signed_vol = torch.einsum("ij,ij->i", e1, torch.linalg.cross(e2, e3, dim=1))
         inverted = signed_vol < 0
         tets = tets.clone()
         tets[inverted] = tets[inverted][:, [0, 1, 3, 2]]
+        # Coplanar tets only evaluate to exactly zero up to floating-point
+        # rounding (which depends on the association order of the triple
+        # product), so compare against a tolerance relative to the Hadamard
+        # bound |e1||e2||e3| of the determinant instead of zero itself.
+        scale = e1.norm(dim=1) * e2.norm(dim=1) * e3.norm(dim=1)
+        degenerate = signed_vol.abs() <= 1e-5 * scale
+        if degenerate.any():
+            logger.info(f"removed {int(degenerate.sum())} elements with 0 volume")
+            tets = tets[~degenerate]
         return tets

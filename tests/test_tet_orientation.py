@@ -4,9 +4,13 @@ FlexiCubes' ``_tetrahedralize`` builds tets from two sub-procedures (surface
 pyramids and interior edges) whose vertex orderings do not share a consistent
 winding, so a large fraction of the elements used to come out inverted
 (negative signed volume). That breaks FEA solvers, which require a positive
-signed volume / Jacobian on every element. These tests pin the fix: every
-non-degenerate tet returned by FlexiCubes must have a positive signed volume.
+signed volume / Jacobian on every element. The interior sub-procedure can
+additionally emit degenerate (exactly coplanar, zero-volume) tets, which are
+removed during extraction. These tests pin both fixes: every tet returned by
+FlexiCubes must have a strictly positive signed volume.
 """
+
+import logging
 
 import torch
 
@@ -48,20 +52,39 @@ def test_orient_tets_handles_empty():
     assert FlexiCubes._orient_tets(verts, tets).shape == (0, 4)
 
 
-def test_flexicubes_volume_mesh_has_no_inverted_tets():
-    """End-to-end: extracted volume mesh contains no negatively-oriented tets."""
+def test_orient_tets_removes_degenerate_elements(caplog):
+    """Zero-volume (coplanar) tets are dropped and the removal is logged."""
+    verts = torch.tensor(
+        [
+            [0.0, 0.0, 0.0],
+            [1.0, 0.0, 0.0],
+            [0.0, 1.0, 0.0],
+            [0.0, 0.0, 1.0],
+            [1.0, 1.0, 0.0],  # coplanar with the first three (z = 0 plane)
+        ]
+    )
+    tets = torch.tensor([[0, 1, 2, 3], [0, 1, 2, 4]])
+
+    with caplog.at_level(logging.INFO, logger="DeepSDFStruct.flexicubes.flexicubes"):
+        oriented = FlexiCubes._orient_tets(verts, tets)
+
+    assert oriented.shape == (1, 4)
+    assert (tet_signed_vol(verts, oriented) > 0).all()
+    assert "removed 1 elements with 0 volume" in caplog.text
+
+
+def test_flexicubes_volume_mesh_has_only_positive_tets():
+    """End-to-end: extracted volume mesh has strictly positive signed volumes."""
     for center in [(0.0, 0.0, 0.0), (0.13, 0.07, 0.21)]:
         verts, tets = _sphere_volume_mesh(center=center)
         assert tets.shape[0] > 0
         vols = tet_signed_vol(verts, tets)
-        # Degenerate (exactly coplanar) tets are a separate FlexiCubes issue;
-        # the orientation guarantee is that none are negatively oriented.
-        n_negative = int((vols < -1e-9).sum())
-        assert n_negative == 0, f"{n_negative} inverted tets for center {center}"
+        n_bad = int((vols <= 0).sum())
+        assert n_bad == 0, f"{n_bad} non-positive tets for center {center}"
 
 
 if __name__ == "__main__":
     test_orient_tets_flips_inverted_element()
     test_orient_tets_handles_empty()
-    test_flexicubes_volume_mesh_has_no_inverted_tets()
+    test_flexicubes_volume_mesh_has_only_positive_tets()
     print("ok")
