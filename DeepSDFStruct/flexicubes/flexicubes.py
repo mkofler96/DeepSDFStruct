@@ -1039,9 +1039,7 @@ class FlexiCubes:
             v2 = vertices[tets[:, 2]]
             v3 = vertices[tets[:, 3]]
             e1, e2, e3 = v1 - v0, v2 - v0, v3 - v0
-            signed_vol = torch.einsum(
-                "ij,ij->i", e1, torch.linalg.cross(e2, e3, dim=1)
-            )
+            signed_vol = torch.einsum("ij,ij->i", e1, torch.linalg.cross(e2, e3, dim=1))
             inverted = signed_vol < 0
             # Coplanar tets only evaluate to exactly zero up to floating-point
             # rounding (which depends on the association order of the triple
