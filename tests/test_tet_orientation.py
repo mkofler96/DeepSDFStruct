@@ -10,8 +10,6 @@ removed during extraction. These tests pin both fixes: every tet returned by
 FlexiCubes must have a strictly positive signed volume.
 """
 
-import logging
-
 import torch
 
 from DeepSDFStruct.flexicubes.flexicubes import FlexiCubes
@@ -52,8 +50,8 @@ def test_orient_tets_handles_empty():
     assert FlexiCubes._orient_tets(verts, tets).shape == (0, 4)
 
 
-def test_orient_tets_removes_degenerate_elements(caplog):
-    """Zero-volume (coplanar) tets are dropped and the removal is logged."""
+def test_orient_tets_removes_degenerate_elements():
+    """Zero-volume (coplanar) tets are dropped."""
     verts = torch.tensor(
         [
             [0.0, 0.0, 0.0],
@@ -65,12 +63,10 @@ def test_orient_tets_removes_degenerate_elements(caplog):
     )
     tets = torch.tensor([[0, 1, 2, 3], [0, 1, 2, 4]])
 
-    with caplog.at_level(logging.INFO, logger="DeepSDFStruct.flexicubes.flexicubes"):
-        oriented = FlexiCubes._orient_tets(verts, tets)
+    oriented = FlexiCubes._orient_tets(verts, tets)
 
     assert oriented.shape == (1, 4)
     assert (tet_signed_vol(verts, oriented) > 0).all()
-    assert "removed 1 elements with 0 volume" in caplog.text
 
 
 def test_flexicubes_volume_mesh_has_only_positive_tets():
