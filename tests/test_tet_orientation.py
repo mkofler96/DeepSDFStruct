@@ -35,7 +35,9 @@ def test_orient_tets_flips_inverted_element():
     # [0, 1, 2, 3] is positively oriented; [0, 1, 3, 2] is its inversion.
     tets = torch.tensor([[0, 1, 2, 3], [0, 1, 3, 2]])
 
-    assert (tet_signed_vol(verts, tets) < 0).any(), "fixture should contain an inversion"
+    assert (
+        tet_signed_vol(verts, tets) < 0
+    ).any(), "fixture should contain an inversion"
 
     oriented = FlexiCubes._orient_tets(verts, tets)
     vols = tet_signed_vol(verts, oriented)
