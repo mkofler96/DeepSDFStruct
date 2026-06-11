@@ -1002,4 +1002,34 @@ class FlexiCubes:
 
         tets = torch.cat([tets_surface, tets_inside])
         vertices = torch.cat([vertices, inside_verts, inside_cubes_center])
+        # The surface (pyramid) and interior sub-procedures above emit tets
+        # with inconsistent winding, so a large fraction come out inverted
+        # (negative signed volume). FEA solvers require a positive signed
+        # volume / Jacobian, so normalize every tet to positive orientation.
+        tets = self._orient_tets(vertices, tets)
         return vertices, tets
+
+    @staticmethod
+    def _orient_tets(vertices, tets):
+        """Return ``tets`` with a consistent, positive signed volume.
+
+        For a tetrahedron with vertices ``(v0, v1, v2, v3)`` the signed volume
+        is proportional to ``det([v1 - v0, v2 - v0, v3 - v0])``. Elements with
+        a negative determinant are inverted; swapping the last two vertices
+        flips the orientation so the signed volume becomes positive without
+        changing the element's geometry. The vertex indices are merely
+        reordered, so gradients to ``vertices`` are unaffected.
+        """
+        if tets.shape[0] == 0:
+            return tets
+        v0 = vertices[tets[:, 0]]
+        v1 = vertices[tets[:, 1]]
+        v2 = vertices[tets[:, 2]]
+        v3 = vertices[tets[:, 3]]
+        signed_vol = torch.einsum(
+            "ij,ij->i", v1 - v0, torch.linalg.cross(v2 - v0, v3 - v0, dim=1)
+        )
+        inverted = signed_vol < 0
+        tets = tets.clone()
+        tets[inverted] = tets[inverted][:, [0, 1, 3, 2]]
+        return tets
