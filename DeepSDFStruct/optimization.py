@@ -308,8 +308,8 @@ class MMA:
         F_np = F_np / self.F0
         dFdx_np = dFdx_np / self.F0
 
-        xmin = np.maximum(self.x - self.max_step, self.bounds[:, 0].reshape(-1, 1))
-        xmax = np.minimum(self.x + self.max_step, self.bounds[:, 1].reshape(-1, 1))
+        xmin = np.maximum(self.x - self.max_step, self.bounds[:, 0:1])
+        xmax = np.minimum(self.x + self.max_step, self.bounds[:, 1:2])
         move = 0.1
         self.loop = self.loop + 1
         xmma, ymma, zmma, lam, xsi, eta, muMMA, zet, s, low, upp = mmasub(
