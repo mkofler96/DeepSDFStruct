@@ -10,8 +10,12 @@ import torch
 
 REVISION = "dbe58ebaa00057d5f15096c2b253c7efa91e19d3"
 
-torch.set_default_dtype(torch.float32)
-torch.set_default_device("cpu")
+
+@pytest.fixture(scope="module", autouse=True)
+def set_float32_dtype():
+    torch.set_default_dtype(torch.float32)
+    torch.set_default_device("cpu")
+    yield
 
 
 @pytest.fixture(scope="module")
@@ -70,6 +74,8 @@ if __name__ == "__main__":
     import warnings
 
     warnings.filterwarnings("error")
+    torch.set_default_dtype(torch.float32)
+    torch.set_default_device("cpu")
     data_dir = snapshot_download(
         "mkofler/lattice_structure_unit_cells",
         repo_type="dataset",

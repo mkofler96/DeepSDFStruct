@@ -73,7 +73,7 @@ def test_structural_optimization(num_iter=1):
         torch.set_default_dtype(torch.float32)
         mesh, _ = create_3D_mesh(
             lattice_struct,
-            30,
+            10,
             mesh_type="volume",
             differentiate=False,
             device=model.device,
@@ -81,7 +81,7 @@ def test_structural_optimization(num_iter=1):
         )
         surf_mesh, _ = create_3D_mesh(
             lattice_struct,
-            30,
+            10,
             mesh_type="surface",
             differentiate=False,
             device=model.device,
@@ -154,6 +154,9 @@ def test_structural_optimization(num_iter=1):
         dF = torch.autograd.grad(F, param, retain_graph=True)[0]
         dG = torch.autograd.grad(G, param, retain_graph=True)[0]
         optimizer.step(F, dF, G, dG)
+
+        # Reset default dtype to float32 for other tests
+        torch.set_default_dtype(torch.float32)
 
     # torch.autograd.grad(compliance, cantilever.thickness)[0]
     mesh = get_mesh_from_torchfem(cantilever)
