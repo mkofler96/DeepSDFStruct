@@ -9,7 +9,12 @@ import torch
 
 
 def test_train_homogenization_model():
-    data_dir = "/storage/mkofler/dissertation/data/"
+    data_dir = snapshot_download(
+        "mkofler/lattice_structure_unit_cells",
+        repo_type="dataset",
+        revision="dbe58ebaa00057d5f15096c2b253c7efa91e19d3",
+        ignore_patterns=["*.stl", "**/*.stl"],
+    )
     exp_dir = "DeepSDFStruct/trained_models/test_experiment_homogenization"
 
     device = "cpu"
@@ -22,6 +27,7 @@ def test_train_hierarchical_model():
         "mkofler/lattice_structure_unit_cells",
         repo_type="dataset",
         revision="b80339abc071df77ff81e8abc19ad4856d96ddbd",
+        ignore_patterns=["*.stl", "**/*.stl"],
     )
     exp_dir = "DeepSDFStruct/trained_models/test_experiment_hierarchical"
 
@@ -35,6 +41,7 @@ def test_train_model():
         "mkofler/lattice_structure_unit_cells",
         repo_type="dataset",
         revision="b80339abc071df77ff81e8abc19ad4856d96ddbd",
+        ignore_patterns=["*.stl", "**/*.stl"],
     )
     exp_dir = "DeepSDFStruct/trained_models/test_experiment"
 
@@ -48,6 +55,7 @@ def test_continue_from():
         "mkofler/lattice_structure_unit_cells",
         repo_type="dataset",
         revision="b80339abc071df77ff81e8abc19ad4856d96ddbd",
+        ignore_patterns=["*.stl", "**/*.stl"],
     )
     exp_dir = "DeepSDFStruct/trained_models/test_experiment"
 

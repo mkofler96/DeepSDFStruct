@@ -1,8 +1,8 @@
 {
   "Description": "This experiment is intented for testing purposes only.",
   "NetworkArch": "deep_sdf_decoder",
-  "TrainSplit": "splits/splines_v2.json",
-  "TestSplit": "splits/splines_v2.json",
+  "TrainSplit": "splits/splines_v2_small.json",
+  "TestSplit": "splits/splines_v2_small.json",
   "ReconstructionSplit": "",
   "NetworkSpecs": {
     "dims": [
@@ -41,7 +41,14 @@
     "use_tanh": false,
     "latent_dropout": false,
     "weight_norm": true,
-    "geom_dimension": 3
+    "geom_dimension": 3,
+    "homogen_predictor_dims": [
+      64,
+      64,
+      64,
+      64,
+      9
+    ]
   },
   "CodeLength": 10,
   "NumEpochs": 5,
