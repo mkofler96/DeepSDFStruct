@@ -1,10 +1,10 @@
 {
-    "loss": 0.0635075570008433,
+    "loss": 0.05482380986213684,
     "num_epochs": 5,
-    "timestamp": "2026-01-19 11:05:17",
+    "timestamp": "2026-05-21 17:40:15",
     "host_name": "neptune",
     "device": "cpu",
-    "training_duration": "0:00:02",
+    "training_duration": "0:00:06",
     "data_dir": "/usr2/mkofler/.cache/huggingface/hub/datasets--mkofler--lattice_structure_unit_cells/snapshots/b80339abc071df77ff81e8abc19ad4856d96ddbd",
-    "version": "1.4.2.dev7+gce8bfe994.d20260119"
+    "version": "1.7.1.dev40+g989384bd4.d20260330"
 }

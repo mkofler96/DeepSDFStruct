@@ -42,6 +42,7 @@ class DeepSDFDecoder(nn.Module):
         xyz_in_all=None,
         use_tanh=False,
         latent_dropout=False,
+        homogen_predictor_dims=None,
     ):
         super(DeepSDFDecoder, self).__init__()
 
@@ -95,6 +96,20 @@ class DeepSDFDecoder(nn.Module):
         self.dropout_prob = dropout_prob
         self.dropout = dropout
         self.th = nn.Tanh()
+        if homogen_predictor_dims is not None:
+            hp_dims = [latent_size] + homogen_predictor_dims
+            homogen_layers = []
+
+            for i in range(len(hp_dims) - 1):
+                homogen_layers.append(nn.Linear(hp_dims[i], hp_dims[i + 1]))
+
+                # No activation after final layer
+                if i < len(hp_dims) - 2:
+                    homogen_layers.append(nn.ReLU())
+
+            self.homogen_network = nn.Sequential(*homogen_layers)
+        else:
+            self.homogen_network = None
 
     # input: N x (L+3), or N x (L+geom_dimension)
     def forward(self, input):
@@ -130,3 +145,11 @@ class DeepSDFDecoder(nn.Module):
                     x = F.dropout(x, p=self.dropout_prob, training=self.training)
 
         return x
+
+    def predict_C_homogenized(self, latent_vec):
+        if self.homogen_network is not None:
+            return self.homogen_network(latent_vec)
+        else:
+            raise RuntimeError(
+                "Cannot predict homogenized elasticity tensor, because homogenization network is not defined"
+            )
