@@ -10,6 +10,9 @@ import torch
 
 REVISION = "dbe58ebaa00057d5f15096c2b253c7efa91e19d3"
 
+torch.set_default_dtype(torch.float32)
+torch.set_default_device("cpu")
+
 
 @pytest.fixture(scope="module")
 def data_dir():
@@ -25,7 +28,6 @@ def test_train_homogenization_model(data_dir):
     exp_dir = "DeepSDFStruct/trained_models/test_experiment_homogenization"
 
     device = "cpu"
-    torch.set_default_device("cpu")
     train_deep_sdf(exp_dir, data_dir, device=device)
 
 
@@ -33,7 +35,6 @@ def test_train_hierarchical_model(data_dir):
     exp_dir = "DeepSDFStruct/trained_models/test_experiment_hierarchical"
 
     device = "cpu"
-    torch.set_default_device("cpu")
     train_deep_sdf(exp_dir, data_dir, device=device)
 
 
@@ -41,7 +42,6 @@ def test_train_model(data_dir):
     exp_dir = "DeepSDFStruct/trained_models/test_experiment"
 
     device = "cpu"
-    torch.set_default_device("cpu")
     train_deep_sdf(exp_dir, data_dir, device=device)
 
 
@@ -49,7 +49,6 @@ def test_continue_from(data_dir):
     exp_dir = "DeepSDFStruct/trained_models/test_experiment"
 
     device = "cpu"
-    torch.set_default_device("cpu")
     train_deep_sdf(exp_dir, data_dir, device=device, continue_from="1")
 
 
