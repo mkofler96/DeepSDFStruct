@@ -5,16 +5,23 @@ from DeepSDFStruct.deep_sdf.training import (
 )
 from DeepSDFStruct.pretrained_models import get_model
 from huggingface_hub import snapshot_download
+import pytest
 import torch
 
+REVISION = "dbe58ebaa00057d5f15096c2b253c7efa91e19d3"
 
-def test_train_homogenization_model():
-    data_dir = snapshot_download(
+
+@pytest.fixture(scope="module")
+def data_dir():
+    return snapshot_download(
         "mkofler/lattice_structure_unit_cells",
         repo_type="dataset",
-        revision="dbe58ebaa00057d5f15096c2b253c7efa91e19d3",
+        revision=REVISION,
         ignore_patterns=["*.stl", "**/*.stl"],
     )
+
+
+def test_train_homogenization_model(data_dir):
     exp_dir = "DeepSDFStruct/trained_models/test_experiment_homogenization"
 
     device = "cpu"
@@ -22,13 +29,7 @@ def test_train_homogenization_model():
     train_deep_sdf(exp_dir, data_dir, device=device)
 
 
-def test_train_hierarchical_model():
-    data_dir = snapshot_download(
-        "mkofler/lattice_structure_unit_cells",
-        repo_type="dataset",
-        revision="b80339abc071df77ff81e8abc19ad4856d96ddbd",
-        ignore_patterns=["*.stl", "**/*.stl"],
-    )
+def test_train_hierarchical_model(data_dir):
     exp_dir = "DeepSDFStruct/trained_models/test_experiment_hierarchical"
 
     device = "cpu"
@@ -36,13 +37,7 @@ def test_train_hierarchical_model():
     train_deep_sdf(exp_dir, data_dir, device=device)
 
 
-def test_train_model():
-    data_dir = snapshot_download(
-        "mkofler/lattice_structure_unit_cells",
-        repo_type="dataset",
-        revision="b80339abc071df77ff81e8abc19ad4856d96ddbd",
-        ignore_patterns=["*.stl", "**/*.stl"],
-    )
+def test_train_model(data_dir):
     exp_dir = "DeepSDFStruct/trained_models/test_experiment"
 
     device = "cpu"
@@ -50,13 +45,7 @@ def test_train_model():
     train_deep_sdf(exp_dir, data_dir, device=device)
 
 
-def test_continue_from():
-    data_dir = snapshot_download(
-        "mkofler/lattice_structure_unit_cells",
-        repo_type="dataset",
-        revision="b80339abc071df77ff81e8abc19ad4856d96ddbd",
-        ignore_patterns=["*.stl", "**/*.stl"],
-    )
+def test_continue_from(data_dir):
     exp_dir = "DeepSDFStruct/trained_models/test_experiment"
 
     device = "cpu"
@@ -82,9 +71,15 @@ if __name__ == "__main__":
     import warnings
 
     warnings.filterwarnings("error")
-    test_train_homogenization_model()
-    test_train_hierarchical_model()
-    test_train_model()
-    test_continue_from()
+    data_dir = snapshot_download(
+        "mkofler/lattice_structure_unit_cells",
+        repo_type="dataset",
+        revision=REVISION,
+        ignore_patterns=["*.stl", "**/*.stl"],
+    )
+    test_train_homogenization_model(data_dir)
+    test_train_hierarchical_model(data_dir)
+    test_train_model(data_dir)
+    test_continue_from(data_dir)
     test_latent_recon()
     test_cpp_file_export()
