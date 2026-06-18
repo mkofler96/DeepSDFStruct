@@ -22,6 +22,7 @@ DeepSDFStruct.sampling
    .. autosummary::
    
       DataSetInfo
+      GeometryInstance
       SDFSampler
       SampledSDF
       SphereParameters

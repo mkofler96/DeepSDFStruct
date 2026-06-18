@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>DeepSDFStruct.sampling &#8212; DeepSDFStruct 1.7.2.dev12+gaf6dea681.d20260617 documentation</title>
+    <title>DeepSDFStruct.sampling &#8212; DeepSDFStruct 1.7.2.dev13+g37c9f6b71.d20260618 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=334a9cd2"></script>
+    <script src="../../_static/documentation_options.js?v=6ba216fd"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'source/generated/DeepSDFStruct.sampling';</script>
@@ -110,7 +110,7 @@
   
   
   
-    <p class="title logo__title">DeepSDFStruct 1.7.2.dev12+gaf6dea681.d20260617 documentation</p>
+    <p class="title logo__title">DeepSDFStruct 1.7.2.dev13+g37c9f6b71.d20260618 documentation</p>
   
 </a></div>
     
@@ -440,13 +440,16 @@ for splitting by sign and visualization.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.sampling.DataSetInfo" title="DeepSDFStruct.sampling.DataSetInfo"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataSetInfo</span></code></a></p></td>
 <td><p>Metadata for a generated SDF dataset.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.sampling.SDFSampler" title="DeepSDFStruct.sampling.SDFSampler"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SDFSampler</span></code></a>(outdir, splitdir, dataset_name[, ...])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.sampling.GeometryInstance" title="DeepSDFStruct.sampling.GeometryInstance"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GeometryInstance</span></code></a>(name, geom, C)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.sampling.SampledSDF" title="DeepSDFStruct.sampling.SampledSDF"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SampledSDF</span></code></a>(samples, distances)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.sampling.SDFSampler" title="DeepSDFStruct.sampling.SDFSampler"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SDFSampler</span></code></a>(outdir, splitdir, dataset_name[, ...])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.sampling.SampledSDF" title="DeepSDFStruct.sampling.SampledSDF"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SampledSDF</span></code></a>(samples, distances)</p></td>
 <td><p>Container for sampled SDF points and their distance values.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.sampling.SphereParameters" title="DeepSDFStruct.sampling.SphereParameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SphereParameters</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.sampling.SphereParameters" title="DeepSDFStruct.sampling.SphereParameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SphereParameters</span></code></a></p></td>
 <td><p>Parameters defining a sampling sphere.</p></td>
 </tr>
 </tbody>
@@ -590,6 +593,36 @@ for splitting by sign and visualization.</p>
 </dd></dl>
 
 <dl class="py class">
+<dt class="sig sig-object py" id="DeepSDFStruct.sampling.GeometryInstance">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.sampling.</span></span><span class="sig-name descname"><span class="pre">GeometryInstance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">geom</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.sampling.GeometryInstance" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>)</p></li>
+<li><p><strong>geom</strong> (<em>trimesh.base.Trimesh</em>)</p></li>
+<li><p><strong>C</strong> (<em>numpy.ndarray</em><em> | </em><em>None</em>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="DeepSDFStruct.sampling.GeometryInstance.C">
+<span class="sig-name descname"><span class="pre">C</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">numpy.ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#DeepSDFStruct.sampling.GeometryInstance.C" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="DeepSDFStruct.sampling.GeometryInstance.geom">
+<span class="sig-name descname"><span class="pre">geom</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">trimesh.base.Trimesh</span></span><a class="headerlink" href="#DeepSDFStruct.sampling.GeometryInstance.geom" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="DeepSDFStruct.sampling.GeometryInstance.name">
+<span class="sig-name descname"><span class="pre">name</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><a class="headerlink" href="#DeepSDFStruct.sampling.GeometryInstance.name" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
 <dt class="sig sig-object py" id="DeepSDFStruct.sampling.SDFSampler">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.sampling.</span></span><span class="sig-name descname"><span class="pre">SDFSampler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outdir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">splitdir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[0.05,</span> <span class="pre">0.025]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite_existing</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.sampling.SDFSampler" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
@@ -597,7 +630,7 @@ for splitting by sign and visualization.</p>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="DeepSDFStruct.sampling.SDFSampler.add_class">
-<span class="sig-name descname"><span class="pre">add_class</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">geom_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">class_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_faces</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.sampling.SDFSampler.add_class" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">add_class</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">geom_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">class_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_faces</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">homogenized_c</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.sampling.SDFSampler.add_class" title="Link to this definition">#</a></dt>
 <dd><p>Adds a geometry to the sampler object. Tries to transform inputs to
 trimesh data. In case the geometry is a spline object, the n_faces
 parameter determines the accuracy of the extracted mesh</p>
@@ -609,10 +642,16 @@ parameter determines the accuracy of the extracted mesh</p>
 <dd class="field-even"><ul class="simple">
 <li><p><strong>geom_list</strong> (<em>list</em>)</p></li>
 <li><p><strong>class_name</strong> (<em>str</em>)</p></li>
+<li><p><strong>homogenized_c</strong> (<em>list</em><em>[</em><em>numpy.ndarray</em><em>] </em><em>| </em><em>None</em>)</p></li>
 </ul>
 </dd>
 </dl>
 </dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="DeepSDFStruct.sampling.SDFSampler.geometries">
+<span class="sig-name descname"><span class="pre">geometries</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#DeepSDFStruct.sampling.GeometryInstance" title="DeepSDFStruct.sampling.GeometryInstance"><span class="pre">DeepSDFStruct.sampling.GeometryInstance</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#DeepSDFStruct.sampling.SDFSampler.geometries" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="DeepSDFStruct.sampling.SDFSampler.get_meshs_from_folder">
@@ -966,8 +1005,15 @@ Each point has an SDF scalar value.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id7"><code class="docutils literal notranslate"><span class="pre">DataSetInfo.stds</span></code></a></li>
 </ul>
 </li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.sampling.GeometryInstance"><code class="docutils literal notranslate"><span class="pre">GeometryInstance</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.sampling.GeometryInstance.C"><code class="docutils literal notranslate"><span class="pre">GeometryInstance.C</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.sampling.GeometryInstance.geom"><code class="docutils literal notranslate"><span class="pre">GeometryInstance.geom</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.sampling.GeometryInstance.name"><code class="docutils literal notranslate"><span class="pre">GeometryInstance.name</span></code></a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.sampling.SDFSampler"><code class="docutils literal notranslate"><span class="pre">SDFSampler</span></code></a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.sampling.SDFSampler.add_class"><code class="docutils literal notranslate"><span class="pre">SDFSampler.add_class()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.sampling.SDFSampler.geometries"><code class="docutils literal notranslate"><span class="pre">SDFSampler.geometries</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.sampling.SDFSampler.get_meshs_from_folder"><code class="docutils literal notranslate"><span class="pre">SDFSampler.get_meshs_from_folder()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.sampling.SDFSampler.process_geometries"><code class="docutils literal notranslate"><span class="pre">SDFSampler.process_geometries()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.sampling.SDFSampler.write_json"><code class="docutils literal notranslate"><span class="pre">SDFSampler.write_json()</span></code></a></li>
