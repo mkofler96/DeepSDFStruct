@@ -15,6 +15,7 @@ jobs:
       HF_HUB_CACHE: ${{ github.workspace }}/.cache/huggingface/hub
       HF_HUB_DOWNLOAD_TIMEOUT: "60"
       HF_HUB_ETAG_TIMEOUT: "30"
+      HF_TOKEN: ${{ secrets.HF_TOKEN }}
 
     strategy:
       matrix:
