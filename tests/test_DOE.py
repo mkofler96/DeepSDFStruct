@@ -13,7 +13,9 @@ def snapshot_download_with_retry(*args, max_retries=3, **kwargs):
             if e.response and e.response.status_code == 429:
                 if attempt < max_retries - 1:
                     wait_time = 60 * (attempt + 1)
-                    print(f"Rate limited (429). Waiting {wait_time}s before retry {attempt + 2}/{max_retries}")
+                    print(
+                        f"Rate limited (429). Waiting {wait_time}s before retry {attempt + 2}/{max_retries}"
+                    )
                     time.sleep(wait_time)
                 else:
                     raise
