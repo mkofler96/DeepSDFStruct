@@ -110,7 +110,10 @@ def test_structural_optimization(num_iter=1):
             init_vol = vols.sum().item()
             logger.info(f"Initial volume: {init_vol} on {len(vols)} elements.")
         eps = 1e-12
-        mask = vols > eps
+        # Use float64 for the mask to match torchfem's internal precision;
+        # tets with tiny float32-positive volumes can become negative in float64.
+        vols_f64 = tet_signed_vol(verts.to(torch.float64), tets_oriented)
+        mask = vols_f64 > eps
         vol = vols[mask].sum()
 
         # keep only the good tets
