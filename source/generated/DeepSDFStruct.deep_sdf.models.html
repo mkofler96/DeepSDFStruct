@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>DeepSDFStruct.deep_sdf.models &#8212; DeepSDFStruct 1.7.2.dev13+g37c9f6b71.d20260618 documentation</title>
+    <title>DeepSDFStruct.deep_sdf.models &#8212; DeepSDFStruct 1.7.2.dev14+gb7fb6aa9d.d20260625 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=6ba216fd"></script>
+    <script src="../../_static/documentation_options.js?v=b6d05299"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'source/generated/DeepSDFStruct.deep_sdf.models';</script>
@@ -110,7 +110,7 @@
   
   
   
-    <p class="title logo__title">DeepSDFStruct 1.7.2.dev13+g37c9f6b71.d20260618 documentation</p>
+    <p class="title logo__title">DeepSDFStruct 1.7.2.dev14+gb7fb6aa9d.d20260625 documentation</p>
   
 </a></div>
     
@@ -453,7 +453,10 @@ Each row encodes one learned shape.</p></li>
 <dd><p>Export model to TorchScript for C++ deployment.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>filename</strong> (<em>str</em>)</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filename</strong> (<em>str</em>)</p></li>
+<li><p><strong>use_script</strong> (<em>bool</em>)</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -493,11 +496,15 @@ shape representation. In CVPR.</p>
 </aside>
 <dl class="py method">
 <dt class="sig sig-object py" id="id0">
-<span class="sig-name descname"><span class="pre">export_libtorch_executable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id0" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">export_libtorch_executable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_script</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id0" title="Link to this definition">#</a></dt>
 <dd><p>Export the trained decoder model to a TorchScript file for use with LibTorch (C++).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>filename</strong> (<em>str</em>) – Path where the TorchScript model will be saved (e.g. “decoder.pt”).</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filename</strong> (<em>str</em>) – Path where the TorchScript model will be saved (e.g. “decoder.pt”).</p></li>
+<li><p><strong>use_script</strong> (<em>bool</em>) – If True, use torch.jit.script (recommended for C++ compatibility).
+If False, use torch.jit.trace (legacy mode, may have control flow issues).</p></li>
+</ul>
 </dd>
 </dl>
 <p class="rubric">Example</p>
