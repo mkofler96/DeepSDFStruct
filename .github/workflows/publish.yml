@@ -13,6 +13,7 @@ jobs:
 
   publish:
     needs: test
+    if: github.ref_type == 'tag'
 
     runs-on: ubuntu-latest
     environment:
