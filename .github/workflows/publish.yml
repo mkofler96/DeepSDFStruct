@@ -22,37 +22,34 @@ jobs:
       id-token: write
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-      - uses: actions/setup-python@v5
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
           python-version: "3.13"
 
-      - uses: astral-sh/setup-uv@v6
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
         with:
           enable-cache: true
 
-      - name: Verify tag format
-        run: |
-          [[ "$GITHUB_REF_NAME" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]
-
-      - name: Verify package version
+      - name: Verify stable tag format
         shell: bash
         run: |
-          TAG="${GITHUB_REF_NAME#v}"
-
-          VERSION=$(uv version --short)
-
-          echo "Tag:     $TAG"
-          echo "Version: $VERSION"
-
-          if [ "$TAG" != "$VERSION" ]; then
-            echo "::error::Git tag ($TAG) does not match package version ($VERSION)"
+          if [[ ! "$GITHUB_REF_NAME" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "::error::Tag must be in the format vX.Y.Z"
             exit 1
           fi
 
-      - run: uv sync
+      - name: Sync dependencies
+        run: uv sync --locked
 
-      - run: uv build
+      - name: Build package
+        run: uv build
 
-      - run: uv publish
+      - name: Publish to PyPI
+        run: uv publish
