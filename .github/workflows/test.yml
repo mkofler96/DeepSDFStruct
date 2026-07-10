@@ -5,6 +5,7 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+  workflow_call:
 
 jobs:
   test:
@@ -37,11 +38,13 @@ jobs:
           enable-cache: true
 
       - name: Cache huggingface
+        id: hf-cache
         uses: actions/cache@v4
         with:
           path: ${{ github.workspace }}/.cache/huggingface
           key: huggingface-${{ hashFiles('pyproject.toml') }}
-          restore-keys: huggingface-
+          restore-keys: |
+            huggingface-
 
       - name: Ensure Hugging Face cache directories exist
         run: |

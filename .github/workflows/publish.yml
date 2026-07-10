@@ -1,0 +1,56 @@
+name: Publish to PyPI
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  test:
+    uses: ./.github/workflows/test.yml
+    secrets: inherit
+
+  publish:
+    needs: test
+
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+
+      - name: Verify tag format
+        run: |
+          [[ "$GITHUB_REF_NAME" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]
+
+      - name: Verify package version
+        shell: bash
+        run: |
+          TAG="${GITHUB_REF_NAME#v}"
+
+          VERSION=$(uv version --short)
+
+          echo "Tag:     $TAG"
+          echo "Version: $VERSION"
+
+          if [ "$TAG" != "$VERSION" ]; then
+            echo "::error::Git tag ($TAG) does not match package version ($VERSION)"
+            exit 1
+          fi
+
+      - run: uv sync
+
+      - run: uv build
+
+      - run: uv publish
