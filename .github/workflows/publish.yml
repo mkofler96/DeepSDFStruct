@@ -42,7 +42,7 @@ jobs:
         shell: bash
         run: |
           if [[ ! "$GITHUB_REF_NAME" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-            echo "::error::Tag must be in the format vX.Y.Z"
+            echo "::error::Tag '$GITHUB_REF_NAME' must be in the format vX.Y.Z"
             exit 1
           fi
 
