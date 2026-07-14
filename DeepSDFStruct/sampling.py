@@ -48,8 +48,6 @@ import os
 from functools import partial
 from itertools import starmap
 import multiprocessing
-from dataclasses import dataclass
-
 
 import vtk
 import numpy as np
@@ -114,18 +112,6 @@ class SphereParameters(typing.TypedDict):
     cy: float
     cz: float
     r: float
-
-
-@dataclass
-class GeometryInstance:
-    name: str
-    geom: trimesh.Trimesh
-    C: np.ndarray | None
-
-    def __init__(self, name: str, geom: trimesh.Trimesh, C: np.ndarray | None):
-        self.name = name
-        self.geom = geom
-        self.C = C
 
 
 class SampledSDF:
@@ -243,7 +229,7 @@ class SampledSDF:
 
 
 def _process_single_geometry_instance(
-    geom_instance: GeometryInstance,
+    geometry,
     file_name: str,
     folder_name: pathlib.Path,
     scale,
@@ -261,17 +247,16 @@ def _process_single_geometry_instance(
         logger.warning(f"File {fname} already exists")
         return
     mesh = None
-    geom = geom_instance.geom
-    if isinstance(geom, SDFBase):
-        sdf = geom
-    elif isinstance(geom, trimesh.Trimesh):
-        mesh = geom
+    if isinstance(geometry, SDFBase):
+        sdf = geometry
+    elif isinstance(geometry, trimesh.Trimesh):
+        mesh = geometry
         sdf = SDFfromMesh(mesh, scale=scale)
         if also_save_mesh:
             mesh.export(fname.with_suffix(".stl"))
     else:
         raise NotImplementedError(
-            f"Geometry must be either trimesh or SDFBase, but not {type(geom)}."
+            f"Geometry must be either trimesh or SDFBase, but not {type(geometry)}."
         )
     sampled_sdf = random_sample_sdf(
         sdf,
@@ -283,7 +268,7 @@ def _process_single_geometry_instance(
         if not isinstance(mesh, trimesh.Trimesh):
             logger.warning(
                 "Add surface samples was specified, but geometry"
-                f"is not given as a mesh but as {type(geom)}"
+                f"is not given as a mesh but as {type(geometry)}"
             )
         else:
             surf_samples = sample_mesh_surface(
@@ -291,10 +276,8 @@ def _process_single_geometry_instance(
             )
             sampled_sdf += surf_samples
     pos, neg = sampled_sdf.split_pos_neg()
-    if geom_instance.C is not None:
-        np.savez(fname, neg=neg.stacked, pos=pos.stacked, C=geom_instance.C)
-    else:
-        np.savez(fname, neg=neg.stacked, pos=pos.stacked)
+
+    np.savez(fname, neg=neg.stacked, pos=pos.stacked)
     if also_save_vtk:
         save_points_to_vtp(fname.with_suffix(".vtp"), neg=neg.stacked, pos=pos.stacked)
 
@@ -311,7 +294,7 @@ class SDFSampler:
         self.outdir = outdir
         self.splitdir = splitdir
         self.dataset_name = dataset_name
-        self.geometries: dict[str, dict[str, GeometryInstance]] = {}
+        self.geometries = {}
         self.stds = stds
         folder_name = pathlib.Path(outdir) / dataset_name
         if os.path.exists(folder_name):
@@ -323,22 +306,12 @@ class SDFSampler:
         else:
             os.makedirs(folder_name)
 
-    def add_class(
-        self,
-        geom_list: list,
-        class_name: str,
-        n_faces=100,
-        homogenized_c: list[np.ndarray] | None = None,
-    ) -> None:
+    def add_class(self, geom_list: list, class_name: str, n_faces=100) -> None:
         """
         Adds a geometry to the sampler object. Tries to transform inputs to
         trimesh data. In case the geometry is a spline object, the n_faces
         parameter determines the accuracy of the extracted mesh
         """
-        if homogenized_c is not None:
-            assert len(geom_list) == len(
-                homogenized_c
-            ), f"Length of geometries ({len(geom_list)}) does not match length of homogenized elasticity tensors ({len(homogenized_c)})"
         instances = {}
         for i, geom in enumerate(geom_list):
             instance_name = f"{class_name}_{i:05}"
@@ -350,11 +323,7 @@ class SDFSampler:
             elif isinstance(geom, torchSurfMesh):
                 geom = geom.to_trimesh()
 
-            if homogenized_c is not None:
-                C = homogenized_c[i]
-            else:
-                C = None
-            instances[instance_name] = GeometryInstance(instance_name, geom, C)
+            instances[instance_name] = geom
         self.geometries[class_name] = instances
 
     def process_geometries(

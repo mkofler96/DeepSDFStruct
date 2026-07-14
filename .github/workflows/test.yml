@@ -5,7 +5,6 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
-  workflow_call:
 
 jobs:
   test:
@@ -14,9 +13,6 @@ jobs:
     env:
       HF_HOME: ${{ github.workspace }}/.cache/huggingface
       HF_HUB_CACHE: ${{ github.workspace }}/.cache/huggingface/hub
-      HF_HUB_DOWNLOAD_TIMEOUT: "60"
-      HF_HUB_ETAG_TIMEOUT: "30"
-      HF_TOKEN: ${{ secrets.HF_TOKEN }}
 
     strategy:
       matrix:
@@ -38,13 +34,14 @@ jobs:
           enable-cache: true
 
       - name: Cache huggingface
-        id: hf-cache
         uses: actions/cache@v4
         with:
-          path: ${{ github.workspace }}/.cache/huggingface
-          key: huggingface-${{ hashFiles('pyproject.toml') }}
-          restore-keys: |
-            huggingface-
+          path: ~/.cache/huggingface
+          key: ${{ runner.os }}-huggingface
+
+      - name: Ensure Hugging Face cache directories exist
+        run: |
+          mkdir -p "$HF_HUB_CACHE"
 
       - name: Ensure Hugging Face cache directories exist
         run: |

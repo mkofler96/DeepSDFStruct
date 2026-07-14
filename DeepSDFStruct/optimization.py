@@ -92,18 +92,14 @@ def get_mesh_from_torchfem(Solid: torchfem.Solid) -> pyvista.UnstructuredGrid:
     if not isinstance(Solid, torchfem.Solid):
         raise NotImplementedError("Currently only solid mesh is supported.")
     # VTK cell types
-    etype = Solid.etype
-
-    if etype is Tetra1 or isinstance(etype, Tetra1):
-        cell_types = [pyvista.CellType.TETRA] * Solid.n_elem
-    elif etype is Tetra2 or isinstance(etype, Tetra2):
-        cell_types = [pyvista.CellType.QUADRATIC_TETRA] * Solid.n_elem
-    elif etype is Hexa1 or isinstance(etype, Hexa1):
-        cell_types = [pyvista.CellType.HEXAHEDRON] * Solid.n_elem
-    elif etype is Hexa2 or isinstance(etype, Hexa2):
-        cell_types = [pyvista.CellType.QUADRATIC_HEXAHEDRON] * Solid.n_elem
-    else:
-        raise TypeError(f"Unsupported element type: {etype} ({type(etype)})")
+    if Solid.etype is Tetra1:
+        cell_types = Solid.n_elem * [pyvista.CellType.TETRA]
+    elif Solid.etype is Tetra2:
+        cell_types = Solid.n_elem * [pyvista.CellType.QUADRATIC_TETRA]
+    elif Solid.etype is Hexa1:
+        cell_types = Solid.n_elem * [pyvista.CellType.HEXAHEDRON]
+    elif Solid.etype is Hexa2:
+        cell_types = Solid.n_elem * [pyvista.CellType.QUADRATIC_HEXAHEDRON]
 
     # VTK element list
     el = len(Solid.elements[0]) * torch.ones(Solid.n_elem, dtype=Solid.elements.dtype)
@@ -312,8 +308,8 @@ class MMA:
         F_np = F_np / self.F0
         dFdx_np = dFdx_np / self.F0
 
-        xmin = np.maximum(self.x - self.max_step, self.bounds[:, 0:1])
-        xmax = np.minimum(self.x + self.max_step, self.bounds[:, 1:2])
+        xmin = np.maximum(self.x - self.max_step, self.bounds[:, 0].reshape(-1, 1))
+        xmax = np.minimum(self.x + self.max_step, self.bounds[:, 1].reshape(-1, 1))
         move = 0.1
         self.loop = self.loop + 1
         xmma, ymma, zmma, lam, xsi, eta, muMMA, zet, s, low, upp = mmasub(
