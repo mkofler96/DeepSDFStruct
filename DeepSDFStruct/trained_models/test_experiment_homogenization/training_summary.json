@@ -1,0 +1,10 @@
+{
+    "loss": 9775.975620117188,
+    "num_epochs": 5,
+    "timestamp": "2026-05-21 17:39:48",
+    "host_name": "neptune",
+    "device": "cpu",
+    "training_duration": "0:00:28",
+    "data_dir": "/storage/mkofler/dissertation/data/",
+    "version": "1.7.1.dev40+g989384bd4.d20260330"
+}

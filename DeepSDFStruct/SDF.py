@@ -366,6 +366,8 @@ class SDFBase(torch.nn.Module, ABC):
         cmap="seismic",
         show_zero_level=True,
         deformation_function=None,
+        xlim=None,
+        ylim=None,
     ):
         """Plot a 2D slice through an SDF as a contour plot.
 
@@ -435,8 +437,15 @@ class SDFBase(torch.nn.Module, ABC):
             fig, ax = plt.subplots()
             plt_show = True
         bounds = self._get_domain_bounds()
-        xlim, ylim = project_bounds(origin, normal, bounds=bounds)
-        points = generate_plane_points(origin, normal, res, xlim, ylim)
+
+        if self.geometric_dim == 3:
+            if xlim is None:
+                xlim, ylim = project_bounds(origin, normal, bounds=bounds)
+            points = generate_plane_points(origin, normal, res, xlim, ylim)
+        else:
+            if xlim is None:
+                xlim, ylim = bounds.detach().cpu().numpy().T
+            points = generate_plane_points(origin, normal, res, xlim, ylim)[:, :2]
 
         sdf_device = self.get_device()
         points = torch.from_numpy(points).to(torch.float32).to(sdf_device)
@@ -1636,6 +1645,11 @@ def project_bounds(origin, normal, bounds=None):
 
     if bounds is None:
         bounds = np.array([[0, 0, 0], [1, 1, 1]])
+    elif isinstance(bounds, torch.Tensor):
+        bounds = bounds.detach().cpu().numpy()
+    if bounds.shape[1] == 2:
+        logger.info("cannot project 2D onto 2D, returning input")
+        return bounds[0], bounds[1]
 
     bmin, bmax = bounds
 

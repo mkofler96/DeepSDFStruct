@@ -316,14 +316,16 @@ def load_trained_model(
 
     data = torch.load(filename, map_location=device)
     decoder = init_decoder(experiment_specs, device, data_parallel)
-    try:
-        decoder.load_state_dict(data["model_state_dict"], strict=False)
-    except RuntimeError:
-        state_dict = {}
-        for k, v in data["model_state_dict"].items():
-            new_key = k.replace("module.", "", 1) if k.startswith("module.") else k
-            state_dict[new_key] = v
-        decoder.load_state_dict(state_dict, strict=False)
+
+    state_dict = data["model_state_dict"]
+    if any(k.startswith("module.") for k in state_dict.keys()):
+        stripped_dict = {}
+        for k, v in state_dict.items():
+            new_key = k.replace("module.", "", 1)
+            stripped_dict[new_key] = v
+        state_dict = stripped_dict
+
+    decoder.load_state_dict(state_dict, strict=False)
     decoder = decoder.to(device)
     return decoder
 

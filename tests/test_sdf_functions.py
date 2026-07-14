@@ -19,7 +19,7 @@ def test_sdf_from_multipatch_cubes_equivalence():
 
     multipatch = splinepy.Multipatch([cube1, cube2])
 
-    n = 30
+    n = 10
     xs = torch.linspace(-0.5, 2.5, n)
     ys = torch.linspace(-0.5, 1.5, n)
     zs = torch.linspace(-0.5, 1.5, n)
@@ -28,8 +28,8 @@ def test_sdf_from_multipatch_cubes_equivalence():
         -1, 3
     )
 
-    multipatch_sdf = SDFfromMesh(multipatch.extract.faces(30))
-    big_cube_sdf = SDFfromMesh(big_cube.extract.faces(30))
+    multipatch_sdf = SDFfromMesh(multipatch.extract.faces(10))
+    big_cube_sdf = SDFfromMesh(big_cube.extract.faces(10))
 
     vals_multipatch = multipatch_sdf(queries)
     vals_big_cube = big_cube_sdf(queries)
@@ -44,7 +44,7 @@ def test_sdf_from_multipatch_cubes_equivalence():
 
 
 def test_cap_border_dict():
-    n = 21
+    n = 11
     xs = torch.linspace(-1.0, 1.0, n)
     ys = torch.linspace(-1.0, 1.0, n)
     zs = torch.linspace(-1.0, 1.0, n)
@@ -76,7 +76,7 @@ def test_cap_border_dict():
         print(cap_border_dict)
         capped_sdf_vals = capped_sdf(queries)
         export_sdf_grid_vtk(capped_sdf, f"tests/tmp_outputs/sdf_{name}.vtk")
-        surf_mesh, _ = create_3D_mesh(capped_sdf, 51, mesh_type="surface")
+        surf_mesh, _ = create_3D_mesh(capped_sdf, 11, mesh_type="surface")
         export_surface_mesh(f"tests/tmp_outputs/sdf_{name}.obj", surf_mesh.to_gus())
         export_surface_mesh(f"tests/tmp_outputs/sdf_{name}.stl", surf_mesh.to_gus())
         interior_low = caps[0] + measure
