@@ -1015,7 +1015,7 @@ class FlexiCubes:
         return vertices, tets
 
     @staticmethod
-    def _orient_tets(vertices, tets):
+    def _orient_tets(vertices, tets, threshold_factor=1e-5):
         """Return ``tets`` with a consistent, strictly positive signed volume.
 
         For a tetrahedron with vertices ``(v0, v1, v2, v3)`` the signed volume
@@ -1028,6 +1028,13 @@ class FlexiCubes:
         Degenerate elements (four coplanar vertices, zero volume) cannot be
         repaired by reordering and are removed instead. Vertices are left
         untouched, so indices of the remaining tets stay valid.
+
+        Args:
+            vertices (torch.Tensor): All vertices as coordinates
+            tets (torch.Tensor): Indices of vertices that form tets
+            threshold_factor (float, optional): Maximum element volume 
+                up until the elements get removed. Gets multiplied by 
+                the Hadamard bound |e1||e2||e3|.
         """
         if tets.shape[0] == 0:
             return tets
@@ -1046,7 +1053,7 @@ class FlexiCubes:
             # product), so compare against a tolerance relative to the Hadamard
             # bound |e1||e2||e3| of the determinant instead of zero itself.
             scale = e1.norm(dim=1) * e2.norm(dim=1) * e3.norm(dim=1)
-            degenerate = signed_vol.abs() <= 1e-5 * scale
+            degenerate = signed_vol.abs() <= threshold_factor * scale
         tets = tets.clone()
         tets[inverted] = tets[inverted][:, [0, 1, 3, 2]]
         if degenerate.any():
