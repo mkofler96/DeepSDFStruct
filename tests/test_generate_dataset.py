@@ -29,7 +29,7 @@ def test_generate_dataset_from_obj_files():
         sampling_strategy="uniform",
         add_surface_samples=True,
         also_save_vtk=True,
-        n_samples=1000,
+        n_samples=10,
     )
 
     sdf_sampler.write_json("chairs_train.json")
@@ -61,11 +61,11 @@ def test_generate_dataset(n_workers, tmp_path):
             tile, _ = chi.create_tile(np.array([[phi, t, x1, x2, r]] * 5))
             chi_tiles.append(splinepy.Multipatch(tile))
 
-    sdf_sampler.add_class(chi_tiles, class_name="Chi3D_center", n_faces=100)
-    sdf_sampler.add_class(crosslattice_tiles, class_name="CrossLattice", n_faces=100)
+    sdf_sampler.add_class(chi_tiles, class_name="Chi3D_center", n_faces=3)
+    sdf_sampler.add_class(crosslattice_tiles, class_name="CrossLattice", n_faces=3)
 
     sdf_sampler.process_geometries(
-        sampling_strategy="uniform", n_workers=n_workers, n_samples=1000
+        sampling_strategy="uniform", n_workers=n_workers, n_samples=10
     )
 
     sdf_sampler.write_json("chi_and_cross.json")

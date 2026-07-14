@@ -155,12 +155,14 @@ class DeepSDFModel:
         model_input = torch.cat([latent_repeat, queries], dim=1)
         return self._decoder(model_input)
 
-    def export_libtorch_executable(self, filename: str):
+    def export_libtorch_executable(self, filename: str, use_script: bool = True):
         """
         Export the trained decoder model to a TorchScript file for use with LibTorch (C++).
 
         Args:
             filename (str): Path where the TorchScript model will be saved (e.g. "decoder.pt").
+            use_script (bool): If True, use torch.jit.script (recommended for C++ compatibility).
+                              If False, use torch.jit.trace (legacy mode, may have control flow issues).
 
         Example:
             >>> model.export_libtorch_executable("decoder.pt")
@@ -176,13 +178,20 @@ class DeepSDFModel:
         ), "trained_latent_vectors must contain at least one element"
         latent = self._trained_latent_vectors
         example_input = torch.cat(
-            [latent[0], torch.tensor([0, 0, 0], device=self.device)]
+            [latent[0], torch.tensor([0.0, 0.0, 0.0], device=self.device)]
         ).unsqueeze(0)
 
         print("Example input: ", example_input)
         print("Example Output: ", self._decoder(example_input))
 
-        decoder_traced = torch.jit.trace(self._decoder, example_input)
-        sm = torch.jit.script(decoder_traced)
+        self._decoder.eval()
+
+        if use_script:
+            print("Exporting with torch.jit.script (recommended)")
+            sm = torch.jit.script(self._decoder)
+        else:
+            print("Exporting with torch.jit.trace (legacy mode)")
+            sm = torch.jit.trace(self._decoder, example_input)
 
         sm.save(filename)
+        print(f"Saved to {filename}")

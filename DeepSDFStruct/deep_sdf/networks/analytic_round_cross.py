@@ -90,7 +90,7 @@ class RoundCrossDecoder(nn.Module):
     def forward(self, input):
         xyz = input[:, -self.geom_dimension :]
         r = input[:, 0]
-        output = torch.linalg.norm(xyz, axis=1, ord=torch.inf)
+        output = torch.linalg.norm(xyz, dim=1, ord=torch.inf)
 
         # add x cylinder
         cylinder = torch.sqrt(xyz[:, 1] ** 2 + xyz[:, 2] ** 2) - r

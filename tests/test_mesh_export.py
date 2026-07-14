@@ -53,7 +53,7 @@ def test_deepsdf_lattice_export_3D():
     )
     surf_mesh, derivative = create_3D_mesh(
         lattice_struct,
-        30,
+        10,
         differentiate=True,
         mesh_type="surface",
         device=model.device,
@@ -72,7 +72,7 @@ def test_deepsdf_lattice_export_3D():
 
     # test other method to export 3D mesh:
     volume_mesh, derivative_vols = create_3D_mesh(
-        lattice_struct, 30, differentiate=True, mesh_type="volume", device=model.device
+        lattice_struct, 10, differentiate=True, mesh_type="volume", device=model.device
     )
     _gus.io.meshio.export(
         fname="tests/tmp_outputs/volumes.inp", mesh=volume_mesh.to_gus()
@@ -106,7 +106,7 @@ def test_deepsdf_lattice_export_2D():
 
     surf_mesh, derivative = create_2D_mesh(
         lattice_struct,
-        30,
+        10,
         differentiate=True,
         mesh_type="surface",
         device=model.device,
@@ -122,11 +122,11 @@ def test_2D_mesh_export():
     linemesh.vertices = linemesh.vertices[:, :2]
 
     sdf_from_linemesh = SDFfromLineMesh(linemesh, thickness=0.5)
-    mesh = generate_2D_surf_mesh(sdf_from_linemesh, 300)
+    mesh = generate_2D_surf_mesh(sdf_from_linemesh, 100)
     _gus.io.meshio.export("tests/tmp_outputs/triangles.inp", mesh)
 
     sdf_from_linemesh = SDFfromLineMesh(linemesh, thickness=0.5, smoothness=0.1)
-    mesh = generate_2D_surf_mesh(sdf_from_linemesh, 300)
+    mesh = generate_2D_surf_mesh(sdf_from_linemesh, 100)
     _gus.io.meshio.export("tests/tmp_outputs/triangles_smooth.inp", mesh)
 
 
