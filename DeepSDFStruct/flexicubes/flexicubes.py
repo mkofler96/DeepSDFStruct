@@ -1032,8 +1032,8 @@ class FlexiCubes:
         Args:
             vertices (torch.Tensor): All vertices as coordinates
             tets (torch.Tensor): Indices of vertices that form tets
-            threshold_factor (float, optional): Maximum element volume 
-                up until the elements get removed. Gets multiplied by 
+            threshold_factor (float, optional): Maximum element volume
+                up until the elements get removed. Gets multiplied by
                 the Hadamard bound |e1||e2||e3|.
         """
         if tets.shape[0] == 0:
