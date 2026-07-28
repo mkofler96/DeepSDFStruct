@@ -1644,16 +1644,16 @@ wheels = [
 
 [[package]]
 name = "gustaf"
-version = "0.1.1"
+version = "0.1.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
     { name = "numpy", version = "2.4.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
     { name = "packaging" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/21/45/2644c6b5bbe18d1d4235750e6be79cc3e8300125e1897458a48407aa0d14/gustaf-0.1.1.tar.gz", hash = "sha256:4997d46e28173f7d5ee069c8da2063ccc0ff7b41a14b4543fa5058c862aa4939", size = 63714, upload-time = "2025-09-07T12:14:26.379Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/9c/7b/1c04669a849d65db9da1342f3a662d065c2bf7df0db023852378dc4328bc/gustaf-0.1.2.tar.gz", hash = "sha256:4037329eb3af0ff253bbc9c855df92043baf1a36802da834289068cd2bcb5176", size = 64516, upload-time = "2025-11-11T15:51:34.821Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/6a/db/d8e7e070ff2e978735ce4358f4452b629e7ce75be42fb0cbb57852f1e675/gustaf-0.1.1-py3-none-any.whl", hash = "sha256:798701b48c0bf53680ae821a50fc1fef6e065fe3768606e8b233b7141660ebae", size = 69307, upload-time = "2025-09-07T12:14:25.371Z" },
+    { url = "https://files.pythonhosted.org/packages/1f/2d/7817ce508a0233662e4bcf339943298d4d2bfcd76a093b0df15841431ce6/gustaf-0.1.2-py3-none-any.whl", hash = "sha256:c22ade7fdee8e4fea9b2a84137c7a015c9743b515d50f6a6fae85fd6295791b3", size = 69637, upload-time = "2025-11-11T15:51:33.499Z" },
 ]
 
 [[package]]
