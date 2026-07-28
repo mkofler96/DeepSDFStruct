@@ -4,31 +4,11 @@ from DeepSDFStruct.deep_sdf.training import (
     create_interpolated_meshes_from_latent,
 )
 from DeepSDFStruct.pretrained_models import get_model
-from huggingface_hub import snapshot_download
-from huggingface_hub.utils import HfHubHTTPError
+from _hf_helpers import snapshot_download_with_retry
 import pytest
 import torch
-import time
 
 REVISION = "dbe58ebaa00057d5f15096c2b253c7efa91e19d3"
-
-
-def snapshot_download_with_retry(*args, max_retries=3, **kwargs):
-    """Download with retry on 429 rate limit errors."""
-    for attempt in range(max_retries):
-        try:
-            return snapshot_download(*args, **kwargs)
-        except HfHubHTTPError as e:
-            if e.response and e.response.status_code == 429:
-                if attempt < max_retries - 1:
-                    wait_time = 60 * (attempt + 1)
-                    print(
-                        f"Rate limited (429). Waiting {wait_time}s before retry {attempt + 2}/{max_retries}"
-                    )
-                    time.sleep(wait_time)
-                else:
-                    raise
-            raise
 
 
 @pytest.fixture(scope="module", autouse=True)

@@ -1,25 +1,5 @@
 from DeepSDFStruct.design_of_experiments import run_experiment, ExperimentSpecifications
-from huggingface_hub import snapshot_download
-from huggingface_hub.utils import HfHubHTTPError
-import time
-
-
-def snapshot_download_with_retry(*args, max_retries=3, **kwargs):
-    """Download with retry on 429 rate limit errors."""
-    for attempt in range(max_retries):
-        try:
-            return snapshot_download(*args, **kwargs)
-        except HfHubHTTPError as e:
-            if e.response and e.response.status_code == 429:
-                if attempt < max_retries - 1:
-                    wait_time = 60 * (attempt + 1)
-                    print(
-                        f"Rate limited (429). Waiting {wait_time}s before retry {attempt + 2}/{max_retries}"
-                    )
-                    time.sleep(wait_time)
-                else:
-                    raise
-            raise
+from _hf_helpers import snapshot_download_with_retry
 
 
 def test_DOE():
