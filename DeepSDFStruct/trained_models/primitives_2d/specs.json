@@ -1,6 +1,6 @@
 {
   "Description" : "DeepLS trained on 500 2D primitives split into 4x4x4 boxes",
-  "DataSource" : "/storage/lfrei/SemperitSDF/data",
+  "DataSource" : "data",
   "TrainSplit" : "data/splits/primitives_11_18_primitives_2d_4boxes.json",
   "TestSplit" : "data/splits/primitives_11_18_cylinder_4boxes.json",
   "NetworkArch" : "deep_sdf_decoder",
@@ -41,6 +41,5 @@
   "CodeRegularizationLambda" : 1e-4,
   "CodeBound" : 1.0
 }
-
 
 

@@ -1,5 +1,9 @@
 # DeepSDFStruct
 
+[![DOI](https://zenodo.org/badge/1089477863.svg)](https://doi.org/10.5281/zenodo.20205817)
+
+> Releases are archived on Zenodo; the badge above points at the always-latest concept DOI. The snapshot used by the [DeepShapeOpt](https://github.com/lfreinberger/DeepShapeOpt) project is archived at [10.5281/zenodo.20210456](https://doi.org/10.5281/zenodo.20210456) (paired with DeepShapeOpt [10.5281/zenodo.20210465](https://doi.org/10.5281/zenodo.20210465)). Training data for the bundled decoder checkpoints is archived at [10.48436/12y18-j6236](https://doi.org/10.48436/12y18-j6236).
+
 A differentiable framework for generating and deforming 3D microstructured materials using Signed Distance Functions (SDFs) and spline-based lattices.
 ## Coverage
 [![Test Python Package](https://github.com/mkofler96/DeepSDFStruct/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/mkofler96/DeepSDFStruct/actions/workflows/test.yml)

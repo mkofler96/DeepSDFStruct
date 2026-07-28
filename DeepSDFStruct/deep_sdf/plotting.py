@@ -30,6 +30,7 @@ import numpy as np
 import os
 import logging
 import torch
+import pandas as pd
 import matplotlib.pyplot as plt
 
 import DeepSDFStruct.deep_sdf.workspace as ws
@@ -86,14 +87,19 @@ def plot_logs(experiment_directory, show_lr=False, ax=None, filename=None):
         np.arange(num_iters) / iters_per_epoch,
         logs["loss"],
         "#82c6eb",
+        label="Loss",
+    )
+    ax[0].plot(
         np.arange(20, num_iters - 20) / iters_per_epoch,
         smoothed_loss_41,
         "#2a9edd",
+        label="Loss (Running Mean 41)",
     )
     ax[0].set_yscale("log")
 
     ax[0].set(xlabel="Epoch", ylabel="Loss")
-    ax[0].legend(["Loss", "Loss (Running Mean)", "Loss (Running Mean 41)"])
+
+    ax[0].legend()
 
     if show_lr:
         combined_lrs = np.array(logs["learning_rate"])
@@ -115,7 +121,9 @@ def plot_logs(experiment_directory, show_lr=False, ax=None, filename=None):
         plt.show()
 
 
-def plot_reconstruction_loss(loss_history, iters_per_epoch, filename=None):
+def plot_reconstruction_loss(
+    loss_history, iters_per_epoch, filename=None, csv_filename=None
+):
 
     losses = np.array(loss_history)
     num_iters = len(losses)
@@ -126,18 +134,34 @@ def plot_reconstruction_loss(loss_history, iters_per_epoch, filename=None):
 
     smoothed_loss_41 = running_mean(losses, 41)
 
+    epochs = np.arange(num_iters) / iters_per_epoch
+
+    if csv_filename is not None:
+        df = pd.DataFrame(
+            {"iteration": np.arange(num_iters), "epoch": epochs, "loss": losses}
+        )
+
+        # smoothed loss only exists for the valid window
+        df["smoothed_loss_41"] = np.nan
+        df.loc[20 : num_iters - 21, "smoothed_loss_41"] = smoothed_loss_41
+
+        df.to_csv(csv_filename, index=False)
+
     fig, ax = plt.subplots()
 
     ax.plot(
-        np.arange(num_iters) / iters_per_epoch,
+        epochs,
         losses,
         "#82c6eb",
         np.arange(20, num_iters - 20) / iters_per_epoch,
         smoothed_loss_41,
         "#2a9edd",
     )
+
     ax.set_yscale("log")
     ax.set(xlabel="Epoch", ylabel="Loss")
     ax.legend(["Loss", "Loss (Running Mean 41)"])
     ax.grid()
-    plt.savefig(filename, bbox_inches="tight")
+
+    if filename is not None:
+        plt.savefig(filename, bbox_inches="tight")

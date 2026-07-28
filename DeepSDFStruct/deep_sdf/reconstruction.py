@@ -67,8 +67,14 @@ def reconstruct_from_samples(
     drop_last=True,
     use_tanh_on_gt=False,
     loss_plot_path=None,
+    loss_csv_path=None,
     optimizer_name="adam",
-    deformation_function=None | TorchSpline | TorchScaling,
+    deformation_function: TorchSpline | TorchScaling | None = None,
+    code_reg_lambda: float = 0.0,
+    code_bound: float | None = None,
+    grad_clip: float | None = None,
+    eikonal_lambda: float = 0.0,
+    step_callback=None,
 ):
     if optimizer_name == "adam":
         optimizer = torch.optim.Adam(sdf.parameters(), lr=lr)
@@ -76,8 +82,8 @@ def reconstruct_from_samples(
         optimizer = torch.optim.LBFGS(
             sdf.parameters(),
             lr=lr,
-            max_iter=20,  # inner Newton iterations
-            history_size=100,  # curvature memory
+            max_iter=20,
+            history_size=100,
             line_search_fn="strong_wolfe",
         )
     else:
@@ -107,6 +113,8 @@ def reconstruct_from_samples(
         print(f"{name}: min={mn:.6f}, max={mx:.6f}")
 
     gt_dist = sdfSample.distances
+    print(f"\nMax absolute SDF value: {gt_dist.abs().max():.6f}")
+
     if use_tanh_on_gt:
         gt_dist = torch.tanh(gt_dist)
 
@@ -126,40 +134,90 @@ def reconstruct_from_samples(
         print(
             "Warning: drop_last was set to true, "
             f"but batch size ({batch_size}) is larger "
-            f"than the size of the dataset ({len(dataset)})."
-            " setting drop_last=False"
+            f"than the size of the dataset ({len(dataset)}). "
+            "Setting drop_last=False"
         )
         drop_last = False
+
     dataloader = DataLoader(
         dataset, batch_size=batch_size, shuffle=True, drop_last=drop_last
     )
+    n_batches = len(dataloader)
+
+    # Detect parametrization for regularization (e.g. LatticeSDFStruct)
+    _parametrization = getattr(sdf, "parametrization", None)
+    _has_bounds = hasattr(sdf, "_get_domain_bounds")
 
     loss_history = []
     for e in pbar:
-        for querie_batch, gt_batch in dataloader:
+        for batch_idx, (querie_batch, gt_batch) in enumerate(dataloader):
 
             def closure() -> torch.Tensor:
                 optimizer.zero_grad()
                 pred_dist = sdf(querie_batch)
-                loss = Loss(pred_dist, gt_batch)
-                loss.backward()
-                return loss
+                loss_total = Loss(pred_dist, gt_batch)
+
+                # L2 regularization on evaluated latent codes
+                if code_reg_lambda > 0 and _parametrization is not None and _has_bounds:
+                    bounds = sdf._get_domain_bounds()
+                    clamped = querie_batch.clamp(bounds[0], bounds[1])
+                    lat_codes = _parametrization(clamped)
+                    reg = lat_codes.pow(2).mean()
+                    loss_total = loss_total + code_reg_lambda * reg
+
+                # Eikonal regularization: ||grad SDF|| ~ 1 near surface
+                if eikonal_lambda > 0:
+                    near_mask = gt_batch.abs().squeeze() < 0.05
+                    if near_mask.any():
+                        xyz_eik = querie_batch[near_mask].detach().requires_grad_(True)
+                        pred_eik = sdf(xyz_eik)
+                        grad_sdf = torch.autograd.grad(
+                            pred_eik.sum(), xyz_eik, create_graph=True
+                        )[0]
+                        eikonal_loss = ((grad_sdf.norm(dim=-1) - 1) ** 2).mean()
+                        loss_total = loss_total + eikonal_lambda * eikonal_loss
+
+                loss_total.backward()
+                return loss_total
 
             if optimizer_name == "adam":
                 loss = closure()
+
+                if grad_clip is not None:
+                    torch.nn.utils.clip_grad_norm_(sdf.parameters(), grad_clip)
+
                 optimizer.step()
             elif optimizer_name == "lbfgs":
                 loss = optimizer.step(closure)
+
+            # Hard constraint on control point magnitudes
+            if code_bound is not None and _parametrization is not None:
+                with torch.no_grad():
+                    for p in _parametrization.parameters():
+                        p.clamp_(-code_bound, code_bound)
+
             loss_num = loss.detach().item()
             pbar.set_postfix({"loss": f"{loss_num:.5f}"})
             loss_history.append(loss_num)
 
+            if step_callback is not None:
+                step_callback(e, batch_idx, n_batches)
+
     if loss_plot_path is not None:
         plot_reconstruction_loss(
-            loss_history, iters_per_epoch=len(dataloader), filename=loss_plot_path
+            loss_history,
+            iters_per_epoch=len(dataloader),
+            filename=loss_plot_path,
+            csv_filename=loss_csv_path,
         )
 
     params = list(sdf.parameters())
-    print(params)
 
-    return params
+    result = {
+        "params": params,
+        "loss_history": loss_history,
+        "final_loss": float(loss_history[-1]) if loss_history else None,
+        "num_steps": len(loss_history),
+    }
+
+    return result

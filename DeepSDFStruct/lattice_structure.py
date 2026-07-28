@@ -23,6 +23,7 @@ Key Features
 """
 
 import logging
+import warnings
 
 
 import numpy as _np
@@ -191,18 +192,41 @@ class LatticeSDFStruct(_SDFBase):
           Function that describes the local tile parameters
         """
         bounds = self._get_domain_bounds()
+
+        # Mask: True for samples inside the domain bounds
+        inside_mask = (samples >= bounds[0]).all(dim=-1) & (samples <= bounds[1]).all(
+            dim=-1
+        )
+        inside_idx = inside_mask.nonzero(as_tuple=True)[0]
+        inside_samples = samples[inside_idx]
+
         if self.parametrization is not None:
-            samples_parameter_space = (samples - bounds[0]) / (bounds[1] - bounds[0])
-            samples_parameter_space = _torch.clamp(samples_parameter_space, 0.0, 1.0)
-            parameters = self.parametrization(samples_parameter_space)
+            parameters = self.parametrization(inside_samples)
             self.microtile._set_param(parameters)
 
-        queries_transformed = _torch.zeros_like(samples)
+        queries_transformed = _torch.zeros_like(inside_samples)
         for i_dim, t in enumerate(self.tiling):
             queries_transformed[:, i_dim] = transform(
-                samples[:, i_dim], t, bounds=bounds[:, i_dim]
+                inside_samples[:, i_dim], t, bounds=bounds[:, i_dim]
             )
-        sdf_values = self.microtile(queries_transformed)
+
+        inside_sdf = self.microtile(queries_transformed)
+
+        # For points outside the domain bounds, use their distance to the
+        # boundary (positive) so that FlexiCubes mesh extraction with extended
+        # bounds does not produce artifacts from partial periodic tiles.
+        lower_dist = bounds[0] - samples  # positive when outside (below lower)
+        upper_dist = samples - bounds[1]  # positive when outside (above upper)
+        outside_dist = _torch.max(
+            _torch.max(lower_dist, dim=-1).values, _torch.max(upper_dist, dim=-1).values
+        ).unsqueeze(-1)
+        # if (outside_dist > 0).any():
+        #     logger.warning(
+        #         "Some samples are outside the domain bounds. SDF values for these points will be positive and represent distance to the boundary."
+        #     )
+
+        sdf_values = outside_dist
+        sdf_values[inside_idx] = inside_sdf
 
         return sdf_values
 

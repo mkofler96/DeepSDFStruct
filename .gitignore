@@ -33,6 +33,13 @@ env.bak/
 venv.bak/
 .python-version
 
+# Local environment and machine-specific settings
+.env
+.env.*
+!.env.example
+.claude/
+.cursor/
+
 # PyInstaller
 *.manifest
 *.spec
@@ -124,9 +131,25 @@ todo
 
 # confidential files
 confidential*
+private*
+secrets*
+*secret*
+*token*
+*.pem
+*.key
+*.p12
+*.pfx
 
 # slurm files
 slurm-*.out
+*.slrm
 
 # intermediate model runs
 mlruns
+mlflow.db
+run_train_mlflow_single_run.py
+run_train_mlflow.py
+run_mlflow_reconstruction.py
+
+# development journal
+history.md

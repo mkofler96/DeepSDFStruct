@@ -1,0 +1,51 @@
+cff-version: 1.2.0
+title: "DeepSDFStruct"
+# No static `version:` -- the package version is derived dynamically from the git
+# tag by setuptools-scm (see `dynamic = ["version"]` in pyproject.toml), so any
+# value hardcoded here would go stale on the next release.
+type: software
+message: "If you use this software, please cite the paper below."
+abstract: "Differentiable signed-distance-function and spline-lattice tooling for generating and deforming 3D microstructured materials."
+authors:
+  - given-names: Michael
+    family-names: Kofler
+    affiliation: "TU Wien"
+  - given-names: Lukas
+    family-names: Freinberger
+    affiliation: "TU Wien"
+license: Apache-2.0
+repository-code: "https://github.com/mkofler96/DeepSDFStruct"
+doi: 10.5281/zenodo.20205817
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.20205817
+    description: "Archived release of the source code"
+keywords:
+  - signed distance functions
+  - neural implicit representation
+  - spline lattices
+  - geometry optimization
+preferred-citation:
+  type: article
+  title: "Structural optimization of lattice structures using deep neural networks as geometry representation"
+  authors:
+    - given-names: Michael
+      family-names: Kofler
+      affiliation: "TU Wien"
+    - given-names: Michael
+      family-names: Giritsch
+      affiliation: "TU Wien"
+    - given-names: Stefanie
+      family-names: Elgeti
+      affiliation: "TU Wien"
+  journal: "Graphical Models"
+  year: 2025
+  # TODO: fill in `doi:`, `volume:` and `start:`/`pages:` from the published record.
+references:
+  - type: data
+    title: "Training data for DeepSDFStruct neural decoder"
+    authors:
+      - given-names: Lukas
+        family-names: Freinberger
+        affiliation: "TU Wien"
+    doi: 10.48436/12y18-j6236

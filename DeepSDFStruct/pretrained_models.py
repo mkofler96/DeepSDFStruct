@@ -75,7 +75,13 @@ class PretrainedModels(Enum):
     ChiAndCross = "chi_and_cross"
     AnalyticRoundCross = "analytic_round_cross"
     RoundCross = "round_cross"
-    Primitives = "primitives"
+    # The primitive decoders differ only in latent code length. ``Primitives``
+    # is the default and aliases the widest (and best performing) one, so
+    # ``PrimitivesCL32 is PretrainedModels.Primitives``.
+    Primitives = "primitives_cl32"
+    PrimitivesCL32 = "primitives_cl32"
+    PrimitivesCL16 = "primitives_cl16"
+    PrimitivesCL08 = "primitives_cl08"
     Primitives2D = "primitives_2d"
 
 
@@ -85,11 +91,7 @@ with importlib.resources.as_file(main_dir) as path:
 
 # Maps enum entries to file paths
 _MODEL_REGISTRY = {
-    PretrainedModels.ChiAndCross: PRETRAINED_MODELS_DIR / "chi_and_cross",
-    PretrainedModels.AnalyticRoundCross: PRETRAINED_MODELS_DIR / "analytic_round_cross",
-    PretrainedModels.RoundCross: PRETRAINED_MODELS_DIR / "round_cross",
-    PretrainedModels.Primitives: PRETRAINED_MODELS_DIR / "primitives",
-    PretrainedModels.Primitives2D: PRETRAINED_MODELS_DIR / "primitives_2d",
+    model: PRETRAINED_MODELS_DIR / model.value for model in PretrainedModels
 }
 
 

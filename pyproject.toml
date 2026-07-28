@@ -22,9 +22,10 @@ dependencies = [
     "trimesh",
     "matplotlib",
     "gustaf",
-    "splinepy",
+    "splinepy>=0.2.1",
     "vedo",
     "libigl",
+    "embreex; sys_platform != 'darwin' or platform_machine != 'arm64'",
     "tetgenpy",
     "meshio",
     "numba",
@@ -38,9 +39,11 @@ dependencies = [
     "pytest-cov>=5.0.0",
     "triangle>=20250106",
     "vtk>=9.5.1",
-    "torch-fem<=0.5.0",
+    "torch-fem>=0.4.5,<=0.5.0",
     "numpy>=2.0.0",
     "mlflow>=3.10.1",
+    "onnx>=1.20.1",
+    "pyvista",
     "tqdm"
 ]
 
@@ -58,7 +61,11 @@ visualization = [
     "scikit-learn",
 ]
 computation = [
-    "pypardiso>=0.4.6",
+    "pypardiso>=0.4.6; sys_platform != 'darwin' or platform_machine != 'arm64'",
+]
+quantum = [
+    "pennylane>=0.40.0",
+    "pennylane-lightning>=0.40.0",
 ]
 
 [tool.setuptools]

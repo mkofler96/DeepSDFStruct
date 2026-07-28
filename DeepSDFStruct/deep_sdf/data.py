@@ -106,10 +106,22 @@ def remove_nans(tensor, geom_dimension):
     return tensor[~tensor_nan, :].float()
 
 
+def _read_pos_neg(npz):
+    """Read positive/negative SDF samples from an npz archive.
+
+    Supports both the 'pos'/'neg' key convention (e.g. ``np.savez(f, pos=..,
+    neg=..)``) and the legacy 'pos.npy'/'neg.npy' keys.
+    """
+    pos_key = "pos" if "pos" in npz else "pos.npy"
+    neg_key = "neg" if "neg" in npz else "neg.npy"
+    return npz[pos_key], npz[neg_key]
+
+
 def read_sdf_samples_into_ram(filename):
     npz = np.load(filename)
-    pos_tensor = torch.from_numpy(npz["pos.npy"]).float()
-    neg_tensor = torch.from_numpy(npz["neg.npy"]).float()
+    pos, neg = _read_pos_neg(npz)
+    pos_tensor = torch.from_numpy(pos).float()
+    neg_tensor = torch.from_numpy(neg).float()
 
     return [pos_tensor, neg_tensor]
 
@@ -117,8 +129,9 @@ def read_sdf_samples_into_ram(filename):
 def unpack_sdf_samples(filename, geom_dimension, subsample=None):
     npz = np.load(filename)
 
-    pos_tensor = remove_nans(torch.from_numpy(npz["pos.npy"]), geom_dimension)
-    neg_tensor = remove_nans(torch.from_numpy(npz["neg.npy"]), geom_dimension)
+    pos, neg = _read_pos_neg(npz)
+    pos_tensor = remove_nans(torch.from_numpy(pos), geom_dimension)
+    neg_tensor = remove_nans(torch.from_numpy(neg), geom_dimension)
 
     if subsample is None:
         return torch.cat([pos_tensor, neg_tensor], 0)
@@ -215,12 +228,9 @@ class SDFSamples(torch.utils.data.Dataset):
             for f in self.npyfiles:
                 filename = os.path.join(self.data_source, ws.sdf_samples_subdir, f)
                 npz = np.load(filename)
-                pos_tensor = remove_nans(
-                    torch.from_numpy(npz["pos.npy"]), self.geom_dimension
-                )
-                neg_tensor = remove_nans(
-                    torch.from_numpy(npz["neg.npy"]), self.geom_dimension
-                )
+                pos, neg = _read_pos_neg(npz)
+                pos_tensor = remove_nans(torch.from_numpy(pos), self.geom_dimension)
+                neg_tensor = remove_nans(torch.from_numpy(neg), self.geom_dimension)
                 self.loaded_data.append(
                     [
                         pos_tensor[torch.randperm(pos_tensor.shape[0])],

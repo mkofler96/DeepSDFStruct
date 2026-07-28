@@ -86,6 +86,13 @@ ARCHITECTURES = {
     "hierarchical_positional_deep_sdf_decoder": HierachicalPositionalDeepSDFDecoder,
 }
 
+try:
+    from .networks.quantum_deep_sdf_decoder import QuantumDeepSDFDecoder
+
+    ARCHITECTURES["quantum_deep_sdf_decoder"] = QuantumDeepSDFDecoder
+except ImportError:
+    pass
+
 
 def load_experiment_specifications(experiment_directory):
 

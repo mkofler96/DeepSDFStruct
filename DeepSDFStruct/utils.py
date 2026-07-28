@@ -10,6 +10,8 @@ Functions
 configure_logging
     Set up logging for the DeepSDFStruct package with customizable
     output format and destinations.
+with_float32_lattice
+    Run a callable with a lattice structure temporarily cast to float32.
 
 Constants
 ---------
@@ -18,6 +20,9 @@ _TUWIEN_COLOR_SCHEME
 """
 
 import logging
+
+import torch
+
 import DeepSDFStruct
 
 
@@ -60,6 +65,61 @@ def configure_logging(level=logging.INFO, logfile=None):
         file_logger_handler = logging.FileHandler(logfile)
         file_logger_handler.setFormatter(formatter)
         logger.addHandler(file_logger_handler)
+
+
+def with_float32_lattice(lattice_struct, bounds, fn):
+    """Run ``fn(bounds_f32)`` with *lattice_struct* temporarily cast to float32.
+
+    The DeepSDF decoder and FlexiCubes mesh extraction only run in float32,
+    while a downstream shape optimizer may hold the lattice parameters in
+    float64. This helper performs the cast locally around ``fn`` and restores
+    the original dtypes afterwards, so callers never have to leave the lattice
+    in a downgraded state.
+
+    Parameters
+    ----------
+    lattice_struct : LatticeSDFStruct
+        Structure whose parametrization parameters and ``bounds`` buffer are
+        cast for the duration of the call.
+    bounds : torch.Tensor
+        Bounds tensor handed to ``fn`` as float32. Not modified in place.
+    fn : Callable[[torch.Tensor], Any]
+        Called once, with the float32 ``bounds``. Its return value is passed
+        through.
+
+    Returns
+    -------
+    Any
+        Whatever ``fn`` returned.
+
+    Examples
+    --------
+    >>> from DeepSDFStruct.utils import with_float32_lattice
+    >>> from DeepSDFStruct.mesh import create_3D_mesh
+    >>> mesh = with_float32_lattice(  # doctest: +SKIP
+    ...     struct,
+    ...     struct.bounds,
+    ...     lambda b: create_3D_mesh(struct, 32, bounds=b, mesh_type="surface"),
+    ... )
+    """
+    params = list(lattice_struct.parametrization.parameters())
+    saved_params = [p.data for p in params]
+    for p in params:
+        p.data = p.data.float()
+
+    saved_bounds = lattice_struct.bounds.data
+    lattice_struct.bounds.data = lattice_struct.bounds.data.float()
+
+    saved_default_dtype = torch.get_default_dtype()
+    torch.set_default_dtype(torch.float32)
+
+    try:
+        return fn(bounds.float())
+    finally:
+        torch.set_default_dtype(saved_default_dtype)
+        for p, s in zip(params, saved_params):
+            p.data = s
+        lattice_struct.bounds.data = saved_bounds
 
 
 #: TU Wien corporate color scheme
