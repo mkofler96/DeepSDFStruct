@@ -373,9 +373,12 @@ class MMA:
         dF : torch.Tensor
             Gradient of objective w.r.t. design variables, shape (n,).
         G : torch.Tensor or float
-            Constraint function value at current design (≤ 0 is feasible).
+            Constraint values at current design (≤ 0 is feasible), reshaped to
+            (m, 1) for the ``m = n_constraints`` rows this instance was built
+            with. A scalar is accepted when ``m == 1``.
         dG : torch.Tensor
-            Gradient of constraint w.r.t. design variables, shape (n,).
+            Gradient of the constraints w.r.t. design variables, reshaped to
+            (m, n). For ``m == 1`` a flat (n,) tensor is accepted.
         geom_eval : callable, optional
             Cheap geometry-only re-evaluation ``x_np -> np.ndarray``. Given a
             candidate design vector it returns the *true* (nonlinear) constraint

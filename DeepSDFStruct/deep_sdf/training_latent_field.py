@@ -6,7 +6,6 @@ import sys
 import json
 import math
 import time
-import copy
 import signal
 import random
 import logging
@@ -362,7 +361,6 @@ def train(
     experiment_directory = str(experiment_directory)
     specs = ws.load_experiment_specifications(experiment_directory)
     logging.info("Experiment description: \n" + specs["Description"])
-    run_ctx = None
     use_mlflow = bool(use_mlflow) and (mlflow.active_run() is not None)
     if use_mlflow:
         if mlflow_tags:

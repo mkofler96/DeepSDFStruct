@@ -1,6 +1,5 @@
 import onnx
 import torch
-import json
 from DeepSDFStruct.pretrained_models import get_model, PretrainedModels
 
 

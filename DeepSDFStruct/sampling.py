@@ -70,7 +70,6 @@ from tqdm import tqdm
 import logging
 import datetime
 from importlib.metadata import version
-import warnings
 
 logger = logging.getLogger(DeepSDFStruct.__name__)
 

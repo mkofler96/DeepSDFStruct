@@ -41,6 +41,11 @@ dependencies = [
     "vtk>=9.5.1",
     "torch-fem>=0.4.5,<=0.5.0",
     "numpy>=2.0.0",
+    # Both are imported unconditionally (pandas in deep_sdf/plotting.py, scipy in
+    # deep_sdf/metrics/mesh_to_analytical.py) and until now only resolved as
+    # transitive dependencies of mlflow / scikit-image.
+    "pandas",
+    "scipy",
     "mlflow>=3.10.1",
     "onnx>=1.20.1",
     "pyvista",

@@ -23,7 +23,6 @@ Key Features
 """
 
 import logging
-import warnings
 
 
 import numpy as _np

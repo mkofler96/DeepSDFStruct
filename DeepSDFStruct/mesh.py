@@ -716,9 +716,19 @@ def create_3D_mesh(
     bounds : array-like of shape (2, 3), optional
         Spatial bounds [[xmin, ymin, zmin], [xmax, ymax, zmax]].
         If None, uses the SDF's domain bounds.
-    sdf_batch_size : int or None, default None
-        If set, evaluates the SDF in batches of this size to reduce peak
-        GPU memory usage. Only applies when ``differentiate=False``.
+    diffmode : {'fwd', 'rev'}, default 'fwd'
+        Autodiff mode used to build ``dVerts_dParams``. Only applies when
+        ``differentiate=True``.
+    deformation_function : TorchSpline or TorchScaling, optional
+        Parameter-to-physical-space map applied to the extracted vertices. If
+        None, the mesh is returned in parameter space.
+    use_tiling : bool, default True
+        Look for a lattice in ``sdf`` and scale the resolution by its tiling so
+        the resolution per unit cell stays consistent. Set False to treat the
+        SDF as a single domain at ``N_base``.
+    extend_bounds : bool, default True
+        Extend the sampling grid 5% beyond ``bounds`` on each side, so surfaces
+        touching the domain border close.
 
     Returns
     -------
