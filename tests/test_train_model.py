@@ -57,11 +57,18 @@ def test_continue_from(data_dir):
 
 
 def test_latent_recon():
+    # Each reconstruction is one marching-cubes extraction over a 31**3 grid,
+    # so this covers the two code paths with the smallest input that exercises
+    # them: 2 latent vectors, and 1 interpolation pair at its 2 endpoints.
+    # Reconstructing all 20 latents and 8 interpolation steps took ~28
+    # extractions, which dominated the suite on a 2-core CI runner.
     exp_dir = "DeepSDFStruct/trained_models/analytic_round_cross"
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     device = "cpu"
-    reconstruct_meshs_from_latent(exp_dir, filetype="obj", device=device)
-    create_interpolated_meshes_from_latent(exp_dir, [1, 2, 3], 4, device=device)
+    reconstruct_meshs_from_latent(
+        exp_dir, filetype="obj", device=device, indices=[0, 1]
+    )
+    create_interpolated_meshes_from_latent(exp_dir, [1, 2], 2, device=device)
 
 
 def test_cpp_file_export():
