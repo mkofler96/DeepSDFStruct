@@ -62,16 +62,11 @@ def _greville_1d(U, p):
         raise ValueError(f"Invalid knot vector length {len(U)} for degree {p}")
     if p == 0:
         return 0.5 * (U[:n] + U[1 : n + 1])
-    return np.array(
-        [np.sum(U[i + 1 : i + p + 1]) / p for i in range(n)], dtype=float
-    )
+    return np.array([np.sum(U[i + 1 : i + p + 1]) / p for i in range(n)], dtype=float)
 
 
 def export_control_lattice_paramspace(
-    spline,
-    filename="control_lattice_paramspace.vtp",
-    locked_idx=None,
-    order="F",
+    spline, filename="control_lattice_paramspace.vtp", locked_idx=None, order="F"
 ):
     """Export control-lattice Greville abscissae (parametric space) as a
     .vtp point cloud with id/i/j/k metadata. If locked_idx is given, adds
@@ -115,9 +110,7 @@ def export_control_lattice_paramspace(
         locked_idx = np.asarray(locked_idx, dtype=int)
         if locked_idx.size > 0:
             if locked_idx.min() < 0 or locked_idx.max() >= N:
-                raise IndexError(
-                    f"locked_idx out of bounds. Valid range: [0, {N-1}]"
-                )
+                raise IndexError(f"locked_idx out of bounds. Valid range: [0, {N-1}]")
             locked_flag = np.zeros((N,), dtype=np.int32)
             locked_flag[locked_idx] = 1
             cloud["locked"] = locked_flag
@@ -151,9 +144,7 @@ def export_design_volume_paramspace(spline, filename="design_volume_paramspace.v
     ids = np.arange(N)
     I, J, K = np.unravel_index(ids, (nu, nv, nw), order="F")
     on_boundary = (
-        (I == 0) | (I == nu - 1)
-        | (J == 0) | (J == nv - 1)
-        | (K == 0) | (K == nw - 1)
+        (I == 0) | (I == nu - 1) | (J == 0) | (J == nv - 1) | (K == 0) | (K == nw - 1)
     ).astype(np.int32)
 
     grid["id"] = ids
@@ -167,11 +158,7 @@ def export_design_volume_paramspace(spline, filename="design_volume_paramspace.v
 
 
 def export_control_lattice_physical(
-    control_points,
-    n_per_dim,
-    filename,
-    order="F",
-    boundary_only=False,
+    control_points, n_per_dim, filename, order="F", boundary_only=False
 ):
     """Export a deformed control lattice in physical space: points plus
     lines connecting (i,j,k) neighbors along each grid axis.
@@ -219,7 +206,7 @@ def export_control_lattice_physical(
     # +i edges: shared j, k → on boundary iff j or k on boundary
     if n0 > 1:
         edge, _, j_ed, k_ed = _edge_block(
-            np.arange(n0 - 1), np.arange(n1), np.arange(n2), 1, 0, 0,
+            np.arange(n0 - 1), np.arange(n1), np.arange(n2), 1, 0, 0
         )
         if boundary_only:
             mask = (j_ed == 0) | (j_ed == n1 - 1) | (k_ed == 0) | (k_ed == n2 - 1)
@@ -228,7 +215,7 @@ def export_control_lattice_physical(
     # +j edges: shared i, k → on boundary iff i or k on boundary
     if n1 > 1:
         edge, i_ed, _, k_ed = _edge_block(
-            np.arange(n0), np.arange(n1 - 1), np.arange(n2), 0, 1, 0,
+            np.arange(n0), np.arange(n1 - 1), np.arange(n2), 0, 1, 0
         )
         if boundary_only:
             mask = (i_ed == 0) | (i_ed == n0 - 1) | (k_ed == 0) | (k_ed == n2 - 1)
@@ -237,7 +224,7 @@ def export_control_lattice_physical(
     # +k edges: shared i, j → on boundary iff i or j on boundary
     if n2 > 1:
         edge, i_ed, j_ed, _ = _edge_block(
-            np.arange(n0), np.arange(n1), np.arange(n2 - 1), 0, 0, 1,
+            np.arange(n0), np.arange(n1), np.arange(n2 - 1), 0, 0, 1
         )
         if boundary_only:
             mask = (i_ed == 0) | (i_ed == n0 - 1) | (j_ed == 0) | (j_ed == n1 - 1)
@@ -248,9 +235,12 @@ def export_control_lattice_physical(
 
     if boundary_only:
         on_boundary = (
-            (I == 0) | (I == n0 - 1)
-            | (J == 0) | (J == n1 - 1)
-            | (K == 0) | (K == n2 - 1)
+            (I == 0)
+            | (I == n0 - 1)
+            | (J == 0)
+            | (J == n1 - 1)
+            | (K == 0)
+            | (K == n2 - 1)
         )
         keep_idx = np.flatnonzero(on_boundary)
         remap = -np.ones(N, dtype=np.int64)
@@ -283,11 +273,7 @@ def export_control_lattice_physical(
 
 
 def export_control_volume_physical(
-    control_points,
-    n_per_dim,
-    filename,
-    undeformed=None,
-    order="F",
+    control_points, n_per_dim, filename, undeformed=None, order="F"
 ):
     """Export a deformed control lattice as a StructuredGrid (.vts) — a
     solid hexahedral volume. In ParaView, render directly (adjust opacity)
@@ -332,9 +318,7 @@ def export_control_volume_physical(
     ids = np.arange(N)
     I, J, K = np.unravel_index(ids, (n0, n1, n2), order=order)
     on_boundary = (
-        (I == 0) | (I == n0 - 1)
-        | (J == 0) | (J == n1 - 1)
-        | (K == 0) | (K == n2 - 1)
+        (I == 0) | (I == n0 - 1) | (J == 0) | (J == n1 - 1) | (K == 0) | (K == n2 - 1)
     ).astype(np.int32)
 
     grid["id"] = ids

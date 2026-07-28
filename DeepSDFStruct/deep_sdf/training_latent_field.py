@@ -652,9 +652,7 @@ def train(
         # Normalize checkpoint name: ws functions expect name without .pth,
         # local save/load functions expect the full filename.
         ckpt_filename = (
-            continue_from
-            if continue_from.endswith(".pth")
-            else continue_from + ".pth"
+            continue_from if continue_from.endswith(".pth") else continue_from + ".pth"
         )
         ckpt_label = ckpt_filename[:-4]
 
@@ -678,22 +676,11 @@ def train(
             pass
 
         try:
-            (
-                loss_log,
-                lr_log,
-                timing_log,
-                lat_mag_log,
-                param_mag_log,
-                log_epoch,
-            ) = load_logs(experiment_directory)
+            loss_log, lr_log, timing_log, lat_mag_log, param_mag_log, log_epoch = (
+                load_logs(experiment_directory)
+            )
             if log_epoch != model_epoch:
-                (
-                    loss_log,
-                    lr_log,
-                    timing_log,
-                    lat_mag_log,
-                    param_mag_log,
-                ) = clip_logs(
+                loss_log, lr_log, timing_log, lat_mag_log, param_mag_log = clip_logs(
                     loss_log,
                     lr_log,
                     timing_log,
@@ -818,9 +805,7 @@ def train(
                             )
                             pred_eik = structs[sid_int](xyz_eik)
                             grad_sdf = torch.autograd.grad(
-                                pred_eik.sum(),
-                                xyz_eik,
-                                create_graph=True,
+                                pred_eik.sum(), xyz_eik, create_graph=True
                             )[0]
                             eik_sq_residuals.append((grad_sdf.norm(dim=-1) - 1) ** 2)
                         eikonal_loss = torch.cat(eik_sq_residuals).mean()

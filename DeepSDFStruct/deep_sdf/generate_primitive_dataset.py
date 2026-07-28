@@ -208,7 +208,9 @@ def _filter_to_bounds(sampled: SampledSDF, bounds: np.ndarray) -> SampledSDF:
     lo = torch.tensor(bounds[0], dtype=sampled.samples.dtype)
     hi = torch.tensor(bounds[1], dtype=sampled.samples.dtype)
     inside = ((sampled.samples >= lo) & (sampled.samples <= hi)).all(dim=1)
-    return SampledSDF(samples=sampled.samples[inside], distances=sampled.distances[inside])
+    return SampledSDF(
+        samples=sampled.samples[inside], distances=sampled.distances[inside]
+    )
 
 
 def generate_primitive_dataset(cfg: dict) -> dict:
@@ -274,10 +276,7 @@ def generate_primitive_dataset(cfg: dict) -> dict:
                 sampling_strategy="uniform",
             )
             surface = sample_mesh_surface(
-                scene_sdf,
-                scene_mesh,
-                int(cfg["n_surface_per_std"]),
-                list(cfg["stds"]),
+                scene_sdf, scene_mesh, int(cfg["n_surface_per_std"]), list(cfg["stds"])
             )
             combined = uniform + surface
             # near-surface Gaussian perturbations can push points past the box;

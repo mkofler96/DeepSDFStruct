@@ -183,8 +183,6 @@ def test_export_reconstructed_artifacts_writes_files(tmp_path):
     assert built.struct.bounds.dtype == torch.float32
 
 
-
-
 TESTS_DIR = Path(__file__).resolve().parent
 MESH_PATH = TESTS_DIR / "data" / "flow_channel.stl"
 # Overrides the reconstructor's default "output": test artifacts belong in the

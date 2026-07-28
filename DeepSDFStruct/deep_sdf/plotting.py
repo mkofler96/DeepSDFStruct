@@ -84,10 +84,7 @@ def plot_logs(experiment_directory, show_lr=False, ax=None, filename=None):
         ax = [ax]
 
     ax[0].plot(
-        np.arange(num_iters) / iters_per_epoch,
-        logs["loss"],
-        "#82c6eb",
-        label="Loss",
+        np.arange(num_iters) / iters_per_epoch, logs["loss"], "#82c6eb", label="Loss"
     )
     ax[0].plot(
         np.arange(20, num_iters - 20) / iters_per_epoch,

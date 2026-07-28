@@ -307,7 +307,9 @@ class MMA:
             # Least-norm correction onto g = 0 (strictly inside the tol-acceptance):
             # dx = Jv^T (Jv Jv^T)^-1 (-gv), tiny Tikhonov guard for degenerate rows.
             A = Jv @ Jv.T
-            A += (1e-10 * max(float(np.trace(A)) / max(gv.size, 1), 0.0) + 1e-30) * np.eye(gv.size)
+            A += (
+                1e-10 * max(float(np.trace(A)) / max(gv.size, 1), 0.0) + 1e-30
+            ) * np.eye(gv.size)
             dx = (Jv.T @ np.linalg.solve(A, -gv)).reshape(-1, 1)
             nrm = float(np.abs(dx).max())
             if nrm <= 0.0:
@@ -344,9 +346,21 @@ class MMA:
             )
         return x
 
-    def step(self, F, dF, G, dG, geom_eval=None, geom_rows=None, max_inner=1,
-             feas_tol=0.05, restore_eval=None, restore_tol=5e-3,
-             restore_max_steps=8, restore_step_limit=None):
+    def step(
+        self,
+        F,
+        dF,
+        G,
+        dG,
+        geom_eval=None,
+        geom_rows=None,
+        max_inner=1,
+        feas_tol=0.05,
+        restore_eval=None,
+        restore_tol=5e-3,
+        restore_max_steps=8,
+        restore_step_limit=None,
+    ):
         """Perform one MMA optimization step.
 
         Updates design variables by solving a convex subproblem constructed
@@ -445,7 +459,7 @@ class MMA:
         do_inner = (
             geom_eval is not None and geom_rows is not None and len(geom_rows) > 0
         )
-        pred_slack = 1e-6     # slack on "worse than the model" (rows are O(1) normalized)
+        pred_slack = 1e-6  # slack on "worse than the model" (rows are O(1) normalized)
 
         self.loop += 1
         xmin = np.maximum(self.x - float(self.max_step), self.bounds[:, 0:1])
@@ -484,18 +498,45 @@ class MMA:
             # initialization of raa0 (objective) / raa (constraint rows) from the
             # current gradients. The raa0/raa inputs are overwritten, so pass dummies.
             low, upp, raa0, raa = asymp(
-                self.loop, self.n, self.x, self.xold1, self.xold2, xmin, xmax,
-                self.low, self.upp, raa0eps, np.full((self.m, 1), raaeps[0, 0]),
-                raa0eps, raaeps, dFdx_np, dGdx_np,
+                self.loop,
+                self.n,
+                self.x,
+                self.xold1,
+                self.xold2,
+                xmin,
+                xmax,
+                self.low,
+                self.upp,
+                raa0eps,
+                np.full((self.m, 1), raaeps[0, 0]),
+                raa0eps,
+                raaeps,
+                dFdx_np,
+                dGdx_np,
             )
             g_now = G_np[rows, 0]
             best_x, best_score = None, np.inf
             for inner in range(n_inner):
-                (xmma, ymma, zmma, lam, xsi, eta, muMMA, zet, s,
-                 f0app, fapp) = gcmmasub(
-                    self.m, self.n, self.loop, epsimin, self.x, xmin, xmax,
-                    low, upp, raa0, raa, F_np, dFdx_np, G_np, dGdx_np,
-                    self.a0_MMA, self.a_MMA, self.c_MMA, self.d_MMA,
+                xmma, ymma, zmma, lam, xsi, eta, muMMA, zet, s, f0app, fapp = gcmmasub(
+                    self.m,
+                    self.n,
+                    self.loop,
+                    epsimin,
+                    self.x,
+                    xmin,
+                    xmax,
+                    low,
+                    upp,
+                    raa0,
+                    raa,
+                    F_np,
+                    dFdx_np,
+                    G_np,
+                    dGdx_np,
+                    self.a0_MMA,
+                    self.a_MMA,
+                    self.c_MMA,
+                    self.d_MMA,
                 )
                 # True (nonlinear) geometry values at the candidate (g = value - target,
                 # > 0 infeasible) vs the conservative approximation at the same point
@@ -540,11 +581,21 @@ class MMA:
                 fvalnew = np.asarray(fapp, dtype=float).reshape(self.m, 1).copy()
                 fvalnew[rows, 0] = g_true
                 raa0, raa = raaupdate(
-                    xmma, self.x, xmin, xmax, low, upp,
-                    np.asarray(f0app, dtype=float).reshape(1, 1), fvalnew,
+                    xmma,
+                    self.x,
+                    xmin,
+                    xmax,
+                    low,
+                    upp,
+                    np.asarray(f0app, dtype=float).reshape(1, 1),
+                    fvalnew,
                     np.asarray(f0app, dtype=float).reshape(1, 1),
                     np.asarray(fapp, dtype=float).reshape(self.m, 1),
-                    raa0, raa, raa0eps, raaeps, epsimin,
+                    raa0,
+                    raa,
+                    raa0eps,
+                    raaeps,
+                    epsimin,
                 )
             xmma = best_x
 
@@ -554,8 +605,11 @@ class MMA:
         # set before committing it as the new design.
         if restore_eval is not None:
             xmma = self._restore_feasibility(
-                xmma, restore_eval, float(restore_tol),
-                restore_max_steps, restore_step_limit,
+                xmma,
+                restore_eval,
+                float(restore_tol),
+                restore_max_steps,
+                restore_step_limit,
             )
 
         self.xold2 = self.xold1.copy()
