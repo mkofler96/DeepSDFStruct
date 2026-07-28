@@ -198,8 +198,9 @@ TESTS_DIR = Path(__file__).resolve().parent
 # at tiling [1, 8, 8] (162 control points) made this the slowest test in CI by a
 # wide margin, and it was covering the same code path as the cone does.
 MESH_PATH = TESTS_DIR / "data" / "cone.stl"
-# Overrides the reconstructor's default "output": test artifacts belong in the
-# gitignored tests/tmp_outputs, not in the repository root.
+# A per-test subdirectory of the reconstructor's default tests/tmp_outputs, so
+# this case's artifacts stay separate from the other tests'. Absolute, so the
+# test does not depend on pytest's working directory.
 OUTPUT_DIR = TESTS_DIR / "tmp_outputs" / "cone"
 
 TILING = [2, 2, 2]

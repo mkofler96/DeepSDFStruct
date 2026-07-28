@@ -350,12 +350,17 @@ class LocalShapesReconstructor:
         an already loaded model.
     device : str or torch.device, optional
         Compute device. Defaults to CUDA when available.
-    output_dir : path-like or None, default ``"output"``
+    output_dir : path-like or None, default ``"tests/tmp_outputs"``
         Where every file this reconstructor writes goes: the loss curve and CSV
         of :meth:`fit_mesh`, and whatever :meth:`export` produces. Relative
         paths are resolved against the working directory. The directory is
         created on first write, not here. Pass ``None`` to keep the
         reconstructor from writing anything unless an explicit path is given.
+
+        The default points at the repository's gitignored scratch directory, so
+        a run started from a checkout does not leave artifacts in the repository
+        root. It is relative to the working directory, so callers running from
+        outside a checkout should pass an explicit path.
 
     Examples
     --------
@@ -378,7 +383,7 @@ class LocalShapesReconstructor:
         model: str | PretrainedModels | DeepSDFModel = PretrainedModels.Primitives,
         checkpoint: str = "latest",
         device=None,
-        output_dir: str | pathlib.Path | None = "output",
+        output_dir: str | pathlib.Path | None = "tests/tmp_outputs",
     ):
         if isinstance(model, DeepSDFModel):
             self.model = model
