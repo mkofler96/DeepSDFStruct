@@ -2,14 +2,18 @@
 
 Exercises the plain
 :class:`~DeepSDFStruct.geom_reconstruction.LocalShapesReconstructor` API -- no
-JSON config and no environment variables. The hyperparameters now *are* the
-library defaults, so only the target mesh and the tiling are spelled out here.
+JSON config and no environment variables.
 
 The end-to-end case uses ``tests/data/cone.stl`` at tiling ``[2, 2, 2]``. It was
 ported from the DeepShapeOpt ``experiments/reconstruction/feed_channel`` case,
 which drove ``flow_channel.stl`` at tiling ``[1, 8, 8]``; that is the same code
 path at roughly an order of magnitude more cost, which made it the slowest test
 in CI, so the cheaper target stands in for it here.
+
+These are correctness tests, not a quality benchmark: the epoch count and the
+sample counts are set well below the library defaults so the suite stays quick,
+and the error thresholds are calibrated against those reduced settings. Fit
+quality at the shipped defaults is therefore *not* what is asserted here.
 
 Run as a test::
 
@@ -199,19 +203,25 @@ MESH_PATH = TESTS_DIR / "data" / "cone.stl"
 OUTPUT_DIR = TESTS_DIR / "tmp_outputs" / "cone"
 
 TILING = [2, 2, 2]
-# Below the default of 10 epochs, to keep CI short. Everything else is left at
-# the library default.
+# Below the default of 10 epochs, to keep CI short.
 NUM_ITERATIONS = 3
+# Also below the library defaults (1e5 / 5e5) to keep CI short: sampling 1.1M
+# points dominated this test's runtime at ~65s, against ~7s here.
+N_UNIFORM = 20000
+N_SURFACE = 50000
 # Same resolution recon.export uses, so the metric is taken on the mesh that
 # gets written out.
 MESH_RESOLUTION = 32
 # Mean |SDF| of the target mesh over the reconstructed surface vertices, in the
-# mesh's own units -- so this threshold is tied to the cone's 6 x 6 x 6 box and
-# has to be recalibrated if MESH_PATH changes. Measured on CPU: three epochs land
-# at 0.003, the unfitted mean-code initialization at 1.16. This sits ~17x above
-# the fit and ~23x below the unfitted baseline, so it catches a fit that stopped
-# working with enough headroom for cross-platform run-to-run noise.
-MAX_SDF_ERROR = 0.05
+# mesh's own units -- so this threshold is tied to the cone's 6 x 6 x 6 box, and
+# has to be recalibrated if MESH_PATH, the epoch count or the sample counts
+# change. Measured on CPU at the settings above: 0.011, against 1.16 for the
+# unfitted mean-code initialization (0.003 at the full 1e5/5e5 sampling, for
+# reference). The threshold sits ~9x above the fit and ~12x below the unfitted
+# baseline: loose enough to absorb the run-to-run noise that the reduced sample
+# counts add across the CI matrix, tight enough to fail a fit that stopped
+# working.
+MAX_SDF_ERROR = 0.1
 
 
 def test_cone_reconstruction():
@@ -229,7 +239,11 @@ def test_cone_reconstruction():
     # fit_mesh returns a FitResult; its first four fields unpack directly.
     # Bind the whole thing instead if you also want loss_history / final_loss.
     struct, scaling, gt_sdf, params = recon.fit_mesh(
-        mesh=mesh_orig, tiling=TILING, num_iterations=NUM_ITERATIONS
+        mesh=mesh_orig,
+        tiling=TILING,
+        num_iterations=NUM_ITERATIONS,
+        n_uniform=N_UNIFORM,
+        n_surface=N_SURFACE,
     )
 
     # Degree 1 with n knot spans -> n + 1 control points per dimension.
