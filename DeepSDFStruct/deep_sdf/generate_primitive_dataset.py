@@ -152,9 +152,10 @@ def _make_primitive(
         sdf = BoxSDF(center=[0.0, 0.0, 0.0], extents=extents)
         mesh = trimesh.creation.box(extents=extents)
     elif prim_type == "cylinder":
-        # unit cylinder: radius 1 (x/y), height 2 (half-height 1 along z)
+        # unit cylinder: radius 1 (x/y), height 2 (half-height 1 along z), which
+        # matches trimesh.creation.cylinder(radius=1, height=2) below.
         unit_sdf = CylinderSDF(
-            point=[0.0, 0.0, 0.0], axis=[0.0, 0.0, 1.0], radius=1.0, height=2.0
+            point_a=[0.0, 0.0, -1.0], point_b=[0.0, 0.0, 1.0], radius=1.0
         )
         sdf = _AnisoScaledSDF(unit_sdf, scale_vec)
         mesh = trimesh.creation.cylinder(radius=1.0, height=2.0, sections=32)
