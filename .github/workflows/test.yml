@@ -42,9 +42,9 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ${{ github.workspace }}/.cache/huggingface
-          key: huggingface-${{ hashFiles('pyproject.toml') }}
+          key: huggingface-${{ runner.os }}-v1
           restore-keys: |
-            huggingface-
+            huggingface-${{ runner.os }}-
 
       - name: Ensure Hugging Face cache directories exist
         run: |
@@ -54,12 +54,20 @@ jobs:
         run: |
           echo "hf-cache-hit=${{ steps.hf-cache.outputs.cache-hit }}"
           echo "HF_HOME=$HF_HOME"
-          ls -la "$(dirname "$HF_HOME")" || true
+          find "$HF_HOME" -maxdepth 3 -type d || true
           du -sh "$HF_HOME" || true
           du -sh "$HF_HUB_CACHE" || true
 
       - name: Sync dependencies with uv
-        run: uv sync
+        run: uv sync --extra quantum
+
+      - name: Verify Hugging Face authentication
+        run: |
+          if [ -z "$HF_TOKEN" ]; then
+            echo "::error::HF_TOKEN is not set. Unauthenticated requests hit stricter rate limits and will time out. Add the HF_TOKEN repository secret."
+            exit 1
+          fi
+          uv run python -c "from huggingface_hub import whoami; print('Authenticated as:', whoami()['name'])"
 
       - name: Run tests
         run: uv run pytest --cov=DeepSDFStruct --cov-report=term-missing --cov-report=xml tests

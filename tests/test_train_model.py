@@ -4,31 +4,11 @@ from DeepSDFStruct.deep_sdf.training import (
     create_interpolated_meshes_from_latent,
 )
 from DeepSDFStruct.pretrained_models import get_model
-from huggingface_hub import snapshot_download
-from huggingface_hub.utils import HfHubHTTPError
+from _hf_helpers import snapshot_download_with_retry
 import pytest
 import torch
-import time
 
 REVISION = "dbe58ebaa00057d5f15096c2b253c7efa91e19d3"
-
-
-def snapshot_download_with_retry(*args, max_retries=3, **kwargs):
-    """Download with retry on 429 rate limit errors."""
-    for attempt in range(max_retries):
-        try:
-            return snapshot_download(*args, **kwargs)
-        except HfHubHTTPError as e:
-            if e.response and e.response.status_code == 429:
-                if attempt < max_retries - 1:
-                    wait_time = 60 * (attempt + 1)
-                    print(
-                        f"Rate limited (429). Waiting {wait_time}s before retry {attempt + 2}/{max_retries}"
-                    )
-                    time.sleep(wait_time)
-                else:
-                    raise
-            raise
 
 
 @pytest.fixture(scope="module", autouse=True)
@@ -77,11 +57,18 @@ def test_continue_from(data_dir):
 
 
 def test_latent_recon():
+    # Each reconstruction is one marching-cubes extraction over a 31**3 grid,
+    # so this covers the two code paths with the smallest input that exercises
+    # them: 2 latent vectors, and 1 interpolation pair at its 2 endpoints.
+    # Reconstructing all 20 latents and 8 interpolation steps took ~28
+    # extractions, which dominated the suite on a 2-core CI runner.
     exp_dir = "DeepSDFStruct/trained_models/analytic_round_cross"
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     device = "cpu"
-    reconstruct_meshs_from_latent(exp_dir, filetype="obj", device=device)
-    create_interpolated_meshes_from_latent(exp_dir, [1, 2, 3], 4, device=device)
+    reconstruct_meshs_from_latent(
+        exp_dir, filetype="obj", device=device, indices=[0, 1]
+    )
+    create_interpolated_meshes_from_latent(exp_dir, [1, 2], 2, device=device)
 
 
 def test_cpp_file_export():

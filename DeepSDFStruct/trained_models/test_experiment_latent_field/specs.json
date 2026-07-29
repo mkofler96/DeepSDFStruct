@@ -1,0 +1,44 @@
+{
+    "Description" : "This experiment is intented for testing purposes only. Spline latent-field training (training_latent_field.train), as opposed to the per-scene latent vectors of test_experiment.",
+    "NetworkArch" : "deep_sdf_decoder",
+    "TrainSplit": "splits/train.json",
+    "TestSplit": "splits/train.json",
+    "ReconstructionSplit": "",
+    "NetworkSpecs" : {
+      "dims" : [16, 16],
+      "dropout" : [],
+      "dropout_prob" : 0.0,
+      "norm_layers" : [],
+      "latent_in" : [],
+      "xyz_in_all" : false,
+      "use_tanh" : false,
+      "latent_dropout" : false,
+      "weight_norm" : false,
+      "geom_dimension": 3
+      },
+    "CodeLength" : 2,
+    "NumEpochs" : 4,
+    "LogFrequency": 2,
+    "SnapshotFrequency" : 100,
+    "AdditionalSnapshots" : [2],
+    "LearningRateSchedule" : [
+      {
+        "Type" : "Constant",
+        "Value" : 0.001
+      },
+      {
+        "Type" : "Constant",
+        "Value" : 0.01
+      }],
+    "SamplesPerScene" : 32,
+    "ScenesPerBatch" : 2,
+    "DataLoaderThreads" : 0,
+    "ClampingDistance" : 0.1,
+    "CodeRegularization" : true,
+    "CodeRegularizationLambda" : 1e-4,
+    "CodeRegularizationTarget" : "both",
+    "Tiling" : [1, 1, 1],
+    "BoundsParamSpace" : [[-1.0, -1.0, -1.0], [1.0, 1.0, 1.0]],
+    "SplineInitStd" : 0.01,
+    "seed" : 42
+  }

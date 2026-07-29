@@ -296,7 +296,8 @@ def _process_single_geometry_instance(
     else:
         np.savez(fname, neg=neg.stacked, pos=pos.stacked)
     if also_save_vtk:
-        save_points_to_vtp(fname.with_suffix(".vtp"), neg=neg.stacked, pos=pos.stacked)
+        all_pts = np.vstack([neg.stacked, pos.stacked])
+        save_points_to_vtp(fname.with_suffix(".vtp"), all_pts)
 
 
 class SDFSampler:
@@ -587,43 +588,43 @@ def sample_mesh_surface(
     return SampledSDF(samples=queries, distances=distances)
 
 
-def save_points_to_vtp(filename, neg, pos):
+def save_points_to_vtp(filename, points):
     """
-    Save pos/neg SDF sample points as a VTU point cloud using vtkPolyData.
-    Each point has an SDF scalar value.
+    points: array-like of shape (N,4)
+            columns = [x, y, z, sdf]
     """
-    # Combine points
-    all_points = np.vstack((pos, neg))
-    coords = all_points[:, :3]
-    sdf_vals = all_points[:, 3]
+    if torch.is_tensor(points):
+        points = points.detach().cpu().numpy()
 
-    # --- Create vtkPoints ---
+    points = np.asarray(points, dtype=np.float64)
+
+    if points.ndim != 2 or points.shape[1] != 4:
+        raise ValueError(f"Expected points of shape (N,4), got {points.shape}")
+
+    coords = points[:, :3]
+    sdf_vals = points[:, 3]
+
     vtk_points = vtk.vtkPoints()
     for pt in coords:
-        vtk_points.InsertNextPoint(pt)
+        vtk_points.InsertNextPoint(float(pt[0]), float(pt[1]), float(pt[2]))
 
-    # --- Create PolyData ---
     polydata = vtk.vtkPolyData()
     polydata.SetPoints(vtk_points)
 
-    # Add vertex cells (required for points in PolyData)
     verts = vtk.vtkCellArray()
     for i in range(len(coords)):
         verts.InsertNextCell(1)
         verts.InsertCellPoint(i)
     polydata.SetVerts(verts)
 
-    # --- Add SDF scalar values ---
     vtk_array = vtk.vtkDoubleArray()
     vtk_array.SetName("SDF")
-    vtk_array.SetNumberOfValues(len(sdf_vals))
-    for i, val in enumerate(sdf_vals):
-        vtk_array.SetValue(i, val)
+    for val in sdf_vals:
+        vtk_array.InsertNextValue(float(val))
     polydata.GetPointData().SetScalars(vtk_array)
 
-    # --- Write to VTU ---
     writer = vtk.vtkXMLPolyDataWriter()
-    writer.SetFileName(filename)
+    writer.SetFileName(str(filename))
     writer.SetInputData(polydata)
     writer.Write()
 

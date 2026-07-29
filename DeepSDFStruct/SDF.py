@@ -878,6 +878,12 @@ class BoxSDF(SDFBase):
         )
         return output.reshape(-1, 1)
 
+    def _get_domain_bounds(self):
+        half_size = self.box_size / 2
+        lower = self.center - half_size
+        upper = self.center + half_size
+        return torch.stack([lower, upper], dim=0)
+
 
 def union_torch(D, k=0):
     """

@@ -713,8 +713,17 @@ def reconstruct_meshs_from_latent(
     max_batch=32,
     filetype="ply",
     device="cpu",
+    indices: list[int] | None = None,
 ):
+    """
+    Reconstruct and export one surface mesh per trained latent vector.
 
+    Args:
+        indices (list[int], optional): Which latent vector indices to
+            reconstruct. Defaults to None, meaning every latent vector in the
+            checkpoint. Each mesh costs one marching-cubes extraction over a
+            31**3 grid, so pass a short list to keep runtimes down.
+    """
     decoder = ws.load_trained_model(experiment_directory, checkpoint, device=device)
     latent_vectors = ws.load_latent_vectors(
         experiment_directory, checkpoint, device=device
@@ -723,7 +732,11 @@ def reconstruct_meshs_from_latent(
     deep_sdf_model = DeepSDFModel(decoder, latent_vectors, device=device)
     sdf_from_DeepSDF = SDFfromDeepSDF(deep_sdf_model)
 
-    for i, latent_in in enumerate(latent_vectors):
+    if indices is None:
+        indices = list(range(len(latent_vectors)))
+
+    for i in indices:
+        latent_in = latent_vectors[i]
         epoch = checkpoint
         dataset = "latent_recon"
         class_name = "all"
@@ -739,7 +752,7 @@ def reconstruct_meshs_from_latent(
         if os.path.isfile(fname):
             print(f"Skipping {fname}")
             continue
-        print(f"Reconstructing {fname} ({i}/{len(latent_vectors)})")
+        print(f"Reconstructing {fname} ({i}/{len(indices)})")
         sdf_from_DeepSDF.set_latent_vec(latent_in)
         surf_mesh, _ = create_3D_mesh(sdf_from_DeepSDF, 30, mesh_type="surface")
         export_surface_mesh(fname, surf_mesh)
