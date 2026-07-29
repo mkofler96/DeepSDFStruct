@@ -1,7 +1,4 @@
 # DeepSDFStruct
-
-[![DOI](https://zenodo.org/badge/1089477863.svg)](https://doi.org/10.5281/zenodo.20205817)
-
 A differentiable framework for generating and deforming 3D microstructured materials using Signed Distance Functions (SDFs) and spline-based lattices.
 ## Coverage
 [![Test Python Package](https://github.com/mkofler96/DeepSDFStruct/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/mkofler96/DeepSDFStruct/actions/workflows/test.yml)
@@ -567,14 +564,12 @@ Further papers building on DeepSDFStruct will be added to this list as they are 
 
 If you use DeepSDFStruct in your work, please cite the repository:
 
-> Kofler, M., Freinberger, L., & Elgeti, S. *DeepSDFStruct*. Zenodo. [https://doi.org/10.5281/zenodo.20205817](https://doi.org/10.5281/zenodo.20205817)
+> Kofler, M., Freinberger, L., & Elgeti, S. *DeepSDFStruct* [github.com/mkofler96/DeepSDFStruct](https://github.com/mkofler96/DeepSDFStruct)
 
 ```bibtex
 @software{deepsdfstruct,
   author    = {Kofler, Michael and Freinberger, Lukas and Elgeti, Stefanie},
   title     = {DeepSDFStruct},
-  publisher = {Zenodo},
-  doi       = {10.5281/zenodo.20205817},
   url       = {https://github.com/mkofler96/DeepSDFStruct}
 }
 ```
