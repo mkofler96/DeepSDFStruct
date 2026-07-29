@@ -1,0 +1,12 @@
+DeepSDFStruct.export\_onnx
+==========================
+
+.. automodule:: DeepSDFStruct.export_onnx
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      export_ONNX
+   

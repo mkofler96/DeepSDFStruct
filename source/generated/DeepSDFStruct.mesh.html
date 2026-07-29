@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>DeepSDFStruct.mesh &#8212; DeepSDFStruct 1.7.3.dev5+gb86bba507 documentation</title>
+    <title>DeepSDFStruct.mesh &#8212; DeepSDFStruct 1.7.4.dev1+gb20659a14 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=50add644"></script>
+    <script src="../../_static/documentation_options.js?v=95cec932"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'source/generated/DeepSDFStruct.mesh';</script>
@@ -110,7 +110,7 @@
   
   
   
-    <p class="title logo__title">DeepSDFStruct 1.7.3.dev5+gb86bba507 documentation</p>
+    <p class="title logo__title">DeepSDFStruct 1.7.4.dev1+gb20659a14 documentation</p>
   
 </a></div>
     
@@ -241,7 +241,9 @@
 <li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.SDF.html">DeepSDFStruct.SDF</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="DeepSDFStruct.deep_sdf.html">DeepSDFStruct.deep_sdf</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.deep_sdf.data.html">DeepSDFStruct.deep_sdf.data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.deep_sdf.generate_primitive_dataset.html">DeepSDFStruct.deep_sdf.generate_primitive_dataset</a></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="DeepSDFStruct.deep_sdf.metrics.html">DeepSDFStruct.deep_sdf.metrics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="DeepSDFStruct.deep_sdf.metrics.error_metrics.html">DeepSDFStruct.deep_sdf.metrics.error_metrics</a></li>
 <li class="toctree-l4"><a class="reference internal" href="DeepSDFStruct.deep_sdf.metrics.mesh_to_analytical.html">DeepSDFStruct.deep_sdf.metrics.mesh_to_analytical</a></li>
 </ul>
 </details></li>
@@ -258,10 +260,13 @@
 <li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.deep_sdf.plotting.html">DeepSDFStruct.deep_sdf.plotting</a></li>
 <li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.deep_sdf.reconstruction.html">DeepSDFStruct.deep_sdf.reconstruction</a></li>
 <li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.deep_sdf.training.html">DeepSDFStruct.deep_sdf.training</a></li>
+<li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.deep_sdf.training_latent_field.html">DeepSDFStruct.deep_sdf.training_latent_field</a></li>
 <li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.deep_sdf.workspace.html">DeepSDFStruct.deep_sdf.workspace</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.design_of_experiments.html">DeepSDFStruct.design_of_experiments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.export_knot_grid.html">DeepSDFStruct.export_knot_grid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.export_onnx.html">DeepSDFStruct.export_onnx</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="DeepSDFStruct.flexicubes.html">DeepSDFStruct.flexicubes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.flexicubes.flexicubes.html">DeepSDFStruct.flexicubes.flexicubes</a></li>
 <li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.flexicubes.tables.html">DeepSDFStruct.flexicubes.tables</a></li>
@@ -272,6 +277,7 @@
 <li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.flexisquares.tables.html">DeepSDFStruct.flexisquares.tables</a></li>
 </ul>
 </details></li>
+<li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.geom_reconstruction.html">DeepSDFStruct.geom_reconstruction</a></li>
 <li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.lattice_structure.html">DeepSDFStruct.lattice_structure</a></li>
 <li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.local_shapes.html">DeepSDFStruct.local_shapes</a></li>
 <li class="toctree-l2 current active"><a class="current reference internal" href="#">DeepSDFStruct.mesh</a></li>
@@ -401,37 +407,40 @@ to standard formats (gustaf, trimesh) for I/O and visualization.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.mesh.export_abaqus_surf_mesh" title="DeepSDFStruct.mesh.export_abaqus_surf_mesh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">export_abaqus_surf_mesh</span></code></a>(surf_mesh, filename)</p></td>
 <td><p>export a mesh and adds corresponding boundary conditions</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.mesh.export_sdf_grid_vtk" title="DeepSDFStruct.mesh.export_sdf_grid_vtk"><code class="xref py py-obj docutils literal notranslate"><span class="pre">export_sdf_grid_vtk</span></code></a>(sdf, filename[, N, bounds])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.mesh.export_reconstructed_artifacts" title="DeepSDFStruct.mesh.export_reconstructed_artifacts"><code class="xref py py-obj docutils literal notranslate"><span class="pre">export_reconstructed_artifacts</span></code></a>(...[, ...])</p></td>
+<td><p>Export a fitted lattice as an SDF grid plus surface meshes.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.mesh.export_sdf_grid_vtk" title="DeepSDFStruct.mesh.export_sdf_grid_vtk"><code class="xref py py-obj docutils literal notranslate"><span class="pre">export_sdf_grid_vtk</span></code></a>(sdf, filename[, N, bounds])</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.mesh.export_surface_mesh" title="DeepSDFStruct.mesh.export_surface_mesh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">export_surface_mesh</span></code></a>(filename, mesh[, dSurf])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.mesh.export_surface_mesh" title="DeepSDFStruct.mesh.export_surface_mesh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">export_surface_mesh</span></code></a>(filename, mesh[, dSurf])</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.mesh.export_volume_mesh" title="DeepSDFStruct.mesh.export_volume_mesh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">export_volume_mesh</span></code></a>(volume_mesh, filename[, ...])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.mesh.export_volume_mesh" title="DeepSDFStruct.mesh.export_volume_mesh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">export_volume_mesh</span></code></a>(volume_mesh, filename[, ...])</p></td>
 <td><p>export a mesh and adds corresponding boundary conditions</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.mesh.find_lattice_sdf" title="DeepSDFStruct.mesh.find_lattice_sdf"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_lattice_sdf</span></code></a>(module)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.mesh.find_lattice_sdf" title="DeepSDFStruct.mesh.find_lattice_sdf"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_lattice_sdf</span></code></a>(module)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.mesh.generate_2D_surf_mesh" title="DeepSDFStruct.mesh.generate_2D_surf_mesh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">generate_2D_surf_mesh</span></code></a>(sdf, n_squares[, ...])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.mesh.generate_2D_surf_mesh" title="DeepSDFStruct.mesh.generate_2D_surf_mesh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">generate_2D_surf_mesh</span></code></a>(sdf, n_squares[, ...])</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.mesh.get_verts" title="DeepSDFStruct.mesh.get_verts"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_verts</span></code></a>(sdf, samples, constructor, cube_idx, N)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.mesh.get_verts" title="DeepSDFStruct.mesh.get_verts"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_verts</span></code></a>(sdf, samples, constructor, cube_idx, N)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.mesh.mergeMeshs" title="DeepSDFStruct.mesh.mergeMeshs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mergeMeshs</span></code></a>(mesh1, mesh2[, tol])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.mesh.mergeMeshs" title="DeepSDFStruct.mesh.mergeMeshs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mergeMeshs</span></code></a>(mesh1, mesh2[, tol])</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.mesh.process_N_base_input" title="DeepSDFStruct.mesh.process_N_base_input"><code class="xref py py-obj docutils literal notranslate"><span class="pre">process_N_base_input</span></code></a>(N, tiling[, bounds, dim])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.mesh.process_N_base_input" title="DeepSDFStruct.mesh.process_N_base_input"><code class="xref py py-obj docutils literal notranslate"><span class="pre">process_N_base_input</span></code></a>(N, tiling[, bounds, dim])</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.mesh.prune_collinear" title="DeepSDFStruct.mesh.prune_collinear"><code class="xref py py-obj docutils literal notranslate"><span class="pre">prune_collinear</span></code></a>(points[, tol])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.mesh.prune_collinear" title="DeepSDFStruct.mesh.prune_collinear"><code class="xref py py-obj docutils literal notranslate"><span class="pre">prune_collinear</span></code></a>(points[, tol])</p></td>
 <td><p>Remove nearly collinear points from a polyline (closed loop).</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.mesh.sdf_to_triangle_dict" title="DeepSDFStruct.mesh.sdf_to_triangle_dict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sdf_to_triangle_dict</span></code></a>(x, y, sdf[, level, ...])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.mesh.sdf_to_triangle_dict" title="DeepSDFStruct.mesh.sdf_to_triangle_dict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sdf_to_triangle_dict</span></code></a>(x, y, sdf[, level, ...])</p></td>
 <td><p>Convert an SDF array to a PSLG dict for triangle.triangulate.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.mesh.tetrahedralize_surface" title="DeepSDFStruct.mesh.tetrahedralize_surface"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tetrahedralize_surface</span></code></a>(surface_mesh)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.mesh.tetrahedralize_surface" title="DeepSDFStruct.mesh.tetrahedralize_surface"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tetrahedralize_surface</span></code></a>(surface_mesh)</p></td>
 <td><p></p></td>
 </tr>
 </tbody>
@@ -473,7 +482,7 @@ to standard formats (gustaf, trimesh) for I/O and visualization.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="DeepSDFStruct.mesh.create_3D_mesh">
-<span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.mesh.</span></span><span class="sig-name descname"><span class="pre">create_3D_mesh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sdf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N_base</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mesh_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">differentiate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cpu'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bounds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">diffmode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'fwd'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deformation_function</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.mesh.create_3D_mesh" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.mesh.</span></span><span class="sig-name descname"><span class="pre">create_3D_mesh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sdf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N_base</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mesh_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">differentiate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cpu'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bounds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">diffmode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'fwd'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deformation_function</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_tiling</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extend_bounds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.mesh.create_3D_mesh" title="Link to this definition">#</a></dt>
 <dd><p>Generate a 3D mesh from an SDF using FlexiCubes dual contouring.</p>
 <p>This is the main entry point for extracting high-quality meshes from SDF
 representations. It uses the FlexiCubes algorithm, which produces smooth,
@@ -504,7 +513,15 @@ respect to SDF parameters, enabling gradient-based optimization.</p></li>
 <li><p><strong>device</strong> (<em>str</em><em>, </em><em>default 'cpu'</em>) – Device for computation (‘cpu’ or ‘cuda’).</p></li>
 <li><p><strong>bounds</strong> (<em>array-like</em><em> of </em><em>shape</em><em> (</em><em>2</em><em>, </em><em>3</em><em>)</em><em>, </em><em>optional</em>) – Spatial bounds [[xmin, ymin, zmin], [xmax, ymax, zmax]].
 If None, uses the SDF’s domain bounds.</p></li>
-<li><p><strong>deformation_function</strong> (<em>None</em><em> | </em><a class="reference internal" href="DeepSDFStruct.torch_spline.html#DeepSDFStruct.torch_spline.TorchSpline" title="DeepSDFStruct.torch_spline.TorchSpline"><em>DeepSDFStruct.torch_spline.TorchSpline</em></a><em> | </em><a class="reference internal" href="DeepSDFStruct.torch_spline.html#DeepSDFStruct.torch_spline.TorchScaling" title="DeepSDFStruct.torch_spline.TorchScaling"><em>DeepSDFStruct.torch_spline.TorchScaling</em></a>)</p></li>
+<li><p><strong>diffmode</strong> (<em>{'fwd'</em><em>, </em><em>'rev'}</em><em>, </em><em>default 'fwd'</em>) – Autodiff mode used to build <code class="docutils literal notranslate"><span class="pre">dVerts_dParams</span></code>. Only applies when
+<code class="docutils literal notranslate"><span class="pre">differentiate=True</span></code>.</p></li>
+<li><p><strong>deformation_function</strong> (<a class="reference internal" href="DeepSDFStruct.torch_spline.html#DeepSDFStruct.torch_spline.TorchSpline" title="DeepSDFStruct.torch_spline.TorchSpline"><em>TorchSpline</em></a><em> or </em><a class="reference internal" href="DeepSDFStruct.torch_spline.html#DeepSDFStruct.torch_spline.TorchScaling" title="DeepSDFStruct.torch_spline.TorchScaling"><em>TorchScaling</em></a><em>, </em><em>optional</em>) – Parameter-to-physical-space map applied to the extracted vertices. If
+None, the mesh is returned in parameter space.</p></li>
+<li><p><strong>use_tiling</strong> (<em>bool</em><em>, </em><em>default True</em>) – Look for a lattice in <code class="docutils literal notranslate"><span class="pre">sdf</span></code> and scale the resolution by its tiling so
+the resolution per unit cell stays consistent. Set False to treat the
+SDF as a single domain at <code class="docutils literal notranslate"><span class="pre">N_base</span></code>.</p></li>
+<li><p><strong>extend_bounds</strong> (<em>bool</em><em>, </em><em>default True</em>) – Extend the sampling grid 5% beyond <code class="docutils literal notranslate"><span class="pre">bounds</span></code> on each side, so surfaces
+touching the domain border close.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -555,6 +572,46 @@ tiling factor to maintain consistent resolution per unit cell.</p>
 <li><p><strong>surf_mesh</strong> (<em>gustaf.faces.Faces</em>)</p></li>
 <li><p><strong>filename</strong> (<em>str</em>)</p></li>
 </ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="DeepSDFStruct.mesh.export_reconstructed_artifacts">
+<span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.mesh.</span></span><span class="sig-name descname"><span class="pre">export_reconstructed_artifacts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lattice_struct</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dir</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">mesh_resolution</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bounds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scaling</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extend_bounds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sdf_grid_N</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">64</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sdf_grid_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'reconstructed_sdf_grid.vtk'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param_mesh_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'reconstructed_mesh_parameterspace.stl'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">physical_mesh_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'reconstructed_mesh.stl'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">export_sdf_grid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">export_param_mesh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.mesh.export_reconstructed_artifacts" title="Link to this definition">#</a></dt>
+<dd><p>Export a fitted lattice as an SDF grid plus surface meshes.</p>
+<p>Writes up to three files into <code class="docutils literal notranslate"><span class="pre">output_dir</span></code>: a sampled SDF grid (VTK), the
+surface mesh in parameter space, and – if <code class="docutils literal notranslate"><span class="pre">scaling</span></code> is given – the same
+surface mesh mapped back to physical space. Mesh extraction is wrapped in
+<a class="reference internal" href="DeepSDFStruct.utils.html#DeepSDFStruct.utils.with_float32_lattice" title="DeepSDFStruct.utils.with_float32_lattice"><code class="xref py py-func docutils literal notranslate"><span class="pre">DeepSDFStruct.utils.with_float32_lattice()</span></code></a>, so this is safe to call on
+a lattice whose parameters are held in float64.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>lattice_struct</strong> (<a class="reference internal" href="DeepSDFStruct.lattice_structure.html#DeepSDFStruct.lattice_structure.LatticeSDFStruct" title="DeepSDFStruct.lattice_structure.LatticeSDFStruct"><em>LatticeSDFStruct</em></a>) – Structure to evaluate. Its parametrization should already hold the
+fitted control points.</p></li>
+<li><p><strong>output_dir</strong> (<em>str</em><em> or </em><em>pathlib.Path</em>) – Destination directory. Must already exist.</p></li>
+<li><p><strong>mesh_resolution</strong> (<em>int</em>) – FlexiCubes grid resolution per dimension for the surface meshes.</p></li>
+<li><p><strong>bounds</strong> (<em>torch.Tensor</em>) – (2, 3) evaluation bounds.</p></li>
+<li><p><strong>device</strong> (<em>str</em><em> or </em><em>torch.device</em>) – Device used for mesh extraction.</p></li>
+<li><p><strong>scaling</strong> (<a class="reference internal" href="DeepSDFStruct.torch_spline.html#DeepSDFStruct.torch_spline.TorchScaling" title="DeepSDFStruct.torch_spline.TorchScaling"><em>TorchScaling</em></a><em>, </em><em>optional</em>) – Parameter-to-physical-space map. If None, only the parameter-space
+mesh is written.</p></li>
+<li><p><strong>extend_bounds</strong> (<em>bool</em><em>, </em><em>default True</em>) – Passed through to <a class="reference internal" href="#DeepSDFStruct.mesh.create_3D_mesh" title="DeepSDFStruct.mesh.create_3D_mesh"><code class="xref py py-func docutils literal notranslate"><span class="pre">create_3D_mesh()</span></code></a>; extends the sampling grid
+slightly beyond <code class="docutils literal notranslate"><span class="pre">bounds</span></code> so surfaces touching the domain border close.</p></li>
+<li><p><strong>sdf_grid_N</strong> (<em>int</em><em>, </em><em>default 64</em>) – Resolution of the exported SDF grid.</p></li>
+<li><p><strong>sdf_grid_name</strong> (<em>str</em>) – Output file names within <code class="docutils literal notranslate"><span class="pre">output_dir</span></code>.</p></li>
+<li><p><strong>param_mesh_name</strong> (<em>str</em>) – Output file names within <code class="docutils literal notranslate"><span class="pre">output_dir</span></code>.</p></li>
+<li><p><strong>physical_mesh_name</strong> (<em>str</em>) – Output file names within <code class="docutils literal notranslate"><span class="pre">output_dir</span></code>.</p></li>
+<li><p><strong>export_sdf_grid</strong> (<em>bool</em><em>, </em><em>default True</em>) – Toggles for the two optional outputs. Turn off to keep runs light.</p></li>
+<li><p><strong>export_param_mesh</strong> (<em>bool</em><em>, </em><em>default True</em>) – Toggles for the two optional outputs. Turn off to keep runs light.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Path of the physical-space mesh, or of the parameter-space mesh when
+no <code class="docutils literal notranslate"><span class="pre">scaling</span></code> was given.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pathlib.Path</p>
 </dd>
 </dl>
 </dd></dl>
@@ -958,6 +1015,7 @@ For now, unreferenced vertices are kept even when clear_unused=True.</p>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.mesh.create_2D_mesh"><code class="docutils literal notranslate"><span class="pre">create_2D_mesh()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.mesh.create_3D_mesh"><code class="docutils literal notranslate"><span class="pre">create_3D_mesh()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.mesh.export_abaqus_surf_mesh"><code class="docutils literal notranslate"><span class="pre">export_abaqus_surf_mesh()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.mesh.export_reconstructed_artifacts"><code class="docutils literal notranslate"><span class="pre">export_reconstructed_artifacts()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.mesh.export_sdf_grid_vtk"><code class="docutils literal notranslate"><span class="pre">export_sdf_grid_vtk()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.mesh.export_surface_mesh"><code class="docutils literal notranslate"><span class="pre">export_surface_mesh()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.mesh.export_volume_mesh"><code class="docutils literal notranslate"><span class="pre">export_volume_mesh()</span></code></a></li>

@@ -12,6 +12,7 @@ DeepSDFStruct.deep\_sdf
 
    create_screenshots_from_plyfiles
    data
+   generate_primitive_dataset
    metrics
    models
    networks
@@ -19,4 +20,5 @@ DeepSDFStruct.deep\_sdf
    plotting
    reconstruction
    training
+   training_latent_field
    workspace

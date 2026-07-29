@@ -10,4 +10,5 @@ DeepSDFStruct.deep\_sdf.metrics
    :toctree:
    :recursive:
 
+   error_metrics
    mesh_to_analytical

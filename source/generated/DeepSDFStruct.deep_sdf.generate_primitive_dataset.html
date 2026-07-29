@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>DeepSDFStruct.flexicubes.tables &#8212; DeepSDFStruct 1.7.4.dev1+gb20659a14 documentation</title>
+    <title>DeepSDFStruct.deep_sdf.generate_primitive_dataset &#8212; DeepSDFStruct 1.7.4.dev1+gb20659a14 documentation</title>
   
   
   
@@ -41,11 +41,11 @@
     <script src="../../_static/documentation_options.js?v=95cec932"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'source/generated/DeepSDFStruct.flexicubes.tables';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'source/generated/DeepSDFStruct.deep_sdf.generate_primitive_dataset';</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="DeepSDFStruct.flexisquares" href="DeepSDFStruct.flexisquares.html" />
-    <link rel="prev" title="DeepSDFStruct.flexicubes.flexicubes" href="DeepSDFStruct.flexicubes.flexicubes.html" />
+    <link rel="next" title="DeepSDFStruct.deep_sdf.metrics" href="DeepSDFStruct.deep_sdf.metrics.html" />
+    <link rel="prev" title="DeepSDFStruct.deep_sdf.data" href="DeepSDFStruct.deep_sdf.data.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
@@ -239,9 +239,9 @@
   <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="DeepSDFStruct.html">DeepSDFStruct</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.SDF.html">DeepSDFStruct.SDF</a></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="DeepSDFStruct.deep_sdf.html">DeepSDFStruct.deep_sdf</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="DeepSDFStruct.deep_sdf.html">DeepSDFStruct.deep_sdf</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.deep_sdf.data.html">DeepSDFStruct.deep_sdf.data</a></li>
-<li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.deep_sdf.generate_primitive_dataset.html">DeepSDFStruct.deep_sdf.generate_primitive_dataset</a></li>
+<li class="toctree-l3 current active"><a class="current reference internal" href="#">DeepSDFStruct.deep_sdf.generate_primitive_dataset</a></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="DeepSDFStruct.deep_sdf.metrics.html">DeepSDFStruct.deep_sdf.metrics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="DeepSDFStruct.deep_sdf.metrics.error_metrics.html">DeepSDFStruct.deep_sdf.metrics.error_metrics</a></li>
 <li class="toctree-l4"><a class="reference internal" href="DeepSDFStruct.deep_sdf.metrics.mesh_to_analytical.html">DeepSDFStruct.deep_sdf.metrics.mesh_to_analytical</a></li>
@@ -267,9 +267,9 @@
 <li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.design_of_experiments.html">DeepSDFStruct.design_of_experiments</a></li>
 <li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.export_knot_grid.html">DeepSDFStruct.export_knot_grid</a></li>
 <li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.export_onnx.html">DeepSDFStruct.export_onnx</a></li>
-<li class="toctree-l2 current active has-children"><a class="reference internal" href="DeepSDFStruct.flexicubes.html">DeepSDFStruct.flexicubes</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 has-children"><a class="reference internal" href="DeepSDFStruct.flexicubes.html">DeepSDFStruct.flexicubes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.flexicubes.flexicubes.html">DeepSDFStruct.flexicubes.flexicubes</a></li>
-<li class="toctree-l3 current active"><a class="current reference internal" href="#">DeepSDFStruct.flexicubes.tables</a></li>
+<li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.flexicubes.tables.html">DeepSDFStruct.flexicubes.tables</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="DeepSDFStruct.flexisquares.html">DeepSDFStruct.flexisquares</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -345,9 +345,9 @@
     <li class="breadcrumb-item"><a href="DeepSDFStruct.html" class="nav-link">DeepSDFStruct</a></li>
     
     
-    <li class="breadcrumb-item"><a href="DeepSDFStruct.flexicubes.html" class="nav-link">DeepSDFStruct.flexicubes</a></li>
+    <li class="breadcrumb-item"><a href="DeepSDFStruct.deep_sdf.html" class="nav-link">DeepSDFStruct.deep_sdf</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">DeepSDFStruct.flexicubes.tables</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">DeepSDFStruct.deep_sdf.generate_primitive_dataset</span></li>
   </ul>
 </nav>
 </div>
@@ -364,16 +364,60 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="module-DeepSDFStruct.flexicubes.tables">
-<span id="deepsdfstruct-flexicubes-tables"></span><h1>DeepSDFStruct.flexicubes.tables<a class="headerlink" href="#module-DeepSDFStruct.flexicubes.tables" title="Link to this heading">#</a></h1>
-<section id="flexicubes-lookup-tables">
-<h2>FlexiCubes Lookup Tables<a class="headerlink" href="#flexicubes-lookup-tables" title="Link to this heading">#</a></h2>
-<p>This module contains precomputed lookup tables for the FlexiCubes algorithm.
-These tables encode the topology of all 256 possible Marching Cubes
-configurations, enabling efficient and accurate mesh extraction.</p>
-<p>Copyright (c) 2025 NVIDIA CORPORATION &amp; AFFILIATES.
-Licensed under the Apache License, Version 2.0.</p>
+  <section id="module-DeepSDFStruct.deep_sdf.generate_primitive_dataset">
+<span id="deepsdfstruct-deep-sdf-generate-primitive-dataset"></span><h1>DeepSDFStruct.deep_sdf.generate_primitive_dataset<a class="headerlink" href="#module-DeepSDFStruct.deep_sdf.generate_primitive_dataset" title="Link to this heading">#</a></h1>
+<section id="primitive-scene-training-data-generator">
+<h2>Primitive-Scene Training Data Generator<a class="headerlink" href="#primitive-scene-training-data-generator" title="Link to this heading">#</a></h2>
+<p>Generates training scenes of simple geometric primitives (spheres, boxes,
+cylinders) randomly positioned, oriented, and scaled inside a bounding box. The
+ground-truth SDF is computed <em>analytically</em> by combining the primitive SDFs with
+the minimum operation (<code class="docutils literal notranslate"><span class="pre">UnionSDF</span></code>).</p>
+<dl class="simple">
+<dt>For each scene the SDF is sampled in two complementary ways:</dt><dd><ul class="simple">
+<li><p>uniformly in the volume (<code class="docutils literal notranslate"><span class="pre">random_sample_sdf</span></code>), and</p></li>
+<li><p>near the surface via Gaussian perturbations at several standard deviations
+(<code class="docutils literal notranslate"><span class="pre">sample_mesh_surface</span></code>).</p></li>
+</ul>
+</dd>
+</dl>
+<p>The output is written in the layout consumed by <code class="docutils literal notranslate"><span class="pre">SDFSamples</span></code> in
+<code class="docutils literal notranslate"><span class="pre">training_latent_field.py</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;data_source&gt;/
+├── SdfSamples/&lt;dataset_name&gt;/&lt;class_name&gt;/&lt;instance&gt;.npz   # pos/neg, [x,y,z,sdf]
+├── SdfSamples/&lt;dataset_name&gt;/&lt;vtp_subdir&gt;/&lt;instance&gt;.vtp   # ParaView point clouds
+└── splits/&lt;split_name&gt;.json                                # {dataset:{class:[instance,...]}}
+</pre></div>
+</div>
+<p>Run directly to generate a dataset using the editable <code class="docutils literal notranslate"><span class="pre">CONFIG</span></code> dict at the
+bottom of this file:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="o">-</span><span class="n">m</span> <span class="n">DeepSDFStruct</span><span class="o">.</span><span class="n">deep_sdf</span><span class="o">.</span><span class="n">generate_primitive_dataset</span>
+</pre></div>
+</div>
+<p class="rubric">Functions</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.deep_sdf.generate_primitive_dataset.generate_primitive_dataset" title="DeepSDFStruct.deep_sdf.generate_primitive_dataset.generate_primitive_dataset"><code class="xref py py-obj docutils literal notranslate"><span class="pre">generate_primitive_dataset</span></code></a>(cfg)</p></td>
+<td><p>Generate a primitive-scene SDF dataset according to <code class="docutils literal notranslate"><span class="pre">cfg</span></code>.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
 </section>
+<dl class="py function">
+<dt class="sig sig-object py" id="DeepSDFStruct.deep_sdf.generate_primitive_dataset.generate_primitive_dataset">
+<span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.deep_sdf.generate_primitive_dataset.</span></span><span class="sig-name descname"><span class="pre">generate_primitive_dataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cfg</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.deep_sdf.generate_primitive_dataset.generate_primitive_dataset" title="Link to this definition">#</a></dt>
+<dd><p>Generate a primitive-scene SDF dataset according to <code class="docutils literal notranslate"><span class="pre">cfg</span></code>.</p>
+<p>Returns the dataset summary dict (also written to <code class="docutils literal notranslate"><span class="pre">summary.json</span></code>).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></span></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>cfg</strong> (<em>dict</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 
 
@@ -387,20 +431,20 @@ Licensed under the Apache License, Version 2.0.</p>
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="DeepSDFStruct.flexicubes.flexicubes.html"
+       href="DeepSDFStruct.deep_sdf.data.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">DeepSDFStruct.flexicubes.flexicubes</p>
+        <p class="prev-next-title">DeepSDFStruct.deep_sdf.data</p>
       </div>
     </a>
     <a class="right-next"
-       href="DeepSDFStruct.flexisquares.html"
+       href="DeepSDFStruct.deep_sdf.metrics.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">DeepSDFStruct.flexisquares</p>
+        <p class="prev-next-title">DeepSDFStruct.deep_sdf.metrics</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -423,7 +467,8 @@ Licensed under the Apache License, Version 2.0.</p>
   </div>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#flexicubes-lookup-tables">FlexiCubes Lookup Tables</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#primitive-scene-training-data-generator">Primitive-Scene Training Data Generator</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.deep_sdf.generate_primitive_dataset.generate_primitive_dataset"><code class="docutils literal notranslate"><span class="pre">generate_primitive_dataset()</span></code></a></li>
 </ul>
   </nav></div>
 
@@ -431,7 +476,7 @@ Licensed under the Apache License, Version 2.0.</p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="../../_sources/source/generated/DeepSDFStruct.flexicubes.tables.rst.txt"
+      <li><a href="../../_sources/source/generated/DeepSDFStruct.deep_sdf.generate_primitive_dataset.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div></div>

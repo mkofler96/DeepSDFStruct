@@ -1,0 +1,37 @@
+DeepSDFStruct.deep\_sdf.training\_latent\_field
+===============================================
+
+.. automodule:: DeepSDFStruct.deep_sdf.training_latent_field
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      append_parameter_magnitudes
+      build_template_spline
+      clip_logs
+      export_training_latent_fields_to_stl
+      get_mean_spline_param_magnitude
+      get_spec_with_default
+      load_latent_fields
+      load_logs
+      load_optimizer
+      make_latent_fields
+      save_latent_fields
+      save_logs
+      save_model
+      save_optimizer
+      train
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      ClampedL1Loss
+      ConstantLearningRateSchedule
+      CosineAnnealingLRSchedule
+      LearningRateSchedule
+      StepLearningRateSchedule
+      WarmupLearningRateSchedule
+   

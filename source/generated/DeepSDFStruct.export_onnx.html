@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>DeepSDFStruct.flexicubes.tables &#8212; DeepSDFStruct 1.7.4.dev1+gb20659a14 documentation</title>
+    <title>DeepSDFStruct.export_onnx &#8212; DeepSDFStruct 1.7.4.dev1+gb20659a14 documentation</title>
   
   
   
@@ -41,11 +41,11 @@
     <script src="../../_static/documentation_options.js?v=95cec932"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'source/generated/DeepSDFStruct.flexicubes.tables';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'source/generated/DeepSDFStruct.export_onnx';</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="DeepSDFStruct.flexisquares" href="DeepSDFStruct.flexisquares.html" />
-    <link rel="prev" title="DeepSDFStruct.flexicubes.flexicubes" href="DeepSDFStruct.flexicubes.flexicubes.html" />
+    <link rel="next" title="DeepSDFStruct.flexicubes" href="DeepSDFStruct.flexicubes.html" />
+    <link rel="prev" title="DeepSDFStruct.export_knot_grid" href="DeepSDFStruct.export_knot_grid.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
@@ -266,10 +266,10 @@
 </details></li>
 <li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.design_of_experiments.html">DeepSDFStruct.design_of_experiments</a></li>
 <li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.export_knot_grid.html">DeepSDFStruct.export_knot_grid</a></li>
-<li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.export_onnx.html">DeepSDFStruct.export_onnx</a></li>
-<li class="toctree-l2 current active has-children"><a class="reference internal" href="DeepSDFStruct.flexicubes.html">DeepSDFStruct.flexicubes</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">DeepSDFStruct.export_onnx</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="DeepSDFStruct.flexicubes.html">DeepSDFStruct.flexicubes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.flexicubes.flexicubes.html">DeepSDFStruct.flexicubes.flexicubes</a></li>
-<li class="toctree-l3 current active"><a class="current reference internal" href="#">DeepSDFStruct.flexicubes.tables</a></li>
+<li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.flexicubes.tables.html">DeepSDFStruct.flexicubes.tables</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="DeepSDFStruct.flexisquares.html">DeepSDFStruct.flexisquares</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -344,10 +344,7 @@
     
     <li class="breadcrumb-item"><a href="DeepSDFStruct.html" class="nav-link">DeepSDFStruct</a></li>
     
-    
-    <li class="breadcrumb-item"><a href="DeepSDFStruct.flexicubes.html" class="nav-link">DeepSDFStruct.flexicubes</a></li>
-    
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">DeepSDFStruct.flexicubes.tables</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">DeepSDFStruct.export_onnx</span></li>
   </ul>
 </nav>
 </div>
@@ -364,16 +361,22 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="module-DeepSDFStruct.flexicubes.tables">
-<span id="deepsdfstruct-flexicubes-tables"></span><h1>DeepSDFStruct.flexicubes.tables<a class="headerlink" href="#module-DeepSDFStruct.flexicubes.tables" title="Link to this heading">#</a></h1>
-<section id="flexicubes-lookup-tables">
-<h2>FlexiCubes Lookup Tables<a class="headerlink" href="#flexicubes-lookup-tables" title="Link to this heading">#</a></h2>
-<p>This module contains precomputed lookup tables for the FlexiCubes algorithm.
-These tables encode the topology of all 256 possible Marching Cubes
-configurations, enabling efficient and accurate mesh extraction.</p>
-<p>Copyright (c) 2025 NVIDIA CORPORATION &amp; AFFILIATES.
-Licensed under the Apache License, Version 2.0.</p>
-</section>
+  <section id="module-DeepSDFStruct.export_onnx">
+<span id="deepsdfstruct-export-onnx"></span><h1>DeepSDFStruct.export_onnx<a class="headerlink" href="#module-DeepSDFStruct.export_onnx" title="Link to this heading">#</a></h1>
+<p class="rubric">Functions</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.export_onnx.export_ONNX" title="DeepSDFStruct.export_onnx.export_ONNX"><code class="xref py py-obj docutils literal notranslate"><span class="pre">export_ONNX</span></code></a>(onnx_filename)</p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="py function">
+<dt class="sig sig-object py" id="DeepSDFStruct.export_onnx.export_ONNX">
+<span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.export_onnx.</span></span><span class="sig-name descname"><span class="pre">export_ONNX</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">onnx_filename</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.export_onnx.export_ONNX" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
 </section>
 
 
@@ -387,20 +390,20 @@ Licensed under the Apache License, Version 2.0.</p>
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="DeepSDFStruct.flexicubes.flexicubes.html"
+       href="DeepSDFStruct.export_knot_grid.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">DeepSDFStruct.flexicubes.flexicubes</p>
+        <p class="prev-next-title">DeepSDFStruct.export_knot_grid</p>
       </div>
     </a>
     <a class="right-next"
-       href="DeepSDFStruct.flexisquares.html"
+       href="DeepSDFStruct.flexicubes.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">DeepSDFStruct.flexisquares</p>
+        <p class="prev-next-title">DeepSDFStruct.flexicubes</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -423,7 +426,7 @@ Licensed under the Apache License, Version 2.0.</p>
   </div>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#flexicubes-lookup-tables">FlexiCubes Lookup Tables</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.export_onnx.export_ONNX"><code class="docutils literal notranslate"><span class="pre">export_ONNX()</span></code></a></li>
 </ul>
   </nav></div>
 
@@ -431,7 +434,7 @@ Licensed under the Apache License, Version 2.0.</p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="../../_sources/source/generated/DeepSDFStruct.flexicubes.tables.rst.txt"
+      <li><a href="../../_sources/source/generated/DeepSDFStruct.export_onnx.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div></div>

@@ -9,4 +9,5 @@ DeepSDFStruct.utils
    .. autosummary::
    
       configure_logging
+      with_float32_lattice
    

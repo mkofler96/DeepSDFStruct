@@ -1,0 +1,21 @@
+DeepSDFStruct.geom\_reconstruction
+==================================
+
+.. automodule:: DeepSDFStruct.geom_reconstruction
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      build_parameter_spline
+      sample_gt_sdf
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      FitResult
+      LocalShapesReconstructor
+      StructBuild
+   

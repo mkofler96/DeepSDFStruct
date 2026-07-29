@@ -1,0 +1,12 @@
+DeepSDFStruct.deep\_sdf.generate\_primitive\_dataset
+====================================================
+
+.. automodule:: DeepSDFStruct.deep_sdf.generate_primitive_dataset
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      generate_primitive_dataset
+   

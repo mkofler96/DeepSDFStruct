@@ -13,8 +13,11 @@ DeepSDFStruct
    SDF
    deep_sdf
    design_of_experiments
+   export_knot_grid
+   export_onnx
    flexicubes
    flexisquares
+   geom_reconstruction
    lattice_structure
    local_shapes
    mesh

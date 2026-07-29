@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>DeepSDFStruct.utils &#8212; DeepSDFStruct 1.7.3.dev5+gb86bba507 documentation</title>
+    <title>DeepSDFStruct.utils &#8212; DeepSDFStruct 1.7.4.dev1+gb20659a14 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=50add644"></script>
+    <script src="../../_static/documentation_options.js?v=95cec932"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'source/generated/DeepSDFStruct.utils';</script>
@@ -109,7 +109,7 @@
   
   
   
-    <p class="title logo__title">DeepSDFStruct 1.7.3.dev5+gb86bba507 documentation</p>
+    <p class="title logo__title">DeepSDFStruct 1.7.4.dev1+gb20659a14 documentation</p>
   
 </a></div>
     
@@ -240,7 +240,9 @@
 <li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.SDF.html">DeepSDFStruct.SDF</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="DeepSDFStruct.deep_sdf.html">DeepSDFStruct.deep_sdf</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.deep_sdf.data.html">DeepSDFStruct.deep_sdf.data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.deep_sdf.generate_primitive_dataset.html">DeepSDFStruct.deep_sdf.generate_primitive_dataset</a></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="DeepSDFStruct.deep_sdf.metrics.html">DeepSDFStruct.deep_sdf.metrics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="DeepSDFStruct.deep_sdf.metrics.error_metrics.html">DeepSDFStruct.deep_sdf.metrics.error_metrics</a></li>
 <li class="toctree-l4"><a class="reference internal" href="DeepSDFStruct.deep_sdf.metrics.mesh_to_analytical.html">DeepSDFStruct.deep_sdf.metrics.mesh_to_analytical</a></li>
 </ul>
 </details></li>
@@ -257,10 +259,13 @@
 <li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.deep_sdf.plotting.html">DeepSDFStruct.deep_sdf.plotting</a></li>
 <li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.deep_sdf.reconstruction.html">DeepSDFStruct.deep_sdf.reconstruction</a></li>
 <li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.deep_sdf.training.html">DeepSDFStruct.deep_sdf.training</a></li>
+<li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.deep_sdf.training_latent_field.html">DeepSDFStruct.deep_sdf.training_latent_field</a></li>
 <li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.deep_sdf.workspace.html">DeepSDFStruct.deep_sdf.workspace</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.design_of_experiments.html">DeepSDFStruct.design_of_experiments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.export_knot_grid.html">DeepSDFStruct.export_knot_grid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.export_onnx.html">DeepSDFStruct.export_onnx</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="DeepSDFStruct.flexicubes.html">DeepSDFStruct.flexicubes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.flexicubes.flexicubes.html">DeepSDFStruct.flexicubes.flexicubes</a></li>
 <li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.flexicubes.tables.html">DeepSDFStruct.flexicubes.tables</a></li>
@@ -271,6 +276,7 @@
 <li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.flexisquares.tables.html">DeepSDFStruct.flexisquares.tables</a></li>
 </ul>
 </details></li>
+<li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.geom_reconstruction.html">DeepSDFStruct.geom_reconstruction</a></li>
 <li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.lattice_structure.html">DeepSDFStruct.lattice_structure</a></li>
 <li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.local_shapes.html">DeepSDFStruct.local_shapes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.mesh.html">DeepSDFStruct.mesh</a></li>
@@ -366,6 +372,8 @@ including logging configuration and color scheme definitions.</p>
 <dt>configure_logging</dt><dd><p>Set up logging for the DeepSDFStruct package with customizable
 output format and destinations.</p>
 </dd>
+<dt>with_float32_lattice</dt><dd><p>Run a callable with a lattice structure temporarily cast to float32.</p>
+</dd>
 </dl>
 </section>
 <section id="constants">
@@ -379,6 +387,9 @@ output format and destinations.</p>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.utils.configure_logging" title="DeepSDFStruct.utils.configure_logging"><code class="xref py py-obj docutils literal notranslate"><span class="pre">configure_logging</span></code></a>([level, logfile])</p></td>
 <td><p>Configure logging for the DeepSDFStruct package.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.utils.with_float32_lattice" title="DeepSDFStruct.utils.with_float32_lattice"><code class="xref py py-obj docutils literal notranslate"><span class="pre">with_float32_lattice</span></code></a>(lattice_struct, bounds, fn)</p></td>
+<td><p>Run <code class="docutils literal notranslate"><span class="pre">fn(bounds_f32)</span></code> with <em>lattice_struct</em> temporarily cast to float32.</p></td>
 </tr>
 </tbody>
 </table>
@@ -411,6 +422,44 @@ and file. If None, logs only to console.</p></li>
 <p class="rubric">Notes</p>
 <p>The log format is: “HH:MM:SS message”
 All log messages are prefixed with a timestamp for easy debugging.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="DeepSDFStruct.utils.with_float32_lattice">
+<span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.utils.</span></span><span class="sig-name descname"><span class="pre">with_float32_lattice</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lattice_struct</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bounds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fn</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.utils.with_float32_lattice" title="Link to this definition">#</a></dt>
+<dd><p>Run <code class="docutils literal notranslate"><span class="pre">fn(bounds_f32)</span></code> with <em>lattice_struct</em> temporarily cast to float32.</p>
+<p>The DeepSDF decoder and FlexiCubes mesh extraction only run in float32,
+while a downstream shape optimizer may hold the lattice parameters in
+float64. This helper performs the cast locally around <code class="docutils literal notranslate"><span class="pre">fn</span></code> and restores
+the original dtypes afterwards, so callers never have to leave the lattice
+in a downgraded state.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>lattice_struct</strong> (<a class="reference internal" href="DeepSDFStruct.lattice_structure.html#DeepSDFStruct.lattice_structure.LatticeSDFStruct" title="DeepSDFStruct.lattice_structure.LatticeSDFStruct"><em>LatticeSDFStruct</em></a>) – Structure whose parametrization parameters and <code class="docutils literal notranslate"><span class="pre">bounds</span></code> buffer are
+cast for the duration of the call.</p></li>
+<li><p><strong>bounds</strong> (<em>torch.Tensor</em>) – Bounds tensor handed to <code class="docutils literal notranslate"><span class="pre">fn</span></code> as float32. Not modified in place.</p></li>
+<li><p><strong>fn</strong> (<em>Callable</em><em>[</em><em>[</em><em>torch.Tensor</em><em>]</em><em>, </em><em>Any</em><em>]</em>) – Called once, with the float32 <code class="docutils literal notranslate"><span class="pre">bounds</span></code>. Its return value is passed
+through.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Whatever <code class="docutils literal notranslate"><span class="pre">fn</span></code> returned.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Any</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">DeepSDFStruct.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">with_float32_lattice</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">DeepSDFStruct.mesh</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_3D_mesh</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mesh</span> <span class="o">=</span> <span class="n">with_float32_lattice</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">struct</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">struct</span><span class="o">.</span><span class="n">bounds</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="k">lambda</span> <span class="n">b</span><span class="p">:</span> <span class="n">create_3D_mesh</span><span class="p">(</span><span class="n">struct</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="n">b</span><span class="p">,</span> <span class="n">mesh_type</span><span class="o">=</span><span class="s2">&quot;surface&quot;</span><span class="p">),</span>
+<span class="gp">... </span><span class="p">)</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </section>
@@ -459,6 +508,7 @@ All log messages are prefixed with a timestamp for easy debugging.</p>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.utils.configure_logging"><code class="docutils literal notranslate"><span class="pre">configure_logging()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.utils.with_float32_lattice"><code class="docutils literal notranslate"><span class="pre">with_float32_lattice()</span></code></a></li>
 </ul>
   </nav></div>
 

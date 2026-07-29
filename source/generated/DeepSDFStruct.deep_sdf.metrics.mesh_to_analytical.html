@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>DeepSDFStruct.deep_sdf.metrics.mesh_to_analytical &#8212; DeepSDFStruct 1.7.3.dev5+gb86bba507 documentation</title>
+    <title>DeepSDFStruct.deep_sdf.metrics.mesh_to_analytical &#8212; DeepSDFStruct 1.7.4.dev1+gb20659a14 documentation</title>
   
   
   
@@ -38,14 +38,14 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=50add644"></script>
+    <script src="../../_static/documentation_options.js?v=95cec932"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'source/generated/DeepSDFStruct.deep_sdf.metrics.mesh_to_analytical';</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="DeepSDFStruct.deep_sdf.models" href="DeepSDFStruct.deep_sdf.models.html" />
-    <link rel="prev" title="DeepSDFStruct.deep_sdf.metrics" href="DeepSDFStruct.deep_sdf.metrics.html" />
+    <link rel="prev" title="DeepSDFStruct.deep_sdf.metrics.error_metrics" href="DeepSDFStruct.deep_sdf.metrics.error_metrics.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
@@ -110,7 +110,7 @@
   
   
   
-    <p class="title logo__title">DeepSDFStruct 1.7.3.dev5+gb86bba507 documentation</p>
+    <p class="title logo__title">DeepSDFStruct 1.7.4.dev1+gb20659a14 documentation</p>
   
 </a></div>
     
@@ -241,7 +241,9 @@
 <li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.SDF.html">DeepSDFStruct.SDF</a></li>
 <li class="toctree-l2 current active has-children"><a class="reference internal" href="DeepSDFStruct.deep_sdf.html">DeepSDFStruct.deep_sdf</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.deep_sdf.data.html">DeepSDFStruct.deep_sdf.data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.deep_sdf.generate_primitive_dataset.html">DeepSDFStruct.deep_sdf.generate_primitive_dataset</a></li>
 <li class="toctree-l3 current active has-children"><a class="reference internal" href="DeepSDFStruct.deep_sdf.metrics.html">DeepSDFStruct.deep_sdf.metrics</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="DeepSDFStruct.deep_sdf.metrics.error_metrics.html">DeepSDFStruct.deep_sdf.metrics.error_metrics</a></li>
 <li class="toctree-l4 current active"><a class="current reference internal" href="#">DeepSDFStruct.deep_sdf.metrics.mesh_to_analytical</a></li>
 </ul>
 </details></li>
@@ -258,10 +260,13 @@
 <li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.deep_sdf.plotting.html">DeepSDFStruct.deep_sdf.plotting</a></li>
 <li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.deep_sdf.reconstruction.html">DeepSDFStruct.deep_sdf.reconstruction</a></li>
 <li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.deep_sdf.training.html">DeepSDFStruct.deep_sdf.training</a></li>
+<li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.deep_sdf.training_latent_field.html">DeepSDFStruct.deep_sdf.training_latent_field</a></li>
 <li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.deep_sdf.workspace.html">DeepSDFStruct.deep_sdf.workspace</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.design_of_experiments.html">DeepSDFStruct.design_of_experiments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.export_knot_grid.html">DeepSDFStruct.export_knot_grid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.export_onnx.html">DeepSDFStruct.export_onnx</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="DeepSDFStruct.flexicubes.html">DeepSDFStruct.flexicubes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.flexicubes.flexicubes.html">DeepSDFStruct.flexicubes.flexicubes</a></li>
 <li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.flexicubes.tables.html">DeepSDFStruct.flexicubes.tables</a></li>
@@ -272,6 +277,7 @@
 <li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.flexisquares.tables.html">DeepSDFStruct.flexisquares.tables</a></li>
 </ul>
 </details></li>
+<li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.geom_reconstruction.html">DeepSDFStruct.geom_reconstruction</a></li>
 <li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.lattice_structure.html">DeepSDFStruct.lattice_structure</a></li>
 <li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.local_shapes.html">DeepSDFStruct.local_shapes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.mesh.html">DeepSDFStruct.mesh</a></li>
@@ -374,13 +380,37 @@ SDF values at mesh vertices using ground truth analytical SDFs.</p>
 <p class="rubric">Functions</p>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.deep_sdf.metrics.mesh_to_analytical.mesh_to_analytical" title="DeepSDFStruct.deep_sdf.metrics.mesh_to_analytical.mesh_to_analytical"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mesh_to_analytical</span></code></a>(gt_sdf, gen_mesh)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.deep_sdf.metrics.mesh_to_analytical.chamfer_distance" title="DeepSDFStruct.deep_sdf.metrics.mesh_to_analytical.chamfer_distance"><code class="xref py py-obj docutils literal notranslate"><span class="pre">chamfer_distance</span></code></a>(mesh_a, mesh_b[, ...])</p></td>
+<td><p>Symmetric Chamfer distance between two meshes.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.deep_sdf.metrics.mesh_to_analytical.mesh_to_analytical" title="DeepSDFStruct.deep_sdf.metrics.mesh_to_analytical.mesh_to_analytical"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mesh_to_analytical</span></code></a>(gt_sdf, gen_mesh)</p></td>
 <td><p>Calculates the SDF for every vertex on the mesh</p></td>
 </tr>
 </tbody>
 </table>
 </div>
 </section>
+<dl class="py function">
+<dt class="sig sig-object py" id="DeepSDFStruct.deep_sdf.metrics.mesh_to_analytical.chamfer_distance">
+<span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.deep_sdf.metrics.mesh_to_analytical.</span></span><span class="sig-name descname"><span class="pre">chamfer_distance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mesh_a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mesh_b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_surface_samples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.deep_sdf.metrics.mesh_to_analytical.chamfer_distance" title="Link to this definition">#</a></dt>
+<dd><p>Symmetric Chamfer distance between two meshes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mesh_a</strong> (<em>trimesh.Trimesh</em>) – First mesh.</p></li>
+<li><p><strong>mesh_b</strong> (<em>trimesh.Trimesh</em>) – Second mesh.</p></li>
+<li><p><strong>n_surface_samples</strong> (<em>int</em>) – Number of points sampled on each mesh surface.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Symmetric Chamfer distance.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py function">
 <dt class="sig sig-object py" id="DeepSDFStruct.deep_sdf.metrics.mesh_to_analytical.mesh_to_analytical">
 <span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.deep_sdf.metrics.mesh_to_analytical.</span></span><span class="sig-name descname"><span class="pre">mesh_to_analytical</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gt_sdf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gen_mesh</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.deep_sdf.metrics.mesh_to_analytical.mesh_to_analytical" title="Link to this definition">#</a></dt>
@@ -411,12 +441,12 @@ SDF values at mesh vertices using ground truth analytical SDFs.</p>
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="DeepSDFStruct.deep_sdf.metrics.html"
+       href="DeepSDFStruct.deep_sdf.metrics.error_metrics.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">DeepSDFStruct.deep_sdf.metrics</p>
+        <p class="prev-next-title">DeepSDFStruct.deep_sdf.metrics.error_metrics</p>
       </div>
     </a>
     <a class="right-next"
@@ -448,6 +478,7 @@ SDF values at mesh vertices using ground truth analytical SDFs.</p>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mesh-to-analytical-sdf-evaluation">Mesh-to-Analytical SDF Evaluation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.deep_sdf.metrics.mesh_to_analytical.chamfer_distance"><code class="docutils literal notranslate"><span class="pre">chamfer_distance()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.deep_sdf.metrics.mesh_to_analytical.mesh_to_analytical"><code class="docutils literal notranslate"><span class="pre">mesh_to_analytical()</span></code></a></li>
 </ul>
   </nav></div>

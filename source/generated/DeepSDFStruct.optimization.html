@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>DeepSDFStruct.optimization &#8212; DeepSDFStruct 1.7.3.dev5+gb86bba507 documentation</title>
+    <title>DeepSDFStruct.optimization &#8212; DeepSDFStruct 1.7.4.dev1+gb20659a14 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=50add644"></script>
+    <script src="../../_static/documentation_options.js?v=95cec932"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'source/generated/DeepSDFStruct.optimization';</script>
@@ -110,7 +110,7 @@
   
   
   
-    <p class="title logo__title">DeepSDFStruct 1.7.3.dev5+gb86bba507 documentation</p>
+    <p class="title logo__title">DeepSDFStruct 1.7.4.dev1+gb20659a14 documentation</p>
   
 </a></div>
     
@@ -241,7 +241,9 @@
 <li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.SDF.html">DeepSDFStruct.SDF</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="DeepSDFStruct.deep_sdf.html">DeepSDFStruct.deep_sdf</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.deep_sdf.data.html">DeepSDFStruct.deep_sdf.data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.deep_sdf.generate_primitive_dataset.html">DeepSDFStruct.deep_sdf.generate_primitive_dataset</a></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="DeepSDFStruct.deep_sdf.metrics.html">DeepSDFStruct.deep_sdf.metrics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="DeepSDFStruct.deep_sdf.metrics.error_metrics.html">DeepSDFStruct.deep_sdf.metrics.error_metrics</a></li>
 <li class="toctree-l4"><a class="reference internal" href="DeepSDFStruct.deep_sdf.metrics.mesh_to_analytical.html">DeepSDFStruct.deep_sdf.metrics.mesh_to_analytical</a></li>
 </ul>
 </details></li>
@@ -258,10 +260,13 @@
 <li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.deep_sdf.plotting.html">DeepSDFStruct.deep_sdf.plotting</a></li>
 <li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.deep_sdf.reconstruction.html">DeepSDFStruct.deep_sdf.reconstruction</a></li>
 <li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.deep_sdf.training.html">DeepSDFStruct.deep_sdf.training</a></li>
+<li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.deep_sdf.training_latent_field.html">DeepSDFStruct.deep_sdf.training_latent_field</a></li>
 <li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.deep_sdf.workspace.html">DeepSDFStruct.deep_sdf.workspace</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.design_of_experiments.html">DeepSDFStruct.design_of_experiments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.export_knot_grid.html">DeepSDFStruct.export_knot_grid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.export_onnx.html">DeepSDFStruct.export_onnx</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="DeepSDFStruct.flexicubes.html">DeepSDFStruct.flexicubes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.flexicubes.flexicubes.html">DeepSDFStruct.flexicubes.flexicubes</a></li>
 <li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.flexicubes.tables.html">DeepSDFStruct.flexicubes.tables</a></li>
@@ -272,6 +277,7 @@
 <li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.flexisquares.tables.html">DeepSDFStruct.flexisquares.tables</a></li>
 </ul>
 </details></li>
+<li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.geom_reconstruction.html">DeepSDFStruct.geom_reconstruction</a></li>
 <li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.lattice_structure.html">DeepSDFStruct.lattice_structure</a></li>
 <li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.local_shapes.html">DeepSDFStruct.local_shapes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.mesh.html">DeepSDFStruct.mesh</a></li>
@@ -405,7 +411,7 @@ enabling gradient-based optimization of complex 3D structures.</p>
 <p class="rubric">Classes</p>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.optimization.MMA" title="DeepSDFStruct.optimization.MMA"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MMA</span></code></a>(parameters, bounds[, max_step])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.optimization.MMA" title="DeepSDFStruct.optimization.MMA"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MMA</span></code></a>(parameters, bounds[, max_step, ...])</p></td>
 <td><p>Method of Moving Asymptotes (MMA) optimizer for constrained problems.</p></td>
 </tr>
 </tbody>
@@ -415,7 +421,7 @@ enabling gradient-based optimization of complex 3D structures.</p>
 </section>
 <dl class="py class">
 <dt class="sig sig-object py" id="DeepSDFStruct.optimization.MMA">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.optimization.</span></span><span class="sig-name descname"><span class="pre">MMA</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parameters</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bounds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_step</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.optimization.MMA" title="Link to this definition">#</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.optimization.</span></span><span class="sig-name descname"><span class="pre">MMA</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parameters</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bounds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_step</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_constraints</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.optimization.MMA" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Method of Moving Asymptotes (MMA) optimizer for constrained problems.</p>
 <p>MMA is a gradient-based optimization algorithm designed for nonlinear
@@ -538,7 +544,7 @@ Methods in Engineering, 24(2), 359-373.</p>
 </aside>
 <dl class="py method">
 <dt class="sig sig-object py" id="id0">
-<span class="sig-name descname"><span class="pre">step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">F</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dF</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">G</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dG</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id0" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">F</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dF</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">G</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dG</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">geom_eval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">geom_rows</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_inner</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">feas_tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">restore_eval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">restore_tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.005</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">restore_max_steps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">restore_step_limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id0" title="Link to this definition">#</a></dt>
 <dd><p>Perform one MMA optimization step.</p>
 <p>Updates design variables by solving a convex subproblem constructed
 from the objective, constraint, and their gradients.</p>
@@ -547,8 +553,43 @@ from the objective, constraint, and their gradients.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>F</strong> (<em>torch.Tensor</em><em> or </em><em>float</em>) – Objective function value at current design.</p></li>
 <li><p><strong>dF</strong> (<em>torch.Tensor</em>) – Gradient of objective w.r.t. design variables, shape (n,).</p></li>
-<li><p><strong>G</strong> (<em>torch.Tensor</em><em> or </em><em>float</em>) – Constraint function value at current design (≤ 0 is feasible).</p></li>
-<li><p><strong>dG</strong> (<em>torch.Tensor</em>) – Gradient of constraint w.r.t. design variables, shape (n,).</p></li>
+<li><p><strong>G</strong> (<em>torch.Tensor</em><em> or </em><em>float</em>) – Constraint values at current design (≤ 0 is feasible), reshaped to
+(m, 1) for the <code class="docutils literal notranslate"><span class="pre">m</span> <span class="pre">=</span> <span class="pre">n_constraints</span></code> rows this instance was built
+with. A scalar is accepted when <code class="docutils literal notranslate"><span class="pre">m</span> <span class="pre">==</span> <span class="pre">1</span></code>.</p></li>
+<li><p><strong>dG</strong> (<em>torch.Tensor</em>) – Gradient of the constraints w.r.t. design variables, reshaped to
+(m, n). For <code class="docutils literal notranslate"><span class="pre">m</span> <span class="pre">==</span> <span class="pre">1</span></code> a flat (n,) tensor is accepted.</p></li>
+<li><p><strong>geom_eval</strong> (<em>callable</em><em>, </em><em>optional</em>) – Cheap geometry-only re-evaluation <code class="docutils literal notranslate"><span class="pre">x_np</span> <span class="pre">-&gt;</span> <span class="pre">np.ndarray</span></code>. Given a
+candidate design vector it returns the <em>true</em> (nonlinear) constraint
+values <code class="docutils literal notranslate"><span class="pre">g</span> <span class="pre">=</span> <span class="pre">value</span> <span class="pre">-</span> <span class="pre">target</span></code> for the rows listed in <code class="docutils literal notranslate"><span class="pre">geom_rows</span></code>,
+without running the expensive (CFD) objective/constraints. Enables the
+hybrid-GCMMA conservativeness loop; when <code class="docutils literal notranslate"><span class="pre">None</span></code> this is a plain MMA
+step.</p></li>
+<li><p><strong>geom_rows</strong> (<em>sequence</em><em> of </em><em>int</em><em>, </em><em>optional</em>) – Row indices into <code class="docutils literal notranslate"><span class="pre">G</span></code> for the geometry-only constraints that
+<code class="docutils literal notranslate"><span class="pre">geom_eval</span></code> returns, in the same order. Required with <code class="docutils literal notranslate"><span class="pre">geom_eval</span></code>.</p></li>
+<li><p><strong>max_inner</strong> (<em>int</em><em>, </em><em>optional</em>) – Maximum GCMMA inner (conservativeness) iterations per step when
+<code class="docutils literal notranslate"><span class="pre">geom_eval</span></code> is supplied. Each rejected candidate raises the offending
+rows’ curvature parameter rho (Svanberg 2002 <code class="docutils literal notranslate"><span class="pre">raaupdate</span></code>) and re-solves;
+the move limit stays FIXED. Default 1 (no inner loop).</p></li>
+<li><p><strong>feas_tol</strong> (<em>float</em><em>, </em><em>optional</em>) – TRUE-violation level below which a candidate is accepted outright, in the
+units of the constraint rows (pass normalized, “fraction over budget” rows
+and the default 0.05 reads “5% over budget is tolerated transiently”).
+Must be well above 0: at an ACTIVE constraint the true value always reads
+slightly above the approximation (residual curvature, evaluation noise) –
+with a ~0 tolerance the inner loop fires on every boundary-riding step and
+burns max_inner solves per iteration for nothing.</p></li>
+<li><p><strong>restore_eval</strong> (<em>callable</em><em>, </em><em>optional</em>) – Enables POST-STEP FEASIBILITY RESTORATION on the cheap geometry rows:
+<code class="docutils literal notranslate"><span class="pre">x_np</span> <span class="pre">-&gt;</span> <span class="pre">(g,</span> <span class="pre">J)</span></code> returning the true values (k,) AND their gradients
+(k, n) – masked for locked variables, in the same normalized units as the
+constraint rows. After the step is accepted (through whichever gate), the
+candidate is projected back onto the geometry-feasible set with
+minimum-norm Gauss-Newton passes, so geometry violations beyond
+<code class="docutils literal notranslate"><span class="pre">restore_tol</span></code> cannot survive an iteration. Independent of the GCMMA
+inner loop (works with or without <code class="docutils literal notranslate"><span class="pre">geom_eval</span></code>). No CFD is invoked.</p></li>
+<li><p><strong>restore_tol</strong> (<em>float</em><em>, </em><em>optional</em>) – Restoration target/trigger: rows with <code class="docutils literal notranslate"><span class="pre">g</span> <span class="pre">&lt;=</span> <span class="pre">restore_tol</span></code> are left alone.
+Keep it above the geometry-evaluation noise floor (default 5e-3).</p></li>
+<li><p><strong>restore_max_steps</strong> (<em>int</em><em>, </em><em>optional</em>) – Maximum Gauss-Newton passes per outer iteration (default 8; typically 1-2
+are used). Each pass costs one geometry evaluation plus up to 4 backtracks.</p></li>
+<li><p><strong>restore_step_limit</strong> (<em>float</em><em>, </em><em>optional</em>) – Per-pass infinity-norm cap on the correction; defaults to <code class="docutils literal notranslate"><span class="pre">max_step</span></code>.</p></li>
 </ul>
 </dd>
 </dl>

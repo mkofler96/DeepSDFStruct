@@ -1,0 +1,17 @@
+DeepSDFStruct.deep\_sdf.metrics.error\_metrics
+==============================================
+
+.. automodule:: DeepSDFStruct.deep_sdf.metrics.error_metrics
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      compute_metrics_from_vtp
+      compute_near_surface_metrics
+      find_scalar_array
+      load_vtp_with_sdf
+      save_error_vtp
+      save_json
+   

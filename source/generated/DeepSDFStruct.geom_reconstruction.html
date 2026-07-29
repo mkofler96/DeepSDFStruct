@@ -1,0 +1,1134 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>DeepSDFStruct.geom_reconstruction &#8212; DeepSDFStruct 1.7.4.dev1+gb20659a14 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../_static/documentation_options.js?v=95cec932"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'source/generated/DeepSDFStruct.geom_reconstruction';</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="DeepSDFStruct.lattice_structure" href="DeepSDFStruct.lattice_structure.html" />
+    <link rel="prev" title="DeepSDFStruct.flexisquares.tables" href="DeepSDFStruct.flexisquares.tables.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">DeepSDFStruct 1.7.4.dev1+gb20659a14 documentation</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../api_reference.html">
+    <no title>
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../api_reference.html">
+    <no title>
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="DeepSDFStruct.html">DeepSDFStruct</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.SDF.html">DeepSDFStruct.SDF</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="DeepSDFStruct.deep_sdf.html">DeepSDFStruct.deep_sdf</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.deep_sdf.data.html">DeepSDFStruct.deep_sdf.data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.deep_sdf.generate_primitive_dataset.html">DeepSDFStruct.deep_sdf.generate_primitive_dataset</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="DeepSDFStruct.deep_sdf.metrics.html">DeepSDFStruct.deep_sdf.metrics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="DeepSDFStruct.deep_sdf.metrics.error_metrics.html">DeepSDFStruct.deep_sdf.metrics.error_metrics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="DeepSDFStruct.deep_sdf.metrics.mesh_to_analytical.html">DeepSDFStruct.deep_sdf.metrics.mesh_to_analytical</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.deep_sdf.models.html">DeepSDFStruct.deep_sdf.models</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="DeepSDFStruct.deep_sdf.networks.html">DeepSDFStruct.deep_sdf.networks</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="DeepSDFStruct.deep_sdf.networks.analytic_round_cross.html">DeepSDFStruct.deep_sdf.networks.analytic_round_cross</a></li>
+<li class="toctree-l4"><a class="reference internal" href="DeepSDFStruct.deep_sdf.networks.deep_sdf_decoder.html">DeepSDFStruct.deep_sdf.networks.deep_sdf_decoder</a></li>
+<li class="toctree-l4"><a class="reference internal" href="DeepSDFStruct.deep_sdf.networks.hierarchical_deep_sdf_decoder.html">DeepSDFStruct.deep_sdf.networks.hierarchical_deep_sdf_decoder</a></li>
+<li class="toctree-l4"><a class="reference internal" href="DeepSDFStruct.deep_sdf.networks.hierarchical_positional_sdf_decoder.html">DeepSDFStruct.deep_sdf.networks.hierarchical_positional_sdf_decoder</a></li>
+<li class="toctree-l4"><a class="reference internal" href="DeepSDFStruct.deep_sdf.networks.resnet_positional_sdf_decoder.html">DeepSDFStruct.deep_sdf.networks.resnet_positional_sdf_decoder</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.deep_sdf.nn_utils.html">DeepSDFStruct.deep_sdf.nn_utils</a></li>
+<li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.deep_sdf.plotting.html">DeepSDFStruct.deep_sdf.plotting</a></li>
+<li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.deep_sdf.reconstruction.html">DeepSDFStruct.deep_sdf.reconstruction</a></li>
+<li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.deep_sdf.training.html">DeepSDFStruct.deep_sdf.training</a></li>
+<li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.deep_sdf.training_latent_field.html">DeepSDFStruct.deep_sdf.training_latent_field</a></li>
+<li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.deep_sdf.workspace.html">DeepSDFStruct.deep_sdf.workspace</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.design_of_experiments.html">DeepSDFStruct.design_of_experiments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.export_knot_grid.html">DeepSDFStruct.export_knot_grid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.export_onnx.html">DeepSDFStruct.export_onnx</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="DeepSDFStruct.flexicubes.html">DeepSDFStruct.flexicubes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.flexicubes.flexicubes.html">DeepSDFStruct.flexicubes.flexicubes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.flexicubes.tables.html">DeepSDFStruct.flexicubes.tables</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="DeepSDFStruct.flexisquares.html">DeepSDFStruct.flexisquares</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.flexisquares.flexisquares.html">DeepSDFStruct.flexisquares.flexisquares</a></li>
+<li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.flexisquares.tables.html">DeepSDFStruct.flexisquares.tables</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">DeepSDFStruct.geom_reconstruction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.lattice_structure.html">DeepSDFStruct.lattice_structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.local_shapes.html">DeepSDFStruct.local_shapes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.mesh.html">DeepSDFStruct.mesh</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.optimization.html">DeepSDFStruct.optimization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.parametrization.html">DeepSDFStruct.parametrization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.pretrained_models.html">DeepSDFStruct.pretrained_models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.sampling.html">DeepSDFStruct.sampling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.sdf_operations.html">DeepSDFStruct.sdf_operations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.sdf_primitives.html">DeepSDFStruct.sdf_primitives</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="DeepSDFStruct.splinepy_unitcells.html">DeepSDFStruct.splinepy_unitcells</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.splinepy_unitcells.chi_3D.html">DeepSDFStruct.splinepy_unitcells.chi_3D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.splinepy_unitcells.cross_lattice.html">DeepSDFStruct.splinepy_unitcells.cross_lattice</a></li>
+<li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.splinepy_unitcells.double_lattice_extruded.html">DeepSDFStruct.splinepy_unitcells.double_lattice_extruded</a></li>
+<li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.splinepy_unitcells.snappy_3d.html">DeepSDFStruct.splinepy_unitcells.snappy_3d</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.torch_spline.html">DeepSDFStruct.torch_spline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.utils.html">DeepSDFStruct.utils</a></li>
+</ul>
+</details></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../api_reference.html" class="nav-link">&lt;no title&gt;</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="DeepSDFStruct.html" class="nav-link">DeepSDFStruct</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">DeepSDFStruct.geom_reconstruction</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="module-DeepSDFStruct.geom_reconstruction">
+<span id="deepsdfstruct-geom-reconstruction"></span><h1>DeepSDFStruct.geom_reconstruction<a class="headerlink" href="#module-DeepSDFStruct.geom_reconstruction" title="Link to this heading">#</a></h1>
+<section id="shape-reconstruction">
+<h2>Shape Reconstruction<a class="headerlink" href="#shape-reconstruction" title="Link to this heading">#</a></h2>
+<p>Fit a spatially varying field of DeepSDF latent codes to a target mesh.</p>
+<p>The decoder of a trained DeepSDF model turns a single latent code into one
+shape. To represent a whole part rather than a single microtile, this module
+tiles that decoder over a domain and lets the latent code <em>vary in space</em>: the
+codes are the control points of a B-spline, and fitting the shape means
+optimizing those control points against SDF samples taken from a target mesh.
+Because neighbouring tiles read nearby points of the same spline, the result is
+a continuous structure – a field of local shapes.</p>
+<p><a class="reference internal" href="#DeepSDFStruct.geom_reconstruction.LocalShapesReconstructor" title="DeepSDFStruct.geom_reconstruction.LocalShapesReconstructor"><code class="xref py py-class docutils literal notranslate"><span class="pre">LocalShapesReconstructor</span></code></a> wraps that whole procedure:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span><span class="o">,</span><span class="w"> </span><span class="nn">trimesh</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">DeepSDFStruct.geom_reconstruction</span><span class="w"> </span><span class="kn">import</span> <span class="n">LocalShapesReconstructor</span>
+
+<span class="n">recon</span> <span class="o">=</span> <span class="n">LocalShapesReconstructor</span><span class="p">(</span><span class="n">output_dir</span><span class="o">=</span><span class="s2">&quot;output&quot;</span><span class="p">)</span>
+<span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+
+<span class="n">mesh_orig</span> <span class="o">=</span> <span class="n">trimesh</span><span class="o">.</span><span class="n">load_mesh</span><span class="p">(</span><span class="s2">&quot;part.stl&quot;</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">mesh_orig</span><span class="o">.</span><span class="n">is_watertight</span><span class="p">,</span> <span class="s2">&quot;target mesh must be watertight&quot;</span>
+
+<span class="n">struct</span><span class="p">,</span> <span class="n">scaling</span><span class="p">,</span> <span class="n">gt_sdf</span><span class="p">,</span> <span class="n">params</span> <span class="o">=</span> <span class="n">recon</span><span class="o">.</span><span class="n">fit_mesh</span><span class="p">(</span>
+    <span class="n">mesh</span><span class="o">=</span><span class="n">mesh_orig</span><span class="p">,</span> <span class="n">tiling</span><span class="o">=</span><span class="p">[</span><span class="mi">32</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">32</span><span class="p">]</span>
+<span class="p">)</span>
+<span class="n">recon</span><span class="o">.</span><span class="n">export</span><span class="p">(</span><span class="n">struct</span><span class="p">,</span> <span class="n">scaling</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">struct</span></code> is a <a class="reference internal" href="DeepSDFStruct.lattice_structure.html#DeepSDFStruct.lattice_structure.LatticeSDFStruct" title="DeepSDFStruct.lattice_structure.LatticeSDFStruct"><code class="xref py py-class docutils literal notranslate"><span class="pre">LatticeSDFStruct</span></code></a>
+defined in parameter space; <code class="docutils literal notranslate"><span class="pre">scaling</span></code> maps it back onto the original mesh’s
+coordinates, and is what you hand to
+<a class="reference internal" href="DeepSDFStruct.mesh.html#DeepSDFStruct.mesh.create_3D_mesh" title="DeepSDFStruct.mesh.create_3D_mesh"><code class="xref py py-func docutils literal notranslate"><span class="pre">create_3D_mesh()</span></code></a> as <code class="docutils literal notranslate"><span class="pre">deformation_function</span></code>.</p>
+<section id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Link to this heading">#</a></h3>
+<dl class="simple">
+<dt>build_parameter_spline</dt><dd><p>Build the B-spline whose control points carry the latent codes.</p>
+</dd>
+<dt>sample_gt_sdf</dt><dd><p>Draw uniform and near-surface SDF samples from a target mesh.</p>
+</dd>
+</dl>
+</section>
+<section id="classes">
+<h3>Classes<a class="headerlink" href="#classes" title="Link to this heading">#</a></h3>
+<dl class="simple">
+<dt>LocalShapesReconstructor</dt><dd><p>Fits a latent-code field to a mesh.</p>
+</dd>
+<dt>StructBuild</dt><dd><p>Named tuple returned by <a class="reference internal" href="#DeepSDFStruct.geom_reconstruction.LocalShapesReconstructor.build_struct" title="DeepSDFStruct.geom_reconstruction.LocalShapesReconstructor.build_struct"><code class="xref py py-meth docutils literal notranslate"><span class="pre">LocalShapesReconstructor.build_struct()</span></code></a>.</p>
+</dd>
+<dt>FitResult</dt><dd><p>Named tuple returned by <a class="reference internal" href="#DeepSDFStruct.geom_reconstruction.LocalShapesReconstructor.fit_mesh" title="DeepSDFStruct.geom_reconstruction.LocalShapesReconstructor.fit_mesh"><code class="xref py py-meth docutils literal notranslate"><span class="pre">LocalShapesReconstructor.fit_mesh()</span></code></a>.</p>
+</dd>
+</dl>
+<p class="rubric">Functions</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.geom_reconstruction.build_parameter_spline" title="DeepSDFStruct.geom_reconstruction.build_parameter_spline"><code class="xref py py-obj docutils literal notranslate"><span class="pre">build_parameter_spline</span></code></a>(spline_degrees, ...)</p></td>
+<td><p>Build the B-spline that carries one latent code per control point.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.geom_reconstruction.sample_gt_sdf" title="DeepSDFStruct.geom_reconstruction.sample_gt_sdf"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sample_gt_sdf</span></code></a>(gt_sdf, mesh, bounds, *, ...)</p></td>
+<td><p>Draw uniform and near-surface SDF samples from a target mesh.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p class="rubric">Classes</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.geom_reconstruction.FitResult" title="DeepSDFStruct.geom_reconstruction.FitResult"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FitResult</span></code></a>(struct, scaling, gt_sdf, params)</p></td>
+<td><p>Outcome of <a class="reference internal" href="#DeepSDFStruct.geom_reconstruction.LocalShapesReconstructor.fit_mesh" title="DeepSDFStruct.geom_reconstruction.LocalShapesReconstructor.fit_mesh"><code class="xref py py-meth docutils literal notranslate"><span class="pre">LocalShapesReconstructor.fit_mesh()</span></code></a>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.geom_reconstruction.LocalShapesReconstructor" title="DeepSDFStruct.geom_reconstruction.LocalShapesReconstructor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LocalShapesReconstructor</span></code></a>([model, ...])</p></td>
+<td><p>Fits a field of DeepSDF latent codes to a target mesh.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.geom_reconstruction.StructBuild" title="DeepSDFStruct.geom_reconstruction.StructBuild"><code class="xref py py-obj docutils literal notranslate"><span class="pre">StructBuild</span></code></a>(struct, scaling, mesh_norm, ...)</p></td>
+<td><p>What <a class="reference internal" href="#DeepSDFStruct.geom_reconstruction.LocalShapesReconstructor.build_struct" title="DeepSDFStruct.geom_reconstruction.LocalShapesReconstructor.build_struct"><code class="xref py py-meth docutils literal notranslate"><span class="pre">LocalShapesReconstructor.build_struct()</span></code></a> produces.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</section>
+<dl class="py class">
+<dt class="sig sig-object py" id="DeepSDFStruct.geom_reconstruction.FitResult">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.geom_reconstruction.</span></span><span class="sig-name descname"><span class="pre">FitResult</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">struct</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="DeepSDFStruct.lattice_structure.html#DeepSDFStruct.lattice_structure.LatticeSDFStruct" title="DeepSDFStruct.lattice_structure.LatticeSDFStruct"><span class="pre">DeepSDFStruct.lattice_structure.LatticeSDFStruct</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">scaling</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="DeepSDFStruct.torch_spline.html#DeepSDFStruct.torch_spline.TorchScaling" title="DeepSDFStruct.torch_spline.TorchScaling"><span class="pre">DeepSDFStruct.torch_spline.TorchScaling</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">gt_sdf</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="DeepSDFStruct.SDF.html#DeepSDFStruct.SDF.SDFBase" title="DeepSDFStruct.SDF.SDFBase"><span class="pre">DeepSDFStruct.SDF.SDFBase</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">torch.Tensor</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.geom_reconstruction.FitResult" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">NamedTuple</span></code></p>
+<p>Outcome of <a class="reference internal" href="#DeepSDFStruct.geom_reconstruction.LocalShapesReconstructor.fit_mesh" title="DeepSDFStruct.geom_reconstruction.LocalShapesReconstructor.fit_mesh"><code class="xref py py-meth docutils literal notranslate"><span class="pre">LocalShapesReconstructor.fit_mesh()</span></code></a>.</p>
+<p>Deliberately just the four headline outputs, so the common case unpacks
+directly:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">struct</span><span class="p">,</span> <span class="n">scaling</span><span class="p">,</span> <span class="n">gt_sdf</span><span class="p">,</span> <span class="n">params</span> <span class="o">=</span> <span class="n">recon</span><span class="o">.</span><span class="n">fit_mesh</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Fit diagnostics are not carried here. For the loss curve, pass
+<code class="docutils literal notranslate"><span class="pre">loss_plot_path</span></code> / <code class="docutils literal notranslate"><span class="pre">loss_csv_path</span></code> to write them out, or drive the
+steps yourself (<a class="reference internal" href="#DeepSDFStruct.geom_reconstruction.LocalShapesReconstructor.build_struct" title="DeepSDFStruct.geom_reconstruction.LocalShapesReconstructor.build_struct"><code class="xref py py-meth docutils literal notranslate"><span class="pre">build_struct()</span></code></a>,
+<a class="reference internal" href="#DeepSDFStruct.geom_reconstruction.sample_gt_sdf" title="DeepSDFStruct.geom_reconstruction.sample_gt_sdf"><code class="xref py py-func docutils literal notranslate"><span class="pre">sample_gt_sdf()</span></code></a>, <a class="reference internal" href="#DeepSDFStruct.geom_reconstruction.LocalShapesReconstructor.fit_samples" title="DeepSDFStruct.geom_reconstruction.LocalShapesReconstructor.fit_samples"><code class="xref py py-meth docutils literal notranslate"><span class="pre">fit_samples()</span></code></a>) –
+<code class="docutils literal notranslate"><span class="pre">fit_samples</span></code> returns <code class="docutils literal notranslate"><span class="pre">loss_history</span></code>, <code class="docutils literal notranslate"><span class="pre">final_loss</span></code> and <code class="docutils literal notranslate"><span class="pre">num_steps</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>struct</strong> (<a class="reference internal" href="DeepSDFStruct.lattice_structure.html#DeepSDFStruct.lattice_structure.LatticeSDFStruct" title="DeepSDFStruct.lattice_structure.LatticeSDFStruct"><em>DeepSDFStruct.lattice_structure.LatticeSDFStruct</em></a>)</p></li>
+<li><p><strong>scaling</strong> (<a class="reference internal" href="DeepSDFStruct.torch_spline.html#DeepSDFStruct.torch_spline.TorchScaling" title="DeepSDFStruct.torch_spline.TorchScaling"><em>DeepSDFStruct.torch_spline.TorchScaling</em></a>)</p></li>
+<li><p><strong>gt_sdf</strong> (<a class="reference internal" href="DeepSDFStruct.SDF.html#DeepSDFStruct.SDF.SDFBase" title="DeepSDFStruct.SDF.SDFBase"><em>DeepSDFStruct.SDF.SDFBase</em></a>)</p></li>
+<li><p><strong>params</strong> (<em>list</em><em>[</em><em>torch.Tensor</em><em>]</em>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="DeepSDFStruct.geom_reconstruction.FitResult.struct">
+<span class="sig-name descname"><span class="pre">struct</span></span><a class="headerlink" href="#DeepSDFStruct.geom_reconstruction.FitResult.struct" title="Link to this definition">#</a></dt>
+<dd><p>The fitted structure, in parameter space, with its parametrization
+already set to the optimized control points. <code class="docutils literal notranslate"><span class="pre">struct.bounds</span></code> holds
+the evaluation bounds.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="DeepSDFStruct.lattice_structure.html#DeepSDFStruct.lattice_structure.LatticeSDFStruct" title="DeepSDFStruct.lattice_structure.LatticeSDFStruct">LatticeSDFStruct</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="DeepSDFStruct.geom_reconstruction.FitResult.scaling">
+<span class="sig-name descname"><span class="pre">scaling</span></span><a class="headerlink" href="#DeepSDFStruct.geom_reconstruction.FitResult.scaling" title="Link to this definition">#</a></dt>
+<dd><p>Parameter space -&gt; original mesh coordinates. Hand this to
+<a class="reference internal" href="DeepSDFStruct.mesh.html#DeepSDFStruct.mesh.create_3D_mesh" title="DeepSDFStruct.mesh.create_3D_mesh"><code class="xref py py-func docutils literal notranslate"><span class="pre">create_3D_mesh()</span></code></a> as <code class="docutils literal notranslate"><span class="pre">deformation_function</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="DeepSDFStruct.torch_spline.html#DeepSDFStruct.torch_spline.TorchScaling" title="DeepSDFStruct.torch_spline.TorchScaling">TorchScaling</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="DeepSDFStruct.geom_reconstruction.FitResult.gt_sdf">
+<span class="sig-name descname"><span class="pre">gt_sdf</span></span><a class="headerlink" href="#DeepSDFStruct.geom_reconstruction.FitResult.gt_sdf" title="Link to this definition">#</a></dt>
+<dd><p>Ground-truth SDF of the normalized target mesh, reusable for error
+metrics.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="DeepSDFStruct.SDF.html#DeepSDFStruct.SDF.SDFBase" title="DeepSDFStruct.SDF.SDFBase">SDFBase</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="DeepSDFStruct.geom_reconstruction.FitResult.params">
+<span class="sig-name descname"><span class="pre">params</span></span><a class="headerlink" href="#DeepSDFStruct.geom_reconstruction.FitResult.params" title="Link to this definition">#</a></dt>
+<dd><p>Optimized parameters, i.e. <code class="docutils literal notranslate"><span class="pre">[control_points]</span></code> of shape
+<code class="docutils literal notranslate"><span class="pre">(n_control_points,</span> <span class="pre">latent_dim)</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list of torch.Tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id0">
+<span class="sig-name descname"><span class="pre">gt_sdf</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="DeepSDFStruct.SDF.html#DeepSDFStruct.SDF.SDFBase" title="DeepSDFStruct.SDF.SDFBase"><span class="pre">DeepSDFStruct.SDF.SDFBase</span></a></span><a class="headerlink" href="#id0" title="Link to this definition">#</a></dt>
+<dd><p>Alias for field number 2</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id1">
+<span class="sig-name descname"><span class="pre">params</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">torch.Tensor</span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#id1" title="Link to this definition">#</a></dt>
+<dd><p>Alias for field number 3</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id2">
+<span class="sig-name descname"><span class="pre">scaling</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="DeepSDFStruct.torch_spline.html#DeepSDFStruct.torch_spline.TorchScaling" title="DeepSDFStruct.torch_spline.TorchScaling"><span class="pre">DeepSDFStruct.torch_spline.TorchScaling</span></a></span><a class="headerlink" href="#id2" title="Link to this definition">#</a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id3">
+<span class="sig-name descname"><span class="pre">struct</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="DeepSDFStruct.lattice_structure.html#DeepSDFStruct.lattice_structure.LatticeSDFStruct" title="DeepSDFStruct.lattice_structure.LatticeSDFStruct"><span class="pre">DeepSDFStruct.lattice_structure.LatticeSDFStruct</span></a></span><a class="headerlink" href="#id3" title="Link to this definition">#</a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="DeepSDFStruct.geom_reconstruction.LocalShapesReconstructor">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.geom_reconstruction.</span></span><span class="sig-name descname"><span class="pre">LocalShapesReconstructor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">PretrainedModels.Primitives</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">checkpoint</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'latest'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'tests/tmp_outputs'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.geom_reconstruction.LocalShapesReconstructor" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Fits a field of DeepSDF latent codes to a target mesh.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>str</em><em>, </em><a class="reference internal" href="DeepSDFStruct.pretrained_models.html#DeepSDFStruct.pretrained_models.PretrainedModels" title="DeepSDFStruct.pretrained_models.PretrainedModels"><em>PretrainedModels</em></a><em> or </em><a class="reference internal" href="DeepSDFStruct.deep_sdf.models.html#DeepSDFStruct.deep_sdf.models.DeepSDFModel" title="DeepSDFStruct.deep_sdf.models.DeepSDFModel"><em>DeepSDFModel</em></a><em>, </em><em>optional</em>) – The decoder providing the microtile. Accepts a
+<a class="reference internal" href="DeepSDFStruct.pretrained_models.html#DeepSDFStruct.pretrained_models.PretrainedModels" title="DeepSDFStruct.pretrained_models.PretrainedModels"><code class="xref py py-class docutils literal notranslate"><span class="pre">PretrainedModels</span></code></a> member, a
+path to a checkpoint directory, or an already loaded
+<a class="reference internal" href="DeepSDFStruct.deep_sdf.models.html#DeepSDFStruct.deep_sdf.models.DeepSDFModel" title="DeepSDFStruct.deep_sdf.models.DeepSDFModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">DeepSDFModel</span></code></a>. Defaults to the
+bundled primitives decoder.</p></li>
+<li><p><strong>checkpoint</strong> (<em>str</em><em>, </em><em>default &quot;latest&quot;</em>) – Checkpoint name inside the model directory. Ignored when <code class="docutils literal notranslate"><span class="pre">model</span></code> is
+an already loaded model.</p></li>
+<li><p><strong>device</strong> (<em>str</em><em> or </em><em>torch.device</em><em>, </em><em>optional</em>) – Compute device. Defaults to CUDA when available.</p></li>
+<li><p><strong>output_dir</strong> (path-like or None, default <code class="docutils literal notranslate"><span class="pre">&quot;tests/tmp_outputs&quot;</span></code>) – <p>Where every file this reconstructor writes goes: the loss curve and CSV
+of <a class="reference internal" href="#DeepSDFStruct.geom_reconstruction.LocalShapesReconstructor.fit_mesh" title="DeepSDFStruct.geom_reconstruction.LocalShapesReconstructor.fit_mesh"><code class="xref py py-meth docutils literal notranslate"><span class="pre">fit_mesh()</span></code></a>, and whatever <a class="reference internal" href="#DeepSDFStruct.geom_reconstruction.LocalShapesReconstructor.export" title="DeepSDFStruct.geom_reconstruction.LocalShapesReconstructor.export"><code class="xref py py-meth docutils literal notranslate"><span class="pre">export()</span></code></a> produces. Relative
+paths are resolved against the working directory. The directory is
+created on first write, not here. Pass <code class="docutils literal notranslate"><span class="pre">None</span></code> to keep the
+reconstructor from writing anything unless an explicit path is given.</p>
+<p>The default points at the repository’s gitignored scratch directory, so
+a run started from a checkout does not leave artifacts in the repository
+root. It is relative to the working directory, so callers running from
+outside a checkout should pass an explicit path.</p>
+</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">recon</span> <span class="o">=</span> <span class="n">LocalShapesReconstructor</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">struct</span><span class="p">,</span> <span class="n">scaling</span><span class="p">,</span> <span class="n">gt_sdf</span><span class="p">,</span> <span class="n">params</span> <span class="o">=</span> <span class="n">recon</span><span class="o">.</span><span class="n">fit_mesh</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">mesh</span><span class="o">=</span><span class="n">mesh</span><span class="p">,</span> <span class="n">tiling</span><span class="o">=</span><span class="p">[</span><span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">]</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">recon</span><span class="o">.</span><span class="n">export</span><span class="p">(</span><span class="n">struct</span><span class="p">,</span> <span class="n">scaling</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="rubric">Notes</p>
+<p><a class="reference internal" href="#DeepSDFStruct.geom_reconstruction.LocalShapesReconstructor.fit_mesh" title="DeepSDFStruct.geom_reconstruction.LocalShapesReconstructor.fit_mesh"><code class="xref py py-meth docutils literal notranslate"><span class="pre">fit_mesh()</span></code></a> is the one-call path. When you need to interleave work –
+exporting intermediate fields, or reusing one structure across several
+fits – use <a class="reference internal" href="#DeepSDFStruct.geom_reconstruction.LocalShapesReconstructor.build_struct" title="DeepSDFStruct.geom_reconstruction.LocalShapesReconstructor.build_struct"><code class="xref py py-meth docutils literal notranslate"><span class="pre">build_struct()</span></code></a>, <a class="reference internal" href="#DeepSDFStruct.geom_reconstruction.sample_gt_sdf" title="DeepSDFStruct.geom_reconstruction.sample_gt_sdf"><code class="xref py py-func docutils literal notranslate"><span class="pre">sample_gt_sdf()</span></code></a> and
+<a class="reference internal" href="#DeepSDFStruct.geom_reconstruction.LocalShapesReconstructor.fit_samples" title="DeepSDFStruct.geom_reconstruction.LocalShapesReconstructor.fit_samples"><code class="xref py py-meth docutils literal notranslate"><span class="pre">fit_samples()</span></code></a> separately; <code class="docutils literal notranslate"><span class="pre">fit_mesh</span></code> is just their composition.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="DeepSDFStruct.geom_reconstruction.LocalShapesReconstructor.build_struct">
+<span class="sig-name descname"><span class="pre">build_struct</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mesh</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tiling</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">spline_degree</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(1,</span> <span class="pre">1,</span> <span class="pre">1)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shrink_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.geom_reconstruction.LocalShapesReconstructor.build_struct" title="Link to this definition">#</a></dt>
+<dd><p>Normalize <em>mesh</em> and build the latent-code spline and structure.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mesh</strong> (<em>trimesh.Trimesh</em>) – Target mesh. Copied before normalization, so the caller’s mesh is
+left untouched.</p></li>
+<li><p><strong>tiling</strong> (<em>list</em><em> of </em><em>3 int</em>) – Microtiles per dimension.</p></li>
+<li><p><strong>spline_degree</strong> (<em>sequence</em><em> of </em><em>3 int</em><em>, </em><em>default</em><em> (</em><em>1</em><em>, </em><em>1</em><em>, </em><em>1</em><em>)</em>) – Degree of the latent-code spline per dimension.</p></li>
+<li><p><strong>shrink_factor</strong> (<em>float</em><em>, </em><em>default 1.0</em>) – Passed to
+<a class="reference internal" href="DeepSDFStruct.SDF.html#DeepSDFStruct.SDF.normalize_mesh_to_unit_cube" title="DeepSDFStruct.SDF.normalize_mesh_to_unit_cube"><code class="xref py py-func docutils literal notranslate"><span class="pre">normalize_mesh_to_unit_cube()</span></code></a>. Values
+below 1 leave a margin between the mesh and the domain border.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Named tuple with the structure and everything derived alongside it.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#DeepSDFStruct.geom_reconstruction.StructBuild" title="DeepSDFStruct.geom_reconstruction.StructBuild">StructBuild</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="DeepSDFStruct.geom_reconstruction.LocalShapesReconstructor.ensure_output_dir">
+<span class="sig-name descname"><span class="pre">ensure_output_dir</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.geom_reconstruction.LocalShapesReconstructor.ensure_output_dir" title="Link to this definition">#</a></dt>
+<dd><p>Create <code class="xref py py-attr docutils literal notranslate"><span class="pre">output_dir</span></code> if needed and return it.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – If the reconstructor was built with <code class="docutils literal notranslate"><span class="pre">output_dir=None</span></code>, i.e. was
+    explicitly told not to write files.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="DeepSDFStruct.geom_reconstruction.LocalShapesReconstructor.export">
+<span class="sig-name descname"><span class="pre">export</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">struct</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scaling</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">mesh_resolution</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">32</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bounds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.geom_reconstruction.LocalShapesReconstructor.export" title="Link to this definition">#</a></dt>
+<dd><p>Write <em>struct</em> to disk as an SDF grid plus surface meshes.</p>
+<p>Thin wrapper around
+<a class="reference internal" href="DeepSDFStruct.mesh.html#DeepSDFStruct.mesh.export_reconstructed_artifacts" title="DeepSDFStruct.mesh.export_reconstructed_artifacts"><code class="xref py py-func docutils literal notranslate"><span class="pre">export_reconstructed_artifacts()</span></code></a> that fills in
+what the reconstructor already knows: the output directory (created if
+missing), the device, and – unless overridden – the structure’s own
+bounds.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>struct</strong> (<a class="reference internal" href="DeepSDFStruct.lattice_structure.html#DeepSDFStruct.lattice_structure.LatticeSDFStruct" title="DeepSDFStruct.lattice_structure.LatticeSDFStruct"><em>LatticeSDFStruct</em></a>) – Structure to export, normally the one <a class="reference internal" href="#DeepSDFStruct.geom_reconstruction.LocalShapesReconstructor.fit_mesh" title="DeepSDFStruct.geom_reconstruction.LocalShapesReconstructor.fit_mesh"><code class="xref py py-meth docutils literal notranslate"><span class="pre">fit_mesh()</span></code></a> returned.</p></li>
+<li><p><strong>scaling</strong> (<a class="reference internal" href="DeepSDFStruct.torch_spline.html#DeepSDFStruct.torch_spline.TorchScaling" title="DeepSDFStruct.torch_spline.TorchScaling"><em>TorchScaling</em></a><em>, </em><em>optional</em>) – Parameter-to-physical-space map. Without it only the
+parameter-space mesh is written.</p></li>
+<li><p><strong>mesh_resolution</strong> (<em>int</em><em>, </em><em>default 32</em>) – FlexiCubes grid resolution per dimension.</p></li>
+<li><p><strong>bounds</strong> (<em>torch.Tensor</em><em>, </em><em>optional</em>) – Evaluation bounds. Defaults to <code class="docutils literal notranslate"><span class="pre">struct.bounds</span></code>.</p></li>
+<li><p><strong>output_dir</strong> (<em>path-like</em><em>, </em><em>optional</em>) – Destination, overriding <code class="xref py py-attr docutils literal notranslate"><span class="pre">output_dir</span></code> for this call.</p></li>
+<li><p><strong>**kwargs</strong> – Forwarded to
+<a class="reference internal" href="DeepSDFStruct.mesh.html#DeepSDFStruct.mesh.export_reconstructed_artifacts" title="DeepSDFStruct.mesh.export_reconstructed_artifacts"><code class="xref py py-func docutils literal notranslate"><span class="pre">export_reconstructed_artifacts()</span></code></a>, e.g.
+<code class="docutils literal notranslate"><span class="pre">sdf_grid_N</span></code> or the file-name arguments.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Path of the physical-space mesh, or of the parameter-space mesh
+when no <code class="docutils literal notranslate"><span class="pre">scaling</span></code> was given.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pathlib.Path</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="DeepSDFStruct.geom_reconstruction.LocalShapesReconstructor.fit_mesh">
+<span class="sig-name descname"><span class="pre">fit_mesh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mesh</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tiling</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_iterations</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.005</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4096</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_uniform</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_surface</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">500000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spline_degree</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(1,</span> <span class="pre">1,</span> <span class="pre">1)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shrink_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">samples_surface_stds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0.005,</span> <span class="pre">0.0001)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">box_constrained</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">code_reg_lambda</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">code_bound</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grad_clip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eikonal_lambda</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss_plot_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss_csv_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_callback</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.geom_reconstruction.LocalShapesReconstructor.fit_mesh" title="Link to this definition">#</a></dt>
+<dd><p>Fit a latent-code field to <em>mesh</em>, end to end.</p>
+<p>Normalizes the mesh into parameter space, builds the structure, samples
+the ground-truth SDF, runs the fit, and writes the optimized codes back
+into the structure.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mesh</strong> (<em>trimesh.Trimesh</em>) – Target mesh. Should be watertight, otherwise the sign of the
+ground-truth SDF is not well defined.</p></li>
+<li><p><strong>tiling</strong> (<em>list</em><em> of </em><em>3 int</em>) – Microtiles per dimension.</p></li>
+<li><p><strong>num_iterations</strong> (<em>int</em><em>, </em><em>float</em><em>, </em><em>int</em>) – Fitting hyperparameters, see <a class="reference internal" href="#DeepSDFStruct.geom_reconstruction.LocalShapesReconstructor.fit_samples" title="DeepSDFStruct.geom_reconstruction.LocalShapesReconstructor.fit_samples"><code class="xref py py-meth docutils literal notranslate"><span class="pre">fit_samples()</span></code></a>.</p></li>
+<li><p><strong>lr</strong> (<em>int</em><em>, </em><em>float</em><em>, </em><em>int</em>) – Fitting hyperparameters, see <a class="reference internal" href="#DeepSDFStruct.geom_reconstruction.LocalShapesReconstructor.fit_samples" title="DeepSDFStruct.geom_reconstruction.LocalShapesReconstructor.fit_samples"><code class="xref py py-meth docutils literal notranslate"><span class="pre">fit_samples()</span></code></a>.</p></li>
+<li><p><strong>batch_size</strong> (<em>int</em><em>, </em><em>float</em><em>, </em><em>int</em>) – Fitting hyperparameters, see <a class="reference internal" href="#DeepSDFStruct.geom_reconstruction.LocalShapesReconstructor.fit_samples" title="DeepSDFStruct.geom_reconstruction.LocalShapesReconstructor.fit_samples"><code class="xref py py-meth docutils literal notranslate"><span class="pre">fit_samples()</span></code></a>.</p></li>
+<li><p><strong>n_uniform</strong> (<em>int</em>) – Sample counts, see <a class="reference internal" href="#DeepSDFStruct.geom_reconstruction.sample_gt_sdf" title="DeepSDFStruct.geom_reconstruction.sample_gt_sdf"><code class="xref py py-func docutils literal notranslate"><span class="pre">sample_gt_sdf()</span></code></a>.</p></li>
+<li><p><strong>n_surface</strong> (<em>int</em>) – Sample counts, see <a class="reference internal" href="#DeepSDFStruct.geom_reconstruction.sample_gt_sdf" title="DeepSDFStruct.geom_reconstruction.sample_gt_sdf"><code class="xref py py-func docutils literal notranslate"><span class="pre">sample_gt_sdf()</span></code></a>.</p></li>
+<li><p><strong>spline_degree</strong> – Structure construction, see <a class="reference internal" href="#DeepSDFStruct.geom_reconstruction.LocalShapesReconstructor.build_struct" title="DeepSDFStruct.geom_reconstruction.LocalShapesReconstructor.build_struct"><code class="xref py py-meth docutils literal notranslate"><span class="pre">build_struct()</span></code></a>.</p></li>
+<li><p><strong>shrink_factor</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span>) – Structure construction, see <a class="reference internal" href="#DeepSDFStruct.geom_reconstruction.LocalShapesReconstructor.build_struct" title="DeepSDFStruct.geom_reconstruction.LocalShapesReconstructor.build_struct"><code class="xref py py-meth docutils literal notranslate"><span class="pre">build_struct()</span></code></a>.</p></li>
+<li><p><strong>samples_surface_stds</strong> – Sampling behaviour, see <a class="reference internal" href="#DeepSDFStruct.geom_reconstruction.sample_gt_sdf" title="DeepSDFStruct.geom_reconstruction.sample_gt_sdf"><code class="xref py py-func docutils literal notranslate"><span class="pre">sample_gt_sdf()</span></code></a>.</p></li>
+<li><p><strong>box_constrained</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>) – Sampling behaviour, see <a class="reference internal" href="#DeepSDFStruct.geom_reconstruction.sample_gt_sdf" title="DeepSDFStruct.geom_reconstruction.sample_gt_sdf"><code class="xref py py-func docutils literal notranslate"><span class="pre">sample_gt_sdf()</span></code></a>.</p></li>
+<li><p><strong>code_reg_lambda</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span>) – Regularization, see <a class="reference internal" href="#DeepSDFStruct.geom_reconstruction.LocalShapesReconstructor.fit_samples" title="DeepSDFStruct.geom_reconstruction.LocalShapesReconstructor.fit_samples"><code class="xref py py-meth docutils literal notranslate"><span class="pre">fit_samples()</span></code></a>.</p></li>
+<li><p><strong>code_bound</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code> | <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span>) – Regularization, see <a class="reference internal" href="#DeepSDFStruct.geom_reconstruction.LocalShapesReconstructor.fit_samples" title="DeepSDFStruct.geom_reconstruction.LocalShapesReconstructor.fit_samples"><code class="xref py py-meth docutils literal notranslate"><span class="pre">fit_samples()</span></code></a>.</p></li>
+<li><p><strong>grad_clip</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code> | <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span>) – Regularization, see <a class="reference internal" href="#DeepSDFStruct.geom_reconstruction.LocalShapesReconstructor.fit_samples" title="DeepSDFStruct.geom_reconstruction.LocalShapesReconstructor.fit_samples"><code class="xref py py-meth docutils literal notranslate"><span class="pre">fit_samples()</span></code></a>.</p></li>
+<li><p><strong>eikonal_lambda</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span>) – Regularization, see <a class="reference internal" href="#DeepSDFStruct.geom_reconstruction.LocalShapesReconstructor.fit_samples" title="DeepSDFStruct.geom_reconstruction.LocalShapesReconstructor.fit_samples"><code class="xref py py-meth docutils literal notranslate"><span class="pre">fit_samples()</span></code></a>.</p></li>
+<li><p><strong>loss_plot_path</strong> (<em>path-like</em><em>, </em><em>optional</em>) – Where the loss curve and its raw values go. Both default to
+<code class="docutils literal notranslate"><span class="pre">reconstruction_loss.png</span></code> / <code class="docutils literal notranslate"><span class="pre">.csv</span></code> inside
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">output_dir</span></code>; with <code class="docutils literal notranslate"><span class="pre">output_dir=None</span></code> they are not written.</p></li>
+<li><p><strong>loss_csv_path</strong> (<em>path-like</em><em>, </em><em>optional</em>) – Where the loss curve and its raw values go. Both default to
+<code class="docutils literal notranslate"><span class="pre">reconstruction_loss.png</span></code> / <code class="docutils literal notranslate"><span class="pre">.csv</span></code> inside
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">output_dir</span></code>; with <code class="docutils literal notranslate"><span class="pre">output_dir=None</span></code> they are not written.</p></li>
+<li><p><strong>step_callback</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code>[[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>], <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>]]</span>) – Diagnostics, see <a class="reference internal" href="#DeepSDFStruct.geom_reconstruction.LocalShapesReconstructor.fit_samples" title="DeepSDFStruct.geom_reconstruction.LocalShapesReconstructor.fit_samples"><code class="xref py py-meth docutils literal notranslate"><span class="pre">fit_samples()</span></code></a>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Unpacks as <code class="docutils literal notranslate"><span class="pre">struct,</span> <span class="pre">scaling,</span> <span class="pre">gt_sdf,</span> <span class="pre">params</span></code>. Fit diagnostics are
+not included – see <a class="reference internal" href="#DeepSDFStruct.geom_reconstruction.FitResult" title="DeepSDFStruct.geom_reconstruction.FitResult"><code class="xref py py-class docutils literal notranslate"><span class="pre">FitResult</span></code></a> for how to get them.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#DeepSDFStruct.geom_reconstruction.FitResult" title="DeepSDFStruct.geom_reconstruction.FitResult">FitResult</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="DeepSDFStruct.geom_reconstruction.LocalShapesReconstructor.fit_samples">
+<span class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">fit_samples</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">struct</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">samples</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_iterations</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.005</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4096</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">code_reg_lambda</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">code_bound</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grad_clip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eikonal_lambda</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss_plot_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss_csv_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_callback</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.geom_reconstruction.LocalShapesReconstructor.fit_samples" title="Link to this definition">#</a></dt>
+<dd><p>Optimize <em>struct</em>’s latent codes against <em>samples</em>.</p>
+<p>Static: everything needed is already inside <code class="docutils literal notranslate"><span class="pre">struct</span></code>, so this can be
+called as <code class="docutils literal notranslate"><span class="pre">LocalShapesReconstructor.fit_samples(struct,</span> <span class="pre">samples,</span> <span class="pre">...)</span></code>
+to refit a lattice without loading a model again.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>struct</strong> (<a class="reference internal" href="DeepSDFStruct.lattice_structure.html#DeepSDFStruct.lattice_structure.LatticeSDFStruct" title="DeepSDFStruct.lattice_structure.LatticeSDFStruct"><em>LatticeSDFStruct</em></a>) – Structure to fit; its parametrization parameters are optimized
+in place.</p></li>
+<li><p><strong>samples</strong> (<a class="reference internal" href="DeepSDFStruct.sampling.html#DeepSDFStruct.sampling.SampledSDF" title="DeepSDFStruct.sampling.SampledSDF"><em>SampledSDF</em></a>) – Target samples, in the same (parameter) space as <code class="docutils literal notranslate"><span class="pre">struct</span></code>.</p></li>
+<li><p><strong>num_iterations</strong> (<em>int</em><em>, </em><em>default 10</em>) – Number of epochs over <code class="docutils literal notranslate"><span class="pre">samples</span></code>. One epoch is
+<code class="docutils literal notranslate"><span class="pre">len(samples)</span> <span class="pre">//</span> <span class="pre">batch_size</span></code> optimizer steps, so with the default
+sample counts of <a class="reference internal" href="#DeepSDFStruct.geom_reconstruction.LocalShapesReconstructor.fit_mesh" title="DeepSDFStruct.geom_reconstruction.LocalShapesReconstructor.fit_mesh"><code class="xref py py-meth docutils literal notranslate"><span class="pre">fit_mesh()</span></code></a> this is already a few thousand
+steps.</p></li>
+<li><p><strong>lr</strong> (<em>float</em><em>, </em><em>default 5e-3</em>) – Adam learning rate.</p></li>
+<li><p><strong>batch_size</strong> (<em>int</em><em>, </em><em>default 4096</em>) – Samples per optimizer step.</p></li>
+<li><p><strong>code_reg_lambda</strong> (<em>float</em><em>, </em><em>default 0.0</em>) – Weight of the L2 penalty on evaluated latent codes.</p></li>
+<li><p><strong>code_bound</strong> (<em>float</em><em> or </em><em>None</em><em>, </em><em>default 1.0</em>) – If set, control points are clamped to <code class="docutils literal notranslate"><span class="pre">[-code_bound,</span> <span class="pre">code_bound]</span></code>
+after every step, keeping them inside the range the decoder was
+trained on. <code class="docutils literal notranslate"><span class="pre">None</span></code> disables the clamp.</p></li>
+<li><p><strong>grad_clip</strong> (<em>float</em><em> or </em><em>None</em><em>, </em><em>default 1.0</em>) – If set, gradient-norm clipping threshold. <code class="docutils literal notranslate"><span class="pre">None</span></code> disables it.</p></li>
+<li><p><strong>eikonal_lambda</strong> (<em>float</em><em>, </em><em>default 0.0</em>) – Weight of the near-surface Eikonal penalty <code class="docutils literal notranslate"><span class="pre">(|grad</span> <span class="pre">SDF|</span> <span class="pre">-</span> <span class="pre">1)^2</span></code>.</p></li>
+<li><p><strong>loss_plot_path</strong> (<em>path-like</em><em>, </em><em>optional</em>) – Where to write the loss curve and its raw values.</p></li>
+<li><p><strong>loss_csv_path</strong> (<em>path-like</em><em>, </em><em>optional</em>) – Where to write the loss curve and its raw values.</p></li>
+<li><p><strong>step_callback</strong> (<em>callable</em><em>, </em><em>optional</em>) – Called as <code class="docutils literal notranslate"><span class="pre">step_callback(epoch,</span> <span class="pre">batch_idx,</span> <span class="pre">n_batches)</span></code> after
+every optimizer step, for progress exports.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Keys <code class="docutils literal notranslate"><span class="pre">params</span></code>, <code class="docutils literal notranslate"><span class="pre">loss_history</span></code>, <code class="docutils literal notranslate"><span class="pre">final_loss</span></code>, <code class="docutils literal notranslate"><span class="pre">num_steps</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="DeepSDFStruct.geom_reconstruction.StructBuild">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.geom_reconstruction.</span></span><span class="sig-name descname"><span class="pre">StructBuild</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">struct</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="DeepSDFStruct.lattice_structure.html#DeepSDFStruct.lattice_structure.LatticeSDFStruct" title="DeepSDFStruct.lattice_structure.LatticeSDFStruct"><span class="pre">DeepSDFStruct.lattice_structure.LatticeSDFStruct</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">scaling</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="DeepSDFStruct.torch_spline.html#DeepSDFStruct.torch_spline.TorchScaling" title="DeepSDFStruct.torch_spline.TorchScaling"><span class="pre">DeepSDFStruct.torch_spline.TorchScaling</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">mesh_norm</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">trimesh.base.Trimesh</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bounds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">torch.Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param_spline</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="DeepSDFStruct.parametrization.html#DeepSDFStruct.parametrization.SplineParametrization" title="DeepSDFStruct.parametrization.SplineParametrization"><span class="pre">DeepSDFStruct.parametrization.SplineParametrization</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">param_spline_sp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">splinepy.bspline.BSpline</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shift</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.geom_reconstruction.StructBuild" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">NamedTuple</span></code></p>
+<p>What <a class="reference internal" href="#DeepSDFStruct.geom_reconstruction.LocalShapesReconstructor.build_struct" title="DeepSDFStruct.geom_reconstruction.LocalShapesReconstructor.build_struct"><code class="xref py py-meth docutils literal notranslate"><span class="pre">LocalShapesReconstructor.build_struct()</span></code></a> produces.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>struct</strong> (<a class="reference internal" href="DeepSDFStruct.lattice_structure.html#DeepSDFStruct.lattice_structure.LatticeSDFStruct" title="DeepSDFStruct.lattice_structure.LatticeSDFStruct"><em>DeepSDFStruct.lattice_structure.LatticeSDFStruct</em></a>)</p></li>
+<li><p><strong>scaling</strong> (<a class="reference internal" href="DeepSDFStruct.torch_spline.html#DeepSDFStruct.torch_spline.TorchScaling" title="DeepSDFStruct.torch_spline.TorchScaling"><em>DeepSDFStruct.torch_spline.TorchScaling</em></a>)</p></li>
+<li><p><strong>mesh_norm</strong> (<em>trimesh.base.Trimesh</em>)</p></li>
+<li><p><strong>bounds</strong> (<em>torch.Tensor</em>)</p></li>
+<li><p><strong>param_spline</strong> (<a class="reference internal" href="DeepSDFStruct.parametrization.html#DeepSDFStruct.parametrization.SplineParametrization" title="DeepSDFStruct.parametrization.SplineParametrization"><em>DeepSDFStruct.parametrization.SplineParametrization</em></a>)</p></li>
+<li><p><strong>param_spline_sp</strong> (<em>splinepy.bspline.BSpline</em>)</p></li>
+<li><p><strong>scale</strong> (<em>float</em>)</p></li>
+<li><p><strong>shift</strong> (<em>numpy.ndarray</em>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="DeepSDFStruct.geom_reconstruction.StructBuild.struct">
+<span class="sig-name descname"><span class="pre">struct</span></span><a class="headerlink" href="#DeepSDFStruct.geom_reconstruction.StructBuild.struct" title="Link to this definition">#</a></dt>
+<dd><p>Lattice over the normalized mesh, latent codes initialized but not yet
+fitted.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="DeepSDFStruct.lattice_structure.html#DeepSDFStruct.lattice_structure.LatticeSDFStruct" title="DeepSDFStruct.lattice_structure.LatticeSDFStruct">LatticeSDFStruct</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="DeepSDFStruct.geom_reconstruction.StructBuild.scaling">
+<span class="sig-name descname"><span class="pre">scaling</span></span><a class="headerlink" href="#DeepSDFStruct.geom_reconstruction.StructBuild.scaling" title="Link to this definition">#</a></dt>
+<dd><p>Parameter space -&gt; original mesh coordinates.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="DeepSDFStruct.torch_spline.html#DeepSDFStruct.torch_spline.TorchScaling" title="DeepSDFStruct.torch_spline.TorchScaling">TorchScaling</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="DeepSDFStruct.geom_reconstruction.StructBuild.mesh_norm">
+<span class="sig-name descname"><span class="pre">mesh_norm</span></span><a class="headerlink" href="#DeepSDFStruct.geom_reconstruction.StructBuild.mesh_norm" title="Link to this definition">#</a></dt>
+<dd><p>The target mesh normalized into parameter space.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>trimesh.Trimesh</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="DeepSDFStruct.geom_reconstruction.StructBuild.bounds">
+<span class="sig-name descname"><span class="pre">bounds</span></span><a class="headerlink" href="#DeepSDFStruct.geom_reconstruction.StructBuild.bounds" title="Link to this definition">#</a></dt>
+<dd><p>(2, 3) bounds of <code class="docutils literal notranslate"><span class="pre">struct</span></code>, taken from <code class="docutils literal notranslate"><span class="pre">mesh_norm</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>torch.Tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="DeepSDFStruct.geom_reconstruction.StructBuild.param_spline">
+<span class="sig-name descname"><span class="pre">param_spline</span></span><a class="headerlink" href="#DeepSDFStruct.geom_reconstruction.StructBuild.param_spline" title="Link to this definition">#</a></dt>
+<dd><p>The latent-code spline; its control points are the free variables.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="DeepSDFStruct.parametrization.html#DeepSDFStruct.parametrization.SplineParametrization" title="DeepSDFStruct.parametrization.SplineParametrization">SplineParametrization</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="DeepSDFStruct.geom_reconstruction.StructBuild.param_spline_sp">
+<span class="sig-name descname"><span class="pre">param_spline_sp</span></span><a class="headerlink" href="#DeepSDFStruct.geom_reconstruction.StructBuild.param_spline_sp" title="Link to this definition">#</a></dt>
+<dd><p>The underlying splinepy spline, for knot-grid exports.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>splinepy.BSpline</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="DeepSDFStruct.geom_reconstruction.StructBuild.scale">
+<span class="sig-name descname"><span class="pre">scale</span></span><a class="headerlink" href="#DeepSDFStruct.geom_reconstruction.StructBuild.scale" title="Link to this definition">#</a></dt>
+<dd><p>Inverse of the normalization scale, as consumed by <code class="docutils literal notranslate"><span class="pre">TorchScaling</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="DeepSDFStruct.geom_reconstruction.StructBuild.shift">
+<span class="sig-name descname"><span class="pre">shift</span></span><a class="headerlink" href="#DeepSDFStruct.geom_reconstruction.StructBuild.shift" title="Link to this definition">#</a></dt>
+<dd><p>Center of the original mesh’s bounding box.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id4">
+<span class="sig-name descname"><span class="pre">bounds</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">torch.Tensor</span></span><a class="headerlink" href="#id4" title="Link to this definition">#</a></dt>
+<dd><p>Alias for field number 3</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id5">
+<span class="sig-name descname"><span class="pre">mesh_norm</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">trimesh.base.Trimesh</span></span><a class="headerlink" href="#id5" title="Link to this definition">#</a></dt>
+<dd><p>Alias for field number 2</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id6">
+<span class="sig-name descname"><span class="pre">param_spline</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="DeepSDFStruct.parametrization.html#DeepSDFStruct.parametrization.SplineParametrization" title="DeepSDFStruct.parametrization.SplineParametrization"><span class="pre">DeepSDFStruct.parametrization.SplineParametrization</span></a></span><a class="headerlink" href="#id6" title="Link to this definition">#</a></dt>
+<dd><p>Alias for field number 4</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id7">
+<span class="sig-name descname"><span class="pre">param_spline_sp</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">splinepy.bspline.BSpline</span></span><a class="headerlink" href="#id7" title="Link to this definition">#</a></dt>
+<dd><p>Alias for field number 5</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id8">
+<span class="sig-name descname"><span class="pre">scale</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#id8" title="Link to this definition">#</a></dt>
+<dd><p>Alias for field number 6</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id9">
+<span class="sig-name descname"><span class="pre">scaling</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="DeepSDFStruct.torch_spline.html#DeepSDFStruct.torch_spline.TorchScaling" title="DeepSDFStruct.torch_spline.TorchScaling"><span class="pre">DeepSDFStruct.torch_spline.TorchScaling</span></a></span><a class="headerlink" href="#id9" title="Link to this definition">#</a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id10">
+<span class="sig-name descname"><span class="pre">shift</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">numpy.ndarray</span></span><a class="headerlink" href="#id10" title="Link to this definition">#</a></dt>
+<dd><p>Alias for field number 7</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id11">
+<span class="sig-name descname"><span class="pre">struct</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="DeepSDFStruct.lattice_structure.html#DeepSDFStruct.lattice_structure.LatticeSDFStruct" title="DeepSDFStruct.lattice_structure.LatticeSDFStruct"><span class="pre">DeepSDFStruct.lattice_structure.LatticeSDFStruct</span></a></span><a class="headerlink" href="#id11" title="Link to this definition">#</a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="DeepSDFStruct.geom_reconstruction.build_parameter_spline">
+<span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.geom_reconstruction.</span></span><span class="sig-name descname"><span class="pre">build_parameter_spline</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spline_degrees</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tiling</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">latent_dim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bounds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.geom_reconstruction.build_parameter_spline" title="Link to this definition">#</a></dt>
+<dd><p>Build the B-spline that carries one latent code per control point.</p>
+<p>Starts from a single clamped span per dimension and inserts <code class="docutils literal notranslate"><span class="pre">n_box</span> <span class="pre">-</span> <span class="pre">1</span></code>
+uniformly spaced interior knots, so the spline has exactly one knot span
+per microtile. Control points are zero-initialized; callers are expected to
+set them (see <a class="reference internal" href="#DeepSDFStruct.geom_reconstruction.LocalShapesReconstructor.build_struct" title="DeepSDFStruct.geom_reconstruction.LocalShapesReconstructor.build_struct"><code class="xref py py-meth docutils literal notranslate"><span class="pre">LocalShapesReconstructor.build_struct()</span></code></a>, which starts
+from the mean trained latent vector).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>spline_degrees</strong> (<em>list</em><em> of </em><em>3 int</em>) – Polynomial degree per spatial dimension. <code class="docutils literal notranslate"><span class="pre">[1,</span> <span class="pre">1,</span> <span class="pre">1]</span></code> gives trilinear
+interpolation between neighbouring latent codes.</p></li>
+<li><p><strong>tiling</strong> (<em>list</em><em> of </em><em>3 int</em>) – Number of knot spans (microtiles) per dimension.</p></li>
+<li><p><strong>latent_dim</strong> (<em>int</em>) – Width of each control point, i.e. the model’s latent code length.</p></li>
+<li><p><strong>bounds</strong> (<em>(</em><em>2</em><em>, </em><em>3</em><em>) </em><em>array-like</em><em>, </em><em>optional</em>) – <code class="docutils literal notranslate"><span class="pre">[[xmin,</span> <span class="pre">ymin,</span> <span class="pre">zmin],</span> <span class="pre">[xmax,</span> <span class="pre">ymax,</span> <span class="pre">zmax]]</span></code> spanned by the spline.
+Defaults to the unit cube <code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">1]^3</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Spline with <code class="docutils literal notranslate"><span class="pre">prod(tiling</span> <span class="pre">+</span> <span class="pre">1)</span></code> control points of width <code class="docutils literal notranslate"><span class="pre">latent_dim</span></code>
+for degree 1.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>splinepy.BSpline</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="DeepSDFStruct.geom_reconstruction.sample_gt_sdf">
+<span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.geom_reconstruction.</span></span><span class="sig-name descname"><span class="pre">sample_gt_sdf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gt_sdf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mesh</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bounds</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_uniform</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_surface</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cpu'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0.025,</span> <span class="pre">0.0001)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">box_constrained</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.geom_reconstruction.sample_gt_sdf" title="Link to this definition">#</a></dt>
+<dd><p>Draw uniform and near-surface SDF samples from a target mesh.</p>
+<p>Combines a uniform fill of <code class="docutils literal notranslate"><span class="pre">bounds</span></code> (which teaches the fit where the
+material is <em>not</em>) with a dense band hugging the surface (which sharpens
+the zero level set).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>gt_sdf</strong> (<a class="reference internal" href="DeepSDFStruct.SDF.html#DeepSDFStruct.SDF.SDFBase" title="DeepSDFStruct.SDF.SDFBase"><em>SDFBase</em></a>) – Ground-truth SDF, normally <code class="docutils literal notranslate"><span class="pre">SDFfromMesh(mesh,</span> <span class="pre">scale=False)</span></code>. Passed
+in rather than built here so the caller can reuse the same object for
+error metrics afterwards.</p></li>
+<li><p><strong>mesh</strong> (<em>trimesh.Trimesh</em>) – Target mesh, already in the coordinate system of <code class="docutils literal notranslate"><span class="pre">bounds</span></code>.</p></li>
+<li><p><strong>bounds</strong> (<em>torch.Tensor</em>) – (2, 3) box for the uniform samples.</p></li>
+<li><p><strong>n_uniform</strong> (<em>int</em>) – Number of uniform samples inside <code class="docutils literal notranslate"><span class="pre">bounds</span></code>.</p></li>
+<li><p><strong>n_surface</strong> (<em>int</em>) – Number of surface points; each is perturbed once per entry of <code class="docutils literal notranslate"><span class="pre">stds</span></code>,
+so the surface band holds <code class="docutils literal notranslate"><span class="pre">n_surface</span> <span class="pre">*</span> <span class="pre">len(stds)</span></code> samples (or exactly
+<code class="docutils literal notranslate"><span class="pre">n_surface</span></code> when <code class="docutils literal notranslate"><span class="pre">box_constrained</span></code> is set).</p></li>
+<li><p><strong>device</strong> (<em>str</em><em> or </em><em>torch.device</em>) – Device the samples are created on.</p></li>
+<li><p><strong>stds</strong> (<em>sequence</em><em> of </em><em>float</em>) – Standard deviations of the Gaussian noise added to surface points –
+one coarse, one fine by convention.</p></li>
+<li><p><strong>box_constrained</strong> (<em>bool</em><em>, </em><em>default False</em>) – If True, reject surface samples outside <code class="docutils literal notranslate"><span class="pre">bounds</span></code> and re-sample until
+<code class="docutils literal notranslate"><span class="pre">n_surface</span></code> accepted points are collected. Needed when the lattice
+domain is smaller than the mesh’s own bounding box, as in a shape
+optimization whose design domain is a sub-box.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Concatenation of the uniform and surface samples.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="DeepSDFStruct.sampling.html#DeepSDFStruct.sampling.SampledSDF" title="DeepSDFStruct.sampling.SampledSDF">SampledSDF</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="DeepSDFStruct.flexisquares.tables.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">DeepSDFStruct.flexisquares.tables</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="DeepSDFStruct.lattice_structure.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">DeepSDFStruct.lattice_structure</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#shape-reconstruction">Shape Reconstruction</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#functions">Functions</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#classes">Classes</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.geom_reconstruction.FitResult"><code class="docutils literal notranslate"><span class="pre">FitResult</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.geom_reconstruction.FitResult.struct"><code class="docutils literal notranslate"><span class="pre">FitResult.struct</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.geom_reconstruction.FitResult.scaling"><code class="docutils literal notranslate"><span class="pre">FitResult.scaling</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.geom_reconstruction.FitResult.gt_sdf"><code class="docutils literal notranslate"><span class="pre">FitResult.gt_sdf</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.geom_reconstruction.FitResult.params"><code class="docutils literal notranslate"><span class="pre">FitResult.params</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id0"><code class="docutils literal notranslate"><span class="pre">FitResult.gt_sdf</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1"><code class="docutils literal notranslate"><span class="pre">FitResult.params</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2"><code class="docutils literal notranslate"><span class="pre">FitResult.scaling</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3"><code class="docutils literal notranslate"><span class="pre">FitResult.struct</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.geom_reconstruction.LocalShapesReconstructor"><code class="docutils literal notranslate"><span class="pre">LocalShapesReconstructor</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.geom_reconstruction.LocalShapesReconstructor.build_struct"><code class="docutils literal notranslate"><span class="pre">LocalShapesReconstructor.build_struct()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.geom_reconstruction.LocalShapesReconstructor.ensure_output_dir"><code class="docutils literal notranslate"><span class="pre">LocalShapesReconstructor.ensure_output_dir()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.geom_reconstruction.LocalShapesReconstructor.export"><code class="docutils literal notranslate"><span class="pre">LocalShapesReconstructor.export()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.geom_reconstruction.LocalShapesReconstructor.fit_mesh"><code class="docutils literal notranslate"><span class="pre">LocalShapesReconstructor.fit_mesh()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.geom_reconstruction.LocalShapesReconstructor.fit_samples"><code class="docutils literal notranslate"><span class="pre">LocalShapesReconstructor.fit_samples()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.geom_reconstruction.StructBuild"><code class="docutils literal notranslate"><span class="pre">StructBuild</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.geom_reconstruction.StructBuild.struct"><code class="docutils literal notranslate"><span class="pre">StructBuild.struct</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.geom_reconstruction.StructBuild.scaling"><code class="docutils literal notranslate"><span class="pre">StructBuild.scaling</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.geom_reconstruction.StructBuild.mesh_norm"><code class="docutils literal notranslate"><span class="pre">StructBuild.mesh_norm</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.geom_reconstruction.StructBuild.bounds"><code class="docutils literal notranslate"><span class="pre">StructBuild.bounds</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.geom_reconstruction.StructBuild.param_spline"><code class="docutils literal notranslate"><span class="pre">StructBuild.param_spline</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.geom_reconstruction.StructBuild.param_spline_sp"><code class="docutils literal notranslate"><span class="pre">StructBuild.param_spline_sp</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.geom_reconstruction.StructBuild.scale"><code class="docutils literal notranslate"><span class="pre">StructBuild.scale</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.geom_reconstruction.StructBuild.shift"><code class="docutils literal notranslate"><span class="pre">StructBuild.shift</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4"><code class="docutils literal notranslate"><span class="pre">StructBuild.bounds</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5"><code class="docutils literal notranslate"><span class="pre">StructBuild.mesh_norm</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id6"><code class="docutils literal notranslate"><span class="pre">StructBuild.param_spline</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id7"><code class="docutils literal notranslate"><span class="pre">StructBuild.param_spline_sp</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id8"><code class="docutils literal notranslate"><span class="pre">StructBuild.scale</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id9"><code class="docutils literal notranslate"><span class="pre">StructBuild.scaling</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id10"><code class="docutils literal notranslate"><span class="pre">StructBuild.shift</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id11"><code class="docutils literal notranslate"><span class="pre">StructBuild.struct</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.geom_reconstruction.build_parameter_spline"><code class="docutils literal notranslate"><span class="pre">build_parameter_spline()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#DeepSDFStruct.geom_reconstruction.sample_gt_sdf"><code class="docutils literal notranslate"><span class="pre">sample_gt_sdf()</span></code></a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/source/generated/DeepSDFStruct.geom_reconstruction.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, Michael Kofler.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.0.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

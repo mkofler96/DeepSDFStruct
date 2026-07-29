@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>DeepSDFStruct.sampling &#8212; DeepSDFStruct 1.7.3.dev5+gb86bba507 documentation</title>
+    <title>DeepSDFStruct.sampling &#8212; DeepSDFStruct 1.7.4.dev1+gb20659a14 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=50add644"></script>
+    <script src="../../_static/documentation_options.js?v=95cec932"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'source/generated/DeepSDFStruct.sampling';</script>
@@ -110,7 +110,7 @@
   
   
   
-    <p class="title logo__title">DeepSDFStruct 1.7.3.dev5+gb86bba507 documentation</p>
+    <p class="title logo__title">DeepSDFStruct 1.7.4.dev1+gb20659a14 documentation</p>
   
 </a></div>
     
@@ -241,7 +241,9 @@
 <li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.SDF.html">DeepSDFStruct.SDF</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="DeepSDFStruct.deep_sdf.html">DeepSDFStruct.deep_sdf</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.deep_sdf.data.html">DeepSDFStruct.deep_sdf.data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.deep_sdf.generate_primitive_dataset.html">DeepSDFStruct.deep_sdf.generate_primitive_dataset</a></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="DeepSDFStruct.deep_sdf.metrics.html">DeepSDFStruct.deep_sdf.metrics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="DeepSDFStruct.deep_sdf.metrics.error_metrics.html">DeepSDFStruct.deep_sdf.metrics.error_metrics</a></li>
 <li class="toctree-l4"><a class="reference internal" href="DeepSDFStruct.deep_sdf.metrics.mesh_to_analytical.html">DeepSDFStruct.deep_sdf.metrics.mesh_to_analytical</a></li>
 </ul>
 </details></li>
@@ -258,10 +260,13 @@
 <li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.deep_sdf.plotting.html">DeepSDFStruct.deep_sdf.plotting</a></li>
 <li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.deep_sdf.reconstruction.html">DeepSDFStruct.deep_sdf.reconstruction</a></li>
 <li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.deep_sdf.training.html">DeepSDFStruct.deep_sdf.training</a></li>
+<li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.deep_sdf.training_latent_field.html">DeepSDFStruct.deep_sdf.training_latent_field</a></li>
 <li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.deep_sdf.workspace.html">DeepSDFStruct.deep_sdf.workspace</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.design_of_experiments.html">DeepSDFStruct.design_of_experiments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.export_knot_grid.html">DeepSDFStruct.export_knot_grid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.export_onnx.html">DeepSDFStruct.export_onnx</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="DeepSDFStruct.flexicubes.html">DeepSDFStruct.flexicubes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.flexicubes.flexicubes.html">DeepSDFStruct.flexicubes.flexicubes</a></li>
 <li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.flexicubes.tables.html">DeepSDFStruct.flexicubes.tables</a></li>
@@ -272,6 +277,7 @@
 <li class="toctree-l3"><a class="reference internal" href="DeepSDFStruct.flexisquares.tables.html">DeepSDFStruct.flexisquares.tables</a></li>
 </ul>
 </details></li>
+<li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.geom_reconstruction.html">DeepSDFStruct.geom_reconstruction</a></li>
 <li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.lattice_structure.html">DeepSDFStruct.lattice_structure</a></li>
 <li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.local_shapes.html">DeepSDFStruct.local_shapes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="DeepSDFStruct.mesh.html">DeepSDFStruct.mesh</a></li>
@@ -428,8 +434,8 @@ for splitting by sign and visualization.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="#DeepSDFStruct.sampling.sample_mesh_surface" title="DeepSDFStruct.sampling.sample_mesh_surface"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sample_mesh_surface</span></code></a>(sdf, mesh, n_samples, stds)</p></td>
 <td><p>Sample noisy points around a mesh surface and evaluate them with a signed distance function (SDF).</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.sampling.save_points_to_vtp" title="DeepSDFStruct.sampling.save_points_to_vtp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_points_to_vtp</span></code></a>(filename, neg, pos)</p></td>
-<td><p>Save pos/neg SDF sample points as a VTU point cloud using vtkPolyData.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#DeepSDFStruct.sampling.save_points_to_vtp" title="DeepSDFStruct.sampling.save_points_to_vtp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_points_to_vtp</span></code></a>(filename, points)</p></td>
+<td><p>points: array-like of shape (N,4)</p></td>
 </tr>
 </tbody>
 </table>
@@ -926,9 +932,11 @@ and queries the SDF at those points.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="DeepSDFStruct.sampling.save_points_to_vtp">
-<span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.sampling.</span></span><span class="sig-name descname"><span class="pre">save_points_to_vtp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.sampling.save_points_to_vtp" title="Link to this definition">#</a></dt>
-<dd><p>Save pos/neg SDF sample points as a VTU point cloud using vtkPolyData.
-Each point has an SDF scalar value.</p>
+<span class="sig-prename descclassname"><span class="pre">DeepSDFStruct.sampling.</span></span><span class="sig-name descname"><span class="pre">save_points_to_vtp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">points</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DeepSDFStruct.sampling.save_points_to_vtp" title="Link to this definition">#</a></dt>
+<dd><dl class="simple">
+<dt>points: array-like of shape (N,4)</dt><dd><p>columns = [x, y, z, sdf]</p>
+</dd>
+</dl>
 </dd></dl>
 
 </section>

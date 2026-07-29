@@ -8,5 +8,6 @@ DeepSDFStruct.deep\_sdf.metrics.mesh\_to\_analytical
 
    .. autosummary::
    
+      chamfer_distance
       mesh_to_analytical
    
