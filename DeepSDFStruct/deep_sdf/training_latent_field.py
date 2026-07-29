@@ -357,8 +357,10 @@ def train(
         datefmt="%H:%M:%S",
         force=True,
     )
-    logging.debug("running " + experiment_directory)
+    # Normalize before first use: the log line below concatenates it, which
+    # raises TypeError for a PathLike argument.
     experiment_directory = str(experiment_directory)
+    logging.debug("running " + experiment_directory)
     specs = ws.load_experiment_specifications(experiment_directory)
     logging.info("Experiment description: \n" + specs["Description"])
     use_mlflow = bool(use_mlflow) and (mlflow.active_run() is not None)
@@ -705,6 +707,12 @@ def train(
     global_step = 0
     error = 0.0
     total_time = "0:00:00"
+    # The loop body never runs when resuming a run that already reached
+    # NumEpochs, and the summary below reads `epoch`. Seed it with the last
+    # completed epoch so that case returns a summary instead of raising
+    # UnboundLocalError (`error` and `total_time` above are pre-set for the
+    # same reason).
+    epoch = start_epoch - 1
     for epoch in range(start_epoch, num_epochs + 1):
         start = time.time()
         adjust_learning_rate(epoch)
