@@ -129,7 +129,8 @@ Indices and tables
 
 QR Codes to paper and Code
 ------------
-Kofler, M., Giritsch, M. & Elgeti, S. Structural optimization of lattice structures using deep neural networks as geometry representation. Graphical Models 142, 101307 (2025). 
+Kofler, M., Giritsch, M. & Elgeti, S. Structural optimization of lattice structures using deep neural networks as geometry representation. Graphical Models 142, 101307 (2025). https://doi.org/10.1016/j.gmod.2025.101307
+
 .. image:: qr_code_paper.png
 
 Github Repository

@@ -2,8 +2,6 @@
 
 [![DOI](https://zenodo.org/badge/1089477863.svg)](https://doi.org/10.5281/zenodo.20205817)
 
-> Releases are archived on Zenodo; the badge above points at the always-latest concept DOI. The snapshot used by the [DeepShapeOpt](https://github.com/lfreinberger/DeepShapeOpt) project is archived at [10.5281/zenodo.20210456](https://doi.org/10.5281/zenodo.20210456) (paired with DeepShapeOpt [10.5281/zenodo.20210465](https://doi.org/10.5281/zenodo.20210465)). Training data for the bundled decoder checkpoints is archived at [10.48436/12y18-j6236](https://doi.org/10.48436/12y18-j6236).
-
 A differentiable framework for generating and deforming 3D microstructured materials using Signed Distance Functions (SDFs) and spline-based lattices.
 ## Coverage
 [![Test Python Package](https://github.com/mkofler96/DeepSDFStruct/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/mkofler96/DeepSDFStruct/actions/workflows/test.yml)
@@ -529,3 +527,75 @@ GitHub: [https://github.com/mkofler96/DeepSDFStruct](https://github.com/mkofler9
 ## 📄 License
 This project is licensed under the **Apache License 2.0**.  
 See the [LICENSE](./LICENSE) file or visit [http://www.apache.org/licenses/LICENSE-2.0](http://www.apache.org/licenses/LICENSE-2.0) for more information.
+
+---
+
+## 📚 Data and Publications
+
+### Datasets
+
+The training data used with this repository is published on the Hugging Face Hub:
+
+| Dataset | Content |
+| --- | --- |
+| [`mkofler/lattice_structure_unit_cells`](https://huggingface.co/datasets/mkofler/lattice_structure_unit_cells) | Preprocessed and sampled SDF data of lattice structure unit cells (chi and cross families). This is the data behind the pretrained lattice decoders (`ChiAndCross`, `RoundCross`, `AnalyticRoundCross`). |
+| [`lfreinberger/primitives`](https://huggingface.co/datasets/lfreinberger/primitives) | Sampled SDF data of scenes made up of randomly placed, rotated and scaled geometric primitives (spheres, boxes, cylinders). This is the data behind the pretrained `Primitives` decoders, generated with [`generate_primitive_dataset.py`](DeepSDFStruct/deep_sdf/generate_primitive_dataset.py). |
+
+Either dataset can be downloaded and used for training directly:
+
+```python
+from huggingface_hub import snapshot_download
+from DeepSDFStruct.deep_sdf.training import train_deep_sdf
+
+data_dir = snapshot_download("mkofler/lattice_structure_unit_cells", repo_type="dataset")
+train_deep_sdf("DeepSDFStruct/trained_models/test_experiment", data_dir)
+```
+
+The training data of the bundled decoder checkpoints is additionally archived at TU Wien Research Data under [10.48436/12y18-j6236](https://doi.org/10.48436/12y18-j6236).
+
+### Publications
+
+Work that is based on this repository:
+
+1. **Kofler, M., Giritsch, M., & Elgeti, S. (2025).** Structural optimization of lattice structures using deep neural networks as geometry representation. *Graphical Models*, 142, 101307. [https://doi.org/10.1016/j.gmod.2025.101307](https://doi.org/10.1016/j.gmod.2025.101307)
+
+Further papers building on DeepSDFStruct will be added to this list as they are published.
+
+---
+
+## 📖 Citation
+
+If you use DeepSDFStruct in your work, please cite the repository:
+
+> Kofler, M., Freinberger, L., & Elgeti, S. *DeepSDFStruct*. Zenodo. [https://doi.org/10.5281/zenodo.20205817](https://doi.org/10.5281/zenodo.20205817)
+
+```bibtex
+@software{deepsdfstruct,
+  author    = {Kofler, Michael and Freinberger, Lukas and Elgeti, Stefanie},
+  title     = {DeepSDFStruct},
+  publisher = {Zenodo},
+  doi       = {10.5281/zenodo.20205817},
+  url       = {https://github.com/mkofler96/DeepSDFStruct}
+}
+```
+
+If you use the lattice structure functionality, please also cite the corresponding paper:
+
+```bibtex
+@article{kofler2025lattice,
+  author  = {Kofler, Michael and Giritsch, Michael and Elgeti, Stefanie},
+  title   = {Structural optimization of lattice structures using deep neural
+             networks as geometry representation},
+  journal = {Graphical Models},
+  volume  = {142},
+  pages   = {101307},
+  year    = {2025},
+  doi     = {10.1016/j.gmod.2025.101307}
+}
+```
+
+Machine-readable metadata for both is kept in [CITATION.cff](./CITATION.cff).
+
+### Archived releases
+
+Releases are archived on Zenodo; the badge at the top of this file points at the always-latest concept DOI. The snapshot used by the [DeepShapeOpt](https://github.com/lfreinberger/DeepShapeOpt) project is archived at [10.5281/zenodo.20210456](https://doi.org/10.5281/zenodo.20210456) (paired with DeepShapeOpt [10.5281/zenodo.20210465](https://doi.org/10.5281/zenodo.20210465)).
