@@ -4,7 +4,10 @@ title: "DeepSDFStruct"
 # tag by setuptools-scm (see `dynamic = ["version"]` in pyproject.toml), so any
 # value hardcoded here would go stale on the next release.
 type: software
-message: "If you use this software, please cite the paper below."
+message: >-
+  If you use this software, please cite the repository as below. If you use the
+  lattice structure functionality, please also cite the article listed under
+  `references`.
 abstract: "Differentiable signed-distance-function and spline-lattice tooling for generating and deforming 3D microstructured materials."
 authors:
   - given-names: Michael
@@ -12,6 +15,9 @@ authors:
     affiliation: "TU Wien"
   - given-names: Lukas
     family-names: Freinberger
+    affiliation: "TU Wien"
+  - given-names: Stefanie
+    family-names: Elgeti
     affiliation: "TU Wien"
 license: Apache-2.0
 repository-code: "https://github.com/mkofler96/DeepSDFStruct"
@@ -25,23 +31,42 @@ keywords:
   - neural implicit representation
   - spline lattices
   - geometry optimization
-preferred-citation:
-  type: article
-  title: "Structural optimization of lattice structures using deep neural networks as geometry representation"
-  authors:
-    - given-names: Michael
-      family-names: Kofler
-      affiliation: "TU Wien"
-    - given-names: Michael
-      family-names: Giritsch
-      affiliation: "TU Wien"
-    - given-names: Stefanie
-      family-names: Elgeti
-      affiliation: "TU Wien"
-  journal: "Graphical Models"
-  year: 2025
-  # TODO: fill in `doi:`, `volume:` and `start:`/`pages:` from the published record.
 references:
+  # Publications based on this repository.
+  - type: article
+    title: "Structural optimization of lattice structures using deep neural networks as geometry representation"
+    authors:
+      - given-names: Michael
+        family-names: Kofler
+        affiliation: "TU Wien"
+      - given-names: Michael
+        family-names: Giritsch
+        affiliation: "TU Wien"
+      - given-names: Stefanie
+        family-names: Elgeti
+        affiliation: "TU Wien"
+    journal: "Graphical Models"
+    volume: 142
+    start: 101307
+    year: 2025
+    doi: 10.1016/j.gmod.2025.101307
+  # Datasets published alongside this repository.
+  - type: data
+    title: "Lattice structure unit cells"
+    authors:
+      - given-names: Michael
+        family-names: Kofler
+        affiliation: "TU Wien"
+    url: "https://huggingface.co/datasets/mkofler/lattice_structure_unit_cells"
+    notes: "Preprocessed and sampled SDF data of lattice structure unit cells."
+  - type: data
+    title: "Primitives"
+    authors:
+      - given-names: Lukas
+        family-names: Freinberger
+        affiliation: "TU Wien"
+    url: "https://huggingface.co/datasets/lfreinberger/primitives"
+    notes: "Sampled SDF data of scenes of randomly placed geometric primitives."
   - type: data
     title: "Training data for DeepSDFStruct neural decoder"
     authors:
