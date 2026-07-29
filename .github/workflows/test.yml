@@ -59,7 +59,7 @@ jobs:
           du -sh "$HF_HUB_CACHE" || true
 
       - name: Sync dependencies with uv
-        run: uv sync
+        run: uv sync --extra quantum
 
       - name: Verify Hugging Face authentication
         run: |
