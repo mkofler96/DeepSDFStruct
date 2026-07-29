@@ -440,7 +440,14 @@ class MMA:
         )
 
         if self.loop == 0:
-            self.F0 = F_np.copy()
+            # Normalize by the MAGNITUDE of the initial objective. Dividing by a
+            # signed F0 flips the sign of both F and dF whenever F(x0) < 0, which
+            # turns the minimization into a maximization: the same problem with a
+            # constant added to the objective (which cannot move the optimum) then
+            # converges to a different point. An exactly-zero F(x0) would divide by
+            # zero, so fall back to 1.0 and leave the objective unscaled.
+            f0_mag = float(np.abs(F_np[0, 0]))
+            self.F0 = np.full((1, 1), f0_mag if f0_mag > 0.0 else 1.0)
 
         F_np = F_np / self.F0
         dFdx_np = dFdx_np / self.F0
