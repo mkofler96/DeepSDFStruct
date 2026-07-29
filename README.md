@@ -589,7 +589,6 @@ If you use the lattice structure functionality, please also cite the correspondi
 }
 ```
 
-Machine-readable metadata for both is kept in [CITATION.cff](./CITATION.cff).
 
 ### Archived releases
 
