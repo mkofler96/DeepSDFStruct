@@ -146,6 +146,37 @@ volumes, _ = tetrahedralize_surface(faces)
 gus.io.mfem.export("volumes.mfem", volumes)
 ```
 
+### Reconstructing a Shape from an STL
+
+Use `LocalShapesReconstructor` to fit a field of local shapes to a watertight STL mesh. It samples the target mesh's signed distance function and optimizes a B-spline field of latent codes using the bundled pretrained primitives decoder; no model training or dataset download is needed.
+
+```python
+import trimesh
+from DeepSDFStruct.geom_reconstruction import LocalShapesReconstructor
+
+mesh = trimesh.load_mesh("tests/data/cone.stl")
+
+recon = LocalShapesReconstructor(output_dir="reconstruction")
+struct, scaling, gt_sdf, params = recon.fit_mesh(
+    mesh=mesh,
+    tiling=[2, 2, 2],
+    num_iterations=10,
+    n_uniform=20_000,
+    n_surface=50_000,
+)
+mesh_path = recon.export(struct, scaling, mesh_resolution=32)
+```
+
+Example output:
+
+![Input cone STL and reconstructed surface](docs/readme_images/reconstruction_cone.png)
+
+Left: the repository's `tests/data/cone.stl`. Right: the reconstructed surface using the settings above on CPU. Both are shown in the original mesh coordinates at the same scale.
+
+The settings above are a small first run. Increase `tiling` for finer local detail, the sample counts and `num_iterations` for fitting, and `mesh_resolution` for a finer exported surface, at the cost of more time and memory. The result approximates the target; accuracy depends on these settings and the shapes represented by the decoder. CUDA is used when available; pass `device="cpu"` to the constructor to use CPU explicitly.
+
+`struct` is the fitted differentiable SDF in normalized parameter space, and `scaling` maps it back to the target mesh's original coordinates. Passing both to `export` writes `reconstruction/reconstructed_mesh.stl`, alongside a parameter-space STL and an SDF grid. The fitting loss plot and CSV are also saved in `reconstruction`.
+
 ### Training a Model
 A model can be trained by using the `train_deep_sdf` function that takes as input the experiment directory and the data directory.`train_deep_sdf("DeepSDFStruct/trained_models/test_experiment", data_dir)`
 
@@ -282,7 +313,7 @@ DeepSDFStruct provides a comprehensive set of geometric primitives and SDF opera
         </tr>
         <tr>
             <td align="center"><b>Rounded Cylinder:</b> Cylinder with smooth rounded transitions</td>
-            <td align="center"><b>Rounded Cone:</b> Cone with smooth rounded transitions</td>
+            <td align="center"><b>Rounded Cone:</b> Cone with rounded transitions</td>
             <td align="center"><b>Corner Spheres:</b> Cube with spherical cutouts at corners</td>
             <td align="center"><b>Cross M:</b> Cross-shaped structure</td>
         </tr>
@@ -556,6 +587,44 @@ Work that is based on this repository:
 
 1. **Kofler, M., Giritsch, M., & Elgeti, S. (2025).** Structural optimization of lattice structures using deep neural networks as geometry representation. *Graphical Models*, 142, 101307. [https://doi.org/10.1016/j.gmod.2025.101307](https://doi.org/10.1016/j.gmod.2025.101307)
 
+   <details>
+   <summary>Show BibTeX</summary>
+
+   ```bibtex
+   @article{kofler2025lattice,
+     author  = {Kofler, Michael and Giritsch, Michael and Elgeti, Stefanie},
+     title   = {Structural optimization of lattice structures using deep neural
+                networks as geometry representation},
+     journal = {Graphical Models},
+     volume  = {142},
+     pages   = {101307},
+     year    = {2025},
+     doi     = {10.1016/j.gmod.2025.101307}
+   }
+   ```
+
+   </details>
+
+2. **Freinberger, L., Key, K., Kofler, M., Breinl, D., Drossel, W.-G., Büttner, M., Roder, K., & Elgeti, S. (2026).** Shape optimization using a neural implicit geometry representation. *Advances in Computational Science and Engineering*. [https://doi.org/10.3934/acse.2026013](https://doi.org/10.3934/acse.2026013)
+
+   <details>
+   <summary>Show BibTeX</summary>
+
+   ```bibtex
+   @article{freinberger2026shape,
+     title     = {Shape optimization using a neural implicit geometry representation},
+     author    = {Freinberger, Lukas and Key, Konstantin and Kofler, Michael and
+                  Breinl, Daniel and Drossel, Welf-Guntram and B{\"u}ttner, Maria and
+                  Roder, Kristina and Elgeti, Stefanie},
+     journal   = {Advances in Computational Science and Engineering},
+     year      = {2026},
+     publisher = {American Institute of Mathematical Sciences (AIMS)},
+     doi       = {10.3934/acse.2026013}
+   }
+   ```
+
+   </details>
+
 Further papers building on DeepSDFStruct will be added to this list as they are published.
 
 ---
@@ -573,22 +642,6 @@ If you use DeepSDFStruct in your work, please cite the repository:
   url       = {https://github.com/mkofler96/DeepSDFStruct}
 }
 ```
-
-If you use the lattice structure functionality, please also cite the corresponding paper:
-
-```bibtex
-@article{kofler2025lattice,
-  author  = {Kofler, Michael and Giritsch, Michael and Elgeti, Stefanie},
-  title   = {Structural optimization of lattice structures using deep neural
-             networks as geometry representation},
-  journal = {Graphical Models},
-  volume  = {142},
-  pages   = {101307},
-  year    = {2025},
-  doi     = {10.1016/j.gmod.2025.101307}
-}
-```
-
 
 ### Archived releases
 
