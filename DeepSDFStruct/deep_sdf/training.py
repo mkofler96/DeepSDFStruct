@@ -12,6 +12,8 @@ Key Features
 Loss Functions
     - ClampedL1Loss: L1 loss with value clamping for stability
     - Support for custom loss functions
+    - Optional Eikonal regularization (``EikonalLambda`` in specs) that
+      pushes ``||grad SDF||`` towards 1 near the surface
 
 Learning Rate Schedules
     - ConstantLearningRateSchedule: Fixed learning rate
@@ -488,6 +490,17 @@ def train_deep_sdf(
     add_homogeniation = get_spec_with_default(specs, "AddHomogenization", False)
     if add_homogeniation:
         logger.info("adding homogenization loss")
+    # Eikonal regularization: penalize (||grad SDF|| - 1)^2 at samples whose
+    # ground-truth distance is within EikonalThreshold of the surface.
+    eikonal_lambda = float(get_spec_with_default(specs, "EikonalLambda", 0.0))
+    eikonal_threshold = float(
+        get_spec_with_default(specs, "EikonalThreshold", 0.5 * clamp_dist)
+    )
+    if eikonal_lambda > 0:
+        logger.info(
+            f"adding eikonal loss (lambda={eikonal_lambda}, "
+            f"threshold={eikonal_threshold})"
+        )
 
     optimizer_all = torch.optim.Adam(
         [
@@ -592,16 +605,32 @@ def train_deep_sdf(
             batch_loss = 0.0
             batch_reg_loss = 0.0
             batch_hom_loss = 0.0
+            batch_eik_loss = 0.0
             optimizer_all.zero_grad()
 
             for i in range(batch_split):
                 batch_lat_vecs = lat_vecs(indices[i])
                 batch_properties = properties_chunked[i]
 
-                input = torch.cat([batch_lat_vecs, xyz[i]], dim=1)
+                xyz_i = xyz[i]
+                if eikonal_lambda > 0:
+                    xyz_i = xyz_i.detach().clone().requires_grad_(True)
+
+                input = torch.cat([batch_lat_vecs, xyz_i], dim=1)
 
                 # NN optimization
                 pred_sdf = decoder(input)
+
+                eik_loss = None
+                if eikonal_lambda > 0:
+                    # Use the unclamped prediction: clamping zeroes the gradient
+                    near_mask = sdf_gt[i].abs().squeeze(-1) < eikonal_threshold
+                    if near_mask.any():
+                        grad_sdf = torch.autograd.grad(
+                            pred_sdf.sum(), xyz_i, create_graph=True
+                        )[0]
+                        eik_loss = ((grad_sdf[near_mask].norm(dim=-1) - 1) ** 2).mean()
+                        batch_eik_loss += eik_loss.item()
 
                 if enforce_minmax:
                     pred_sdf = torch.clamp(pred_sdf, minT, maxT)
@@ -617,6 +646,9 @@ def train_deep_sdf(
 
                     chunk_loss += hom_loss.to(device)
                     batch_hom_loss += hom_loss.item()
+
+                if eik_loss is not None:
+                    chunk_loss = chunk_loss + eikonal_lambda * eik_loss
 
                 # standard l2 latent vector loss
                 reg_loss = (
@@ -657,18 +689,12 @@ def train_deep_sdf(
                 f"Finished {epoch} ({epoch}/{num_epochs}) [{epoch/num_epochs*100:.2f}%] after {total_time}"
             )
         else:
+            postfix = {"Loss": f"{batch_loss:.4f}", "Reg": f"{batch_reg_loss:.4f}"}
             if add_homogeniation:
-                pbar.set_postfix(
-                    {
-                        "Loss": f"{batch_loss:.4f}",
-                        "Reg": f"{batch_reg_loss:.4f}",
-                        "Hom": f"{batch_hom_loss:.4f}",
-                    }
-                )
-            else:
-                pbar.set_postfix(
-                    {"Loss": f"{batch_loss:.4f}", "Reg": f"{batch_reg_loss:.4f}"}
-                )
+                postfix["Hom"] = f"{batch_hom_loss:.4f}"
+            if eikonal_lambda > 0:
+                postfix["Eik"] = f"{batch_eik_loss:.4f}"
+            pbar.set_postfix(postfix)
         seconds_elapsed = end - start
         timing_log.append(seconds_elapsed)
 
