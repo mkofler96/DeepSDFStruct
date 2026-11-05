@@ -13,9 +13,29 @@ import splinepy
 import torch
 import logging
 import numpy as np
+import importlib.metadata
+import inspect
 
 logger = logging.getLogger(DeepSDFStruct.__name__)
 configure_logging()
+
+
+def _torchfem_solve_kwargs(solid):
+    """Return version-dependent keyword arguments for ``Solid.solve``.
+
+    - torch-fem >= 0.11 renamed the direct solver method ``"spsolve"`` to
+      ``"direct"``.
+    - torch-fem >= 0.6 only differentiates through the implicit solve for
+      tensors passed via ``differentiable_parameters``; older versions track
+      gradients implicitly and do not accept the argument.
+    """
+    torchfem_version = tuple(
+        int(part) for part in importlib.metadata.version("torch-fem").split(".")[:2]
+    )
+    kwargs = {"method": "direct" if torchfem_version >= (0, 11) else "spsolve"}
+    if "differentiable_parameters" in inspect.signature(solid.solve).parameters:
+        kwargs["differentiable_parameters"] = solid.nodes
+    return kwargs
 
 
 def test_structural_optimization(num_iter=1):
@@ -146,11 +166,7 @@ def test_structural_optimization(num_iter=1):
 
         # log("Starting Simulation")
         u, f, _, _, _ = cantilever.solve(
-            rtol=1e-2,
-            atol=1e-2,
-            device="cpu",
-            method="direct",
-            differentiable_parameters=cantilever.nodes,
+            rtol=1e-2, atol=1e-2, device="cpu", **_torchfem_solve_kwargs(cantilever)
         )
 
         # Compute sensitivity of compliance w.r.t. element thicknesses

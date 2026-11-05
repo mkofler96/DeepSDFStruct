@@ -1060,7 +1060,7 @@ requires-dist = [
     { name = "streamlit-stl", marker = "extra == 'visualization'", specifier = ">=0.0.6" },
     { name = "tetgenpy" },
     { name = "torch" },
-    { name = "torch-fem", specifier = ">=0.11.0" },
+    { name = "torch-fem", specifier = ">=0.4.5" },
     { name = "torchaudio" },
     { name = "torchvision" },
     { name = "tqdm" },
