@@ -283,6 +283,36 @@ def get_spec_with_default(specs, key, default):
         return default
 
 
+def initialize_latent_vectors(latent_vectors, specs, experiment_directory):
+    """Draw random codes, then apply the optional ``InitialLatentCodes`` spec.
+
+    ``InitialLatentCodes`` names a ``.npy`` array of shape
+    ``(num_scenes, latent_size)``, relative to the experiment directory. The
+    random draw always happens, so the option leaves the random stream, and
+    therefore everything sampled afterwards, unchanged.
+    """
+    torch.nn.init.normal_(
+        latent_vectors.weight.data,
+        0.0,
+        get_spec_with_default(specs, "CodeInitStdDev", 1.0)
+        / math.sqrt(latent_vectors.embedding_dim),
+    )
+    filename = get_spec_with_default(specs, "InitialLatentCodes", None)
+    if filename is None:
+        return
+    path = os.path.join(experiment_directory, filename)
+    codes = np.load(path)
+    expected_shape = tuple(latent_vectors.weight.shape)
+    if codes.shape != expected_shape:
+        raise ValueError(f"{path} has shape {codes.shape}, expected {expected_shape}.")
+    if not np.isfinite(codes).all():
+        raise ValueError(f"{path} contains nonfinite latent codes.")
+    bound = latent_vectors.max_norm
+    if bound is not None and np.linalg.norm(codes, axis=1).max() > bound:
+        raise ValueError(f"{path} contains codes outside CodeBound={bound}.")
+    latent_vectors.weight.data.copy_(torch.from_numpy(codes))
+
+
 def get_mean_latent_vector_magnitude(latent_vectors):
     return torch.mean(torch.norm(latent_vectors.weight.data.detach(), dim=1))
 
@@ -471,12 +501,7 @@ def train_deep_sdf(
     lat_vecs = torch.nn.Embedding(
         num_scenes, latent_size_embedding, max_norm=code_bound, device=device
     )
-    torch.nn.init.normal_(
-        lat_vecs.weight.data,
-        0.0,
-        get_spec_with_default(specs, "CodeInitStdDev", 1.0)
-        / math.sqrt(latent_size_embedding),
-    )
+    initialize_latent_vectors(lat_vecs, specs, experiment_directory)
 
     logger.debug(
         "initialized with mean magnitude {}".format(
